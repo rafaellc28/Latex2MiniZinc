@@ -1,4 +1,9 @@
 # Byte-compiled / optimized / DLL files
+.cache/
+.eggs/
+Latex_to_Minizinc.egg-info/
+parselog.txt
+
 __pycache__/
 *.py[cod]
 *$py.class
