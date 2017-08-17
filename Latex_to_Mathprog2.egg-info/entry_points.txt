@@ -1,3 +1,0 @@
-[console_scripts]
-latex2mathprog2 = latex2mathprog2.main:main
-
