@@ -1,19 +1,19 @@
 enum JOBS;
 
-array[JOBS] of float: dur;
+array[int] of float: rel;
 
-array[JOBS] of float: due;
+array[int] of float: dur;
 
-array[JOBS] of float: rel;
+array[int] of float: due;
 
 float: bigM = (max(k in JOBS)(rel[k])) + sum(k in JOBS)(dur[k]);
 
 
-array[JOBS] of var float: start;
+array[int] of var float: start;
 
-array[JOBS] of var float: pastdue;
+array[int] of var float: pastdue;
 
-array[JOBS, JOBS] of var bool: y;
+array[int, int] of var bool: y;
 
 
 constraint forall(k in JOBS)(start[k] >= 0);

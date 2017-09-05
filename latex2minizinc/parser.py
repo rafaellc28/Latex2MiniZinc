@@ -39,7 +39,7 @@ precedence = (
     ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
     ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
-    ('left', 'UNDERLINE', 'CARET'),
+    ('left', 'UNDERLINE'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
     ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'COS', 'ARCTAN', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('right', 'LPAREN', 'RPAREN'),
@@ -47,6 +47,7 @@ precedence = (
     ('right', 'LBRACE', 'RBRACE', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('right', 'PLUS', 'MINUS'),
     ('right', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
+    ('right', 'CARET'),
     ('right', 'UPLUS', 'UMINUS'),
     ('right', 'AMPERSAND'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 
@@ -883,16 +884,12 @@ def p_EntryLogicalExpressionWithSet(t):
 
 def p_EntryIteratedLogicalExpression(t):
     '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | FORALL LLBRACE IndexingExpression RRBRACE NumericExpression
                               | FORALL LLBRACE IndexingExpression RRBRACE Identifier
                               | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | NFORALL LLBRACE IndexingExpression RRBRACE NumericExpression
                               | NFORALL LLBRACE IndexingExpression RRBRACE Identifier
                               | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | EXISTS LLBRACE IndexingExpression RRBRACE NumericExpression
                               | EXISTS LLBRACE IndexingExpression RRBRACE Identifier
                               | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
-                              | NEXISTS LLBRACE IndexingExpression RRBRACE NumericExpression
                               | NEXISTS LLBRACE IndexingExpression RRBRACE Identifier'''
     if not isinstance(t[5], LogicalExpression):
       t[5] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[5])])

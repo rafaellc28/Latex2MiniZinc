@@ -110,12 +110,13 @@ def test_lp9_with_declarations():
 	check_test_num(9, True)
 
 
-'''
+
 def test_lp10():
 	check_test_num(10)
 
 def test_lp10_with_declarations():
 	check_test_num(10, True)
+
 
 def test_lp11():
 	check_test_num(11)
@@ -128,6 +129,7 @@ def test_lp12():
 
 def test_lp12_with_declarations():
 	check_test_num(12, True)
+
 
 def test_lp13():
 	check_test_num(13)
@@ -146,6 +148,7 @@ def test_lp15():
 
 def test_lp15_with_declarations():
 	check_test_num(15, True)
+
 
 def test_lp16():
 	check_test_num(16)
@@ -221,6 +224,7 @@ def test_lp27():
 def test_lp27_with_declarations():
 	check_test_num(27, True)
 
+
 def test_lp28():
 	check_test_num(28)
 
@@ -240,6 +244,7 @@ def test_lp30():
 def test_lp30_with_declarations():
 	check_test_num(30, True)
 
+'''
 def test_lp31():
 	check_test_num(31)
 

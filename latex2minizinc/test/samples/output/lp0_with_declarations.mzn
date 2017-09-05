@@ -2,14 +2,14 @@ enum I;
 
 enum J;
 
-array[I] of float: A;
+array[int, int] of float: C;
 
-array[I, J] of float: C;
+array[int] of float: A;
 
-array[J] of float: B;
+array[int] of float: B;
 
 
-array[I, J] of var int: x;
+array[int, int] of var int: x;
 
 
 constraint forall(i in I, j in J)(x[i,j] >= 0);

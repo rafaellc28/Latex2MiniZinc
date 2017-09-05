@@ -2,16 +2,16 @@ enum C;
 
 enum N;
 
-array[C, {price,weight} union N] of float: Data;
+array[int, int] of float: Data;
 
-array[N] of float: Allowance;
+array[int] of float: Allowance;
 
 int: price;
 
 int: weight;
 
 
-array[C] of var float: x;
+array[int] of var float: x;
 
 
 constraint forall(c in C)(x[c] >= 0);

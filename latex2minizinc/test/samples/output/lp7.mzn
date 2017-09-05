@@ -1,19 +1,19 @@
 enum JOBS;
 
+array[int] of float: Rel;
+
+array[int] of float: Dur;
+
+array[int] of float: Due;
+
 float: BigM;
 
-array[JOBS] of float: Dur;
 
-array[JOBS] of float: Due;
+array[int] of var float: start;
 
-array[JOBS] of float: Rel;
+array[int] of var float: pastdue;
 
-
-array[JOBS] of var float: start;
-
-array[JOBS] of var float: pastdue;
-
-array[JOBS, JOBS] of var bool: y;
+array[int, int] of var bool: y;
 
 
 constraint forall(j in JOBS)(start[j] >= 0);

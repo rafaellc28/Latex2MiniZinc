@@ -1,23 +1,23 @@
 enum TASKS;
 
-array[INDEX_SET_TASKS, 1..2] of TASKS: ARCS;
+array[INDEX_SET_ARCS, 1..2] of TASKS: ARCS;
 
-array[TASKS] of float: Dur;
+array[int] of float: Dur;
 
-set of int: INDEX_SET_TASKS = index_set(TASKS);
+set of int: INDEX_SET_ARCS;
 
 
-array[TASKS] of var float: Tef;
+array[int] of var float: Tef;
 
 var float: Tf;
 
-array[TASKS] of var float: Tlf;
+array[int] of var float: Tlf;
 
-array[TASKS] of var float: Tes;
+array[int] of var float: Tes;
 
-array[TASKS] of var float: Tls;
+array[int] of var float: Tls;
 
-array[TASKS] of var float: Tsl;
+array[int] of var float: Tsl;
 
 
 constraint forall(j in TASKS)(Tef[j] >= 0);
@@ -42,9 +42,9 @@ constraint forall(j in TASKS)(Tlf[j] = Tls[j] + Dur[j]);
 
 constraint forall(j in TASKS)(Tsl[j] = Tls[j] - Tes[j]);
 
-constraint forall(i in INDEX_SET_TASKS)(Tef[ARCS[i,0]] <= Tes[ARCS[i,1]]);
+constraint forall(i in INDEX_SET_ARCS)(Tef[ARCS[i,1]] <= Tes[ARCS[i,2]]);
 
-constraint forall(j in INDEX_SET_TASKS)(Tlf[ARCS[j,0]] <= Tls[ARCS[j,1]]);
+constraint forall(j in INDEX_SET_ARCS)(Tlf[ARCS[j,1]] <= Tls[ARCS[j,2]]);
 
 
 

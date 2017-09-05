@@ -1111,6 +1111,7 @@ class CodeSetup:
         """
 
         if node.getIndice() > -1:
+            node.isInt = True
             if len(node.sub_indices) == 0:
                 return
         
@@ -1278,7 +1279,7 @@ class CodeSetup:
                 else:
                     genDeclaration.addAttributes(node.declarationExpression.attributeList)
 
-                if node.indexingExpression and len(identifier.sub_indices) > 0:
+                if node.indexingExpression:
                     genDeclaration.setIndexingExpression(node.indexingExpression)
 
                 _symbolTableEntry = self.currentTable.lookup(name)
@@ -1345,6 +1346,20 @@ class CodeSetup:
                 
                 if isinstance(var, Identifier):
                     self._setIsSet(var)
+                
+                #print(name, str(var), str(identifier))
+                _symbolTableEntry = self.currentTable.lookup(name)
+                if _symbolTableEntry == None:
+                    _symbolTableEntry = SymbolTableEntry(name, GenProperties(name, [], None, None, None), 
+                                                         None, self.level, [], True, True)
+                    self.currentTable.insert(name, _symbolTableEntry)
+
+                else:
+
+                    if _symbolTableEntry.getInferred():
+                        _symbolTableEntry.setType(None)
+
+                    #_symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, DeclarationAttribute.IN, attribute.getDependencies(self.codeGenerator)))
 
     def setupEnvironment_AttributeList(self, node, identifier):
         identifier1 = self._getIdentifier(node.attribute)
