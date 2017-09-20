@@ -6,16 +6,26 @@ float: BigM;
 
 array[int, int] of float: Dur;
 
+
+array[INDEX_SET_start_1, INDEX_SET_start_2] of var float: start;
+
+var float: makespan;
+
+array[INDEX_SET_y_1, INDEX_SET_y_2, INDEX_SET_y_3] of var bool: y;
+
 set of int: INDEX_SET_TASKORDER;
 
 set of int: INDEX_SET_TASKS;
 
+set of int: INDEX_SET_start_1;
 
-array[int, int] of var float: start;
+set of int: INDEX_SET_start_2;
 
-var float: makespan;
+set of int: INDEX_SET_y_1;
 
-array[int, int, int] of var bool: y;
+set of int: INDEX_SET_y_2;
+
+set of int: INDEX_SET_y_3;
 
 
 constraint forall(i in INDEX_SET_TASKS)(start[TASKS[i,1],TASKS[i,2]] >= 0);

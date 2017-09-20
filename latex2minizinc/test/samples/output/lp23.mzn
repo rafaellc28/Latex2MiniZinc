@@ -12,6 +12,19 @@ enum LOCATIONS;
 
 array[int, int] of float: Gcdist;
 
+
+array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5] of var bool: x;
+
+array[INDEX_SET_y_1, INDEX_SET_y_2, INDEX_SET_y_3, INDEX_SET_y_4, INDEX_SET_y_5] of var int: y;
+
+array[INDEX_SET_routeDistance_1] of var float: routeDistance;
+
+array[INDEX_SET_routeLegs_1] of var float: routeLegs;
+
+var float: maxDistance;
+
+var float: maxLegs;
+
 array[INDEX_SET_CUSTOMERS_union_FINISH,1..2] of int: CUSTOMERS_union_FINISH;
 
 array[INDEX_SET_CUSTOMERS_union_START,1..2] of int: CUSTOMERS_union_START;
@@ -30,20 +43,31 @@ set of int: INDEX_SET_START;
 
 set of int: INDEX_SET_START_union_CUSTOMERS;
 
+set of int: INDEX_SET_routeDistance_1;
+
+set of int: INDEX_SET_routeLegs_1;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
+
+set of int: INDEX_SET_x_3;
+
+set of int: INDEX_SET_x_4;
+
+set of int: INDEX_SET_x_5;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
+
+set of int: INDEX_SET_y_3;
+
+set of int: INDEX_SET_y_4;
+
+set of int: INDEX_SET_y_5;
+
 array[INDEX_SET_START_union_CUSTOMERS,1..2] of int: START_union_CUSTOMERS;
-
-
-array[int, int, int, int, int] of var bool: x;
-
-array[int, int, int, int, int] of var int: y;
-
-array[int] of var float: routeDistance;
-
-array[int] of var float: routeLegs;
-
-var float: maxDistance;
-
-var float: maxLegs;
 
 
 constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(y[p,N[a,1],N[a,2],N[b,1],N[b,2]] >= 0);

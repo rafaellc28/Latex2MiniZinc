@@ -9,11 +9,19 @@ array[int] of float: due;
 float: bigM = (max(k in JOBS)(rel[k])) + sum(k in JOBS)(dur[k]);
 
 
-array[int] of var float: start;
+array[INDEX_SET_start_1] of var float: start;
 
-array[int] of var float: pastdue;
+array[INDEX_SET_pastdue_1] of var float: pastdue;
 
-array[int, int] of var bool: y;
+array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
+
+set of int: INDEX_SET_pastdue_1;
+
+set of int: INDEX_SET_start_1;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
 
 
 constraint forall(k in JOBS)(start[k] >= 0);

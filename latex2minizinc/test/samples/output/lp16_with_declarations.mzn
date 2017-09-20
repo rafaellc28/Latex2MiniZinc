@@ -2,18 +2,26 @@ array[INDEX_SET_PAIRS, 1..2] of PEOPLE: PAIRS;
 
 set of int: TABLES = 1..NTABLES;
 
-set of int: PEOPLE = 1..TABLESIZE * NTABLES;
+set of int: PEOPLE = 1..floor(TABLESIZE * NTABLES);
 
 float: TABLESIZE = 3;
 
 int: NTABLES = 4;
 
+
+array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
+
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+
 set of int: INDEX_SET_PAIRS;
 
+set of int: INDEX_SET_x_1;
 
-array[int, int] of var bool: y;
+set of int: INDEX_SET_x_2;
 
-array[int, int] of var bool: x;
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
 
 
 constraint forall(p in PEOPLE)(sum(t in TABLES)(x[p,t]) = 1);

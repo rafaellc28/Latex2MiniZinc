@@ -48,6 +48,29 @@ array[int, int, int] of float: F1;
 
 array[INDEX_SET_alpha_1, INDEX_SET_alpha_2] of float: alpha = array2d(INDEX_SET_alpha_1, INDEX_SET_alpha_2, [pow(sin(d2r * (lat[a] - lat[b]) / 2),2) + cos(d2r * lat[a]) * cos(d2r * lat[b]) * pow(sin(d2r * (lng[a] - lng[b]) / 2),2) | a in LOCATIONS, b in LOCATIONS]);
 
+
+var float: timePenalty;
+
+var float: totalDistance;
+
+array[INDEX_SET_routeDistance_1] of var float: routeDistance;
+
+array[INDEX_SET_y_1, INDEX_SET_y_2, INDEX_SET_y_3, INDEX_SET_y_4, INDEX_SET_y_5] of var float: y;
+
+array[INDEX_SET_tlv_1, INDEX_SET_tlv_2] of var float: tlv;
+
+array[INDEX_SET_tar_1, INDEX_SET_tar_2] of var float: tar;
+
+array[INDEX_SET_tea_1, INDEX_SET_tea_2] of var float: tea;
+
+array[INDEX_SET_tla_1, INDEX_SET_tla_2] of var float: tla;
+
+array[INDEX_SET_ted_1, INDEX_SET_ted_2] of var float: ted;
+
+array[INDEX_SET_tld_1, INDEX_SET_tld_2] of var float: tld;
+
+array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5] of var bool: x;
+
 array[INDEX_SET_CUSTOMERS_union_FINISH,1..2] of int: CUSTOMERS_union_FINISH;
 
 array[INDEX_SET_CUSTOMERS_union_START,1..2] of int: CUSTOMERS_union_START;
@@ -96,30 +119,53 @@ set of int: INDEX_SET_gcdist_1;
 
 set of int: INDEX_SET_gcdist_2;
 
+set of int: INDEX_SET_routeDistance_1;
+
+set of int: INDEX_SET_tar_1;
+
+set of int: INDEX_SET_tar_2;
+
+set of int: INDEX_SET_tea_1;
+
+set of int: INDEX_SET_tea_2;
+
+set of int: INDEX_SET_ted_1;
+
+set of int: INDEX_SET_ted_2;
+
+set of int: INDEX_SET_tla_1;
+
+set of int: INDEX_SET_tla_2;
+
+set of int: INDEX_SET_tld_1;
+
+set of int: INDEX_SET_tld_2;
+
+set of int: INDEX_SET_tlv_1;
+
+set of int: INDEX_SET_tlv_2;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
+
+set of int: INDEX_SET_x_3;
+
+set of int: INDEX_SET_x_4;
+
+set of int: INDEX_SET_x_5;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
+
+set of int: INDEX_SET_y_3;
+
+set of int: INDEX_SET_y_4;
+
+set of int: INDEX_SET_y_5;
+
 array[INDEX_SET_START_union_CUSTOMERS,1..2] of int: START_union_CUSTOMERS;
-
-
-var float: timePenalty;
-
-var float: totalDistance;
-
-array[int] of var float: routeDistance;
-
-array[int, int, int, int, int] of var float: y;
-
-array[int, int] of var float: tlv;
-
-array[int, int] of var float: tar;
-
-array[int, int] of var float: tea;
-
-array[int, int] of var float: tla;
-
-array[int, int] of var float: ted;
-
-array[int, int] of var float: tld;
-
-array[int, int, int, int, int] of var bool: x;
 
 
 constraint timePenalty >= 0;

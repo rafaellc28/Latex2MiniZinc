@@ -6,12 +6,20 @@ enum PEOPLE;
 
 float: TABLESIZE;
 
+
+array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
+
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+
 set of int: INDEX_SET_PAIRS;
 
+set of int: INDEX_SET_x_1;
 
-array[int, int] of var bool: y;
+set of int: INDEX_SET_x_2;
 
-array[int, int] of var bool: x;
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
 
 
 constraint forall(p in PEOPLE)(sum(t in TABLES)(x[p,t]) = 1);

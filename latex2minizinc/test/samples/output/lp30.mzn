@@ -15,13 +15,21 @@ array[int] of STREAMS: S;
 array[int] of float: Emax;
 
 
-array[int] of var bool: gerr;
+array[INDEX_SET_gerr_1] of var bool: gerr;
 
-array[int] of var float: epos;
+array[INDEX_SET_epos_1] of var float: epos;
 
-array[int] of var float: eneg;
+array[INDEX_SET_eneg_1] of var float: eneg;
 
-array[int] of var float: x;
+array[INDEX_SET_x_1] of var float: x;
+
+set of int: INDEX_SET_eneg_1;
+
+set of int: INDEX_SET_epos_1;
+
+set of int: INDEX_SET_gerr_1;
+
+set of int: INDEX_SET_x_1;
 
 
 constraint forall(k in SENSORS)(epos[k] >= 0);

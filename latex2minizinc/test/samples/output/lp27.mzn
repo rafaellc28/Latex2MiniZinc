@@ -17,11 +17,21 @@ array[int, int] of float: D;
 
 var float: capcost;
 
-array[int] of var float: v;
+array[INDEX_SET_v_1] of var float: v;
 
-array[int] of var float: x;
+array[INDEX_SET_x_1] of var float: x;
 
-array[int, int, int] of var float: y;
+array[INDEX_SET_y_1, INDEX_SET_y_2, INDEX_SET_y_3] of var float: y;
+
+set of int: INDEX_SET_v_1;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
+
+set of int: INDEX_SET_y_3;
 
 
 constraint forall(p in PLANTS)(x[p] >= 0);

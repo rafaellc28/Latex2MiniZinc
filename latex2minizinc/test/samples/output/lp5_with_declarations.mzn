@@ -6,12 +6,14 @@ array[int, int] of float: Data;
 
 array[int] of float: Allowance;
 
+
+array[INDEX_SET_x_1] of var float: x;
+
+set of int: INDEX_SET_x_1;
+
 int: price;
 
 int: weight;
-
-
-array[int] of var float: x;
 
 
 constraint forall(c in C)(x[c] >= 0);

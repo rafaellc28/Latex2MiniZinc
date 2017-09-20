@@ -12,13 +12,15 @@ int: N = 100;
 
 float: B = N;
 
+
+array[INDEX_SET_V_1] of var float: V;
+
 set of int: INDEX_SET_U_1;
 
+set of int: INDEX_SET_V_1;
 
-array[int] of var float: V;
 
-
-constraint forall(x in 1..N - 1, u in U[x])(V[x] >= a * (p * V[x + to_enum(X,u)] + q * V[x - to_enum(X,u)]));
+constraint forall(x in 1..floor(N - 1), u in U[x])(V[x] >= a * (p * V[x + to_enum(X,u)] + q * V[x - to_enum(X,u)]));
 
 constraint V[0] = 0;
 

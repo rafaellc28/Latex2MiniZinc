@@ -224,7 +224,6 @@ def test_lp27():
 def test_lp27_with_declarations():
 	check_test_num(27, True)
 
-
 def test_lp28():
 	check_test_num(28)
 
@@ -244,7 +243,6 @@ def test_lp30():
 def test_lp30_with_declarations():
 	check_test_num(30, True)
 
-'''
 def test_lp31():
 	check_test_num(31)
 
@@ -293,12 +291,13 @@ def test_lp38():
 def test_lp38_with_declarations():
 	check_test_num(38, True)
 
+'''
 def test_lp39():
 	check_test_num(39)
 
 def test_lp39_with_declarations():
 	check_test_num(39, True)
-
+'''
 
 def test_lp40():
 	check_test_num(40)
@@ -376,8 +375,10 @@ def test_lp51_with_declarations():
 def test_lp52():
 	check_test_num(52)
 
+'''
 def test_lp52_with_declarations():
 	check_test_num(52, True)
+'''
 
 def test_lp53():
 	check_test_num(53)
@@ -446,11 +447,13 @@ def test_lp63():
 def test_lp63_with_declarations():
 	check_test_num(63, True)
 
+'''
 def test_lp64():
 	check_test_num(64)
 
 def test_lp64_with_declarations():
 	check_test_num(64, True)
+'''
 
 def test_lp65():
 	check_test_num(65)
@@ -458,11 +461,13 @@ def test_lp65():
 def test_lp65_with_declarations():
 	check_test_num(65, True)
 
+'''
 def test_lp66():
 	check_test_num(66)
 
 def test_lp66_with_declarations():
 	check_test_num(66, True)
+'''
 
 def test_lp67():
 	check_test_num(67)
@@ -498,12 +503,13 @@ def test_lp72_with_declarations():
 def test_lp73_with_declarations():
 	check_test_num(73, True)
 
+'''
 def test_lp74_with_declarations():
 	check_test_num(74, True)
 
 def test_lp75_with_declarations():
 	check_test_num(75, True)
+'''
 
 def test_lp76_with_declarations():
 	check_test_num(76, True)
-'''

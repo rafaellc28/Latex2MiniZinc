@@ -5,7 +5,11 @@ enum J;
 array[int, int] of float: C;
 
 
-array[int, int] of var float: x;
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
 
 
 constraint forall(i in I, j in J)(x[i,j] >= 0);

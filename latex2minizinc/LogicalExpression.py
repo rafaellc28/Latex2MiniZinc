@@ -17,7 +17,7 @@ class LogicalExpression(Expression):
         """
         to string
         """
-        res = "\nLE:\n"
+        res = "\nLogicalE:\n"
         resAux = ""
         first = True
 

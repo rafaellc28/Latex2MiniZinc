@@ -15,23 +15,43 @@ array[int] of float: S1;
 array[int] of float: S2;
 
 
-array[int] of var float: tea;
+array[INDEX_SET_tea_1] of var float: tea;
 
-array[int] of var float: tla;
+array[INDEX_SET_tla_1] of var float: tla;
 
-array[int] of var float: ted;
+array[INDEX_SET_ted_1] of var float: ted;
 
-array[int] of var float: tld;
+array[INDEX_SET_tld_1] of var float: tld;
 
 var float: Tmax;
 
-array[int, int] of var int: y;
+array[INDEX_SET_y_1, INDEX_SET_y_2] of var int: y;
 
-array[int] of var float: tlv;
+array[INDEX_SET_tlv_1] of var float: tlv;
 
-array[int] of var float: tar;
+array[INDEX_SET_tar_1] of var float: tar;
 
-array[int, int] of var bool: x;
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+
+set of int: INDEX_SET_tar_1;
+
+set of int: INDEX_SET_tea_1;
+
+set of int: INDEX_SET_ted_1;
+
+set of int: INDEX_SET_tla_1;
+
+set of int: INDEX_SET_tld_1;
+
+set of int: INDEX_SET_tlv_1;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
 
 
 constraint forall(a in PLACES)(tea[a] >= 0);

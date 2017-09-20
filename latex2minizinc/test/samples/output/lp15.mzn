@@ -14,16 +14,32 @@ array[int] of float: PLength;
 
 float: BigM;
 
+
+array[INDEX_SET_y_1, INDEX_SET_y_2, INDEX_SET_y_3, INDEX_SET_y_4] of var bool: y;
+
+array[INDEX_SET_w_1, INDEX_SET_w_2] of var float: w;
+
+array[INDEX_SET_u_1, INDEX_SET_u_2] of var bool: u;
+
 set of int: INDEX_SET_Q;
 
 set of int: INDEX_SET_S;
 
+set of int: INDEX_SET_u_1;
 
-array[int, int, int, int] of var bool: y;
+set of int: INDEX_SET_u_2;
 
-array[int, int] of var float: w;
+set of int: INDEX_SET_w_1;
 
-array[int, int] of var bool: u;
+set of int: INDEX_SET_w_2;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
+
+set of int: INDEX_SET_y_3;
+
+set of int: INDEX_SET_y_4;
 
 
 constraint forall(r in RAWMATERIALS, s in S[r])(w[r,s] >= 0);

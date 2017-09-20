@@ -15,7 +15,9 @@ var float: ExProfit;
 
 var float: x;
 
-array[int] of var float: y;
+array[INDEX_SET_y_1] of var float: y;
+
+set of int: INDEX_SET_y_1;
 
 
 constraint x >= 0;

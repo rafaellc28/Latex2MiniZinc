@@ -4,20 +4,30 @@ array[INDEX_SET_ARCS, 1..2] of TASKS: ARCS;
 
 array[int] of float: Dur;
 
-set of int: INDEX_SET_ARCS;
 
-
-array[int] of var float: Tef;
+array[INDEX_SET_Tef_1] of var float: Tef;
 
 var float: Tf;
 
-array[int] of var float: Tlf;
+array[INDEX_SET_Tlf_1] of var float: Tlf;
 
-array[int] of var float: Tes;
+array[INDEX_SET_Tes_1] of var float: Tes;
 
-array[int] of var float: Tls;
+array[INDEX_SET_Tls_1] of var float: Tls;
 
-array[int] of var float: Tsl;
+array[INDEX_SET_Tsl_1] of var float: Tsl;
+
+set of int: INDEX_SET_ARCS;
+
+set of int: INDEX_SET_Tef_1;
+
+set of int: INDEX_SET_Tes_1;
+
+set of int: INDEX_SET_Tlf_1;
+
+set of int: INDEX_SET_Tls_1;
+
+set of int: INDEX_SET_Tsl_1;
 
 
 constraint forall(j in TASKS)(Tef[j] >= 0);

@@ -151,7 +151,7 @@ class SetExpressionWithOperation(SetExpression):
         to string
         """
 
-        return "SETOP: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
+        return "SETWithOeration: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.setExpression1.getDependencies(codeGenerator) + self.setExpression2.getDependencies(codeGenerator)))
@@ -188,7 +188,7 @@ class SetExpressionBetweenParenthesis(SetExpression):
         to string
         """
         
-        return "SE: (" + str(self.setExpression) + ")"
+        return "SEBetweenParen: (" + str(self.setExpression) + ")"
 
     def getDependencies(self, codeGenerator):
         return self.setExpression.getDependencies(codeGenerator)
@@ -225,7 +225,7 @@ class SetExpressionBetweenBraces(SetExpression):
         to string
         """
         setExpr = str(self.setExpression) if self.setExpression != None else ""
-        return "SEB: {" + setExpr + "}"
+        return "SEBeteweenBraces: {" + setExpr + "}"
 
     def getDependencies(self, codeGenerator):
         if self.setExpression != None:

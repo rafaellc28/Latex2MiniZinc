@@ -13,7 +13,11 @@ int: m;
 int: n;
 
 
-array[int, int] of var bool: x;
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
 
 
 constraint forall(j in J)(sum(i in I)(x[i,j]) = 1);

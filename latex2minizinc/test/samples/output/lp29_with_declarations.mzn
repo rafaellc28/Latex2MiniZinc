@@ -12,21 +12,25 @@ int: N = 50;
 
 float: B = N;
 
+
+array[INDEX_SET_V_1, INDEX_SET_V_2] of var float: V;
+
 set of int: INDEX_SET_U_1;
 
+set of int: INDEX_SET_V_1;
 
-array[int, int] of var float: V;
+set of int: INDEX_SET_V_2;
 
 
 constraint forall(t in 0..T, x in X)(V[t,x] >= 0);
 
-constraint forall(t in 0..T - 1, x in 1..N, u in U[x])(V[t,x] >= p * V[t + 1,x + to_enum(X,u)] + q * V[t + 1,x - to_enum(X,u)]);
+constraint forall(t in 0..floor(T - 1), x in 1..N, u in U[x])(V[t,x] >= p * V[t + 1,x + to_enum(X,u)] + q * V[t + 1,x - to_enum(X,u)]);
 
 constraint forall(x in X)(V[T,x] = ln(x));
 
 
 
-var float: obj = sum(t in 0..T - 1, x in X)(V[t,x]);
+var float: obj = sum(t in 0..floor(T - 1), x in X)(V[t,x]);
 
 solve minimize obj;
 

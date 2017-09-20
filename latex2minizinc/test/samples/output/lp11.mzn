@@ -4,12 +4,14 @@ array[INDEX_SET_P] of set of int: P;
 
 array[int] of float: T;
 
-set of int: INDEX_SET_P;
 
-
-array[int] of var float: x;
+array[INDEX_SET_x_1] of var float: x;
 
 var float: z;
+
+set of int: INDEX_SET_P;
+
+set of int: INDEX_SET_x_1;
 
 
 constraint forall(j in J)(x[j] >= 0);

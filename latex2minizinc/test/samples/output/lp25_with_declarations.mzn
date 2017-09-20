@@ -6,16 +6,20 @@ array[int, int] of float: c;
 
 int: n;
 
+
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+
+array[INDEX_SET_y_1, INDEX_SET_y_2] of var float: y;
+
 set of int: INDEX_SET_E;
 
-set of int: INDEX_SET_V_cross_V;
+set of int: INDEX_SET_x_1;
 
-array[INDEX_SET_V_cross_V,1..2] of int: V_cross_V;
+set of int: INDEX_SET_x_2;
 
+set of int: INDEX_SET_y_1;
 
-array[int, int] of var bool: x;
-
-array[int, int] of var float: y;
+set of int: INDEX_SET_y_2;
 
 
 constraint forall(i in INDEX_SET_E)(y[E[i,1],E[i,2]] >= 0);

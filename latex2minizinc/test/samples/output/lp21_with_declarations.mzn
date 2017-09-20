@@ -12,12 +12,16 @@ array[int, int] of float: d;
 
 float: f;
 
+
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+
 set of int: INDEX_SET_c_1;
 
 set of int: INDEX_SET_c_2;
 
+set of int: INDEX_SET_x_1;
 
-array[int, int] of var float: x;
+set of int: INDEX_SET_x_2;
 
 
 constraint forall(i in I, j in J)(x[i,j] >= 0);

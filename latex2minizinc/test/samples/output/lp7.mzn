@@ -9,11 +9,19 @@ array[int] of float: Due;
 float: BigM;
 
 
-array[int] of var float: start;
+array[INDEX_SET_start_1] of var float: start;
 
-array[int] of var float: pastdue;
+array[INDEX_SET_pastdue_1] of var float: pastdue;
 
-array[int, int] of var bool: y;
+array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
+
+set of int: INDEX_SET_pastdue_1;
+
+set of int: INDEX_SET_start_1;
+
+set of int: INDEX_SET_y_1;
+
+set of int: INDEX_SET_y_2;
 
 
 constraint forall(j in JOBS)(start[j] >= 0);

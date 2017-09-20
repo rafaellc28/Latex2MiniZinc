@@ -14,14 +14,26 @@ array[int, int, int, int] of float: Low;
 
 array[int, int, int, int] of float: High;
 
+
+array[INDEX_SET_X_1, INDEX_SET_X_2, INDEX_SET_X_3, INDEX_SET_X_4] of var float: X;
+
+array[INDEX_SET_U_1, INDEX_SET_U_2] of var float: U;
+
 set of int: INDEX_SET_Links;
 
+set of int: INDEX_SET_U_1;
+
+set of int: INDEX_SET_U_2;
+
+set of int: INDEX_SET_X_1;
+
+set of int: INDEX_SET_X_2;
+
+set of int: INDEX_SET_X_3;
+
+set of int: INDEX_SET_X_4;
+
 set of int: INDEX_SET_schedule;
-
-
-array[int, int, int, int] of var float: X;
-
-array[int, int] of var float: U;
 
 
 constraint forall(c1 in INDEX_SET_schedule)(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]] >= 0);

@@ -20,6 +20,23 @@ array[int, int, int, int] of float: demand;
 
 array[int, int] of float: disttable;
 
+
+array[INDEX_SET_U_1, INDEX_SET_U_2] of var float: U;
+
+array[INDEX_SET_X_1, INDEX_SET_X_2, INDEX_SET_X_3, INDEX_SET_X_4] of var float: X;
+
+set of int: INDEX_SET_U_1;
+
+set of int: INDEX_SET_U_2;
+
+set of int: INDEX_SET_X_1;
+
+set of int: INDEX_SET_X_2;
+
+set of int: INDEX_SET_X_3;
+
+set of int: INDEX_SET_X_4;
+
 set of int: INDEX_SET_distance_1;
 
 set of int: INDEX_SET_distance_2;
@@ -43,11 +60,6 @@ set of int: INDEX_SET_low_3;
 set of int: INDEX_SET_low_4;
 
 set of int: INDEX_SET_schedule;
-
-
-array[int, int] of var float: U;
-
-array[int, int, int, int] of var float: X;
 
 
 constraint forall(c in cities, t in times)(U[c,t] >= 0);

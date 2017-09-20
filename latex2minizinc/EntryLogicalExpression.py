@@ -215,7 +215,7 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
         to string
         """
         
-        return "LE: (" + str(self.logicalExpression) + ")"
+        return "LogicalE: (" + str(self.logicalExpression) + ")"
  
     def getDependencies(self, codeGenerator):
         return self.logicalExpression.getDependencies(codeGenerator)
@@ -251,7 +251,7 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
         to string
         """
         
-        return "LE_NSE: (" + str(self.numericOrSymbolicExpression) + ")"
+        return "LogicalE_NumSymbE: (" + str(self.numericOrSymbolicExpression) + ")"
 
     def getDependencies(self, codeGenerator):
         return self.numericOrSymbolicExpression.getDependencies(codeGenerator)
@@ -287,7 +287,7 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
         to string
         """
         
-        return "NLE: (NOT " + str(self.logicalExpression) + ")"
+        return "LogicalE_Not: (NOT " + str(self.logicalExpression) + ")"
 
     def getDependencies(self, codeGenerator):
         return self.logicalExpression.getDependencies(codeGenerator)

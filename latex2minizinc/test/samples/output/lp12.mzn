@@ -11,11 +11,21 @@ int: MS;
 float: K;
 
 
-array[int, int] of var float: x;
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
 
-array[int, int, int] of var bool: Y;
+array[INDEX_SET_Y_1, INDEX_SET_Y_2, INDEX_SET_Y_3] of var bool: Y;
 
 var float: z;
+
+set of int: INDEX_SET_Y_1;
+
+set of int: INDEX_SET_Y_2;
+
+set of int: INDEX_SET_Y_3;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
 
 
 constraint forall(j in J, a in M)(x[j,a] >= 0);

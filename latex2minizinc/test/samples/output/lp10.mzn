@@ -6,16 +6,30 @@ enum WEEKS;
 
 array[INDEX_SET_PAIRS, 1..2] of VOLS: PAIRS;
 
-set of int: INDEX_SET_PAIRS;
 
-TASKS: Trash;
-
-
-array[int, int, int] of var bool: x;
+array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
 
 var int: z;
 
-array[int, int, int, int] of var bool: p;
+array[INDEX_SET_p_1, INDEX_SET_p_2, INDEX_SET_p_3, INDEX_SET_p_4] of var bool: p;
+
+set of int: INDEX_SET_PAIRS;
+
+set of int: INDEX_SET_p_1;
+
+set of int: INDEX_SET_p_2;
+
+set of int: INDEX_SET_p_3;
+
+set of int: INDEX_SET_p_4;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
+
+set of int: INDEX_SET_x_3;
+
+TASKS: Trash;
 
 
 constraint forall(v in VOLS, w in WEEKS)(sum(t in TASKS)(x[v,t,w]) = 1);
