@@ -47,13 +47,21 @@ class SetExpressionWithValue(SetExpression):
 
         if isinstance(self.value, Identifier):
             self.value.setDimenSet(dimension)
-
+            
     def getDimension(self):
         return self.dimension
-
+        
     def getSymbol(self):
         return self.value
-
+        
+    def getSymbolName(self, codeGenerator):
+        if isinstance(self.value, Identifier):
+            res = self.value.getSymbolNameWithIndices(codeGenerator)
+        else:
+            res = self.value.getSymbolName(codeGenerator)
+            
+        return res
+        
     def getDependencies(self, codeGenerator):
         if not isinstance(self.value, str):
             return self.value.getDependencies(codeGenerator)
@@ -250,31 +258,29 @@ class IteratedSetExpression(SetExpression):
     Class representing a iterated set expression node in the AST of a MLP
     """
     
-    def __init__(self, indexingExpression, integrands):
+    def __init__(self, indexingExpression, integrand):
         """
         Set the iterated set expression
         
         :param indexingExpression : IndexingExpression
-        :param integrands         : [NumericExpression|SymbolicExpression]
+        :param integrand          : NumericExpression | SymbolicExpression | Identifier | Tuple
         """
         SetExpression.__init__(self)
 
         self.indexingExpression = indexingExpression
-        self.integrands         = integrands
-    
+        self.integrand          = integrand
+        
     def __str__(self):
         """
         to string
         """
-        res = str(self.indexingExpression)
-
-        if self.integrands != None and len(self.integrands) > 0:
-            res += ",".join(map(lambda el: str(el), self.integrands))
+        res = "setof {" + str(self.indexingExpression) + "} "
+        res += str(self.integrand)
 
         return "ItSetExpr: " + res
 
     def getDependencies(self, codeGenerator):
-        return list(set(self.indexingExpression.getDependencies(codeGenerator) + Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.integrands))))
+        return list(set(self.indexingExpression.getDependencies(codeGenerator) + self.integrand.getDependencies(codeGenerator)))
         
     def setupEnvironment(self, codeSetup):
         """

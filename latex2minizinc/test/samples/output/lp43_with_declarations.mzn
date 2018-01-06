@@ -4,11 +4,11 @@ set of int: rows = 1..ndim;
 
 set of int: cols = 1..ndim;
 
-array[INDEX_SET_V, 1..2] of int: V;
-
 set of int: rows1 = 1..(ndim + 1);
 
 set of int: cols1 = 1..(ndim + 1);
+
+array[INDEX_SET_V, 1..2] of int: V;
 
 int: ndim = 10;
 

@@ -21,3 +21,7 @@ class Utils:
 
     # from http://stackoverflow.com/questions/406121/flattening-a-shallow-list-in-python
     _flatten = staticmethod(_flatten)
+
+    @staticmethod
+    def _isInfinity(value):
+        return value == "Infinity" or value == "-Infinity"

@@ -34,17 +34,17 @@ array[INDEX_SET_TS2_1, INDEX_SET_TS2_2] of float: TS2 = array2d(INDEX_SET_TS2_1,
 
 array[int, int, int] of float: S2;
 
+array[int, int, int] of float: S1;
+
 array[int, int, int] of float: F2;
+
+array[int, int, int] of float: F1;
 
 array[int] of float: lat;
 
 array[int] of float: lng;
 
 float: d2r = 3.1415926 / 180;
-
-array[int, int, int] of float: S1;
-
-array[int, int, int] of float: F1;
 
 array[INDEX_SET_alpha_1, INDEX_SET_alpha_2] of float: alpha = array2d(INDEX_SET_alpha_1, INDEX_SET_alpha_2, [pow(sin(d2r * (lat[a] - lat[b]) / 2),2) + cos(d2r * lat[a]) * cos(d2r * lat[b]) * pow(sin(d2r * (lng[a] - lng[b]) / 2),2) | a in LOCATIONS, b in LOCATIONS]);
 

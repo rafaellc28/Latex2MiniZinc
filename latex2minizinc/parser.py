@@ -4,7 +4,6 @@ import sys
 import re
 
 from lexer import tokens
-import ply.yacc as yacc
 
 from Main import *
 from LinearProgram import *
@@ -31,13 +30,15 @@ from SyntaxException import *
 from Declarations import *
 from DeclarationExpression import *
 
+import objects as obj
+
 precedence = (
     ('left', 'ID'),
     ('left', 'COMMA', 'DOTS', 'FOR', 'WHERE'),
-    ('left', 'NUMBER'),
+    ('left', 'NUMBER', 'INFINITY'),
     ('left', 'OR', 'AND', 'NOT'),
-    ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
-    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF'),
+    ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF', 'ASSIGN'),
     ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
     ('left', 'UNDERLINE'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
@@ -45,50 +46,24 @@ precedence = (
     ('right', 'LPAREN', 'RPAREN'),
     ('right', 'IN', 'NOTIN', 'SUBSET', 'NOTSUBSET'),
     ('right', 'LBRACE', 'RBRACE', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
+    ('left', 'MAXIMIZE', 'MINIMIZE'),
     ('right', 'PLUS', 'MINUS'),
     ('right', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
     ('right', 'CARET'),
     ('right', 'UPLUS', 'UMINUS'),
-    ('right', 'AMPERSAND'),
-    ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 
-      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'NATURALSET', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
+    ('right', 'AMPERSAND', 'SLASHES'),
+    ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
+      'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
+      'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
 )
 
 def p_Main(t):
-  '''MAIN : LinearProgram 
-          | LinearEquations'''
+  '''MAIN : LinearEquations'''
   t[0] = Main(t[1])
 
 def p_LinearEquations(t):
     '''LinearEquations : ConstraintList'''
     t[0] = LinearEquations(Constraints(t[1]))
-
-def p_LinearProgram(t):
-    '''LinearProgram : Objectives
-                     | Objectives Constraints'''
-
-    if isinstance(t[1], LinearProgram):
-      t[1].setDeclarations(t[2])
-      t[0] = t[1]
-
-    else:
-      if len(t) > 3:
-          t[0] = LinearProgram(t[1], t[3])
-      elif len(t) > 2:
-          t[0] = LinearProgram(t[1], t[2])
-      else:
-          t[0] = LinearProgram(t[1], None)
-
-def p_Objectives(t):
-    '''Objectives : Objectives Objective
-                  | Objective'''
-
-    if not isinstance(t[1], Objectives):
-        t[0] = Objectives([t[1]])
-    elif len(t) > 2:
-        t[0] = t[1].addObjective(t[2])
-    else:
-        t[0] = t[1]
 
 def p_Objective(t):
     '''Objective : MAXIMIZE LinearExpression
@@ -138,16 +113,21 @@ def p_Objective(t):
         else:
             t[0] = Objective(t[2], Objective.MAXIMIZE)
 
-def p_Constraints(t):
-    '''Constraints : SUBJECTTO ConstraintList'''
-    t[0] = Constraints(t[2])
-
 def p_ConstraintList(t):
-    '''ConstraintList : ConstraintList Constraint
+    '''ConstraintList : ConstraintList Objective SLASHES
+                      | ConstraintList Constraint SLASHES
+                      | ConstraintList Declarations SLASHES
+                      | ConstraintList Objective
+                      | ConstraintList Constraint
                       | ConstraintList Declarations
-                      | Declarations
-                      | Constraint'''
-    if len(t) > 2:
+                      | Objective SLASHES
+                      | Constraint SLASHES
+                      | Declarations SLASHES
+                      | Objective
+                      | Constraint
+                      | Declarations'''
+
+    if len(t) > 2 and not isinstance(t[2], str):
       if isinstance(t[2], Declarations):
         t[0] = t[1] + t[2].declarations
       else:
@@ -155,8 +135,7 @@ def p_ConstraintList(t):
 
     elif isinstance(t[1], Declarations):
         t[0] = t[1].declarations
-    #elif len(t) > 2:
-    #    t[0] = t[1]
+
     else:
         t[0] = [t[1]]
 
@@ -370,15 +349,6 @@ def p_Declaration(t):
                    | SymbolicExpression COLON IndexingExpression
                    | DeclarationExpression'''
 
-    #if len(t) > 4:
-    #    t[4].setStmtIndexing(True)
-    #    if isinstance(t[1], ValueList):
-    #      t[1] = DeclarationExpression(t[1], [])
-    #    elif isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
-    #      t[1] = DeclarationExpression(ValueList([t[1]]), [])
-    #
-    #    t[0] = Declaration(t[1], t[4])
-
     if len(t) > 3:
         t[3].setStmtIndexing(True)
         if isinstance(t[1], ValueList):
@@ -447,26 +417,26 @@ def p_DeclarationExpression(t):
                              | NumericExpression DIMEN SymbolicExpression
                              | Identifier DIMEN SymbolicExpression
                              | SymbolicExpression DIMEN SymbolicExpression
-                             | ValueList COLON EQ NumericExpression
-                             | ValueList COLON EQ Identifier
-                             | NumericExpression COLON EQ NumericExpression
-                             | NumericExpression COLON EQ Identifier
-                             | Identifier COLON EQ NumericExpression
-                             | Identifier COLON EQ Identifier
-                             | SymbolicExpression COLON EQ NumericExpression
-                             | SymbolicExpression COLON EQ Identifier
-                             | ValueList COLON EQ SymbolicExpression
-                             | NumericExpression COLON EQ SymbolicExpression
-                             | Identifier COLON EQ SymbolicExpression
-                             | SymbolicExpression COLON EQ SymbolicExpression
-                             | ValueList COLON EQ SetExpression
-                             | ValueList COLON EQ Range
-                             | NumericExpression COLON EQ SetExpression
-                             | NumericExpression COLON EQ Range
-                             | Identifier COLON EQ SetExpression
-                             | Identifier COLON EQ Range
-                             | SymbolicExpression COLON EQ SetExpression
-                             | SymbolicExpression COLON EQ Range
+                             | ValueList ASSIGN NumericExpression
+                             | ValueList ASSIGN Identifier
+                             | NumericExpression ASSIGN NumericExpression
+                             | NumericExpression ASSIGN Identifier
+                             | Identifier ASSIGN NumericExpression
+                             | Identifier ASSIGN Identifier
+                             | SymbolicExpression ASSIGN NumericExpression
+                             | SymbolicExpression ASSIGN Identifier
+                             | ValueList ASSIGN SymbolicExpression
+                             | NumericExpression ASSIGN SymbolicExpression
+                             | Identifier ASSIGN SymbolicExpression
+                             | SymbolicExpression ASSIGN SymbolicExpression
+                             | ValueList ASSIGN SetExpression
+                             | ValueList ASSIGN Range
+                             | NumericExpression ASSIGN SetExpression
+                             | NumericExpression ASSIGN Range
+                             | Identifier ASSIGN SetExpression
+                             | Identifier ASSIGN Range
+                             | SymbolicExpression ASSIGN SetExpression
+                             | SymbolicExpression ASSIGN Range
                              | ValueList LT NumericExpression
                              | ValueList LT Identifier
                              | NumericExpression LT NumericExpression
@@ -509,9 +479,6 @@ def p_DeclarationExpression(t):
                              | SymbolicExpression COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList'''
 
-    if len(t) > 3 and isinstance(t[3], Identifier):
-      t[3] = SetExpressionWithValue(t[3])    
-
     if isinstance(t[1], DeclarationExpression):
       if t[2] == ",":
         t[1].addAttribute(t[3])
@@ -525,23 +492,28 @@ def p_DeclarationExpression(t):
       if t[2] == ",":
         attr = t[3]
       elif t[2] == "\\in":
+        if not isinstance(t[3], SetExpression):
+          t[3] = SetExpressionWithValue(t[3])
+
         attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
       elif re.search(r"\\subseteq|\\subset", t[2]):
+        if not isinstance(t[3], SetExpression):
+          t[3] = SetExpressionWithValue(t[3])
+
         attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
       elif re.search(r"\\text\{\s*default\s*\}", t[2]):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DF)
       elif re.search(r"\\text\{\s*dimen\s*\}", t[2]):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
-      elif t[2] == ":":
-        attr = DeclarationAttribute(t[4], DeclarationAttribute.ST)
+      elif t[2] == ":=":
+        if isinstance(t[3], Range):
+          t[3] = SetExpressionWithValue(t[3])
+
+        attr = DeclarationAttribute(t[3], DeclarationAttribute.ST)
       elif t[2] == "<":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.LT)
-      elif t[2] == "\\leq":
-        attr = DeclarationAttribute(t[3], DeclarationAttribute.LE)
       elif t[2] == ">":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.GT)
-      elif t[2] == "\\geq":
-        attr = DeclarationAttribute(t[3], DeclarationAttribute.GE)
       elif t[2] == "\\neq":
         attr = DeclarationAttribute(t[3], DeclarationAttribute.NEQ)
 
@@ -574,11 +546,11 @@ def p_DeclarationAttribute(t):
                           | DIMEN NumericExpression
                           | DIMEN Identifier
                           | DIMEN SymbolicExpression
-                          | COLON EQ NumericExpression
-                          | COLON EQ Identifier
-                          | COLON EQ SymbolicExpression
-                          | COLON EQ SetExpression
-                          | COLON EQ Range
+                          | ASSIGN NumericExpression
+                          | ASSIGN Identifier
+                          | ASSIGN SymbolicExpression
+                          | ASSIGN SetExpression
+                          | ASSIGN Range
                           | LT NumericExpression
                           | LT Identifier
                           | LT SymbolicExpression
@@ -597,19 +569,28 @@ def p_DeclarationAttribute(t):
                           | NEQ NumericExpression
                           | NEQ Identifier
                           | NEQ SymbolicExpression'''
-  if isinstance(t[2], Identifier):
-    t[2] = SetExpressionWithValue(t[2])    
 
   if t[1] == "\\in":
+    if not isinstance(t[2], SetExpression):
+      t[2] = SetExpressionWithValue(t[2])    
+
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.IN)
+
   elif re.search(r"\\subseteq|\\subset", t[1]):
+    if not isinstance(t[2], SetExpression):
+      t[2] = SetExpressionWithValue(t[2])    
+
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.WT)
+
   elif re.search(r"\\text\{\s*default\s*\}", t[1]):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DF)
   elif re.search(r"\\text\{\s*dimen\s*\}", t[1]):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
-  elif t[1] == ":":
-    t[0] = DeclarationAttribute(t[3], DeclarationAttribute.ST)
+  elif t[1] == ":=":
+    if isinstance(t[2], Range):
+      t[2] = SetExpressionWithValue(t[2])
+      
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.ST)
   elif t[1] == "<":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.LT)
   elif t[1] == "\\leq":
@@ -620,6 +601,8 @@ def p_DeclarationAttribute(t):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.GE)
   elif t[1] == "\\neq":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.NEQ)
+  elif t[1] == "=":
+    t[0] = DeclarationAttribute(t[2], DeclarationAttribute.EQ)
 
 def p_LinearExpression(t):
     '''LinearExpression : LPAREN LinearExpression RPAREN
@@ -944,9 +927,9 @@ def p_SetExpressionWithOperation(t):
         op = SetExpressionWithOperation.DIFF
     elif re.search(r"\\triangle|\\ominus", t[2]):
         op = SetExpressionWithOperation.SYMDIFF
-    elif re.search(r"\\cup", t[2]):
+    elif re.search(r"\\cup|\\bigcup", t[2]):
         op = SetExpressionWithOperation.UNION
-    elif re.search(r"\\cap", t[2]):
+    elif re.search(r"\\cap|\\bigcap", t[2]):
         op = SetExpressionWithOperation.INTER
     elif re.search(r"\\times", t[2]):
         op = SetExpressionWithOperation.CROSS
@@ -971,7 +954,10 @@ def p_SetExpressionWithValue(t):
                      | LLBRACE RRBRACE
                      | LPAREN SetExpression RPAREN
                      | LPAREN Range RPAREN
+                     | EMPTYSET
                      | NATURALSET
+                     | NATURALSETWITHONELIMIT
+                     | NATURALSETWITHTWOLIMITS
                      | INTEGERSET
                      | INTEGERSETPOSITIVE
                      | INTEGERSETNEGATIVE
@@ -1005,6 +991,10 @@ def p_SetExpressionWithValue(t):
             t[2] = SetExpressionWithValue(t[2])
 
           t[0] = SetExpressionWithValue(t[2])
+
+    elif t[1] == "\\emptyset" or t[1] == "\\varnothing":
+        t[0] = SetExpressionBetweenBraces(None)
+
     else:
         value = t[1]
         if hasattr(t.slice[1], 'value2'):
@@ -1027,19 +1017,12 @@ def p_SetExpressionWithIndices(t):
     t[0] = SetExpressionWithIndices(t[1], t[3])
 
 def p_IteratedSetExpression(t):
-    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE ValueList
-                     | SETOF LLBRACE IndexingExpression RRBRACE NumericExpression
+    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE NumericExpression
                      | SETOF LLBRACE IndexingExpression RRBRACE Identifier
                      | SETOF LLBRACE IndexingExpression RRBRACE SymbolicExpression
-                     | SETOF LLBRACE IndexingExpression RRBRACE LPAREN ValueList RPAREN'''
+                     | SETOF LLBRACE IndexingExpression RRBRACE TupleListItem'''
     
-    if t[5] == "(":
-      t[0] = IteratedSetExpression(t[3], t[6])
-    else:
-      if isinstance(t[5], NumericExpression) or isinstance(t[5], SymbolicExpression) or isinstance(t[5], Identifier):
-        t[5] = ValueList([t[5]])
-
-      t[0] = IteratedSetExpression(t[3], [t[5]])
+    t[0] = IteratedSetExpression(t[3], t[5])
 
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
@@ -1216,14 +1199,14 @@ def p_NumericExpression_binop(t):
         op = NumericExpressionWithArithmeticOperation.MINUS
     elif re.search(r"\*|\\cdot|\\ast", t[2]):
         op = NumericExpressionWithArithmeticOperation.TIMES
+    elif re.search(r"\\big/|\\text\{\s*div\s*\}", t[2]):
+        op = NumericExpressionWithArithmeticOperation.QUOT
     elif re.search(r"/|\\div", t[2]):
         op = NumericExpressionWithArithmeticOperation.DIV
     elif re.search(r"\\text\{\s*\%\s*\}|\\mod|\\bmod", t[2]):
         op = NumericExpressionWithArithmeticOperation.MOD
     elif t[2] == "^":
         op = NumericExpressionWithArithmeticOperation.POW
-    elif re.search(r"\\big/|\\text\{\s*div\s*\}", t[2]):
-        op = NumericExpressionWithArithmeticOperation.QUOT
     elif re.search(r"\\text\{\s*less\s*\}", t[2]):
         op = NumericExpressionWithArithmeticOperation.LESS
 
@@ -1296,7 +1279,8 @@ def p_NumericExpression(t):
                          | LPAREN NumericExpression RPAREN
                          | LPAREN Identifier RPAREN
                          | ConditionalNumericExpression
-                         | NUMBER'''
+                         | NUMBER
+                         | INFINITY'''
 
     if len(t) > 2 and isinstance(t[2], Identifier):
       t[2] = ValuedNumericExpression(t[2])
@@ -1311,6 +1295,13 @@ def p_NumericExpression(t):
       t[0] = t[1]
     else:
       t[0] = ValuedNumericExpression(t[1])
+
+def p_FractionalNumericExpression(t):
+    '''NumericExpression : FRAC LBRACE Identifier RBRACE LBRACE Identifier RBRACE
+                         | FRAC LBRACE Identifier RBRACE LBRACE NumericExpression RBRACE
+                         | FRAC LBRACE NumericExpression RBRACE LBRACE Identifier RBRACE
+                         | FRAC LBRACE NumericExpression RBRACE LBRACE NumericExpression RBRACE'''
+    t[0] = FractionalNumericExpression(t[3], t[6])
 
 def p_FunctionNumericExpression(t):
     '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
@@ -1437,15 +1428,11 @@ def p_FunctionNumericExpression(t):
         op = NumericExpressionWithFunction.STR2TIME
 
     if len(t) > 5:
-        if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
-          t[3] = ValueList([t[3]])
-
         t[0] = NumericExpressionWithFunction(op, t[3], t[5])
-    elif len(t) > 4:
-        if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
-          t[3] = ValueList([t[3]])
 
+    elif len(t) > 4:
         t[0] = NumericExpressionWithFunction(op, t[3])
+
     else:
         if t[2] == "(":
           t[0] = NumericExpressionWithFunction(op)
@@ -1504,14 +1491,14 @@ def p_Range(t):
 
 def p_Identifier(t):
     '''Identifier : ID UNDERLINE LBRACE ValueList RBRACE
-                | ID UNDERLINE LBRACE NumericExpression RBRACE
-                | ID UNDERLINE LBRACE Identifier RBRACE
-                | ID UNDERLINE LBRACE SymbolicExpression RBRACE
-                | ID LBRACKET ValueList RBRACKET
-                | ID LBRACKET NumericExpression RBRACKET
-                | ID LBRACKET Identifier RBRACKET
-                | ID LBRACKET SymbolicExpression RBRACKET
-                | ID'''
+                  | ID UNDERLINE LBRACE NumericExpression RBRACE
+                  | ID UNDERLINE LBRACE Identifier RBRACE
+                  | ID UNDERLINE LBRACE SymbolicExpression RBRACE
+                  | ID LBRACKET ValueList RBRACKET
+                  | ID LBRACKET NumericExpression RBRACKET
+                  | ID LBRACKET Identifier RBRACKET
+                  | ID LBRACKET SymbolicExpression RBRACKET
+                  | ID'''
 
     if len(t) > 5:
         if isinstance(t[4], ValueList):
@@ -1580,6 +1567,6 @@ def p_TupleList(t):
 
 def p_error(t):
   if t:
-    raise SyntaxException(t.lineno, t.lexpos, t.value)
+    raise SyntaxException(t.lineno, t.lexpos, t.value, t)
   else:
     raise SyntaxException("EOF")

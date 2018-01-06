@@ -69,14 +69,16 @@ class Identifier(Expression):
         """
         Get the iterator of the class
         """
-
         return [self]
-    
+        
     def getSymbol(self):
         return self
 
     def getSymbolName(self, codeGenerator):
         return self.generateCodeWithoutIndices(codeGenerator)
+
+    def getSymbolNameWithIndices(self, codeGenerator):
+        return self.generateCode(codeGenerator)
 
     def addSet(self, inSet):
         self.inSets += [inSet]

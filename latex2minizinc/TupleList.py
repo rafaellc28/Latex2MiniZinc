@@ -1,4 +1,5 @@
 from Expression import *
+from Utils import *
 
 class TupleList(Expression):
     """
@@ -9,7 +10,7 @@ class TupleList(Expression):
         """
         Set the values
         
-        :param values : [Identifier|Number]
+        :param values : [Identifier|NumericExpression|SymbolicExpression]
         """
         
         self.values = values

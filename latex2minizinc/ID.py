@@ -14,6 +14,7 @@ class ID(Expression):
 
         Expression.__init__(self)
         
+        value = value.replace("\\_", "_")
         self.value = value
     
     def __str__(self):

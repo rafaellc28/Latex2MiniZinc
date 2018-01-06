@@ -2,13 +2,14 @@ from GenObj import *
 
 class GenItemDomain(GenObj):
 
-    def __init__(self, name, op, dependencies = []):
+    def __init__(self, name, op, dependencies = [], obj = None):
         """
         Constructor
         
         :param name         : string
         :param op           : string
         :param dependencies : [string]
+        :param obj          : object
         """
 
         super(GenItemDomain, self).__init__(name)
@@ -19,6 +20,8 @@ class GenItemDomain(GenObj):
             self.dependencies = []
         else:
             self.dependencies = dependencies
+
+        self.obj = obj
 
     def setName(self, name):
         self.name = name
@@ -45,3 +48,9 @@ class GenItemDomain(GenObj):
                 self.dependencies.remove(d)
 
         self.dependencies.append(dependency)
+        
+    def setObj(self, obj):
+        self.obj = obj
+        
+    def getObj(self):
+        return self.obj

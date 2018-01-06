@@ -18,7 +18,10 @@ class Constraints:
         """
         
         return "\nCnts:\n" + "\n".join(map(lambda i: str(i), self.constraints))
-    
+        
+    def getConstraints(self):
+        return self.constraints
+
     def setupEnvironment(self, codeSetup):
         """
         Generate the MathProg code for the identifiers and sets used in these constraints

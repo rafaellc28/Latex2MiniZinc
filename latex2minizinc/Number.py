@@ -9,7 +9,7 @@ class Number(Expression):
         """
         Set the number
         
-        :param number: float
+        :param number: float|Infinity
         """
         Expression.__init__(self)
 
@@ -36,6 +36,12 @@ class Number(Expression):
 
         return [self]
 
+    def lessThanZero(self):
+        return self.number[0] == "-"
+
+    def getNumber(self):
+        return self.number
+
     def getDependencies(self, codeGenerator):
         return []
     
@@ -47,6 +53,6 @@ class Number(Expression):
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Number
+        Generate the Minizinc code for this Number
         """
         return codeGenerator.generateCode(self)
