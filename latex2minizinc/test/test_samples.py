@@ -13,17 +13,11 @@ def check_test(name1, name2):
 
 	expected = f2.read()
 	expected = expected[:-1] # remove last \n
-	print(name2)
-	print(expected)
-	print("")
 
 	doc = f1.read()
 	#compiler = Compiler()
 
 	actual = compiler.compile(doc)
-	print(name1)
-	print(actual)
-	print("")
 
 	expected=expected.splitlines(True)
 	actual=actual.splitlines(True)
@@ -34,9 +28,6 @@ def check_test(name1, name2):
 	f1.close()
 	f2.close()
 
-	if len(diff) != 0:
-		print(''.join(diff))
-
 	assert len(diff) == 0
 
 def check_test_num(num, with_declarations = False):
@@ -46,6 +37,12 @@ def check_test_num(num, with_declarations = False):
 	else:
 		name1 = 'latex2minizinc/test/samples/lp'+str(num)+'.tex.equation'
 		name2 = 'latex2minizinc/test/samples/output/lp'+str(num)+'.mzn'
+
+	check_test(name1, name2)
+
+def check_test_extras_num(num):
+	name1 = 'latex2minizinc/test/samples/extras/test'+str(num)+'.tex.equation'
+	name2 = 'latex2minizinc/test/samples/extras/output/test'+str(num)+'.mzn'
 
 	check_test(name1, name2)
 
@@ -513,3 +510,28 @@ def test_lp75_with_declarations():
 
 def test_lp76_with_declarations():
 	check_test_num(76, True)
+
+
+def test_extras_test1():
+	check_test_extras_num(1)
+
+def test_extras_test2():
+	check_test_extras_num(2)
+
+def test_extras_test3():
+	check_test_extras_num(3)
+
+def test_extras_test4():
+	check_test_extras_num(4)
+
+def test_extras_test5():
+	check_test_extras_num(5)
+
+def test_extras_test6():
+	check_test_extras_num(6)
+
+def test_extras_test7():
+	check_test_extras_num(7)
+
+def test_extras_test8():
+	check_test_extras_num(8)

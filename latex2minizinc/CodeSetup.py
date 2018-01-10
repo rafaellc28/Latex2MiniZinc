@@ -125,7 +125,11 @@ class CodeSetup:
         self.stmtIndex += 1
         self.currentTable = None
 
-    # Get the MathProg code for a given constraint
+    # Get the Minizinc code for a given declaration
+    def _setupDeclaration(self, declaration):
+        declaration.setupEnvironment(self)
+
+    # Get the Minizinc code for a given constraint
     def _setupConstraint(self, constraint):
         self.level = 0
 
@@ -138,6 +142,7 @@ class CodeSetup:
         constraint.setupEnvironment(self)
         self.stmtIndex += 1
         self.currentTable = None
+
 
     # Get the MathProg code for a given constraint
     def _setupEntry(self, entry): return entry.setupEnvironment(self)
@@ -1301,7 +1306,7 @@ class CodeSetup:
     # Declarations
     def setupEnvironment_Declarations(self, node):
         map(self._setupDeclaration, node.declarations)
-    
+
     def setupEnvironment_Declaration(self, node):
         """
         Generate the MathProg code for declaration of identifiers and sets in this declaeation
@@ -1314,7 +1319,7 @@ class CodeSetup:
             if isinstance(identifier, Identifier):
                 name = identifier.getSymbolName(self.codeGenerator)
                 genDeclaration = self.codeGenerator.genDeclarations.get(name)
-
+                
                 if genDeclaration == None:
                     _sub_indices = {}
                     if identifier.sub_indices:
