@@ -2824,12 +2824,27 @@ class CodeGenerator:
 
         return res
 
-    def setupEnvironment_FractionalNumericExpression(self, node):
-        """
-        Generate the AMPL code for the identifiers and sets used in this numeric expression
-        """
-        node.numerator.setupEnvironment(self)
-        node.denominator.setupEnvironment(self)
+    def generateCode_FractionalNumericExpression(self, node):
+        
+        numerator = node.numerator
+        if isinstance(node.numerator, ValuedNumericExpression):
+            numerator = numerator.value
+            
+        if not isinstance(numerator, Identifier) and not isinstance(numerator, Number):
+            numerator = "("+numerator.generateCode(self)+")"
+        else:
+            numerator = numerator.generateCode(self)
+            
+        denominator = node.denominator
+        if isinstance(denominator, ValuedNumericExpression):
+            denominator = denominator.value
+            
+        if not isinstance(denominator, Identifier) and not isinstance(denominator, Number):
+            denominator = "("+denominator.generateCode(self)+")"
+        else:
+            denominator = denominator.generateCode(self)
+            
+        return numerator+"/"+denominator
 
     def generateCode_ValuedNumericExpression(self, node):
         self.turnStringsIntoInts = True

@@ -469,7 +469,14 @@ class CodeSetup:
 
         if node.numericExpression2 != None:
             node.numericExpression2.setupEnvironment(self)
-
+            
+    def setupEnvironment_FractionalNumericExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this numeric expression
+        """
+        node.numerator.setupEnvironment(self)
+        node.denominator.setupEnvironment(self)
+        
     def setupEnvironment_ValuedNumericExpression(self, node):
         """
         Generate the MathProg code for the identifiers and sets used in this numeric expression

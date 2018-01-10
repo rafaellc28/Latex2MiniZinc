@@ -535,3 +535,15 @@ def test_extras_test7():
 
 def test_extras_test8():
 	check_test_extras_num(8)
+
+def test_extras_test9():
+	check_test_extras_num(9)
+
+def test_extras_test10():
+	check_test_extras_num(10)
+
+def test_extras_test11():
+	check_test_extras_num(11)
+
+def test_extras_test12():
+	check_test_extras_num(12)

@@ -1025,8 +1025,6 @@ def p_IndexingExpression(t):
                           | IndexingExpression PIPE Identifier
                           | IndexingExpression COMMA EntryIndexingExpression'''
 
-    #if len(t) > 4:
-    #    t[0] = t[1].add(t[4])
     if len(t) > 3:
         if re.search(r"\\mid|\\vert|\|", t[2]):
             if isinstance(t[3], NumericExpression) or isinstance(t[3], Identifier):
@@ -1457,12 +1455,6 @@ def p_ConditionalNumericExpression(t):
 
     t[0] = ConditionalNumericExpression(t[2], t[5])
     t[0].addElseExpression(t[7])
-
-#def p_NumericOrSymbolicExpression(t):
-#    '''NumericOrSymbolicExpression : NumericExpression
-#                                   | SymbolicExpression'''
-#    t[0] = t[1]
-
 
 def p_Range(t):
     '''Range : NumericExpression DOTS NumericExpression BY NumericExpression
