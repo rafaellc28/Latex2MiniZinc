@@ -27,7 +27,10 @@ def check_test(name1, name2):
 
 	f1.close()
 	f2.close()
-
+	
+	if len(diff) != 0:
+		print(''.join(diff))
+		
 	assert len(diff) == 0
 
 def check_test_num(num, with_declarations = False):
@@ -547,3 +550,18 @@ def test_extras_test11():
 
 def test_extras_test12():
 	check_test_extras_num(12)
+
+def test_extras_test13():
+	check_test_extras_num(13)
+
+def test_extras_test14():
+	check_test_extras_num(14)
+
+def test_extras_test15():
+	check_test_extras_num(15)
+
+def test_extras_test16():
+	check_test_extras_num(16)
+
+def test_extras_test17():
+	check_test_extras_num(17)

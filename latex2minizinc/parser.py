@@ -997,11 +997,7 @@ def p_SetExpressionWithValue(t):
         t[0] = SetExpressionWithValue(value)
 
 def p_SetExpressionWithIndices(t):
-    '''SetExpression : Identifier LPAREN ValueList RPAREN
-                     | Identifier LPAREN NumericExpression RPAREN
-                     | Identifier LPAREN Identifier RPAREN
-                     | Identifier LPAREN SymbolicExpression RPAREN
-                     | Identifier LBRACKET ValueList RBRACKET
+    '''SetExpression : Identifier LBRACKET ValueList RBRACKET
                      | Identifier LBRACKET NumericExpression RBRACKET
                      | Identifier LBRACKET Identifier RBRACKET
                      | Identifier LBRACKET SymbolicExpression RBRACKET'''
@@ -1366,9 +1362,17 @@ def p_FunctionNumericExpression(t):
                          | GMTIME LPAREN RPAREN
                          | IRAND224 LPAREN RPAREN
                          | UNIFORM01 LPAREN RPAREN
-                         | NORMAL01 LPAREN RPAREN'''
+                         | NORMAL01 LPAREN RPAREN
+                         | ID LPAREN Identifier RPAREN
+                         | ID LPAREN SymbolicExpression RPAREN
+                         | ID LPAREN NumericExpression RPAREN
+                         | ID LPAREN ValueList RPAREN
+                         | ID LPAREN RPAREN'''
 
-    if t[1] == "card":
+    if t.slice[1].type == "ID":
+        op = ID(t[1])
+
+    elif t[1] == "card":
         op = NumericExpressionWithFunction.CARD
 
         if not isinstance(t[3], SetExpression):

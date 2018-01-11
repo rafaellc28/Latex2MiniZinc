@@ -10,7 +10,7 @@ set of int: INDEX_SET_x_2;
 set of int: INDEX_SET_x_3;
 
 
-constraint forall(i0 in 1..2, i1 in 1..2, c in C)(x[i0,i1,c] >= 0);
+constraint forall(i0 in 1..2, i1 in 1..2, i2 in 1..2)(x[i0,i1,i2] >= 0);
 
 constraint 1.85 * x[1,1,1] + x[2,2,2] <= 100;
 

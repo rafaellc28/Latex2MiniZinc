@@ -1,4 +1,8 @@
-array[1..3, 1..6] of var int: x;
+array[INDEX_SET_x_1, INDEX_SET_x_2] of var int: x;
+
+set of int: INDEX_SET_x_1;
+
+set of int: INDEX_SET_x_2;
 
 
 constraint forall(i0 in 1..3, i1 in 1..6)(x[i0,i1] >= 0);

@@ -418,7 +418,10 @@ class CodeGenerator:
         return None
 
     def _getWords(self, expression):
-        return re.sub("[^\w]", " ", expression).split()
+        if isinstance(expression, str):
+            return re.sub("[^\w]", " ", expression).split()
+
+        return []
 
     def _getSets(self, setExpression):
         sets = []
@@ -1053,6 +1056,18 @@ class CodeGenerator:
         dependencies_ret = []
         sub_indices_ret = []
         domains_str = []
+        max_length_domain = 0
+
+        countAlreadyComputed = {}
+        dependenciesAlreadyComputed = {}
+        subIndicesAlreadyComputed = {}
+        
+
+        if not domainsAlreadyComputed:
+            domainsAlreadyComputed = {}
+            domainsWithIndicesAlreadyComputed = {}
+        else:
+            domainsWithIndicesAlreadyComputed = dict(domainsAlreadyComputed)
 
         for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
 
@@ -1079,13 +1094,17 @@ class CodeGenerator:
                 sub_indices_list = list(t.getSubIndices())
                 sub_indices_list.reverse()
 
+                domain = ""
                 domains = {}
                 domains_with_indices = {}
                 dependencies = {}
                 domains_str = []
+                count = {}
 
 
                 for _subIndices in sub_indices_list:
+
+                    max_length_domain = max(max_length_domain, len(_subIndices))
 
                     totalIndices = list(_subIndices)
                     idx = 0
@@ -1116,6 +1135,7 @@ class CodeGenerator:
                             domains[idx] = _tuple
                             domains_with_indices[idx] = {"indices": _combIndices, "set": _tuple}
                             dependencies[idx] = deps
+                            count[idx] = len(_combIndices)
                             
                             for i in range(idx, idx+len(_combIndices)):
                                 indices.remove(i)
@@ -1143,72 +1163,88 @@ class CodeGenerator:
 
                             if subIdxDomains[i][1] != None:
                                 domains[ind] = subIdxDomains[i][1]
+                                domains_with_indices[ind] = _subIndicesRemaining[i] + " " + subIdxDomains[i][0] + " " + subIdxDomains[i][1]
+                                count[ind] = 1
                                 if not _subIndicesRemaining[i] in varNameSubIndices:
-                                    domains_with_indices[ind] = _subIndicesRemaining[i] + " " + subIdxDomains[i][0] + " " + subIdxDomains[i][1]
                                     varNameSubIndices.append(_subIndicesRemaining[i])
 
                                 dependencies[ind] = subIdxDomains[i][3]
 
                             else:
                                 subIdxDomainsRemaining.append(ind)
-                            
-                        if len(subIdxDomainsRemaining) != 0 and len(subIdxDomainsRemaining) < len(totalIndices):
-                            completed = False
-
-                            if domainsAlreadyComputed:
-                                completed = True
-
-                                for idx in subIdxDomainsRemaining:
-                                    
-                                    if not idx in domainsAlreadyComputed:
-                                        completed = False
-                                        break
-
-                                    else:
-                                        domains[idx] = domainsAlreadyComputed[idx]
-                                        dependencies[idx] = []
-                                        domains_with_indices[idx] = domainsAlreadyComputed[idx]
-
-                            if not completed:
-                                domains = {}
-                                domains_with_indices = {}
-                                dependencies = {}
-                                domains_str = []
-
-                    if domains:
-                        break 
                     
-                if len(domains) > 0:
-                    domains_str = []
-                    domains_ret = []
-                    dependencies_ret = []
-                    sub_indices_ret = _subIndices
+                    for idx in domains:
+                        if not idx in domainsAlreadyComputed or ".." in domainsAlreadyComputed[idx]:
+                            domainsAlreadyComputed[idx]      = domains[idx]
+                            dependenciesAlreadyComputed[idx] = dependencies[idx]
 
-                    for key in sorted(domains.iterkeys()):
-                        if domains[key] != None:
-                            domains_str.append(domains[key].strip())
+                            self._setSubIndicesAlreadyComputed(idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices)
 
-                            if key in domains_with_indices:
-                                domains_ret.append(domains_with_indices[key])
+                            countAlreadyComputed[idx]   = count[idx]
+                            domainsWithIndicesAlreadyComputed[idx] = domains_with_indices[idx]
+                        
+                        if not idx in domainsWithIndicesAlreadyComputed:
+                            domainsWithIndicesAlreadyComputed[idx] = domains_with_indices[idx]
 
-                            dependencies_ret += dependencies[key]
-
-                    domain += ", ".join(domains_str)
-                    domain_with_indices = domains_ret
-
-                if domain != "":
-                    break
-
+                        if not idx in subIndicesAlreadyComputed:
+                            self._setSubIndicesAlreadyComputed(idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices)
+                            
                 table = table.getParent()
+            
+        totalCountAlreadyComputed = 0
+        for idx in countAlreadyComputed:
+            totalCountAlreadyComputed += countAlreadyComputed[idx]
 
-            if domain != "":
-                break
+        if totalCountAlreadyComputed == max_length_domain:
+            domains_str = []
+            domains_ret = []
+            dependencies_ret = []
+            sub_indices_ret = []
 
-        #print("1", name, domain_with_indices)
+            for key in sorted(domainsAlreadyComputed.iterkeys()):
+                if domainsAlreadyComputed[key] != None:
+                    domains_str.append(domainsAlreadyComputed[key])
+
+                    if key in domainsWithIndicesAlreadyComputed:
+                        domains_ret.append(domainsWithIndicesAlreadyComputed[key])
+
+                    if key in dependenciesAlreadyComputed:
+                        if isinstance(dependenciesAlreadyComputed[key], list):
+                            for dep in dependenciesAlreadyComputed[key]:
+                                dependencies_ret.append(dep)
+
+                        else:
+                            dependencies_ret.append(dependenciesAlreadyComputed[key])
+
+                    if key in subIndicesAlreadyComputed:
+                        if key in domains_with_indices and isinstance(domains_with_indices[key], dict):
+                            _indices = domains_with_indices[key]["indices"]
+                            for i in range(key, key+len(_indices)):
+                                sub_indices_ret.append(subIndicesAlreadyComputed[i])
+
+                        elif isinstance(subIndicesAlreadyComputed[key], list):
+                            for dep in subIndicesAlreadyComputed[key]:
+                                sub_indices_ret.append(dep)
+
+                        else:
+                            sub_indices_ret.append(subIndicesAlreadyComputed[key])
+
+            domain += ", ".join(domains_str)
+            domain_with_indices = domains_ret
+
         domain_with_indices = self._processDomainsWithIndices(domain_with_indices)
-        #print("2", name, domain_with_indices)
-        #print(name, domain, domains_str, domain_with_indices, sub_indices_ret, minVal, maxVal)
+        
         return domain, domains_str, domain_with_indices, list(set(dependencies_ret)), sub_indices_ret, minVal, maxVal
+
+    def _setSubIndicesAlreadyComputed(self, idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices):
+        if idx in domains_with_indices and isinstance(domains_with_indices[idx], dict):
+            _indices = domains_with_indices[idx]["indices"]
+            c = 0
+            for i in range(idx, idx+len(_indices)):
+                subIndicesAlreadyComputed[i] = _indices[c]
+                c += 1
+        else:
+            subIndicesAlreadyComputed[idx]   = _subIndices[idx]
 
     def _processDomainsWithIndices(self, domain_with_indices):
 
@@ -1223,7 +1259,7 @@ class CodeGenerator:
 
         idx = "i"
         count = 0
-        #print(domain_with_indices, dummy_indices)
+        
         for i in range(len(domain_with_indices)):
             d = dummy_indices[i]
             
@@ -1235,7 +1271,6 @@ class CodeGenerator:
                     new_dummy_index = idx+str(count)
                     count += 1
 
-                #print(new_dummy_index, domain_with_indices[i])
                 new_domain_with_indices.append(new_dummy_index + " in " + domain_with_indices[i])
 
             else:
@@ -1250,23 +1285,28 @@ class CodeGenerator:
         dependencies = []
         sub_indices = []
         stmtIndex = None
+        currStmt = None
         
         for stmt in sorted(statements, reverse=True):
 
+            currStmt = stmt
             
             scopes = self.symbolTables.getFirstScopeByKey(name, stmt)
             domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, scopes, minVal, maxVal, isDeclaration, domainsAlreadyComputed)
 
-            if domain != "":
+            if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
             
             leafs = self.symbolTables.getLeafs(stmt)
             domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, isDeclaration, domainsAlreadyComputed, True)
 
-            if domain != "":
+            if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
+
+        if not stmtIndex:
+            stmtIndex = currStmt
 
         return domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal
 
@@ -1288,7 +1328,7 @@ class CodeGenerator:
                 minMaxVals = self._zipMinMaxVals(minVal, maxVal)
                 domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True, minMaxVals)
 
-                if domain == "":
+                if domain == "" or domains == minMaxVals.values():
                     statements = self.symbolTables.getStatementsByKey(name)
                     domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False, minMaxVals)
                 
@@ -1629,8 +1669,11 @@ class CodeGenerator:
 
             elif "[" in d:
                 res.append("int")
+            #elif not ".." in d:
+            #    res.append("int")
             else:
                 res.append("int")
+                #res.append(d)
 
         return res
 
@@ -1643,11 +1686,8 @@ class CodeGenerator:
             const = ""
 
             if isArray:
-                #print("_getRelationalConstraints", varName, sub_indices, domains_with_indices)
                 indices_ins = self._getIndices(sub_indices, domains_with_indices)
                 var = varName + "[" + ",".join(indices_ins) + "]"
-
-                #print("_getRelationalConstraints", varName, sub_indices, domains_with_indices, indices_ins)
 
             else:
                 var = varName
@@ -1683,7 +1723,7 @@ class CodeGenerator:
             if const:
                 if isArray:
                     domains = self._getDomainsWithIndices(domains_with_indices)
-                    #print(varName, domains, domains_with_indices)
+                    
                     cnt += "constraint forall("+", ".join(domains)+")("+const+");";
                 else:
                     cnt += "constraint "+const + ";";
@@ -1792,14 +1832,14 @@ class CodeGenerator:
 
                     domain, domains, domains_with_indices, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(varName)
                     _types, dim, minVal, maxVal = self._getProperties(varName)
-
+                    
                     _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
 
                     domains_aux = []
 
                     if domain and domain.strip() != "":
                         domains = self._getDomains(domains)
-
+                        
                         for d in domains:
                             if d in self.tuples:
                                 d = "int"
@@ -1821,11 +1861,10 @@ class CodeGenerator:
                                 d = str(minVal[i])+".."+str(maxVal[i])
                                 domainMinMax.append(d)
                                 domains_aux.append(d)
-                                
-
-                            domain = ", ".join(domainMinMax)
+                            
+                            domains_aux = self._getDomains(domainMinMax)
+                            domain = ", ".join(domains_aux)
                             domains_with_indices = self._processDomainsWithIndices(domainMinMax)
-                            #print(varName, domain)
                             isArray = True
 
                     if not domain and varDecl != None:
@@ -1835,7 +1874,7 @@ class CodeGenerator:
                             domains_aux = ["int"]*size
 
                     if isArray:
-
+                        
                         for i in range(len(domains_aux)):
                             d = domains_aux[i]
                             if d == "int":
@@ -1995,7 +2034,9 @@ class CodeGenerator:
                 for i in range(len(minVal)):
                     domainMinMax.append(str(minVal[i])+".."+str(maxVal[i]))
 
-                array += "array["+", ".join(domainMinMax)+"]"
+                domains = self._getDomains(domainMinMax)
+                array += "array["+", ".join(domains)+"]"
+                domains_with_indices = self._processDomainsWithIndices(domainMinMax)
                 isArray = True
 
         if not domain and varDecl != None:
@@ -2006,7 +2047,7 @@ class CodeGenerator:
                 domain = indexingExpression
                 isArray = True
                 array += "array[" + domain + "]"
-        
+            
         _types = self._removeTypesThatAreNotDeclarable(_types)
         _types = self._getTypes(_types)
 
@@ -2799,7 +2840,12 @@ class CodeGenerator:
 
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):
-        function = self._getNumericFunction(node.function)
+        if not isinstance(node.function, str):
+            function = node.function.generateCode(self)
+        else:
+            function = node.function
+
+        function = self._getNumericFunction(function)
 
         res = function + "("
 
