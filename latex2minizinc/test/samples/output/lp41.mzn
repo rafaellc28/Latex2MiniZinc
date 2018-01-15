@@ -13,7 +13,7 @@ LETTERS: D;
 
 LETTERS: E;
 
-set of int: INDEX_SET_carry_1;
+set of int: INDEX_SET_carry_1 = 1..3;
 
 set of int: INDEX_SET_dig_1;
 

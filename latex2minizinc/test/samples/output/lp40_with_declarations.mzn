@@ -7,9 +7,9 @@ array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
 
 var float: s;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = 1..n;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = 1..n;
 
 set of int: INDEX_SET_x_3;
 

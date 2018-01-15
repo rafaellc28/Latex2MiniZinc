@@ -11,11 +11,11 @@ array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
 
 set of int: INDEX_SET_E;
 
-set of int: INDEX_SET_u_1;
+set of int: INDEX_SET_u_1 = 1..Nc;
 
 set of int: INDEX_SET_x_1;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = 1..Nc;
 
 
 constraint forall(i in V)(sum(c in 1..Nc)(x[i,c]) = 1);

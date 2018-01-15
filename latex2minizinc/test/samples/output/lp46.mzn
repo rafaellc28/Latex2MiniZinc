@@ -13,12 +13,12 @@ array[INDEX_SET_z_1] of var bool: z;
 
 var float: x;
 
-set of int: INDEX_SET_s_1;
+set of int: INDEX_SET_s_1 = 1..N;
 
-set of int: INDEX_SET_z_1;
+set of int: INDEX_SET_z_1 = 1..N;
 
 
-constraint forall(n in 1..N)(s[n] >= 0);
+constraint forall(n in INDEX_SET_s_1)(s[n] >= 0);
 
 constraint forall(n in 1..N)(s[n] <= z[n]);
 

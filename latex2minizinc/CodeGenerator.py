@@ -1832,15 +1832,15 @@ class CodeGenerator:
 
                     domain, domains, domains_with_indices, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(varName)
                     _types, dim, minVal, maxVal = self._getProperties(varName)
-                    
+
                     _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
 
                     domains_aux = []
 
                     if domain and domain.strip() != "":
-                        domains = self._getDomains(domains)
+                        domains0 = self._getDomains(domains)
                         
-                        for d in domains:
+                        for d in domains0:
                             if d in self.tuples:
                                 d = "int"
                                 _tuple = self.tuples[d]
@@ -1865,6 +1865,7 @@ class CodeGenerator:
                             domains_aux = self._getDomains(domainMinMax)
                             domain = ", ".join(domains_aux)
                             domains_with_indices = self._processDomainsWithIndices(domainMinMax)
+                            domains = domainMinMax
                             isArray = True
 
                     if not domain and varDecl != None:
@@ -1879,7 +1880,18 @@ class CodeGenerator:
                             d = domains_aux[i]
                             if d == "int":
                                 index = "INDEX_SET_"+varName+"_"+str(i+1)
-                                setint = "set of int: "+index+";\n\n"
+
+                                setint = "set of int: "+index
+
+                                if i < len(domains) and ".." in domains[i]:
+                                    setint += " = " + domains[i]
+
+                                    if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
+                                        pos = domains_with_indices[i].find(" in ")
+                                        domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
+
+                                setint += ";\n\n"
+
                                 self.additionalParameters[index] = setint
 
                                 domains_aux[i] = index
@@ -2023,6 +2035,7 @@ class CodeGenerator:
         _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
 
         if domain != None and domain.strip() != "":
+            domains_aux = domains
             domains = self._getDomains(domains)
             domain = ", ".join(domains)
             array += "array[" + domain + "]"
@@ -2034,6 +2047,7 @@ class CodeGenerator:
                 for i in range(len(minVal)):
                     domainMinMax.append(str(minVal[i])+".."+str(maxVal[i]))
 
+                domains_aux = domainMinMax
                 domains = self._getDomains(domainMinMax)
                 array += "array["+", ".join(domains)+"]"
                 domains_with_indices = self._processDomainsWithIndices(domainMinMax)
@@ -2200,11 +2214,20 @@ class CodeGenerator:
                                             d = domains[i]
                                             if d == "int":
                                                 index = "INDEX_SET_"+param+"_"+str(i+1)
-                                                setint = "set of int: "+index+";\n\n"
+                                                setint = "set of int: "+index
+
+                                                if i < len(domains_aux) and ".." in domains_aux[i]:
+                                                    setint += " = " + domains_aux[i]
+
+                                                    if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
+                                                        pos = domains_with_indices[i].find(" in ")
+                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
+
+                                                setint += ";\n\n"
 
                                                 self.additionalParameters[index] = setint
-
                                                 indices.append(index)
+
                                             else:
                                                 indices.append(d)
 
@@ -2220,6 +2243,9 @@ class CodeGenerator:
 
         if array != "":
             paramStr += array
+
+        if _type[0] == "{" and _type[-1] == "}" and ".." in _type:
+            _type = _type[1:-1]
 
         if _type != "enum" and not _type.endswith(":"):
             _type = _type+":"
@@ -2381,6 +2407,7 @@ class CodeGenerator:
                                 domain = self._getDomainByIdentifier(name)
                                 if domain != None and domain.strip() != "":
                                     domains = self._getDomainsByIdentifier(name)
+                                    domains_aux = domains
                                     domains = self._getDomains(domains)
 
                                     if len(domains) > 0:
@@ -2392,11 +2419,20 @@ class CodeGenerator:
                                             d = domains[i]
                                             if d == "int":
                                                 index = "INDEX_SET_"+name+"_"+str(i+1)
-                                                setint = "set of int: "+index+";\n\n"
+                                                setint = "set of int: "+index
+
+                                                if i < len(domains_aux) and ".." in domains_aux[i]:
+                                                    setint += " = " + domains_aux[i]
+
+                                                    if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
+                                                        pos = domains_with_indices[i].find(" in ")
+                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
+
+                                                setint += ";\n\n"
 
                                                 self.additionalParameters[index] = setint
-
                                                 indices.append(index)
+
                                             else:
                                                 indices.append(d)
 

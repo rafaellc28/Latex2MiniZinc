@@ -2,9 +2,9 @@ array[INDEX_SET_E, 1..2] of int: E;
 
 array[int, int] of float: c;
 
-{1..n}: s;
+1..n: s;
 
-{1..n}: t;
+1..n: t;
 
 int: n;
 

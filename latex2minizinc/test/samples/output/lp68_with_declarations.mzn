@@ -11,9 +11,9 @@ float: k = floor(log2n);
 
 array[INDEX_SET_x_1] of var bool: x;
 
-set of int: INDEX_SET_a_1;
+set of int: INDEX_SET_a_1 = 1..n;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = 1..n;
 
 
 constraint sum(j in 1..n)(a[j] * x[j]) <= b;

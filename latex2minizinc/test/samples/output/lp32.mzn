@@ -27,7 +27,7 @@ set of int: INDEX_SET_u_1;
 
 set of int: INDEX_SET_w_1;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = 1..Nper;
 
 set of int: INDEX_SET_x_2;
 
@@ -40,7 +40,7 @@ EXPENSES: TuitionC;
 
 constraint forall(n in N)(w[n] >= 0);
 
-constraint forall(n in 1..Nper, e in EXPENSES)(x[n,e] >= 0);
+constraint forall(n in INDEX_SET_x_1, e in EXPENSES)(x[n,e] >= 0);
 
 constraint forall(n in N)(u[n] >= 0);
 

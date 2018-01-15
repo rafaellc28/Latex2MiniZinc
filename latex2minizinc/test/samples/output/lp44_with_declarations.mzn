@@ -3,11 +3,11 @@ array[int, int] of int: givens;
 
 array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = 1..9;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = 1..9;
 
-set of int: INDEX_SET_x_3;
+set of int: INDEX_SET_x_3 = 1..9;
 
 
 constraint forall(i in 1..9, j in 1..9, k in 1..9 where givens[i,j] != 0)(x[i,j,k] = if givens[i,j] = k then 1 else 0 endif);

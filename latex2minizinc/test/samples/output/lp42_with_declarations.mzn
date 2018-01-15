@@ -3,9 +3,9 @@ int: n = 8;
 
 array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = 1..n;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = 1..n;
 
 
 constraint forall(i in 1..n)(sum(j in 1..n)(x[i,j]) <= 1);
