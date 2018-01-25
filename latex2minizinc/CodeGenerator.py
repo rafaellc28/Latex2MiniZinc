@@ -106,10 +106,7 @@ class CodeGenerator:
         self.setsWitOperationsUsed = []
         self.setsWitOperationsInv = {}
 
-        self.FUNCTIONS_TO_REMOVE = [NumericExpressionWithFunction.STR2TIME, NumericExpressionWithFunction.GMTIME, \
-                                    NumericExpressionWithFunction.UNIFORM01, NumericExpressionWithFunction.UNIFORM, \
-                                    NumericExpressionWithFunction.NORMAL01, NumericExpressionWithFunction.NORMAL, \
-                                    NumericExpressionWithFunction.IRAND224]
+        self.FUNCTIONS_TO_REMOVE = ["str2time", "gmtime", "Uniform01", "Uniform", "Normal01", "Normal", "Irand224"]
 
         self.lastIdentifier = None
 
@@ -492,6 +489,7 @@ class CodeGenerator:
                     elif "," in key:
 
                         domains = value.getProperties().getDomains()
+                        domains.reverse()
                         
                         if len(domains) > 0:
                             indices = key.split(",")
@@ -1386,6 +1384,7 @@ class CodeGenerator:
 
                 prop = t.getProperties()
                 domains = prop.getDomains()
+                domains.reverse()
 
                 for domain in domains:
                     inserted = False
@@ -2869,7 +2868,7 @@ class CodeGenerator:
     def _getNumericFunction(self, function):
         if function == NumericExpressionWithFunction.LOG:
             function = "ln"
-        elif function == NumericExpressionWithFunction.TRUNC:
+        elif function == "trunc":
             function = NumericExpressionWithFunction.FLOOR
 
         return function
@@ -3007,6 +3006,9 @@ class CodeGenerator:
 
         if node.numericExpression2:
             res += " else " + node.numericExpression2.generateCode(self)
+
+        else:
+            res += " else 0"
 
         res += " endif"
 
@@ -3508,6 +3510,9 @@ class CodeGenerator:
                 self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope, "where": "generateCode_ConditionalSetExpression2"}
 
             res += " else " + node.setExpression2.generateCode(self)
+
+        else:
+            res += " else {}"
 
         res += " endif"
 

@@ -469,14 +469,14 @@ class CodeSetup:
 
         if node.numericExpression2 != None:
             node.numericExpression2.setupEnvironment(self)
-            
+
     def setupEnvironment_FractionalNumericExpression(self, node):
         """
         Generate the AMPL code for the identifiers and sets used in this numeric expression
         """
         node.numerator.setupEnvironment(self)
         node.denominator.setupEnvironment(self)
-        
+
     def setupEnvironment_ValuedNumericExpression(self, node):
         """
         Generate the MathProg code for the identifiers and sets used in this numeric expression
@@ -1394,6 +1394,23 @@ class CodeSetup:
 
         if isinstance(var, str):
             name = var
+
+        elif isinstance(var, ConditionalNumericExpression):
+            if var.numericExpression2:
+                var = [var.numericExpression1, var.numericExpression2]
+                name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
+            else:
+                var = var.numericExpression1
+                name = var.getSymbolName(self.codeGenerator)
+
+        elif isinstance(var, ConditionalSetExpression):
+            if var.setExpression2:
+                var = [var.setExpression1, var.setExpression2]
+                name = [var[0].getSymbolName(self.codeGenerator), var[1].getSymbolName(self.codeGenerator)]
+            else:
+                var = var.setExpression1
+                name = var.getSymbolName(self.codeGenerator)
+
         else:
             name = var.getSymbolName(self.codeGenerator)
 
@@ -1401,7 +1418,21 @@ class CodeSetup:
             self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, identifier)
 
         elif (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF or node.op == DeclarationAttribute.WT) and \
-            (isinstance(node.attribute, SetExpression) or isinstance(var, SetExpression) or isinstance(var, Range) or self.codeGenerator.genSets.has(name)) and not identifier.isParam:
+             (
+                isinstance(node.attribute, SetExpression) or \
+                # attribute is a conditional expression
+                (isinstance(var, list) and (isinstance(var[0], SetExpression) or isinstance(var[1], SetExpression))) or \
+                # attribute is not a conditional expression
+                (not isinstance(var, list) and isinstance(var, SetExpression)) or \
+                # attribute is a conditional expression
+                (isinstance(var, list) and (isinstance(var[0], Range) or isinstance(var[1], Range))) or \
+                # attribute is not a conditional expression
+                (not isinstance(var, list) and isinstance(var, Range)) or \
+                # attribute is a conditional expression
+                (isinstance(name, list) and (self.codeGenerator.genSets.has(name[0]) or self.codeGenerator.genSets.has(name[1]))) or \
+                # attribute is not a conditional expression
+                (isinstance(name, str) and self.codeGenerator.genSets.has(name))
+             ) and not identifier.isParam:
 
             if not self.codeGenerator.genParameters.has(name):
                 self._setIsSet(identifier)

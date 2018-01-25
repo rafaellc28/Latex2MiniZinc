@@ -19,22 +19,10 @@ import re
 from SyntaxException import *
 
 reserved = {
-   'card' : 'CARD',
-   'length' : 'LENGTH',
-   'round' : 'ROUND',
-   'trunc' : 'TRUNC',
-   'substr' : 'SUBSTR',
-   'time2str': 'TIME2STR', 
-   'str2time': 'STR2TIME', 
-   'gmtime' : 'GMTIME',
-   'Irand224': 'IRAND224',
-   'Uniform01': 'UNIFORM01',
-   'Normal01': 'NORMAL01',
-   'Uniform': 'UNIFORM',
-   'Normal': 'NORMAL'
 }
 
 tokens = [
+   'CARD',
    'OR',
    'AND',
    'NOT',
@@ -42,7 +30,6 @@ tokens = [
    'NFORALL',
    'EXISTS',
    'NEXISTS',
-   'QUESTION_MARK',
    'EMPTYSET',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
@@ -72,7 +59,6 @@ tokens = [
    'TIMES',
    'DIVIDE',
    'QUOTIENT',
-   'LESS',
    'MAXIMIZE',
    'MINIMIZE',
    'LPAREN',
@@ -88,8 +74,17 @@ tokens = [
    'LCEIL',
    'RCEIL',
    'SIN',
+   'ASIN',
+   'SINH',
+   'ASINH',
    'COS',
-   'ARCTAN',
+   'ACOS',
+   'COSH',
+   'ACOSH',
+   'TAN',
+   'TANH',
+   'ATAN',
+   'ATANH',
    'SQRT',
    'LOG',
    'LN',
@@ -130,7 +125,10 @@ tokens = [
    'SETS',
    'VARIABLES',
    'SLASHES',
-   'INFINITY'
+   'INFINITY',
+   'IF',
+   'THEN',
+   'ELSE'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -147,6 +145,30 @@ def _getOp(op):
       op = "<="
 
    return op
+
+# Define a rule so we can track line numbers
+def t_newline(t):
+   r'\n+'
+   t.lexer.lineno += len(t.value)
+
+# A string containing ignored characters (spaces and tabs)
+t_ignore  = ' \t\r'
+
+def t_CARD(t):
+   r'\\text\{\s*card\s*\}|\s*card(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_IF(t):
+   r'\\text\{\s*if\s*\}|\s*if(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_THEN(t):
+   r'\\text\{\s*then\s*\}|\s*then(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_ELSE(t):
+   r'\\text\{\s*else\s*\}|\s*else(?!\\_|[a-zA-Z0-9])'
+   return t
 
 def t_ASSIGN(t):
    r':='
@@ -191,11 +213,11 @@ def t_MOD(t):
    return t
 
 def t_BY(t):
-   r'\\text\{\s*by\s*\}'
+   r'\\text\{\s*by\s*\}|\s*by(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_QUOTIENT(t):
-   r'\\big/|\\text\{\s*div\s*\}'
+   r'\\big/|\\text\{\s*div\s*\}|\s*div(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_TIMES(t):
@@ -206,28 +228,24 @@ def t_DIVIDE(t):
    r'/|\\div'
    return t
 
-def t_LESS(t):
-   r'\\text\{\s*less\s*\}'
-   return t
-
 def t_FOR(t):
-   r'\\text\{\s*[fF][oO][rR]\s*\}'
+   r'\\text\{\s*for\s*\}|\s*for(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_WHERE(t):
-   r'\\text\{\s*[wW][hH][eE][rR][eE]\s*\}'
+   r'\\text\{\s*where\s*\}|\s*where(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_OR(t):
-   r'\\lor|\\vee|\\text\{\s*or\s*\}'
+   r'\\lor|\\vee|\\text\{\s*or\s*\}|\s*or(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_AND(t):
-   r'\\land|\\wedge|\\text\{\s*and\s*\}'
+   r'\\land|\\wedge|\\text\{\s*and\s*\}|\s*and(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_NOT(t):
-   r'\\neg|!|\\text\{\s*not\s*}'
+   r'\\neg|!|\\text\{\s*not\s*}|\s*not(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_FORALL(t):
@@ -251,15 +269,15 @@ def t_FRAC(t):
    return t
 
 def t_DEFAULT(t):
-   r'\\text\{\s*default\s*\}'
+   r'\\text\{\s*default\s*\}|\s*default(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_DIMEN(t):
-   r'\\text\{\s*dimen\s*\}'
+   r'\\text\{\s*dimen\s*\}|\s*dimen(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_SETOF(t):
-   r'\\text\{\s*setof\s*\}'
+   r'\\text\{\s*setof\s*\}|\s*setof(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_PARAMETERS(t):
@@ -449,15 +467,15 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
 def t_MAXIMIZE(t):
-   r'\\text\{\s*maximize:\s*\}|maximize:|\\text\{\s*maximize\s*\}|maximize'
+   r'\\text\{\s*maximize\s*:\s*\}|\s*maximize\s*:|\\text\{\s*maximize\s*\}|\s*maximize(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_MINIMIZE(t):
-   r'\\text\{\s*minimize:\s*\}|minimize:|\\text\{\s*minimize\s*\}|minimize'
+   r'\\text\{\s*minimize\s*:\s*\}|\s*minimize\s*:|\\text\{\s*minimize\s*\}|\s*minimize(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ignore_SUBJECTTO(t):
-   r'\\text\{\s*subject\sto:\s*\}|\\text\{\s*subj\.to:\s*\}|\\text\{\s*s\.t\.:\s*\}|subject\sto:\s*|subj\.to:\s*|s\.t\.:\s*|\\text\{\s*subject\sto\s*\}|\\text\{\s*subj\.to\s*\}|\\text\{\s*s\.t\.\s*\}|subject\sto\s*|subj\.to\s*|s\.t\.\s*'
+   r'\\text\{\s*subject\s+to\s*:\s*\}|\\text\{\s*subj\s*\.\s*to\s*:\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*:\s*\}|\s*subject\s+to\s*:|\s*subj\s*\.\s*to\s*:|\s*s\s*\.\s*t\s*\.\s*:|\\text\{\s*subject\s+to\s*\}|\\text\{\s*subj\s*\.\s*to\s*\}|\\text\{\s*s\s*\.\s*t\s*\.\s*\}|\s*subject\s+to(?!\\_|[a-zA-Z0-9])|\s*subj\s*\.\s*to(?!\\_|[a-zA-Z0-9])|\s*s\s*\.\s*t\s*\.'
    pass
 
 def t_LLBRACE(t):
@@ -484,7 +502,6 @@ def t_RBRACKET(t):
    r'\]|\\\]'
    return t
 
-t_QUESTION_MARK = r'\?'
 t_EQ = r'='
 t_NEQ = r'\\neq'
 t_LE = r'\\leq'
@@ -503,9 +520,18 @@ t_LFLOOR = r'\\lfloor'
 t_RFLOOR = r'\\rfloor'
 t_LCEIL = r'\\lceil'
 t_RCEIL = r'\\rceil'
+t_ASINH = r'\\sinh\^\{-1\}'
+t_SINH = r'\\sinh'
+t_ASIN = r'\\sin\^\{-1\}|\\arcsin'
 t_SIN = r'\\sin'
+t_ACOSH = r'\\cosh\^\{-1\}'
+t_COSH = r'\\cosh'
+t_ACOS = r'\\cos\^\{-1\}|\\arccos'
 t_COS = r'\\cos'
-t_ARCTAN = r'\\tan\^\{-1\}|\\arctan'
+t_ATANH = r'\\tanh\^\{-1\}'
+t_TANH = r'\\tanh'
+t_TAN = r'\\tan'
+t_ATAN = r'\\tan\^\{-1\}|\\arctan'
 t_SQRT = r'\\sqrt'
 t_LOG = r'\\log'
 t_LN = r'\\ln'
@@ -555,10 +581,6 @@ def t_ignore_MATHCLAP(t):
    r'\\mathclap'
    pass
 
-def t_ignore_TEXT(t):
-    r'\\text\{\s*\}|\\text'
-    pass
-
 def t_ignored_LEFT(t):
    r'\\left'
    pass
@@ -587,15 +609,6 @@ def t_ignore_BACKSLASHES(t):
    r'\\\\'
    pass
 
-def t_ignore_N(t):
-   r'\n'
-   t.lexer.lineno += 1
-   pass
-
-def t_ignore_R(t):
-   r'\r'
-   pass
-
 def t_DIFF(t):
    r'\\setminus'
    return t
@@ -617,8 +630,14 @@ def t_CROSS(t):
    return t
 
 def t_ID(t):
-   r'(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
+   r'\\text\{\s*(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*\s*\}|(\\_)*[a-zA-Z]((\\_)*[a-zA-Z0-9]*)*'
    t.type = reserved.get(t.value, 'ID') # Check for reserved words
+
+   m = re.search(r"\\text\{\s*(.+)\s*\}", t.value)
+
+   if m:
+      t.value = m.groups(0)[0]
+
    return t
 
 # A regular expression rule with some action code
@@ -627,13 +646,9 @@ def t_NUMBER(t):
    t.value = Number(t.value)
    return t
 
-# Define a rule so we can track line numbers
-def t_newline(t):
-   r'\n+'
-   t.lexer.lineno += len(t.value)
-
-# A string containing ignored characters (spaces and tabs)
-t_ignore  = ' \t'
+def t_ignore_TEXT(t):
+    r'\\text\{\s*\}|\\text'
+    pass
 
 # Error handling rule
 def t_error(t):

@@ -12,35 +12,36 @@ class NumericExpressionWithFunction(NumericExpression):
     Class representing a numeric expression with function node in the AST of a MLP
     """
 
-    ABS       = "abs"
-    ATAN      = "atan"
     CARD      = "card"
+    ABS       = "abs"
     CEIL      = "ceil"
-    COS       = "cos"
     FLOOR     = "floor"
     EXP       = "exp"
-    LENGTH    = "length"
     LOG       = "log"
     LOG10     = "log10"
-    ROUND     = "round"
-    SIN       = "sin"
     SQRT      = "sqrt"
-    TRUNC     = "trunc"
     MIN       = "min"
     MAX       = "max"
-    STR2TIME  = "str2time"
-    GMTIME    = "gmtime"
-    UNIFORM01 = "Uniform01"
-    UNIFORM   = "Uniform"
-    NORMAL01  = "Normal01"
-    NORMAL    = "Normal"
-    IRAND224  = "Irand224"
+    
+    SIN       = "sin"
+    COS       = "cos"
+    TAN       = "tan"
+    ASIN      = "asin"
+    ACOS      = "acos"
+    ATAN      = "atan"
+
+    SINH      = "sin"
+    COSH      = "cos"
+    TANH      = "tan"
+    ASINH     = "asin"
+    ACOSH     = "acos"
+    ATANH     = "atan"
 
     def __init__(self, function, numericExpression1 = None, numericExpression2 = None):
         """
         Set the numeric expression and the function
         
-        :param function           : (abs | atan | card | ceil | cos | floor | exp | length | log | log10 | round | sin | sqrt | trunc | gmtime | ...)
+        :param function           : (abs | atan | card | ceil | cos | floor | exp | log | log10 | sin | sqrt  ...)
         :param numericExpression  : NumericExpression | SymbolicExpression | ValueList
         :param numericExpression2 : NumericExpression | SymbolicExpression
         """
@@ -351,7 +352,7 @@ class IteratedNumericExpression(NumericExpression):
     """
 
     SUM  = "sum"
-    PROD = "prod"
+    PROD = "product"
     MAX  = "max"
     MIN  = "min"
 

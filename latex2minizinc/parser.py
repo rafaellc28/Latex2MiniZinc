@@ -8,7 +8,6 @@ from LinearEquations import *
 from Objectives import *
 from Constraints import *
 from ConstraintExpression import *
-from LinearExpression import *
 from NumericExpression import *
 from SymbolicExpression import *
 from IndexingExpression import *
@@ -31,24 +30,36 @@ import objects as obj
 
 precedence = (
     ('left', 'ID'),
-    ('left', 'COMMA', 'DOTS', 'FOR', 'WHERE'),
     ('left', 'NUMBER', 'INFINITY'),
-    ('left', 'OR', 'AND', 'NOT'),
-    ('left', 'FRAC', 'FORALL', 'EXISTS', 'NEXISTS'),
-    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ', 'COLON', 'DEFAULT', 'DIMEN', 'SETOF', 'ASSIGN'),
-    ('left', 'DIFF', 'SYMDIFF', 'UNION', 'INTER', 'CROSS', 'BY'),
-    ('left', 'UNDERLINE'),
-    ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
-    ('left', 'PIPE', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'COS', 'ARCTAN', 'SQRT', 'LN', 'LOG', 'EXP'),
-    ('right', 'LPAREN', 'RPAREN'),
-    ('right', 'IN', 'NOTIN', 'SUBSET', 'NOTSUBSET'),
-    ('right', 'LBRACE', 'RBRACE', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
+    ('right', 'COMMA'),
+    ('right', 'SLASHES', 'SEMICOLON'),
+    ('right', 'FOR', 'WHERE', 'COLON'),
+    ('right', 'PIPE'),
+    ('right', 'DEFAULT', 'DIMEN', 'ASSIGN'),
+    ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
+    ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
     ('left', 'MAXIMIZE', 'MINIMIZE'),
-    ('right', 'PLUS', 'MINUS'),
-    ('right', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT', 'LESS'),
+    #('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
+    ('right', 'IF', 'THEN', 'ELSE'),
+    ('left', 'OR'),
+    ('left', 'FORALL', 'EXISTS', 'NEXISTS'),
+    ('left', 'AND'),
+    ('right', 'LE', 'GE', 'LT', 'GT', 'EQ', 'NEQ'),
+    ('left', 'IN', 'NOTIN'),
+    ('left', 'SUBSET', 'NOTSUBSET'),
+    ('left', 'NOT'),
+    ('left', 'DIFF', 'SYMDIFF', 'UNION'),
+    ('left', 'INTER'),
+    ('left', 'CROSS'),
+    ('left', 'SETOF'),
+    ('right', 'DOTS', 'BY'),
+    ('right', 'AMPERSAND'),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
+    ('left', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT'),
+    ('left', 'UPLUS', 'UMINUS'),
     ('right', 'CARET'),
-    ('right', 'UPLUS', 'UMINUS'),
-    ('right', 'AMPERSAND', 'SLASHES', 'SEMICOLON'),
+    ('left', 'LFLOOR', 'RFLOOR', 'LCEIL', 'RCEIL', 'SIN', 'ASIN', 'SINH', 'ASINH', 'COS', 'ACOS', 'COSH', 'ACOSH', 'TAN', 'ATAN', 'ATANH', 'TANH', 'SQRT', 'LN', 'LOG', 'EXP'),
     ('left', 'INTEGERSET', 'INTEGERSETPOSITIVE', 'INTEGERSETNEGATIVE', 'INTEGERSETWITHONELIMIT', 'INTEGERSETWITHTWOLIMITS', 
       'REALSET', 'REALSETPOSITIVE', 'REALSETNEGATIVE', 'REALSETWITHONELIMIT', 'REALSETWITHTWOLIMITS', 
       'NATURALSET', 'NATURALSETWITHONELIMIT', 'NATURALSETWITHTWOLIMITS', 'BINARYSET', 'SYMBOLIC', 'LOGICAL')
@@ -63,38 +74,23 @@ def p_LinearEquations(t):
     t[0] = LinearEquations(Constraints(t[1]))
 
 def p_Objective(t):
-    '''Objective : MAXIMIZE LinearExpression
-                 | MAXIMIZE SymbolicExpression
-                 | MAXIMIZE NumericExpression
-                 | MAXIMIZE Identifier
-                 | MINIMIZE LinearExpression
-                 | MINIMIZE SymbolicExpression
-                 | MINIMIZE NumericExpression
-                 | MINIMIZE Identifier
-                 | MAXIMIZE LinearExpression FOR IndexingExpression
-                 | MAXIMIZE SymbolicExpression FOR IndexingExpression
-                 | MAXIMIZE NumericExpression FOR IndexingExpression
-                 | MAXIMIZE Identifier FOR IndexingExpression
-                 | MINIMIZE LinearExpression FOR IndexingExpression
-                 | MINIMIZE SymbolicExpression FOR IndexingExpression
-                 | MINIMIZE NumericExpression FOR IndexingExpression
-                 | MINIMIZE Identifier FOR IndexingExpression
-                 | MAXIMIZE LinearExpression WHERE IndexingExpression
-                 | MAXIMIZE SymbolicExpression WHERE IndexingExpression
-                 | MAXIMIZE NumericExpression WHERE IndexingExpression
+    '''Objective : MAXIMIZE Identifier FOR IndexingExpression
                  | MAXIMIZE Identifier WHERE IndexingExpression
-                 | MINIMIZE LinearExpression WHERE IndexingExpression
-                 | MINIMIZE SymbolicExpression WHERE IndexingExpression
-                 | MINIMIZE NumericExpression WHERE IndexingExpression
-                 | MINIMIZE Identifier WHERE IndexingExpression
-                 | MAXIMIZE LinearExpression COLON IndexingExpression
-                 | MAXIMIZE SymbolicExpression COLON IndexingExpression
-                 | MAXIMIZE NumericExpression COLON IndexingExpression
                  | MAXIMIZE Identifier COLON IndexingExpression
-                 | MINIMIZE LinearExpression COLON IndexingExpression
-                 | MINIMIZE SymbolicExpression COLON IndexingExpression
-                 | MINIMIZE NumericExpression COLON IndexingExpression
-                 | MINIMIZE Identifier COLON IndexingExpression'''
+                 | MAXIMIZE Identifier
+                 | MAXIMIZE NumericSymbolicExpression FOR IndexingExpression
+                 | MAXIMIZE NumericSymbolicExpression WHERE IndexingExpression
+                 | MAXIMIZE NumericSymbolicExpression COLON IndexingExpression
+                 | MAXIMIZE NumericSymbolicExpression
+                 
+                 | MINIMIZE Identifier FOR IndexingExpression
+                 | MINIMIZE Identifier WHERE IndexingExpression
+                 | MINIMIZE Identifier COLON IndexingExpression
+                 | MINIMIZE Identifier
+                 | MINIMIZE NumericSymbolicExpression WHERE IndexingExpression
+                 | MINIMIZE NumericSymbolicExpression FOR IndexingExpression
+                 | MINIMIZE NumericSymbolicExpression COLON IndexingExpression
+                 | MINIMIZE NumericSymbolicExpression'''
 
     _type = t.slice[1].type
 
@@ -119,12 +115,15 @@ def p_ConstraintList(t):
     '''ConstraintList : ConstraintList Objective SLASHES
                       | ConstraintList Constraint SLASHES
                       | ConstraintList Declarations SLASHES
+                      
                       | ConstraintList Objective
                       | ConstraintList Constraint
                       | ConstraintList Declarations
+                      
                       | Objective SLASHES
                       | Constraint SLASHES
                       | Declarations SLASHES
+                      
                       | Objective
                       | Constraint
                       | Declarations'''
@@ -148,139 +147,43 @@ def p_Constraint(t):
         t[0] = Constraint(t[1])
 
 def p_ConstraintExpression(t):
-    '''ConstraintExpression : LinearExpression EQ LinearExpression
-                            | SymbolicExpression EQ SymbolicExpression
-                            | NumericExpression EQ LinearExpression
-                            | NumericExpression EQ SymbolicExpression
-                            | Identifier EQ LinearExpression
-                            | Identifier EQ SymbolicExpression
-                            | LinearExpression EQ NumericExpression
-                            | SymbolicExpression EQ NumericExpression
-                            | LinearExpression EQ Identifier
-                            | SymbolicExpression EQ Identifier
-                            | NumericExpression EQ NumericExpression
-                            | NumericExpression EQ Identifier
-                            | Identifier EQ NumericExpression
+    '''ConstraintExpression : Identifier LE Identifier LE Identifier
+                            | Identifier LE Identifier LE NumericSymbolicExpression
+                            | Identifier LE NumericSymbolicExpression LE Identifier
+                            | Identifier LE NumericSymbolicExpression LE NumericSymbolicExpression
+                            
+                            | Identifier GE Identifier GE Identifier
+                            | Identifier GE Identifier GE NumericSymbolicExpression
+                            | Identifier GE NumericSymbolicExpression GE Identifier
+                            | Identifier GE NumericSymbolicExpression GE NumericSymbolicExpression
+                            
                             | Identifier EQ Identifier
-                            | LinearExpression LE LinearExpression
-                            | SymbolicExpression LE SymbolicExpression
-                            | NumericExpression LE LinearExpression
-                            | NumericExpression LE SymbolicExpression
-                            | Identifier LE LinearExpression
-                            | Identifier LE SymbolicExpression
-                            | LinearExpression LE NumericExpression
-                            | SymbolicExpression LE NumericExpression
-                            | LinearExpression LE Identifier
-                            | SymbolicExpression LE Identifier
-                            | NumericExpression LE NumericExpression
-                            | NumericExpression LE Identifier
-                            | Identifier LE NumericExpression
+                            | Identifier EQ NumericSymbolicExpression
+                            
                             | Identifier LE Identifier
-                            | LinearExpression GE LinearExpression
-                            | SymbolicExpression GE SymbolicExpression
-                            | NumericExpression GE LinearExpression
-                            | NumericExpression GE SymbolicExpression
-                            | Identifier GE LinearExpression
-                            | Identifier GE SymbolicExpression
-                            | LinearExpression GE NumericExpression
-                            | SymbolicExpression GE NumericExpression
-                            | LinearExpression GE Identifier
-                            | SymbolicExpression GE Identifier
-                            | NumericExpression GE NumericExpression
-                            | NumericExpression GE Identifier
-                            | Identifier GE NumericExpression
+                            | Identifier LE NumericSymbolicExpression
+                            
                             | Identifier GE Identifier
-                            | LinearExpression LE LinearExpression LE LinearExpression
-                            | SymbolicExpression LE SymbolicExpression LE SymbolicExpression
-                            | LinearExpression LE LinearExpression LE NumericExpression
-                            | SymbolicExpression LE SymbolicExpression LE NumericExpression
-                            | LinearExpression LE LinearExpression LE Identifier
-                            | SymbolicExpression LE SymbolicExpression LE Identifier
-                            | LinearExpression LE NumericExpression LE LinearExpression
-                            | SymbolicExpression LE NumericExpression LE SymbolicExpression
-                            | LinearExpression LE Identifier LE LinearExpression
-                            | SymbolicExpression LE Identifier LE SymbolicExpression
-                            | LinearExpression LE NumericExpression LE NumericExpression
-                            | SymbolicExpression LE NumericExpression LE NumericExpression
-                            | LinearExpression LE NumericExpression LE Identifier
-                            | SymbolicExpression LE NumericExpression LE Identifier
-                            | LinearExpression LE Identifier LE NumericExpression
-                            | SymbolicExpression LE Identifier LE NumericExpression
-                            | LinearExpression LE Identifier LE Identifier
-                            | SymbolicExpression LE Identifier LE Identifier
-                            | NumericExpression LE LinearExpression LE LinearExpression
-                            | NumericExpression LE SymbolicExpression LE SymbolicExpression
-                            | Identifier LE LinearExpression LE LinearExpression
-                            | Identifier LE SymbolicExpression LE SymbolicExpression
-                            | NumericExpression LE LinearExpression LE NumericExpression
-                            | NumericExpression LE SymbolicExpression LE NumericExpression
-                            | NumericExpression LE LinearExpression LE Identifier
-                            | NumericExpression LE SymbolicExpression LE Identifier
-                            | Identifier LE LinearExpression LE NumericExpression
-                            | Identifier LE SymbolicExpression LE NumericExpression
-                            | Identifier LE LinearExpression LE Identifier
-                            | Identifier LE SymbolicExpression LE Identifier
-                            | NumericExpression LE NumericExpression LE LinearExpression
-                            | NumericExpression LE NumericExpression LE SymbolicExpression
-                            | NumericExpression LE Identifier LE LinearExpression
-                            | NumericExpression LE Identifier LE SymbolicExpression
-                            | Identifier LE NumericExpression LE LinearExpression
-                            | Identifier LE NumericExpression LE SymbolicExpression
-                            | Identifier LE Identifier LE LinearExpression
-                            | Identifier LE Identifier LE SymbolicExpression
-                            | NumericExpression LE NumericExpression LE NumericExpression
-                            | NumericExpression LE NumericExpression LE Identifier
-                            | NumericExpression LE Identifier LE NumericExpression
-                            | Identifier LE NumericExpression LE NumericExpression
-                            | Identifier LE NumericExpression LE Identifier
-                            | Identifier LE Identifier LE NumericExpression
-                            | Identifier LE Identifier LE Identifier
-                            | LinearExpression GE LinearExpression GE LinearExpression
-                            | SymbolicExpression GE SymbolicExpression GE SymbolicExpression
-                            | LinearExpression GE LinearExpression GE NumericExpression
-                            | SymbolicExpression GE SymbolicExpression GE NumericExpression
-                            | LinearExpression GE LinearExpression GE Identifier
-                            | SymbolicExpression GE SymbolicExpression GE Identifier
-                            | LinearExpression GE NumericExpression GE LinearExpression
-                            | SymbolicExpression GE NumericExpression GE SymbolicExpression
-                            | LinearExpression GE Identifier GE LinearExpression
-                            | SymbolicExpression GE Identifier GE SymbolicExpression
-                            | LinearExpression GE NumericExpression GE NumericExpression
-                            | SymbolicExpression GE NumericExpression GE NumericExpression
-                            | LinearExpression GE NumericExpression GE Identifier
-                            | SymbolicExpression GE NumericExpression GE Identifier
-                            | LinearExpression GE Identifier GE NumericExpression
-                            | SymbolicExpression GE Identifier GE NumericExpression
-                            | LinearExpression GE Identifier GE Identifier
-                            | SymbolicExpression GE Identifier GE Identifier
-                            | NumericExpression GE LinearExpression GE LinearExpression
-                            | NumericExpression GE SymbolicExpression GE SymbolicExpression
-                            | Identifier GE LinearExpression GE LinearExpression
-                            | Identifier GE SymbolicExpression GE SymbolicExpression
-                            | NumericExpression GE LinearExpression GE NumericExpression
-                            | NumericExpression GE SymbolicExpression GE NumericExpression
-                            | NumericExpression GE LinearExpression GE Identifier
-                            | NumericExpression GE SymbolicExpression GE Identifier
-                            | Identifier GE LinearExpression GE NumericExpression
-                            | Identifier GE SymbolicExpression GE NumericExpression
-                            | Identifier GE LinearExpression GE Identifier
-                            | Identifier GE SymbolicExpression GE Identifier
-                            | NumericExpression GE NumericExpression GE LinearExpression
-                            | NumericExpression GE NumericExpression GE SymbolicExpression
-                            | NumericExpression GE Identifier GE LinearExpression
-                            | NumericExpression GE Identifier GE SymbolicExpression
-                            | Identifier GE NumericExpression GE LinearExpression
-                            | Identifier GE NumericExpression GE SymbolicExpression
-                            | Identifier GE Identifier GE LinearExpression
-                            | Identifier GE Identifier GE SymbolicExpression
-                            | NumericExpression GE NumericExpression GE NumericExpression
-                            | NumericExpression GE NumericExpression GE Identifier
-                            | NumericExpression GE Identifier GE NumericExpression
-                            | NumericExpression GE Identifier GE Identifier
-                            | Identifier GE NumericExpression GE NumericExpression
-                            | Identifier GE NumericExpression GE Identifier
-                            | Identifier GE Identifier GE NumericExpression
-                            | Identifier GE Identifier GE Identifier'''
+                            | Identifier GE NumericSymbolicExpression
+                            
+                            | NumericSymbolicExpression LE Identifier LE Identifier
+                            | NumericSymbolicExpression LE Identifier LE NumericSymbolicExpression
+                            | NumericSymbolicExpression LE NumericSymbolicExpression LE Identifier
+                            | NumericSymbolicExpression LE NumericSymbolicExpression LE NumericSymbolicExpression
+                            
+                            | NumericSymbolicExpression GE Identifier GE Identifier
+                            | NumericSymbolicExpression GE Identifier GE NumericSymbolicExpression
+                            | NumericSymbolicExpression GE NumericSymbolicExpression GE Identifier
+                            | NumericSymbolicExpression GE NumericSymbolicExpression GE NumericSymbolicExpression
+                            
+                            | NumericSymbolicExpression EQ Identifier
+                            | NumericSymbolicExpression EQ NumericSymbolicExpression
+                            
+                            | NumericSymbolicExpression LE Identifier
+                            | NumericSymbolicExpression LE NumericSymbolicExpression
+                            
+                            | NumericSymbolicExpression GE Identifier
+                            | NumericSymbolicExpression GE NumericSymbolicExpression'''
     
     if len(t) > 4:
         if t.slice[4].type == "LE":
@@ -335,18 +238,19 @@ def p_Declaration(t):
     '''Declaration : DeclarationExpression FOR IndexingExpression
                    | DeclarationExpression WHERE IndexingExpression
                    | DeclarationExpression COLON IndexingExpression
+                   
                    | ValueList FOR IndexingExpression
-                   | NumericExpression FOR IndexingExpression
-                   | Identifier FOR IndexingExpression
-                   | SymbolicExpression FOR IndexingExpression
                    | ValueList WHERE IndexingExpression
-                   | NumericExpression WHERE IndexingExpression
-                   | Identifier WHERE IndexingExpression
-                   | SymbolicExpression WHERE IndexingExpression
                    | ValueList COLON IndexingExpression
-                   | NumericExpression COLON IndexingExpression
+                   
+                   | Identifier FOR IndexingExpression
+                   | Identifier WHERE IndexingExpression
                    | Identifier COLON IndexingExpression
-                   | SymbolicExpression COLON IndexingExpression
+                   
+                   | NumericSymbolicExpression FOR IndexingExpression
+                   | NumericSymbolicExpression WHERE IndexingExpression
+                   | NumericSymbolicExpression COLON IndexingExpression
+                   
                    | DeclarationExpression'''
 
     if len(t) > 3:
@@ -362,121 +266,65 @@ def p_Declaration(t):
 
 def p_DeclarationExpression(t):
     '''DeclarationExpression : ValueList IN SetExpression
-                             | ValueList IN Range
-                             | NumericExpression IN SetExpression
-                             | NumericExpression IN Range
-                             | Identifier IN SetExpression
-                             | Identifier IN Range
-                             | SymbolicExpression IN SetExpression
-                             | SymbolicExpression IN Range
                              | ValueList IN Identifier
-                             | NumericExpression IN Identifier
-                             | Identifier IN Identifier
-                             | SymbolicExpression IN Identifier
-                             | ValueList SUBSET SetExpression
-                             | ValueList SUBSET Range
-                             | NumericExpression SUBSET SetExpression
-                             | NumericExpression SUBSET Range
-                             | Identifier SUBSET SetExpression
-                             | Identifier SUBSET Range
-                             | SymbolicExpression SUBSET SetExpression
-                             | SymbolicExpression SUBSET Range
                              | ValueList SUBSET Identifier
-                             | NumericExpression SUBSET Identifier
-                             | Identifier SUBSET Identifier
-                             | SymbolicExpression SUBSET Identifier
-                             | ValueList DEFAULT NumericExpression
-                             | ValueList DEFAULT Identifier
-                             | NumericExpression DEFAULT NumericExpression
-                             | NumericExpression DEFAULT Identifier
-                             | Identifier DEFAULT NumericExpression
-                             | Identifier DEFAULT Identifier
-                             | SymbolicExpression DEFAULT NumericExpression
-                             | SymbolicExpression DEFAULT Identifier
-                             | ValueList DEFAULT SymbolicExpression
-                             | NumericExpression DEFAULT SymbolicExpression
-                             | Identifier DEFAULT SymbolicExpression
-                             | SymbolicExpression DEFAULT SymbolicExpression
+                             | ValueList SUBSET SetExpression
                              | ValueList DEFAULT SetExpression
-                             | ValueList DEFAULT Range
-                             | NumericExpression DEFAULT SetExpression
-                             | NumericExpression DEFAULT Range
-                             | Identifier DEFAULT SetExpression
-                             | Identifier DEFAULT Range
-                             | SymbolicExpression DEFAULT SetExpression
-                             | SymbolicExpression DEFAULT Range
-                             | ValueList DIMEN NumericExpression
+                             | ValueList DEFAULT Identifier
+                             | ValueList DEFAULT NumericSymbolicExpression
                              | ValueList DIMEN Identifier
-                             | NumericExpression DIMEN NumericExpression
-                             | NumericExpression DIMEN Identifier
-                             | Identifier DIMEN NumericExpression
-                             | Identifier DIMEN Identifier
-                             | SymbolicExpression DIMEN NumericExpression
-                             | SymbolicExpression DIMEN Identifier
-                             | ValueList DIMEN SymbolicExpression
-                             | NumericExpression DIMEN SymbolicExpression
-                             | Identifier DIMEN SymbolicExpression
-                             | SymbolicExpression DIMEN SymbolicExpression
-                             | ValueList ASSIGN NumericExpression
-                             | ValueList ASSIGN Identifier
-                             | NumericExpression ASSIGN NumericExpression
-                             | NumericExpression ASSIGN Identifier
-                             | Identifier ASSIGN NumericExpression
-                             | Identifier ASSIGN Identifier
-                             | SymbolicExpression ASSIGN NumericExpression
-                             | SymbolicExpression ASSIGN Identifier
-                             | ValueList ASSIGN SymbolicExpression
-                             | NumericExpression ASSIGN SymbolicExpression
-                             | Identifier ASSIGN SymbolicExpression
-                             | SymbolicExpression ASSIGN SymbolicExpression
+                             | ValueList DIMEN NumericSymbolicExpression
                              | ValueList ASSIGN SetExpression
-                             | ValueList ASSIGN Range
-                             | NumericExpression ASSIGN SetExpression
-                             | NumericExpression ASSIGN Range
-                             | Identifier ASSIGN SetExpression
-                             | Identifier ASSIGN Range
-                             | SymbolicExpression ASSIGN SetExpression
-                             | SymbolicExpression ASSIGN Range
-                             | ValueList LT NumericExpression
+                             | ValueList ASSIGN Identifier
+                             | ValueList ASSIGN NumericSymbolicExpression
                              | ValueList LT Identifier
-                             | NumericExpression LT NumericExpression
-                             | NumericExpression LT Identifier
-                             | Identifier LT NumericExpression
-                             | Identifier LT Identifier
-                             | SymbolicExpression LT NumericExpression
-                             | SymbolicExpression LT Identifier
-                             | ValueList LT SymbolicExpression
-                             | NumericExpression LT SymbolicExpression
-                             | Identifier LT SymbolicExpression
-                             | SymbolicExpression LT SymbolicExpression
-                             | ValueList GT NumericExpression
+                             | ValueList LT NumericSymbolicExpression
                              | ValueList GT Identifier
-                             | NumericExpression GT NumericExpression
-                             | NumericExpression GT Identifier
-                             | Identifier GT NumericExpression
-                             | Identifier GT Identifier
-                             | SymbolicExpression GT NumericExpression
-                             | SymbolicExpression GT Identifier
-                             | ValueList GT SymbolicExpression
-                             | NumericExpression GT SymbolicExpression
-                             | Identifier GT SymbolicExpression
-                             | SymbolicExpression GT SymbolicExpression
-                             | ValueList NEQ NumericExpression
+                             | ValueList GT NumericSymbolicExpression
                              | ValueList NEQ Identifier
-                             | NumericExpression NEQ NumericExpression
-                             | NumericExpression NEQ Identifier
-                             | Identifier NEQ NumericExpression
+                             | ValueList NEQ NumericSymbolicExpression
+                             
+                             | Identifier IN SetExpression
+                             | Identifier IN Identifier
+                             | Identifier SUBSET SetExpression
+                             | Identifier SUBSET Identifier
+                             | Identifier DEFAULT SetExpression
+                             | Identifier DEFAULT Identifier
+                             | Identifier DEFAULT NumericSymbolicExpression
+                             | Identifier DIMEN Identifier
+                             | Identifier DIMEN NumericSymbolicExpression
+                             | Identifier ASSIGN SetExpression
+                             | Identifier ASSIGN Identifier
+                             | Identifier ASSIGN NumericSymbolicExpression
+                             | Identifier LT Identifier
+                             | Identifier LT NumericSymbolicExpression
+                             | Identifier GT Identifier
+                             | Identifier GT NumericSymbolicExpression
                              | Identifier NEQ Identifier
-                             | SymbolicExpression NEQ NumericExpression
-                             | SymbolicExpression NEQ Identifier
-                             | ValueList NEQ SymbolicExpression
-                             | NumericExpression NEQ SymbolicExpression
-                             | Identifier NEQ SymbolicExpression
-                             | SymbolicExpression NEQ SymbolicExpression
+                             | Identifier NEQ NumericSymbolicExpression
+                             
+                             | NumericSymbolicExpression IN Identifier
+                             | NumericSymbolicExpression IN SetExpression
+                             | NumericSymbolicExpression SUBSET SetExpression
+                             | NumericSymbolicExpression SUBSET Identifier
+                             | NumericSymbolicExpression DEFAULT SetExpression
+                             | NumericSymbolicExpression DEFAULT Identifier
+                             | NumericSymbolicExpression DEFAULT NumericSymbolicExpression
+                             | NumericSymbolicExpression DIMEN Identifier
+                             | NumericSymbolicExpression DIMEN NumericSymbolicExpression
+                             | NumericSymbolicExpression ASSIGN SetExpression
+                             | NumericSymbolicExpression ASSIGN Identifier
+                             | NumericSymbolicExpression ASSIGN NumericSymbolicExpression
+                             | NumericSymbolicExpression LT Identifier
+                             | NumericSymbolicExpression LT NumericSymbolicExpression
+                             | NumericSymbolicExpression GT Identifier
+                             | NumericSymbolicExpression GT NumericSymbolicExpression
+                             | NumericSymbolicExpression NEQ Identifier
+                             | NumericSymbolicExpression NEQ NumericSymbolicExpression
+                             
                              | ValueList COMMA DeclarationAttributeList
-                             | NumericExpression COMMA DeclarationAttributeList
                              | Identifier COMMA DeclarationAttributeList
-                             | SymbolicExpression COMMA DeclarationAttributeList
+                             | NumericSymbolicExpression COMMA DeclarationAttributeList
                              | DeclarationExpression COMMA DeclarationAttributeList'''
 
     _type = t.slice[2].type
@@ -512,8 +360,8 @@ def p_DeclarationExpression(t):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
 
       elif _type == "ASSIGN":
-        if isinstance(t[3], Range):
-          t[3] = SetExpressionWithValue(t[3])
+        #if isinstance(t[3], Range):
+        #  t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.ST)
 
@@ -533,8 +381,8 @@ def p_DeclarationExpression(t):
       t[0].addAttribute(attr)
 
 def p_DeclarationAttributeList(t):
-  '''DeclarationAttributeList : DeclarationAttribute
-                              | DeclarationAttributeList COMMA DeclarationAttribute'''
+  '''DeclarationAttributeList : DeclarationAttributeList COMMA DeclarationAttribute
+                              | DeclarationAttribute'''
   if len(t) > 3:
     t[0] = t[1] + [t[3]]
   else:
@@ -542,42 +390,39 @@ def p_DeclarationAttributeList(t):
 
 def p_DeclarationAttribute(t):
   '''DeclarationAttribute : IN SetExpression
-                          | IN Range
                           | IN Identifier
+                          
                           | SUBSET SetExpression
-                          | SUBSET Range
                           | SUBSET Identifier
-                          | DEFAULT NumericExpression
-                          | DEFAULT Identifier
-                          | DEFAULT SymbolicExpression
+                          
                           | DEFAULT SetExpression
-                          | DEFAULT Range
-                          | DIMEN NumericExpression
+                          | DEFAULT Identifier
+                          | DEFAULT NumericSymbolicExpression
+                          
                           | DIMEN Identifier
-                          | DIMEN SymbolicExpression
-                          | ASSIGN NumericExpression
-                          | ASSIGN Identifier
-                          | ASSIGN SymbolicExpression
+                          | DIMEN NumericSymbolicExpression
+                          
                           | ASSIGN SetExpression
-                          | ASSIGN Range
-                          | LT NumericExpression
+                          | ASSIGN Identifier
+                          | ASSIGN NumericSymbolicExpression
+                          
                           | LT Identifier
-                          | LT SymbolicExpression
-                          | LE NumericExpression
+                          | LT NumericSymbolicExpression
+                          
                           | LE Identifier
-                          | LE SymbolicExpression
-                          | EQ NumericExpression
+                          | LE NumericSymbolicExpression
+                          
                           | EQ Identifier
-                          | EQ SymbolicExpression
-                          | GT NumericExpression
+                          | EQ NumericSymbolicExpression
+                          
                           | GT Identifier
-                          | GT SymbolicExpression
-                          | GE NumericExpression
+                          | GT NumericSymbolicExpression
+                          
                           | GE Identifier
-                          | GE SymbolicExpression
-                          | NEQ NumericExpression
+                          | GE NumericSymbolicExpression
+                          
                           | NEQ Identifier
-                          | NEQ SymbolicExpression'''
+                          | NEQ NumericSymbolicExpression'''
 
   _type = t.slice[1].type
   if _type == "IN":
@@ -599,8 +444,8 @@ def p_DeclarationAttribute(t):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
 
   elif _type == "ASSIGN":
-    if isinstance(t[2], Range):
-      t[2] = SetExpressionWithValue(t[2])
+    #if isinstance(t[2], Range):
+    #  t[2] = SetExpressionWithValue(t[2])
       
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.ST)
 
@@ -622,117 +467,33 @@ def p_DeclarationAttribute(t):
   elif _type == "EQ":
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.EQ)
 
-def p_LinearExpression(t):
-    '''LinearExpression : LPAREN LinearExpression RPAREN
-                        | ConditionalLinearExpression'''
-
-    if len(t) > 3:
-        t[0] = LinearExpressionBetweenParenthesis(t[2])
-    elif isinstance(t[1], ConditionalLinearExpression):
-        t[0] = t[1]
-    else:
-        t[0] = ValuedLinearExpression(t[1])
-
-def p_LinearExpression_binop(t):
-    '''LinearExpression : LinearExpression PLUS LinearExpression
-                        | SymbolicExpression PLUS SymbolicExpression
-                        | LinearExpression PLUS NumericExpression
-                        | SymbolicExpression PLUS NumericExpression
-                        | LinearExpression PLUS Identifier
-                        | SymbolicExpression PLUS Identifier
-                        | NumericExpression PLUS LinearExpression
-                        | NumericExpression PLUS SymbolicExpression
-                        | Identifier PLUS LinearExpression
-                        | Identifier PLUS SymbolicExpression
-                        | LinearExpression MINUS LinearExpression
-                        | SymbolicExpression MINUS SymbolicExpression
-                        | LinearExpression MINUS NumericExpression
-                        | SymbolicExpression MINUS NumericExpression
-                        | LinearExpression MINUS Identifier
-                        | SymbolicExpression MINUS Identifier
-                        | NumericExpression MINUS LinearExpression
-                        | NumericExpression MINUS SymbolicExpression
-                        | Identifier MINUS LinearExpression
-                        | Identifier MINUS SymbolicExpression
-                        | LinearExpression TIMES NumericExpression
-                        | SymbolicExpression TIMES NumericExpression
-                        | LinearExpression TIMES Identifier
-                        | SymbolicExpression TIMES Identifier
-                        | LinearExpression DIVIDE NumericExpression
-                        | SymbolicExpression DIVIDE NumericExpression
-                        | LinearExpression DIVIDE Identifier
-                        | SymbolicExpression DIVIDE Identifier'''
-
-    _type = t.slice[2].type
-    if _type == "PLUS":
-        op = LinearExpressionWithArithmeticOperation.PLUS
-
-    elif _type == "MINUS":
-        op = LinearExpressionWithArithmeticOperation.MINUS
-
-    elif _type == "TIMES":
-        op = LinearExpressionWithArithmeticOperation.TIMES
-
-    elif _type == "DIVIDE":
-        op = LinearExpressionWithArithmeticOperation.DIV
-
-    t[0] = LinearExpressionWithArithmeticOperation(op, t[1], t[3])
-
-def p_IteratedLinearExpression(t):
-    '''LinearExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE LinearExpression
-                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE LinearExpression
-                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE SymbolicExpression
-                        | SUM UNDERLINE LBRACE IndexingExpression RBRACE SymbolicExpression'''
-    if len(t) > 7:
-        t[0] = IteratedLinearExpression(t[10], t[4], t[8])
-    else:
-        t[0] = IteratedLinearExpression(t[6], t[4])
-
-def p_ConditionalLinearExpression(t):
-    '''ConditionalLinearExpression : LPAREN Identifier RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK SymbolicExpression COLON SymbolicExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK SymbolicExpression COLON NumericExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK LinearExpression COLON Identifier
-                                   | LPAREN Identifier RPAREN QUESTION_MARK SymbolicExpression COLON Identifier
-                                   | LPAREN Identifier RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK NumericExpression COLON SymbolicExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK Identifier COLON LinearExpression
-                                   | LPAREN Identifier RPAREN QUESTION_MARK Identifier COLON SymbolicExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK SymbolicExpression COLON SymbolicExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK SymbolicExpression COLON NumericExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK LinearExpression COLON Identifier
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK SymbolicExpression COLON Identifier
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON SymbolicExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK Identifier COLON LinearExpression
-                                   | LPAREN NumericExpression RPAREN QUESTION_MARK Identifier COLON SymbolicExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON LinearExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression COLON SymbolicExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON NumericExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression COLON NumericExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK LinearExpression COLON Identifier
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK SymbolicExpression COLON Identifier
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON LinearExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON SymbolicExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK Identifier COLON LinearExpression
-                                   | LPAREN LogicalExpression RPAREN QUESTION_MARK Identifier COLON SymbolicExpression'''
-    if not isinstance(t[2], LogicalExpression):
-      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
-
-    t[0] = ConditionalLinearExpression(t[2], t[5])
-    t[0].addElseExpression(t[7])
 
 def p_LogicalExpression(t):
     '''LogicalExpression : EntryLogicalExpression
-                         | LogicalExpression OR EntryLogicalExpression
-                         | LogicalExpression OR NumericExpression
+                         
+                         | LogicalExpression OR LogicalExpression
                          | LogicalExpression OR Identifier
-                         | LogicalExpression AND EntryLogicalExpression
-                         | LogicalExpression AND NumericExpression
-                         | LogicalExpression AND Identifier'''
+                         | LogicalExpression OR NumericSymbolicExpression
+
+                         | Identifier OR LogicalExpression
+                         | Identifier OR Identifier
+                         | Identifier OR NumericSymbolicExpression
+
+                         | NumericSymbolicExpression OR LogicalExpression
+                         | NumericSymbolicExpression OR Identifier
+                         | NumericSymbolicExpression OR NumericSymbolicExpression
+                         
+                         | LogicalExpression AND LogicalExpression
+                         | LogicalExpression AND Identifier
+                         | LogicalExpression AND NumericSymbolicExpression
+
+                         | Identifier AND LogicalExpression
+                         | Identifier AND Identifier
+                         | Identifier AND NumericSymbolicExpression
+
+                         | NumericSymbolicExpression AND LogicalExpression
+                         | NumericSymbolicExpression AND Identifier
+                         | NumericSymbolicExpression AND NumericSymbolicExpression'''
 
     if len(t) > 3:
       if isinstance(t[3], NumericExpression) or isinstance(t[3], Identifier):
@@ -747,9 +508,9 @@ def p_LogicalExpression(t):
         t[0] = LogicalExpression([t[1]])
 
 def p_EntryLogicalExpression(t):
-    '''EntryLogicalExpression : NOT EntryLogicalExpression
-                              | NOT NumericExpression
+    '''EntryLogicalExpression : NOT LogicalExpression
                               | NOT Identifier
+                              | NOT NumericSymbolicExpression
                               | LPAREN LogicalExpression RPAREN'''
                               
     if isinstance(t[2], NumericExpression) or isinstance(t[2], Identifier):
@@ -765,60 +526,31 @@ def p_EntryLogicalExpression(t):
       t[0] = t[2]
 
 def p_EntryRelationalLogicalExpression(t):
-    '''EntryLogicalExpression : NumericExpression LT NumericExpression
-                              | NumericExpression LT Identifier
-                              | Identifier LT NumericExpression
-                              | Identifier LT Identifier
-                              | NumericExpression LT SymbolicExpression
-                              | Identifier LT SymbolicExpression
-                              | SymbolicExpression LT NumericExpression
-                              | SymbolicExpression LT Identifier
-                              | SymbolicExpression LT SymbolicExpression
-                              | NumericExpression LE NumericExpression
-                              | NumericExpression LE Identifier
-                              | Identifier LE NumericExpression
-                              | Identifier LE Identifier
-                              | NumericExpression LE SymbolicExpression
-                              | Identifier LE SymbolicExpression
-                              | SymbolicExpression LE NumericExpression
-                              | SymbolicExpression LE Identifier
-                              | SymbolicExpression LE SymbolicExpression
-                              | NumericExpression EQ NumericExpression
-                              | NumericExpression EQ Identifier
-                              | Identifier EQ NumericExpression
-                              | Identifier EQ Identifier
-                              | NumericExpression EQ SymbolicExpression
-                              | Identifier EQ SymbolicExpression
-                              | SymbolicExpression EQ NumericExpression
-                              | SymbolicExpression EQ Identifier
-                              | SymbolicExpression EQ SymbolicExpression
-                              | NumericExpression GT NumericExpression
-                              | NumericExpression GT Identifier
-                              | Identifier GT NumericExpression
-                              | Identifier GT Identifier
-                              | NumericExpression GT SymbolicExpression
-                              | Identifier GT SymbolicExpression
-                              | SymbolicExpression GT NumericExpression
-                              | SymbolicExpression GT Identifier
-                              | SymbolicExpression GT SymbolicExpression
-                              | NumericExpression GE NumericExpression
-                              | NumericExpression GE Identifier
-                              | Identifier GE NumericExpression
+    '''EntryLogicalExpression : Identifier LE Identifier
+                              | Identifier LE NumericSymbolicExpression
                               | Identifier GE Identifier
-                              | NumericExpression GE SymbolicExpression
-                              | Identifier GE SymbolicExpression
-                              | SymbolicExpression GE NumericExpression
-                              | SymbolicExpression GE Identifier
-                              | SymbolicExpression GE SymbolicExpression
-                              | NumericExpression NEQ NumericExpression
-                              | NumericExpression NEQ Identifier
-                              | Identifier NEQ NumericExpression
+                              | Identifier GE NumericSymbolicExpression
+                              | Identifier EQ Identifier
+                              | Identifier EQ NumericSymbolicExpression
+                              | Identifier LT Identifier
+                              | Identifier LT NumericSymbolicExpression
+                              | Identifier GT Identifier
+                              | Identifier GT NumericSymbolicExpression
                               | Identifier NEQ Identifier
-                              | NumericExpression NEQ SymbolicExpression
-                              | Identifier NEQ SymbolicExpression
-                              | SymbolicExpression NEQ NumericExpression
-                              | SymbolicExpression NEQ Identifier
-                              | SymbolicExpression NEQ SymbolicExpression'''
+                              | Identifier NEQ NumericSymbolicExpression
+                              
+                              | NumericSymbolicExpression LE Identifier
+                              | NumericSymbolicExpression LE NumericSymbolicExpression
+                              | NumericSymbolicExpression GE Identifier
+                              | NumericSymbolicExpression GE NumericSymbolicExpression
+                              | NumericSymbolicExpression EQ Identifier
+                              | NumericSymbolicExpression EQ NumericSymbolicExpression
+                              | NumericSymbolicExpression LT Identifier
+                              | NumericSymbolicExpression LT NumericSymbolicExpression
+                              | NumericSymbolicExpression GT Identifier
+                              | NumericSymbolicExpression GT NumericSymbolicExpression
+                              | NumericSymbolicExpression NEQ Identifier
+                              | NumericSymbolicExpression NEQ NumericSymbolicExpression'''
 
     _type = t.slice[2].type
     if _type == "LT":
@@ -841,47 +573,33 @@ def p_EntryRelationalLogicalExpression(t):
 
 def p_EntryLogicalExpressionWithSet(t):
     '''EntryLogicalExpression : ValueList IN SetExpression
-                              | ValueList IN Range
-                              | NumericExpression IN SetExpression
-                              | NumericExpression IN Range
-                              | Identifier IN SetExpression
-                              | Identifier IN Range
-                              | SymbolicExpression IN SetExpression
-                              | SymbolicExpression IN Range
                               | ValueList IN Identifier
-                              | NumericExpression IN Identifier
-                              | Identifier IN Identifier
-                              | SymbolicExpression IN Identifier
-                              | Tuple IN SetExpression
-                              | Tuple IN Range
-                              | Tuple IN Identifier
                               | ValueList NOTIN SetExpression
-                              | ValueList NOTIN Range
-                              | NumericExpression NOTIN SetExpression
-                              | NumericExpression NOTIN Range
-                              | Identifier NOTIN SetExpression
-                              | Identifier NOTIN Range
-                              | SymbolicExpression NOTIN SetExpression
-                              | SymbolicExpression NOTIN Range
                               | ValueList NOTIN Identifier
-                              | NumericExpression NOTIN Identifier
-                              | Identifier NOTIN Identifier
-                              | SymbolicExpression NOTIN Identifier
+                              
+                              | Tuple IN SetExpression
+                              | Tuple IN Identifier
                               | Tuple NOTIN SetExpression
-                              | Tuple NOTIN Range
                               | Tuple NOTIN Identifier
+                              
                               | SetExpression SUBSET SetExpression
-                              | Range SUBSET Range
-                              | Identifier SUBSET SetExpression
-                              | Identifier SUBSET Range
                               | SetExpression SUBSET Identifier
-                              | Range SUBSET Identifier
                               | SetExpression NOTSUBSET SetExpression
-                              | Range NOTSUBSET Range
-                              | Identifier NOTSUBSET SetExpression
-                              | Identifier NOTSUBSET Range
                               | SetExpression NOTSUBSET Identifier
-                              | Range NOTSUBSET Identifier'''
+                              
+                              | Identifier IN SetExpression
+                              | Identifier IN Identifier
+                              | Identifier NOTIN SetExpression
+                              | Identifier NOTIN Identifier
+                              | Identifier SUBSET SetExpression
+                              | Identifier SUBSET Identifier
+                              | Identifier NOTSUBSET SetExpression
+                              | Identifier NOTSUBSET Identifier
+                              
+                              | NumericSymbolicExpression IN SetExpression
+                              | NumericSymbolicExpression IN Identifier
+                              | NumericSymbolicExpression NOTIN SetExpression
+                              | NumericSymbolicExpression NOTIN Identifier'''
 
     if not isinstance(t[3], SetExpression):
       t[3] = SetExpressionWithValue(t[3])
@@ -905,12 +623,16 @@ def p_EntryLogicalExpressionWithSet(t):
 def p_EntryIteratedLogicalExpression(t):
     '''EntryLogicalExpression : FORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | FORALL LLBRACE IndexingExpression RRBRACE Identifier
+                              
                               | NFORALL LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | NFORALL LLBRACE IndexingExpression RRBRACE Identifier
+                              
                               | EXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | EXISTS LLBRACE IndexingExpression RRBRACE Identifier
+                              
                               | NEXISTS LLBRACE IndexingExpression RRBRACE LogicalExpression
                               | NEXISTS LLBRACE IndexingExpression RRBRACE Identifier'''
+
     if not isinstance(t[5], LogicalExpression):
       t[5] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[5])])
 
@@ -928,41 +650,27 @@ def p_EntryIteratedLogicalExpression(t):
         t[0] = EntryLogicalExpressionIterated(EntryLogicalExpressionIterated.NEXISTS, t[3], t[5])
 
 def p_SetExpressionWithOperation(t):
-    '''SetExpression : Identifier DIFF Identifier
-                     | SetExpression DIFF SetExpression
-                     | Range DIFF Range
-                     | Identifier DIFF SetExpression
-                     | Identifier DIFF Range
+    '''SetExpression : SetExpression DIFF SetExpression
                      | SetExpression DIFF Identifier
-                     | Range DIFF Identifier
                      | SetExpression SYMDIFF SetExpression
-                     | Range SYMDIFF Range
-                     | Identifier SYMDIFF Identifier
-                     | Identifier SYMDIFF SetExpression
-                     | Identifier SYMDIFF Range
                      | SetExpression SYMDIFF Identifier
-                     | Range SYMDIFF Identifier
                      | SetExpression UNION SetExpression
-                     | Range UNION Range
-                     | Identifier UNION Identifier
-                     | Identifier UNION SetExpression
-                     | Identifier UNION Range
                      | SetExpression UNION Identifier
-                     | Range UNION Identifier
                      | SetExpression INTER SetExpression
-                     | Range INTER Range
-                     | Identifier INTER Identifier
-                     | Identifier INTER SetExpression
-                     | Identifier INTER Range
                      | SetExpression INTER Identifier
-                     | Range INTER Identifier
                      | SetExpression CROSS SetExpression
-                     | Range CROSS Range
-                     | Identifier CROSS Identifier
-                     | Identifier CROSS SetExpression
-                     | Identifier CROSS Range
                      | SetExpression CROSS Identifier
-                     | Range CROSS Identifier'''
+                     
+                     | Identifier DIFF SetExpression
+                     | Identifier DIFF Identifier
+                     | Identifier SYMDIFF SetExpression
+                     | Identifier SYMDIFF Identifier
+                     | Identifier UNION SetExpression
+                     | Identifier UNION Identifier
+                     | Identifier INTER SetExpression
+                     | Identifier INTER Identifier
+                     | Identifier CROSS SetExpression
+                     | Identifier CROSS Identifier'''
 
     _type = t.slice[2].type
     if _type == "DIFF":
@@ -990,16 +698,15 @@ def p_SetExpressionWithOperation(t):
 
 def p_SetExpressionWithValue(t):
     '''SetExpression : LLBRACE ValueList RRBRACE
-                     | LLBRACE NumericExpression RRBRACE
-                     | LLBRACE Identifier RRBRACE
-                     | LLBRACE SymbolicExpression RRBRACE
-                     | LLBRACE Range RRBRACE
-                     | LLBRACE SetExpression RRBRACE
                      | LLBRACE TupleList RRBRACE
+                     | LLBRACE SetExpression RRBRACE
+                     | LLBRACE Identifier RRBRACE
+                     | LLBRACE NumericSymbolicExpression RRBRACE
                      | LLBRACE IndexingExpression RRBRACE
-                     | LLBRACE RRBRACE
+                     
                      | LPAREN SetExpression RPAREN
-                     | LPAREN Range RPAREN
+                     | LLBRACE RRBRACE
+
                      | EMPTYSET
                      | NATURALSET
                      | NATURALSETWITHONELIMIT
@@ -1019,7 +726,10 @@ def p_SetExpressionWithValue(t):
                      | LOGICAL
                      | PARAMETERS
                      | SETS
-                     | VARIABLES'''
+                     | VARIABLES
+
+                     | Range
+                     | ConditionalSetExpression'''
 
     _type = t.slice[1].type
     if len(t) > 2:
@@ -1030,7 +740,10 @@ def p_SetExpressionWithValue(t):
             if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
               t[2] = ValueList([t[2]])
 
-            t[0] = SetExpressionBetweenBraces(SetExpressionWithValue(t[2]))
+            if not isinstance(t[2], SetExpression):
+              t[2] = SetExpressionWithValue(t[2])
+
+            t[0] = SetExpressionBetweenBraces(t[2])
 
           else:
             t[0] = SetExpressionBetweenBraces(None)
@@ -1038,45 +751,78 @@ def p_SetExpressionWithValue(t):
         elif _type == "LPAREN":
           t[0] = SetExpressionBetweenParenthesis(t[2])
 
-        else:
-          if not isinstance(t[2], SetExpression):
-            t[2] = SetExpressionWithValue(t[2])
-
-          t[0] = SetExpressionWithValue(t[2])
-
     elif _type == "EMPTYSET":
         t[0] = SetExpressionBetweenBraces(None)
 
     else:
         value = t[1]
-        if hasattr(t.slice[1], 'value2'):
-          value = t.slice[1].value2
-        
-        t[0] = SetExpressionWithValue(value)
+
+        if isinstance(value, ConditionalSetExpression):
+          t[0] = t[1]
+
+        else:
+          if hasattr(t.slice[1], 'value2'):
+            value = t.slice[1].value2
+          
+          t[0] = SetExpressionWithValue(value)
 
 def p_SetExpressionWithIndices(t):
     '''SetExpression : Identifier LBRACKET ValueList RBRACKET
-                     | Identifier LBRACKET NumericExpression RBRACKET
                      | Identifier LBRACKET Identifier RBRACKET
-                     | Identifier LBRACKET SymbolicExpression RBRACKET'''
+                     | Identifier LBRACKET NumericSymbolicExpression RBRACKET'''
+
     if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
       t[3] = ValueList([t[3]])
 
     t[0] = SetExpressionWithIndices(t[1], t[3])
 
 def p_IteratedSetExpression(t):
-    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE NumericExpression
+    '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE TupleListItem
                      | SETOF LLBRACE IndexingExpression RRBRACE Identifier
-                     | SETOF LLBRACE IndexingExpression RRBRACE SymbolicExpression
-                     | SETOF LLBRACE IndexingExpression RRBRACE TupleListItem'''
+                     | SETOF LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression'''
     
     t[0] = IteratedSetExpression(t[3], t[5])
 
+def p_ConditionalSetExpression(t):
+    '''ConditionalSetExpression : IF LogicalExpression THEN SetExpression ELSE SetExpression
+                                | IF LogicalExpression THEN SetExpression ELSE Identifier
+                                | IF LogicalExpression THEN Identifier ELSE SetExpression
+                                | IF LogicalExpression THEN SetExpression
+
+                                | IF Identifier THEN SetExpression ELSE SetExpression
+                                | IF Identifier THEN SetExpression ELSE Identifier
+                                | IF Identifier THEN Identifier ELSE SetExpression
+                                | IF Identifier THEN SetExpression
+
+                                | IF NumericSymbolicExpression THEN SetExpression ELSE SetExpression
+                                | IF NumericSymbolicExpression THEN SetExpression ELSE Identifier
+                                | IF NumericSymbolicExpression THEN Identifier ELSE SetExpression
+                                | IF NumericSymbolicExpression THEN SetExpression'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
+    
+    if isinstance(t[4], Identifier):
+      t[4] = SetExpressionWithValue(t[4])
+
+    if len(t) > 5 and isinstance(t[6], Identifier):
+      t[6] = SetExpressionWithValue(t[6])
+
+    t[0] = ConditionalSetExpression(t[2], t[4])
+
+    if len(t) > 5:
+      t[0].addElseExpression(t[6])
+
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
+                          
                           | IndexingExpression PIPE LogicalExpression
-                          | IndexingExpression PIPE NumericExpression
                           | IndexingExpression PIPE Identifier
+                          | IndexingExpression PIPE NumericSymbolicExpression
+                          
                           | IndexingExpression COMMA EntryIndexingExpression'''
 
     if len(t) > 3:
@@ -1096,20 +842,16 @@ def p_IndexingExpression(t):
 
 def p_EntryIndexingExpressionWithSet(t):
     '''EntryIndexingExpression : ValueList IN SetExpression
-                               | ValueList IN Range
-                               | NumericExpression IN SetExpression
-                               | NumericExpression IN Range
-                               | Identifier IN SetExpression
-                               | Identifier IN Range
-                               | SymbolicExpression IN SetExpression
-                               | SymbolicExpression IN Range
                                | ValueList IN Identifier
-                               | NumericExpression IN Identifier
-                               | Identifier IN Identifier
-                               | SymbolicExpression IN Identifier
+                               
                                | Tuple IN SetExpression
-                               | Tuple IN Range
-                               | Tuple IN Identifier'''
+                               | Tuple IN Identifier
+                               
+                               | Identifier IN SetExpression
+                               | Identifier IN Identifier
+                               
+                               | NumericSymbolicExpression IN SetExpression
+                               | NumericSymbolicExpression IN Identifier'''
 
     if not isinstance(t[3], SetExpression):
       t[3] = SetExpressionWithValue(t[3])
@@ -1120,19 +862,24 @@ def p_EntryIndexingExpressionWithSet(t):
     t[0] = EntryIndexingExpressionWithSet(t[1], t[3])
 
 def p_EntryIndexingExpressionEq(t):
-    '''EntryIndexingExpression : Identifier EQ NumericExpression
+    '''EntryIndexingExpression : Identifier EQ SetExpression
                                | Identifier EQ Identifier
-                               | Identifier EQ Range
-                               | Identifier NEQ NumericExpression
+                               | Identifier EQ NumericSymbolicExpression
+                               
                                | Identifier NEQ Identifier
-                               | Identifier LE NumericExpression
+                               | Identifier NEQ NumericSymbolicExpression
+                               
                                | Identifier LE Identifier
-                               | Identifier GE NumericExpression
+                               | Identifier LE NumericSymbolicExpression
+                               
                                | Identifier GE Identifier
-                               | Identifier LT NumericExpression
+                               | Identifier GE NumericSymbolicExpression
+                               
                                | Identifier LT Identifier
-                               | Identifier GT NumericExpression
-                               | Identifier GT Identifier'''
+                               | Identifier LT NumericSymbolicExpression
+                               
+                               | Identifier GT Identifier
+                               | Identifier GT NumericSymbolicExpression'''
 
     _type = t.slice[2].type
     if _type == "EQ":
@@ -1154,104 +901,64 @@ def p_EntryIndexingExpressionEq(t):
         t[0] = EntryIndexingExpressionCmp(EntryIndexingExpressionCmp.GT, t[1], t[3])
 
 
-def p_StringSymbolicExpression(t):
-    '''SymbolicExpression : LPAREN SymbolicExpression RPAREN
-                          | STRING'''
+def p_NumericSymbolicExpression(t):
+    '''NumericSymbolicExpression : NumericExpression
+                                 | SymbolicExpression
+                                 | LPAREN NumericSymbolicExpression RPAREN'''
 
     if len(t) > 2:
-        t[0] = SymbolicExpressionBetweenParenthesis(t[2])
+        t[0] = NumericExpressionBetweenParenthesis(t[2])
+
     else:
-        t[0] = StringSymbolicExpression(t[1])
+        t[0] = t[1]
+
+def p_StringSymbolicExpression(t):
+    '''SymbolicExpression : STRING'''
+    t[0] = StringSymbolicExpression(t[1])
 
 def p_SymbolicExpression_binop(t):
-    '''SymbolicExpression : NumericExpression AMPERSAND NumericExpression
-                          | NumericExpression AMPERSAND Identifier
-                          | Identifier AMPERSAND NumericExpression
-                          | Identifier AMPERSAND Identifier
-                          | NumericExpression AMPERSAND SymbolicExpression
-                          | Identifier AMPERSAND SymbolicExpression
-                          | SymbolicExpression AMPERSAND NumericExpression
-                          | SymbolicExpression AMPERSAND Identifier
-                          | SymbolicExpression AMPERSAND SymbolicExpression'''
+    '''SymbolicExpression : Identifier AMPERSAND Identifier
+                          | Identifier AMPERSAND NumericSymbolicExpression
+                          
+                          | NumericSymbolicExpression AMPERSAND Identifier
+                          | NumericSymbolicExpression AMPERSAND NumericSymbolicExpression'''
 
     if t.slice[2].type == "AMPERSAND":
         op = SymbolicExpressionWithOperation.CONCAT
 
     t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])
 
-def p_FunctionSymbolicExpression(t):
-    '''SymbolicExpression : SUBSTR LPAREN NumericExpression COMMA NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN NumericExpression COMMA NumericExpression COMMA Identifier RPAREN
-                          | SUBSTR LPAREN NumericExpression COMMA Identifier COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN NumericExpression COMMA Identifier COMMA Identifier RPAREN
-                          | SUBSTR LPAREN Identifier COMMA NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN Identifier COMMA NumericExpression COMMA Identifier RPAREN
-                          | SUBSTR LPAREN Identifier COMMA Identifier COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN Identifier COMMA Identifier COMMA Identifier RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression COMMA Identifier RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA Identifier COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA Identifier COMMA Identifier RPAREN
-                          | SUBSTR LPAREN NumericExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN NumericExpression COMMA Identifier RPAREN
-                          | SUBSTR LPAREN Identifier COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN Identifier COMMA Identifier RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA NumericExpression RPAREN
-                          | SUBSTR LPAREN SymbolicExpression COMMA Identifier RPAREN
-                          | TIME2STR LPAREN NumericExpression COMMA NumericExpression RPAREN
-                          | TIME2STR LPAREN NumericExpression COMMA Identifier RPAREN
-                          | TIME2STR LPAREN Identifier COMMA NumericExpression RPAREN
-                          | TIME2STR LPAREN Identifier COMMA Identifier RPAREN
-                          | TIME2STR LPAREN NumericExpression COMMA SymbolicExpression RPAREN
-                          | TIME2STR LPAREN Identifier COMMA SymbolicExpression RPAREN'''
-
-    _type = t.slice[1].type
-    if _type == "SUBSTR":
-        op = SymbolicExpressionWithFunction.SUBSTR
-    elif _type == "TIME2STR":
-        op = SymbolicExpressionWithFunction.TIME2STR
-
-    if len(t) > 7:
-        t[0] = SymbolicExpressionWithFunction(op, t[3], t[5], t[7])
-    else:
-        if _type == "SUBSTR":
-            t[0] = SymbolicExpressionWithFunction(op, t[3], t[5])
-        else:
-            t[0] = SymbolicExpressionWithFunction(op, t[5], t[3])
 
 def p_NumericExpression_binop(t):
-    '''NumericExpression : NumericExpression PLUS NumericExpression
-                         | NumericExpression PLUS Identifier
-                         | Identifier PLUS NumericExpression
-                         | Identifier PLUS Identifier
-                         | NumericExpression MINUS NumericExpression
-                         | NumericExpression MINUS Identifier
-                         | Identifier MINUS NumericExpression
+    '''NumericExpression : Identifier PLUS Identifier
+                         | Identifier PLUS NumericSymbolicExpression
                          | Identifier MINUS Identifier
-                         | NumericExpression TIMES NumericExpression
-                         | NumericExpression TIMES Identifier
-                         | Identifier TIMES NumericExpression
+                         | Identifier MINUS NumericSymbolicExpression
                          | Identifier TIMES Identifier
-                         | NumericExpression DIVIDE NumericExpression
-                         | NumericExpression DIVIDE Identifier
-                         | Identifier DIVIDE NumericExpression
+                         | Identifier TIMES NumericSymbolicExpression
                          | Identifier DIVIDE Identifier
-                         | NumericExpression MOD NumericExpression
-                         | NumericExpression MOD Identifier
-                         | Identifier MOD NumericExpression
+                         | Identifier DIVIDE NumericSymbolicExpression
                          | Identifier MOD Identifier
-                         | NumericExpression QUOTIENT NumericExpression
-                         | NumericExpression QUOTIENT Identifier
-                         | Identifier QUOTIENT NumericExpression
+                         | Identifier MOD NumericSymbolicExpression
                          | Identifier QUOTIENT Identifier
-                         | NumericExpression LESS NumericExpression
-                         | NumericExpression LESS Identifier
-                         | Identifier LESS NumericExpression
-                         | Identifier LESS Identifier
-                         | NumericExpression CARET LBRACE NumericExpression RBRACE
-                         | NumericExpression CARET LBRACE Identifier RBRACE
-                         | Identifier CARET LBRACE NumericExpression RBRACE
-                         | Identifier CARET LBRACE Identifier RBRACE'''
+                         | Identifier QUOTIENT NumericSymbolicExpression
+                         | Identifier CARET LBRACE Identifier RBRACE
+                         | Identifier CARET LBRACE NumericSymbolicExpression RBRACE
+                         
+                         | NumericSymbolicExpression PLUS Identifier
+                         | NumericSymbolicExpression PLUS NumericSymbolicExpression
+                         | NumericSymbolicExpression MINUS Identifier
+                         | NumericSymbolicExpression MINUS NumericSymbolicExpression
+                         | NumericSymbolicExpression TIMES Identifier
+                         | NumericSymbolicExpression TIMES NumericSymbolicExpression
+                         | NumericSymbolicExpression DIVIDE Identifier
+                         | NumericSymbolicExpression DIVIDE NumericSymbolicExpression
+                         | NumericSymbolicExpression MOD Identifier
+                         | NumericSymbolicExpression MOD NumericSymbolicExpression
+                         | NumericSymbolicExpression QUOTIENT Identifier
+                         | NumericSymbolicExpression QUOTIENT NumericSymbolicExpression
+                         | NumericSymbolicExpression CARET LBRACE Identifier RBRACE
+                         | NumericSymbolicExpression CARET LBRACE NumericSymbolicExpression RBRACE'''
 
     _type = t.slice[2].type
     if _type == "PLUS":
@@ -1275,9 +982,6 @@ def p_NumericExpression_binop(t):
     elif _type == "CARET":
         op = NumericExpressionWithArithmeticOperation.POW
 
-    elif _type == "LESS":
-        op = NumericExpressionWithArithmeticOperation.LESS
-
     if len(t) > 4 and isinstance(t[4], Identifier):
       t[4] = ValuedNumericExpression(t[4])
 
@@ -1293,30 +997,33 @@ def p_NumericExpression_binop(t):
       t[0] = NumericExpressionWithArithmeticOperation(op, t[1], t[3])
 
 def p_IteratedNumericExpression(t):
-    '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Identifier
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericExpression
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
-                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+    '''NumericExpression : SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE Identifier
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE Identifier
-                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Identifier
-                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
-                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE Identifier
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE Identifier
-                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Identifier
-                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
-                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE Identifier
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE Identifier
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE NumericExpression
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericExpression RBRACE Identifier
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericExpression
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE Identifier'''
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE Identifier
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE Identifier
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression'''
 
     _type = t.slice[1].type
     if _type == "SUM":
@@ -1346,12 +1053,14 @@ def p_IteratedNumericExpression(t):
         t[0] = IteratedNumericExpression(op, t[6], t[4])
 
 def p_NumericExpression(t):
-    '''NumericExpression : MINUS NumericExpression %prec UMINUS
+    '''NumericExpression : PLUS Identifier %prec UPLUS
+                         | PLUS NumericSymbolicExpression %prec UPLUS
+                         
                          | MINUS Identifier %prec UMINUS
-                         | PLUS NumericExpression %prec UPLUS
-                         | PLUS Identifier %prec UPLUS
-                         | LPAREN NumericExpression RPAREN
+                         | MINUS NumericSymbolicExpression %prec UMINUS
+                         
                          | LPAREN Identifier RPAREN
+                         
                          | ConditionalNumericExpression
                          | NUMBER
                          | INFINITY'''
@@ -1376,87 +1085,90 @@ def p_NumericExpression(t):
 
 def p_FractionalNumericExpression(t):
     '''NumericExpression : FRAC LBRACE Identifier RBRACE LBRACE Identifier RBRACE
-                         | FRAC LBRACE Identifier RBRACE LBRACE NumericExpression RBRACE
-                         | FRAC LBRACE NumericExpression RBRACE LBRACE Identifier RBRACE
-                         | FRAC LBRACE NumericExpression RBRACE LBRACE NumericExpression RBRACE'''
+                         | FRAC LBRACE Identifier RBRACE LBRACE NumericSymbolicExpression RBRACE
+                         | FRAC LBRACE NumericSymbolicExpression RBRACE LBRACE Identifier RBRACE
+                         | FRAC LBRACE NumericSymbolicExpression RBRACE LBRACE NumericSymbolicExpression RBRACE'''
+
     t[0] = FractionalNumericExpression(t[3], t[6])
 
 def p_FunctionNumericExpression(t):
-    '''NumericExpression : SQRT LBRACE NumericExpression RBRACE
-                         | SQRT LBRACE Identifier RBRACE
-                         | LFLOOR NumericExpression RFLOOR
+    '''NumericExpression : SQRT LBRACE Identifier RBRACE
+                         | SQRT LBRACE NumericSymbolicExpression RBRACE
+                         
                          | LFLOOR Identifier RFLOOR
-                         | LCEIL NumericExpression RCEIL
+                         | LFLOOR NumericSymbolicExpression RFLOOR
+                         
                          | LCEIL Identifier RCEIL
-                         | PIPE NumericExpression PIPE
+                         | LCEIL NumericSymbolicExpression RCEIL
+                         
                          | PIPE Identifier PIPE
+                         | PIPE NumericSymbolicExpression PIPE
+                         
                          | MAX LPAREN ValueList RPAREN
-                         | MAX LPAREN NumericExpression RPAREN
                          | MAX LPAREN Identifier RPAREN
-                         | MAX LPAREN SymbolicExpression RPAREN
+                         | MAX LPAREN NumericSymbolicExpression RPAREN
+                         
                          | MIN LPAREN ValueList RPAREN
-                         | MIN LPAREN NumericExpression RPAREN
                          | MIN LPAREN Identifier RPAREN
-                         | MIN LPAREN SymbolicExpression RPAREN
-                         | SIN LPAREN NumericExpression RPAREN
+                         | MIN LPAREN NumericSymbolicExpression RPAREN
+                         
                          | SIN LPAREN Identifier RPAREN
-                         | COS LPAREN NumericExpression RPAREN
+                         | SIN LPAREN NumericSymbolicExpression RPAREN
+                         
                          | COS LPAREN Identifier RPAREN
-                         | LOG LPAREN NumericExpression RPAREN
+                         | COS LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | TAN LPAREN Identifier RPAREN
+                         | TAN LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | ASIN LPAREN Identifier RPAREN
+                         | ASIN LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | ACOS LPAREN Identifier RPAREN
+                         | ACOS LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | ATAN LPAREN Identifier COMMA Identifier RPAREN
+                         | ATAN LPAREN Identifier COMMA NumericSymbolicExpression RPAREN
+                         | ATAN LPAREN NumericSymbolicExpression COMMA Identifier RPAREN
+                         | ATAN LPAREN NumericSymbolicExpression COMMA NumericSymbolicExpression RPAREN
+                         | ATAN LPAREN Identifier RPAREN
+                         | ATAN LPAREN NumericSymbolicExpression RPAREN
+
+                         | SINH LPAREN Identifier RPAREN
+                         | SINH LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | COSH LPAREN Identifier RPAREN
+                         | COSH LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | TANH LPAREN Identifier RPAREN
+                         | TANH LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | ASINH LPAREN Identifier RPAREN
+                         | ASINH LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | ACOSH LPAREN Identifier RPAREN
+                         | ACOSH LPAREN NumericSymbolicExpression RPAREN
+                         
+                         | ATANH LPAREN Identifier RPAREN
+                         | ATANH LPAREN NumericSymbolicExpression RPAREN
+                         
                          | LOG LPAREN Identifier RPAREN
-                         | LN LPAREN NumericExpression RPAREN
+                         | LOG LPAREN NumericSymbolicExpression RPAREN
+                         
                          | LN LPAREN Identifier RPAREN
-                         | EXP LPAREN NumericExpression RPAREN
+                         | LN LPAREN NumericSymbolicExpression RPAREN
+                         
                          | EXP LPAREN Identifier RPAREN
-                         | ARCTAN LPAREN NumericExpression RPAREN
-                         | ARCTAN LPAREN Identifier RPAREN
-                         | ARCTAN LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | ARCTAN LPAREN NumericExpression COMMA Identifier RPAREN
-                         | ARCTAN LPAREN Identifier COMMA NumericExpression RPAREN
-                         | ARCTAN LPAREN Identifier COMMA Identifier RPAREN
+                         | EXP LPAREN NumericSymbolicExpression RPAREN
+
                          | CARD LPAREN SetExpression RPAREN
-                         | CARD LPAREN Range RPAREN
                          | CARD LPAREN Identifier RPAREN
-                         | LENGTH LPAREN NumericExpression RPAREN
-                         | LENGTH LPAREN Identifier RPAREN
-                         | LENGTH LPAREN SymbolicExpression RPAREN
-                         | ROUND LPAREN NumericExpression RPAREN
-                         | ROUND LPAREN Identifier RPAREN
-                         | ROUND LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | ROUND LPAREN NumericExpression COMMA Identifier RPAREN
-                         | ROUND LPAREN Identifier COMMA NumericExpression RPAREN
-                         | ROUND LPAREN Identifier COMMA Identifier RPAREN
-                         | STR2TIME LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | STR2TIME LPAREN NumericExpression COMMA Identifier RPAREN
-                         | STR2TIME LPAREN Identifier COMMA NumericExpression RPAREN
-                         | STR2TIME LPAREN Identifier COMMA Identifier RPAREN
-                         | STR2TIME LPAREN NumericExpression COMMA SymbolicExpression RPAREN
-                         | STR2TIME LPAREN Identifier COMMA SymbolicExpression RPAREN
-                         | STR2TIME LPAREN SymbolicExpression COMMA NumericExpression RPAREN
-                         | STR2TIME LPAREN SymbolicExpression COMMA Identifier RPAREN
-                         | STR2TIME LPAREN SymbolicExpression COMMA SymbolicExpression RPAREN
-                         | TRUNC LPAREN NumericExpression RPAREN
-                         | TRUNC LPAREN Identifier RPAREN
-                         | TRUNC LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | TRUNC LPAREN NumericExpression COMMA Identifier RPAREN
-                         | TRUNC LPAREN Identifier COMMA NumericExpression RPAREN
-                         | TRUNC LPAREN Identifier COMMA Identifier RPAREN
-                         | UNIFORM LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | UNIFORM LPAREN NumericExpression COMMA Identifier RPAREN
-                         | UNIFORM LPAREN Identifier COMMA NumericExpression RPAREN
-                         | UNIFORM LPAREN Identifier COMMA Identifier RPAREN
-                         | NORMAL LPAREN NumericExpression COMMA NumericExpression RPAREN
-                         | NORMAL LPAREN NumericExpression COMMA Identifier RPAREN
-                         | NORMAL LPAREN Identifier COMMA NumericExpression RPAREN
-                         | NORMAL LPAREN Identifier COMMA Identifier RPAREN
-                         | GMTIME LPAREN RPAREN
-                         | IRAND224 LPAREN RPAREN
-                         | UNIFORM01 LPAREN RPAREN
-                         | NORMAL01 LPAREN RPAREN
-                         | ID LPAREN Identifier RPAREN
-                         | ID LPAREN SymbolicExpression RPAREN
-                         | ID LPAREN NumericExpression RPAREN
+                         
                          | ID LPAREN ValueList RPAREN
+                         | ID LPAREN SetExpression RPAREN
+                         | ID LPAREN Identifier RPAREN
+                         | ID LPAREN NumericSymbolicExpression RPAREN
+                         
                          | ID LPAREN RPAREN'''
 
     _type = t.slice[1].type
@@ -1468,15 +1180,6 @@ def p_FunctionNumericExpression(t):
 
         if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])
-
-    elif _type == "LENGTH":
-        op = NumericExpressionWithFunction.LENGTH
-
-    elif _type == "ROUND":
-        op = NumericExpressionWithFunction.ROUND
-
-    elif _type == "TRUNC":
-        op = NumericExpressionWithFunction.TRUNC
 
     elif _type == "SQRT":
         op = NumericExpressionWithFunction.SQRT
@@ -1502,6 +1205,36 @@ def p_FunctionNumericExpression(t):
     elif _type == "COS":
         op = NumericExpressionWithFunction.COS
 
+    elif _type == "TAN":
+        op = NumericExpressionWithFunction.TAN
+
+    elif _type == "ASIN":
+        op = NumericExpressionWithFunction.ASIN
+
+    elif _type == "ACOS":
+        op = NumericExpressionWithFunction.ACOS
+
+    elif _type == "ATAN":
+        op = NumericExpressionWithFunction.ATAN
+
+    elif _type == "SINH":
+        op = NumericExpressionWithFunction.SINH
+
+    elif _type == "COSH":
+        op = NumericExpressionWithFunction.COSH
+
+    elif _type == "TANH":
+        op = NumericExpressionWithFunction.TANH
+
+    elif _type == "ASINH":
+        op = NumericExpressionWithFunction.ASINH
+
+    elif _type == "ACOSH":
+        op = NumericExpressionWithFunction.ACOSH
+
+    elif _type == "ATANH":
+        op = NumericExpressionWithFunction.ATANH
+
     elif _type == "LOG":
         op = NumericExpressionWithFunction.LOG10
 
@@ -1510,30 +1243,6 @@ def p_FunctionNumericExpression(t):
 
     elif _type == "EXP":
         op = NumericExpressionWithFunction.EXP
-
-    elif _type == "ARCTAN":
-        op = NumericExpressionWithFunction.ATAN
-
-    elif _type == "UNIFORM01":
-        op = NumericExpressionWithFunction.UNIFORM01
-
-    elif _type == "UNIFORM":
-        op = NumericExpressionWithFunction.UNIFORM
-
-    elif _type == "NORMAL01":
-        op = NumericExpressionWithFunction.NORMAL01
-
-    elif _type == "NORMAL":
-        op = NumericExpressionWithFunction.NORMAL
-
-    elif _type == "GMTIME":
-        op = NumericExpressionWithFunction.GMTIME
-
-    elif _type == "IRAND224":
-        op = NumericExpressionWithFunction.IRAND224
-
-    elif _type == "STR2TIME":
-        op = NumericExpressionWithFunction.STR2TIME
 
     if len(t) > 5:
         t[0] = NumericExpressionWithFunction(op, t[3], t[5])
@@ -1548,43 +1257,58 @@ def p_FunctionNumericExpression(t):
           t[0] = NumericExpressionWithFunction(op, t[2])
 
 def p_ConditionalNumericExpression(t):
-    '''ConditionalNumericExpression : LPAREN Identifier RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
-                                    | LPAREN Identifier RPAREN QUESTION_MARK NumericExpression COLON Identifier
-                                    | LPAREN Identifier RPAREN QUESTION_MARK Identifier COLON NumericExpression
-                                    | LPAREN Identifier RPAREN QUESTION_MARK Identifier COLON Identifier
-                                    | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
-                                    | LPAREN NumericExpression RPAREN QUESTION_MARK NumericExpression COLON Identifier
-                                    | LPAREN NumericExpression RPAREN QUESTION_MARK Identifier COLON NumericExpression
-                                    | LPAREN NumericExpression RPAREN QUESTION_MARK Identifier COLON Identifier
-                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON NumericExpression
-                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK NumericExpression COLON Identifier
-                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK Identifier COLON NumericExpression
-                                    | LPAREN LogicalExpression RPAREN QUESTION_MARK Identifier COLON Identifier'''
-    if isinstance(t[2], NumericExpression) or isinstance(t[2], Identifier):
-      t[2] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[2])])
+    '''ConditionalNumericExpression : IF LogicalExpression THEN Identifier ELSE Identifier
+                                    | IF LogicalExpression THEN Identifier ELSE NumericSymbolicExpression
+                                    | IF LogicalExpression THEN NumericSymbolicExpression ELSE Identifier
+                                    | IF LogicalExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression
+                                    | IF LogicalExpression THEN Identifier
+                                    | IF LogicalExpression THEN NumericSymbolicExpression
+
+                                    | IF Identifier THEN Identifier ELSE Identifier
+                                    | IF Identifier THEN Identifier ELSE NumericSymbolicExpression
+                                    | IF Identifier THEN NumericSymbolicExpression ELSE Identifier
+                                    | IF Identifier THEN NumericSymbolicExpression ELSE NumericSymbolicExpression
+                                    | IF Identifier THEN Identifier
+                                    | IF Identifier THEN NumericSymbolicExpression
+
+                                    | IF NumericSymbolicExpression THEN Identifier ELSE Identifier
+                                    | IF NumericSymbolicExpression THEN Identifier ELSE NumericSymbolicExpression
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ELSE Identifier
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression
+                                    | IF NumericSymbolicExpression THEN Identifier
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
     
-    if isinstance(t[5], Identifier):
-      t[5] = ValuedNumericExpression(t[5])
+    if isinstance(t[4], Identifier):
+      t[4] = ValuedNumericExpression(t[4])
 
-    if isinstance(t[7], Identifier):
-      t[7] = ValuedNumericExpression(t[7])
+    if len(t) > 5 and isinstance(t[6], Identifier):
+      t[6] = ValuedNumericExpression(t[6])
 
-    t[0] = ConditionalNumericExpression(t[2], t[5])
-    t[0].addElseExpression(t[7])
+    t[0] = ConditionalNumericExpression(t[2], t[4])
+
+    if len(t) > 5:
+      t[0].addElseExpression(t[6])
 
 def p_Range(t):
-    '''Range : NumericExpression DOTS NumericExpression BY NumericExpression
-             | NumericExpression DOTS NumericExpression BY Identifier
-             | NumericExpression DOTS Identifier BY NumericExpression
-             | NumericExpression DOTS Identifier BY Identifier
-             | Identifier DOTS NumericExpression BY NumericExpression
-             | Identifier DOTS NumericExpression BY Identifier
-             | Identifier DOTS Identifier BY NumericExpression
-             | Identifier DOTS Identifier BY Identifier
-             | NumericExpression DOTS NumericExpression
-             | NumericExpression DOTS Identifier
-             | Identifier DOTS NumericExpression
-             | Identifier DOTS Identifier'''
+    '''Range : Identifier DOTS Identifier BY Identifier
+             | Identifier DOTS Identifier BY NumericSymbolicExpression
+             | Identifier DOTS NumericSymbolicExpression BY Identifier
+             | Identifier DOTS NumericSymbolicExpression BY NumericSymbolicExpression
+             | Identifier DOTS Identifier
+             | Identifier DOTS NumericSymbolicExpression
+             
+             | NumericSymbolicExpression DOTS Identifier BY Identifier
+             | NumericSymbolicExpression DOTS Identifier BY NumericSymbolicExpression
+             | NumericSymbolicExpression DOTS NumericSymbolicExpression BY Identifier
+             | NumericSymbolicExpression DOTS NumericSymbolicExpression BY NumericSymbolicExpression
+             | NumericSymbolicExpression DOTS Identifier
+             | NumericSymbolicExpression DOTS NumericSymbolicExpression'''
 
     if len(t) > 4:
       t[0] = Range(t[1], t[3], t[5])
@@ -1593,13 +1317,13 @@ def p_Range(t):
 
 def p_Identifier(t):
     '''Identifier : ID UNDERLINE LBRACE ValueList RBRACE
-                  | ID UNDERLINE LBRACE NumericExpression RBRACE
                   | ID UNDERLINE LBRACE Identifier RBRACE
-                  | ID UNDERLINE LBRACE SymbolicExpression RBRACE
+                  | ID UNDERLINE LBRACE NumericSymbolicExpression RBRACE
+                  
                   | ID LBRACKET ValueList RBRACKET
-                  | ID LBRACKET NumericExpression RBRACKET
                   | ID LBRACKET Identifier RBRACKET
-                  | ID LBRACKET SymbolicExpression RBRACKET
+                  | ID LBRACKET NumericSymbolicExpression RBRACKET
+                  
                   | ID'''
 
     if len(t) > 5:
@@ -1616,18 +1340,21 @@ def p_Identifier(t):
         t[0] = Identifier(ID(t[1]))
 
 def p_ValueList(t):
-    '''ValueList : ValueList COMMA NumericExpression
+    '''ValueList : ValueList COMMA SetExpression
                  | ValueList COMMA Identifier
-                 | ValueList COMMA SymbolicExpression
-                 | NumericExpression COMMA NumericExpression
-                 | NumericExpression COMMA Identifier
-                 | Identifier COMMA NumericExpression
+                 | ValueList COMMA NumericSymbolicExpression
+
+                 | SetExpression COMMA SetExpression
+                 | SetExpression COMMA Identifier
+                 | SetExpression COMMA NumericSymbolicExpression
+                 
+                 | Identifier COMMA SetExpression
                  | Identifier COMMA Identifier
-                 | NumericExpression COMMA SymbolicExpression
-                 | Identifier COMMA SymbolicExpression
-                 | SymbolicExpression COMMA NumericExpression
-                 | SymbolicExpression COMMA Identifier
-                 | SymbolicExpression COMMA SymbolicExpression'''
+                 | Identifier COMMA NumericSymbolicExpression
+                 
+                 | NumericSymbolicExpression COMMA SetExpression
+                 | NumericSymbolicExpression COMMA Identifier
+                 | NumericSymbolicExpression COMMA NumericSymbolicExpression'''
 
     if not isinstance(t[1], ValueList):
         t[0] = ValueList([t[1],t[3]])
