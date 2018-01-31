@@ -128,7 +128,10 @@ tokens = [
    'INFINITY',
    'IF',
    'THEN',
-   'ELSE'
+   'ELSE',
+   'IMPLIES',
+   'ISIMPLIEDBY',
+   'IFANDONLYIF'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -168,6 +171,18 @@ def t_THEN(t):
 
 def t_ELSE(t):
    r'\\text\{\s*else\s*\}|\s*else(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_IMPLIES(t):
+   r'\\implies|\\Rightarrow|\\Longrightarrow'
+   return t
+
+def t_ISIMPLIEDBY(t):
+   r'\\Leftarrow|\\Longleftarrow'
+   return t
+
+def t_IFANDONLYIF(t):
+   r'\\iff|\\Leftrightarrow'
    return t
 
 def t_ASSIGN(t):

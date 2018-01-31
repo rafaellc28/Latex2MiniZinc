@@ -41,6 +41,7 @@ class CodeSetup:
         self.stmtIndex = 0
         self.level = 0
         self.currentTable = None
+        self.indexingExpression = None
 
     def _setIsParam(self, identifier):
         identifier.setIsParam(True)
@@ -70,16 +71,17 @@ class CodeSetup:
         return var.getSymbol()
 
     def _addTypeAux(self, identifier, _type):
-        name = identifier.getSymbolName(self.codeGenerator)
 
         if not self._checkIsModifierSet(_type):
             self._setIsVar(identifier)
 
-            # if the parameter was included in the current statement, remove because it is not a parameter but an index
-            _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
-            if _genParam != None and len(_genParam) > 0:
-                if not self.isParamForSure(identifier):
-                    self.codeGenerator.genParameters.remove(name)
+            if identifier.checkIfIsDummyIndex:
+                # if the parameter was included in the current statement, remove because it is not a parameter but an index
+                name = identifier.getSymbolName(self.codeGenerator)
+                _genParam = self.codeGenerator.genParameters.getByNameAndStmtInclusion(name, self.stmtIndex)
+                if _genParam != None and len(_genParam) > 0:
+                    if not self.isParamForSure(identifier):
+                        self.codeGenerator.genParameters.remove(name)
     
     def _addType(self, identifier, _type):
         if isinstance(identifier, ValueList):
@@ -116,7 +118,7 @@ class CodeSetup:
 
         return setExpression
 
-    # Get the MathProg code for a given objective
+    # Get the MiniZinc code for a given objective
     def _setupObjective(self, objective):
         self.level = 0
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), self.level)
@@ -144,10 +146,10 @@ class CodeSetup:
         self.currentTable = None
 
 
-    # Get the MathProg code for a given constraint
+    # Get the MiniZinc code for a given constraint
     def _setupEntry(self, entry): return entry.setupEnvironment(self)
 
-    # Get the MathProg code for a given entry
+    # Get the MiniZinc code for a given entry
     def _setupEntryByKey(self, entry):
         for key in entry:
             return entry[key].setupEnvironment(self)
@@ -193,7 +195,7 @@ class CodeSetup:
             self._setDimension(setExpression.setExpression2, dimen)
 
     def _addItemBelongsTo(self, var, name):
-        if len(var.sub_indices) == 0:
+        if var.checkIfIsDummyIndex and len(var.sub_indices) == 0:
             var.setIsInSet(True)
             self.codeGenerator.genBelongsToList.add(GenBelongsTo(name, self.stmtIndex))
 
@@ -303,14 +305,14 @@ class CodeSetup:
     # Linear Equations
     def setupEnvironment_LinearEquations(self, node):
         """
-        Generate the MathProg code for the Set, Parameter and Identifier statements
+        Generate the MiniZinc code for the Set, Parameter and Identifier statements
         """
         node.constraints.setupEnvironment(self)
 
     # Linear Program
     def setupEnvironment_LinearProgram(self, node):
         """
-        Generate the MathProg code for the Set, Parameter and Identifier statements
+        Generate the MiniZinc code for the Set, Parameter and Identifier statements
         """
         
         node.objectives.setupEnvironment(self)
@@ -320,14 +322,14 @@ class CodeSetup:
     # Objectives
     def setupEnvironment_Objectives(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in these objectives
+        Generate the MiniZinc code for the identifiers and sets used in these objectives
         """
         map(self._setupObjective, node.objectives)
 
     # Objective
     def setupEnvironment_Objective(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this objective function
+        Generate the MiniZinc code for the identifiers and sets used in this objective function
         """
         node.linearExpression.setupEnvironment(self)
 
@@ -337,45 +339,82 @@ class CodeSetup:
     # Constraints
     def setupEnvironment_Constraints(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in these constraints
+        Generate the MiniZinc code for the identifiers and sets used in these constraints
         """
         map(self._setupConstraint, node.constraints)
 
     # Constraint
     def setupEnvironment_Constraint(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets in this constraint
+        Generate the MiniZinc code for declaration of identifiers and sets in this constraint
         """
+
+        self.indexingExpression = node.indexingExpression
+
         node.constraintExpression.setupEnvironment(self)
+
+        self.indexingExpression = None
 
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
 
     def setupEnvironment_ConstraintExpression2(self, node):
         """
-        Generate the MathProg code for the identifiers and sets in this constraint
+        Generate the MiniZinc code for the identifiers and sets in this constraint
         """
         node.linearExpression1.setupEnvironment(self)
         node.linearExpression2.setupEnvironment(self)
 
     def setupEnvironment_ConstraintExpression3(self, node):
         """
-        Generate the MathProg code for the identifiers and sets in this constraint
+        Generate the MiniZinc code for the identifiers and sets in this constraint
         """
         node.numericExpression1.setupEnvironment(self)
         node.linearExpression.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
+    def setupEnvironment_ConditionalConstraintExpression(self, node):
+        """
+        Generate the AMPL code for the identifiers and sets used in this constraint expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+        node.constraintExpression1.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+        if node.constraintExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+            node.constraintExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
+
+
     # Linear Expression
     def setupEnvironment_ValuedLinearExpression(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
+        Generate the MiniZinc code for the declaration of identifiers and sets in this linear expression
         """
         node.value.setupEnvironment(self)
 
     def setupEnvironment_LinearExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
+        Generate the MiniZinc code for the declaration of identifiers and sets in this linear expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -391,20 +430,20 @@ class CodeSetup:
 
     def setupEnvironment_LinearExpressionWithArithmeticOperation(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
+        Generate the MiniZinc code for the declaration of identifiers and sets in this linear expression
         """
         node.expression1.setupEnvironment(self)
         node.expression2.setupEnvironment(self)
 
     def setupEnvironment_MinusLinearExpression(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
+        Generate the MiniZinc code for the declaration of identifiers and sets in this linear expression
         """
         node.linearExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedLinearExpression(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets in this linear expression
+        Generate the MiniZinc code for the declaration of identifiers and sets in this linear expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -430,21 +469,22 @@ class CodeSetup:
 
     def setupEnvironment_ConditionalLinearExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this linear expression
+        Generate the MiniZinc code for the identifiers and sets used in this linear expression
         """
         node.logicalExpression.setupEnvironment(self)
 
-        previousLevel = self.level
-        previousTable = self.currentTable
+        if node.linearExpression1 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
 
-        self.level += 1
-        self.currentTable.setIsLeaf(False)
-        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
-        node.linearExpression1.setupEnvironment(self)
+            node.linearExpression1.setupEnvironment(self)
 
-        self.level = previousLevel
-        self.currentTable = previousTable
+            self.level = previousLevel
+            self.currentTable = previousTable
 
         if node.linearExpression2 != None:
             previousLevel = self.level
@@ -462,7 +502,7 @@ class CodeSetup:
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         if node.numericExpression1 != None:
             node.numericExpression1.setupEnvironment(self)
@@ -479,13 +519,13 @@ class CodeSetup:
 
     def setupEnvironment_ValuedNumericExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         node.value.setupEnvironment(self)
 
     def setupEnvironment_NumericExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -502,20 +542,20 @@ class CodeSetup:
 
     def setupEnvironment_NumericExpressionWithArithmeticOperation(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         node.numericExpression1.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
     def setupEnvironment_MinusNumericExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedNumericExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -541,7 +581,7 @@ class CodeSetup:
 
     def setupEnvironment_ConditionalNumericExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         node.logicalExpression.setupEnvironment(self)
 
@@ -573,24 +613,15 @@ class CodeSetup:
 
 
     # Symbolic Expression
-    def setupEnvironment_SymbolicExpressionWithFunction(self, node):
-        """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
-        """
-        node.symbolicExpression.setupEnvironment(self)
-        node.numericExpression1.setupEnvironment(self)
-        if node.numericExpression2 != None:
-            node.numericExpression2.setupEnvironment(self)
-
     def setupEnvironment_StringSymbolicExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Generate the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         node.value.setupEnvironment(self)
 
     def setupEnvironment_SymbolicExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Generate the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -607,14 +638,14 @@ class CodeSetup:
 
     def setupEnvironment_SymbolicExpressionWithOperation(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Generate the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         node.symbolicExpression1.setupEnvironment(self)
         node.symbolicExpression2.setupEnvironment(self)
 
     def setupEnvironment_ConditionalSymbolicExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Generate the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         node.logicalExpression.setupEnvironment(self)
 
@@ -646,8 +677,9 @@ class CodeSetup:
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
         """
-        Generate the MathProg code for entries in this indexing expression
+        Generate the MiniZinc code for entries in this indexing expression
         """
+
         if node.hasSup:
             if len(node.entriesIndexingExpression) != 1 or not isinstance(node.entriesIndexingExpression[0], EntryIndexingExpressionEq):
                 raise CodeGenerationException(self.stmtIndex+1, ", ".join(map(lambda el: el.getSymbolName(self.codeGenerator), node.entriesIndexingExpression)), 'Iterated expression (\sum, \prod, \max, \min, \cup or \cap) with a upper limit expression must have a single entry of the form "identifier = identifier2 | numeric expression" as the lower limit expression. Ex.: \sum_{i = 1}^{n}x_{i}')
@@ -656,10 +688,13 @@ class CodeSetup:
                 node.entriesIndexingExpression[0].setHasSup(True)
                 node.entriesIndexingExpression[0].setSupExpression(node.supExpression)
 
+        node.enableCheckDummyIndices()
         map(self._setupEntry, node.entriesIndexingExpression)
+        node.disableCheckDummyIndices()
 
         if node.logicalExpression:
             node.logicalExpression.setupEnvironment(self)
+
 
     def setupEnvironment_EntryExpressionWithSet(self, node, identifier):
 
@@ -669,6 +704,7 @@ class CodeSetup:
             for var1 in identifier.getValues():
                 var2 = self._getIdentifier(var1)
                 var.append(var2)
+
         else:
             var = self._getIdentifier(identifier)
 
@@ -676,11 +712,19 @@ class CodeSetup:
         setExpression = self._getSetExpression(node.setExpression)
 
         if isinstance(setExpressionObj, BinarySet):
+
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isBinary = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isBinary = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -688,8 +732,15 @@ class CodeSetup:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isInteger = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isInteger = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -698,9 +749,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     var[i].isReal = True
                     var[i].isDeclaredAsVar = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isReal = True
                 var.isDeclaredAsVar = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -709,9 +767,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     var[i].isSymbolic = True
                     self._setIsParam(var[i])
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsParam(var)
                 var.isSymbolic = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -720,9 +785,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     var[i].isLogical = True
                     self._setIsParam(var[i])
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 var.isLogical = True
                 self._setIsParam(var)
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -731,9 +803,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsParam(var[i])
                     var[i].isDeclaredAsParam = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsParam(var)
                 var.isDeclaredAsParam = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -742,9 +821,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsVar(var[i])
                     var[i].isDeclaredAsVar = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsVar(var)
                 var.isDeclaredAsVar = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -753,9 +839,16 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsSet(var[i])
                     var[i].isDeclaredAsSet = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
             else:
                 self._setIsSet(var)
                 var.isDeclaredAsSet = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
 
             self._addType(identifier, setExpressionObj)
 
@@ -768,7 +861,7 @@ class CodeSetup:
     # Entry Indexing Expression
     def setupEnvironment_EntryIndexingExpressionWithSet(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for indexing expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for indexing expression
         """
 
         if isinstance(node.identifier, str):
@@ -816,13 +909,13 @@ class CodeSetup:
 
     def setupEnvironment_EntryIndexingExpressionCmp(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
+        Generate the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         node.numericExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryIndexingExpressionEq(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
+        Generate the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         self._addBelongsTo(node.identifier, node.value, DeclarationAttribute.IN, node.supExpression if node.hasSup else None)
 
@@ -831,33 +924,33 @@ class CodeSetup:
 
     def setupEnvironment_LogicalExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         map(self._setupEntryByKey, node.entriesLogicalExpression)
 
     # Entry Logical Expression
     def setupEnvironment_EntryLogicalExpressionNot(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.logicalExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionNumericOrSymbolic(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.numericOrSymbolicExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionRelational(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.numericExpression1.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionWithSet(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
 
         if isinstance(node.identifier, str):
@@ -903,14 +996,14 @@ class CodeSetup:
 
     def setupEnvironment_EntryLogicalExpressionWithSetOperation(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionIterated(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -928,7 +1021,7 @@ class CodeSetup:
 
     def setupEnvironment_EntryLogicalExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this logical expression
+        Generate the MiniZinc code for the identifiers and sets used in this logical expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -945,7 +1038,7 @@ class CodeSetup:
     # Set Expression
     def setupEnvironment_SetExpressionWithValue(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this set expression
+        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         if not isinstance(node.value, str):
             if isinstance(node.value, ValueList):
@@ -965,7 +1058,7 @@ class CodeSetup:
 
     def setupEnvironment_SetExpressionWithIndices(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this set expression
+        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         if not isinstance(node.identifier, str):
             if isinstance(node.identifier, Identifier) and not self.isParamForSure(node.identifier):
@@ -985,14 +1078,14 @@ class CodeSetup:
 
     def setupEnvironment_SetExpressionWithOperation(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this set expression
+        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)
 
     def setupEnvironment_SetExpressionBetweenParenthesis(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this set expression
+        Generate the MiniZinc code for the identifiers and sets used in this set expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -1009,14 +1102,14 @@ class CodeSetup:
 
     def setupEnvironment_SetExpressionBetweenBraces(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this set expression
+        Generate the MiniZinc code for the identifiers and sets used in this set expression
         """
         if node.setExpression != None:
             node.setExpression.setupEnvironment(self)
 
     def setupEnvironment_IteratedSetExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this set expression
+        Generate the MiniZinc code for the identifiers and sets used in this set expression
         """
         previousLevel = self.level
         previousTable = self.currentTable
@@ -1034,7 +1127,7 @@ class CodeSetup:
 
     def setupEnvironment_ConditionalSetExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets used in this set expression
+        Generate the MiniZinc code for the identifiers and sets used in this set expression
         """
         node.logicalExpression.setupEnvironment(self)
 
@@ -1066,7 +1159,7 @@ class CodeSetup:
     # Range
     def setupEnvironment_Range(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers used in this range expression
+        Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         if not isinstance(node.rangeInit, str):
             ident = self._getIdentifier(node.rangeInit)
@@ -1098,42 +1191,42 @@ class CodeSetup:
     # Value List
     def setupEnvironment_ValueList(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers used in this range expression
+        Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
 
     # Identifier List
     def setupEnvironment_IdentifierList(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers used in this range expression
+        Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.identifiers)
 
     # Tuple
     def setupEnvironment_Tuple(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers used in this range expression
+        Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
 
     # Tuple List
     def setupEnvironment_TupleList(self, node):
         """
-        Generate the MathProg code for the declaration of identifiers used in this range expression
+        Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
 
     # Value
     def setupEnvironment_Value(self, node):
         """
-        Generate the MathProg code for the declaration of the identifier of this value
+        Generate the MiniZinc code for the declaration of the identifier of this value
         """
         node.value.setupEnvironment(self)
 
     # Identifier
     def setupEnvironment_Identifier(self, node):
         """
-        Generate the MathProg code for the declaration of this identifier
+        Generate the MiniZinc code for the declaration of this identifier
         """
 
         if node.getIndice() > -1:
@@ -1147,6 +1240,7 @@ class CodeSetup:
         _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
         if _symbolTableEntry == None:
             justInserted = True
+
             _symbolTableEntry = SymbolTableEntry(self.identifierKey, node, GenProperties(self.identifierKey), None, self.level, 
                                                  [map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices)] if node.sub_indices != None else [])
             self.currentTable.insert(self.identifierKey, _symbolTableEntry)
@@ -1310,13 +1404,35 @@ class CodeSetup:
     def setupEnvironment_Infinity(self, node):
         pass
 
+    def _addGenDeclaration(self, name, sub_indices, attributeList, indexingExpression):
+        genDeclaration = self.codeGenerator.genDeclarations.get(name)
+
+        if genDeclaration == None:
+            _sub_indices = {}
+            if sub_indices:
+                _sub_indices = {self.stmtIndex: sub_indices}
+
+            genDeclaration = GenDeclaration(name, list(attributeList), None, _sub_indices, self.stmtIndex)
+            self.codeGenerator.genDeclarations.add(genDeclaration)
+
+        else:
+            genDeclaration.addAttributes(attributeList)
+
+            if sub_indices:
+                genDeclaration.addSubIndices({self.stmtIndex: sub_indices})
+            
+        if indexingExpression:
+            genDeclaration.addIndexingExpression({self.stmtIndex: indexingExpression})
+
+        return genDeclaration
+
     # Declarations
     def setupEnvironment_Declarations(self, node):
         map(self._setupDeclaration, node.declarations)
 
     def setupEnvironment_Declaration(self, node):
         """
-        Generate the MathProg code for declaration of identifiers and sets in this declaeation
+        Generate the MiniZinc code for declaration of identifiers and sets in this declaeation
         """
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), 0, True)
 
@@ -1325,25 +1441,8 @@ class CodeSetup:
             
             if isinstance(identifier, Identifier):
                 name = identifier.getSymbolName(self.codeGenerator)
-                genDeclaration = self.codeGenerator.genDeclarations.get(name)
+                genDeclaration = self._addGenDeclaration(name, identifier.sub_indices, node.declarationExpression.attributeList, node.indexingExpression)
                 
-                if genDeclaration == None:
-                    _sub_indices = {}
-                    if identifier.sub_indices:
-                        _sub_indices = {self.stmtIndex: identifier.sub_indices}
-
-                    genDeclaration = GenDeclaration(name, list(node.declarationExpression.attributeList), None, _sub_indices, self.stmtIndex)
-                    self.codeGenerator.genDeclarations.add(genDeclaration)
-
-                else:
-                    if identifier.sub_indices:
-                        genDeclaration.addSubIndices({self.stmtIndex: identifier.sub_indices})
-
-                    genDeclaration.addAttributes(node.declarationExpression.attributeList)
-
-                if node.indexingExpression:
-                    genDeclaration.addIndexingExpression({self.stmtIndex: node.indexingExpression})
-
                 _symbolTableEntry = self.currentTable.lookup(name)
                 if _symbolTableEntry == None:
                     _symbolTableEntry = SymbolTableEntry(name, identifier, GenProperties(name, [], None, None, None, None, genDeclaration), 
@@ -1360,7 +1459,7 @@ class CodeSetup:
 
     def setupEnvironment_DeclarationExpression(self, node):
         """
-        Generate the MathProg code for the identifiers and sets in this declaration
+        Generate the MiniZinc code for the identifiers and sets in this declaration
         """
 
         for identifier in node.identifiers:
@@ -1385,7 +1484,7 @@ class CodeSetup:
 
     def setupEnvironment_DeclarationAttribute(self, node):
         """
-        Generate the MathProg code for the identifiers and sets in this declaration
+        Generate the MiniZinc code for the identifiers and sets in this declaration
         """
         node.attribute.setupEnvironment(self)
 

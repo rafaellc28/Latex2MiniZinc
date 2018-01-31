@@ -17,7 +17,7 @@ class LogicalExpression(Expression):
         """
         to string
         """
-        res = "\nLogicalE:\n"
+        res = "\nLogicalExpression:\n"
         resAux = ""
         first = True
 
@@ -61,15 +61,22 @@ class LogicalExpression(Expression):
         entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
         return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), entries))))
 
+    def enableCheckDummyIndices(self):
+        entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
+        map(lambda el: el.enableCheckDummyIndices(), entries)
+
+    def disableCheckDummyIndices(self):
+        entries = [v for e in self.entriesLogicalExpression for k,v in e.iteritems()]
+        map(lambda el: el.disableCheckDummyIndices(), entries)
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this logical expression
+        Generate the MiniZinc code for this logical expression
         """
         return codeGenerator.generateCode(self)

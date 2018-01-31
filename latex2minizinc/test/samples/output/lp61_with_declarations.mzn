@@ -4,7 +4,7 @@ set of int: D = [i| i in U where sum(j in N)(a[j] * x[i,j]) <= b];
 
 set of int: U = 0..floor(pow(2,n) - 1);
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of float: x = array2d(INDEX_SET_x_1, INDEX_SET_x_2, [(i div pow(2,j - 1)) mod 2 | i in U, j in N]);
+array[INDEX_SET_x_1, INDEX_SET_x_2] of float: x = array2d(INDEX_SET_x_1, INDEX_SET_x_2, [floor((i div pow(2,j - 1))) mod 2 | i in U, j in N]);
 
 int: n;
 

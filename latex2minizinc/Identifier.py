@@ -36,6 +36,7 @@ class Identifier(Expression):
         self.isDeclaredAsParam = None
         self.isDeclaredAsSet = None
         self.isDeclaredAsVar = None
+        self.checkIfIsDummyIndex = False
 
     def __str__(self):
         """
@@ -69,6 +70,7 @@ class Identifier(Expression):
         """
         Get the iterator of the class
         """
+
         return [self]
         
     def getSymbol(self):
@@ -114,20 +116,26 @@ class Identifier(Expression):
         dep = list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.sub_indices))))
         return list(set(self.identifier.getDependencies(codeGenerator) + dep))
 
+    def enableCheckDummyIndices(self):
+        self.checkIfIsDummyIndex = True
+
+    def disableCheckDummyIndices(self):
+        self.checkIfIsDummyIndex = False
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of this Identifier
+        Generate the MiniZinc code for the declaration of this Identifier
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Identifier
+        Generate the MiniZinc code for this Identifier
         """
         return codeGenerator.generateCode(self)
     
     def generateCodeWithoutIndices(self, codeGenerator):
         """
-        Generate the MathProg code for this Identifier without the Indexing, if there are 
+        Generate the MiniZinc code for this Identifier without the Indexing, if there are 
         """
         return self.identifier.generateCode(codeGenerator)

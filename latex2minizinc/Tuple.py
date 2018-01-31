@@ -48,6 +48,12 @@ class Tuple(Expression):
     def getDependencies(self, codeGenerator):
         return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.values))))
 
+    def enableCheckDummyIndices(self):
+        map(lambda el: el.enableCheckDummyIndices(), self.values)
+        
+    def disableCheckDummyIndices(self):
+        map(lambda el: el.disableCheckDummyIndices(), self.values)
+
     def getValues(self):
         """
         get the values in this Tuple
@@ -65,12 +71,12 @@ class Tuple(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers used in this range expression
+        Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Tuple
+        Generate the MiniZinc code for this Tuple
         """
         return codeGenerator.generateCode(self)

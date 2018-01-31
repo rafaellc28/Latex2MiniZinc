@@ -1,4 +1,5 @@
 from Expression import *
+from SetExpression import *
 from ValueList import *
 
 class EntryIndexingExpression(Expression):
@@ -48,16 +49,24 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
     
     def getDependencies(self, codeGenerator):
         return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
-
+        
+    def enableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionWithSet.IN:
+            self.identifier.enableCheckDummyIndices()
+        
+    def disableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionWithSet.IN:
+            self.identifier.disableCheckDummyIndices()
+        
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for indexing expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for indexing expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry with Set of Indexing Expression
+        Generate the MiniZinc code for Entry with Set of Indexing Expression
         """
         return codeGenerator.generateCode(self)
 
@@ -98,13 +107,13 @@ class EntryIndexingExpressionCmp(EntryIndexingExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
+        Generate the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry with Comparison of Indexing Expression
+        Generate the MiniZinc code for Entry with Comparison of Indexing Expression
         """
         return codeGenerator.generateCode(self)
         
@@ -158,14 +167,22 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
 
         return list(set(dep))
 
+    def enableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionEq.EQ and (isinstance(self.value, SetExpression) or self.supExpression):
+            self.identifier.enableCheckDummyIndices()
+        
+    def disableCheckDummyIndices(self):
+        if self.op == EntryIndexingExpressionEq.EQ and (isinstance(self.value, SetExpression) or self.supExpression):
+            self.identifier.disableCheckDummyIndices()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this entry for indexing expressions
+        Generate the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry with Equality of Indexing Expression
+        Generate the MiniZinc code for Entry with Equality of Indexing Expression
         """
         return codeGenerator.generateCode(self)

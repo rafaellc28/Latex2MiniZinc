@@ -262,7 +262,6 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
     MOD   = "mod"
     POW   = "^"
     QUOT  = "div"
-    LESS  = "less"
 
     def __init__(self, op, numericExpression1, numericExpression2):
         """

@@ -565,3 +565,30 @@ def test_extras_test16():
 
 def test_extras_test17():
 	check_test_extras_num(17)
+
+def test_extras_test18():
+	check_test_extras_num(18)
+
+def test_extras_test19():
+	check_test_extras_num(19)
+
+def test_extras_test20():
+	check_test_extras_num(20)
+
+def test_extras_test21():
+	check_test_extras_num(21)
+
+def test_extras_test22():
+	check_test_extras_num(22)
+
+def test_extras_test23():
+	check_test_extras_num(23)
+
+def test_extras_test24():
+	check_test_extras_num(24)
+
+def test_extras_test25():
+	check_test_extras_num(25)
+
+def test_extras_test26():
+	check_test_extras_num(26)

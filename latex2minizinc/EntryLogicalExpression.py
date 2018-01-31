@@ -42,13 +42,13 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry of Relational Logical Expression
+        Generate the MiniZinc code for Entry of Relational Logical Expression
         """
         return codeGenerator.generateCode(self)
     
@@ -93,15 +93,21 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
     def getDependencies(self, codeGenerator):
         return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
 
+    def enableCheckDummyIndices(self):
+        self.identifier.enableCheckDummyIndices()
+        
+    def disableCheckDummyIndices(self):
+        self.identifier.disableCheckDummyIndices()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry of Logical Expression with Set
+        Generate the MiniZinc code for Entry of Logical Expression with Set
         """
         return codeGenerator.generateCode(self)
 
@@ -139,13 +145,13 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry of Logical Expression with Set
+        Generate the MiniZinc code for Entry of Logical Expression with Set
         """
         return codeGenerator.generateCode(self)
 
@@ -185,13 +191,13 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers and sets used in this entry for logical expression
+        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for Entry of Iterated Logical Expression
+        Generate the MiniZinc code for Entry of Iterated Logical Expression
         """
         return codeGenerator.generateCode(self)
         
@@ -222,13 +228,13 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this logical expression
+        Generate the MiniZinc code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this logical expression
+        Generate the MiniZinc code for this logical expression
         """
         return codeGenerator.generateCode(self)
 
@@ -258,13 +264,13 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
    
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this logical expression
+        Generate the MiniZinc code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this logical expression
+        Generate the MiniZinc code for this logical expression
         """
         return codeGenerator.generateCode(self)
 
@@ -294,12 +300,12 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this logical expression
+        Generate the MiniZinc code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this logical expression
+        Generate the MiniZinc code for this logical expression
         """
         return codeGenerator.generateCode(self)

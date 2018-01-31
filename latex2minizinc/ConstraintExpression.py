@@ -4,9 +4,12 @@ class ConstraintExpression(Expression):
     """
     Class representing a constraint expression node in the AST of a MLP
     """
-    EQ = "="
-    LE = "<="
-    GE = ">="
+    EQ  = "="
+    LE  = "<="
+    GE  = ">="
+    NEQ = "!="
+    LT  = "<"
+    GT  = ">"
 
 
 class ConstraintExpression2(ConstraintExpression):
@@ -38,13 +41,13 @@ class ConstraintExpression2(ConstraintExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets in this constraint
+        Generate the MiniZinc code for the identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this constraint expression
+        Generate the MiniZinc code for this constraint expression
         """
         return codeGenerator.generateCode(self)
 
@@ -80,12 +83,63 @@ class ConstraintExpression3(ConstraintExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets in this constraint
+        Generate the MiniZinc code for the identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this constraint expression
+        Generate the MiniZinc code for this constraint expression
+        """
+        return codeGenerator.generateCode(self)
+
+
+class ConditionalConstraintExpression(ConstraintExpression):
+    """
+    Class representing a conditional constraint expression node in the AST of a MLP
+    """
+    
+    IMPLIES = "->"
+    ISIMPLIEDBY = "<-"
+    IFANDONLYIF = "<->"
+
+    def __init__(self, op, logicalExpression, constraintExpression1, constraintExpression2 = None):
+        """
+        Set the conditional constraint expression
+        
+        :param op : IMPLIES | ISIMPLIEDBY | IFANDONLYIF
+        :param logicalExpression : LogicalExpression
+        :param constraintExpression1 : ConstraintExpression
+        :param constraintExpression2 : ConstraintExpression
+        """
+        
+        self.op = op
+        self.logicalExpression = logicalExpression
+        self.constraintExpression1 = constraintExpression1
+        self.constraintExpression2 = constraintExpression2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        res = "CondConstraintExpr: " + str(self.logicalExpression) + " " + self.op + " " + str(self.constraintExpression1)
+
+        if self.constraintExpression2 != None:
+            res += " ELSE " + str(self.constraintExpression2)
+
+        return res
+        
+    def addElseExpression(self, elseExpression):
+        self.constraintExpression2 = elseExpression
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MiniZinc code for the identifiers and sets used in this conditional constraint expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MiniZinc code for this contitional constraint expression
         """
         return codeGenerator.generateCode(self)

@@ -59,14 +59,20 @@ class TupleList(Expression):
     def getDependencies(self, codeGenerator):
         return list(set(Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.values))))
 
+    def enableCheckDummyIndices(self):
+        map(lambda el: el.enableCheckDummyIndices(), self.values)
+        
+    def disableCheckDummyIndices(self):
+        map(lambda el: el.disableCheckDummyIndices(), self.values)
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of identifiers used in this tuple list expression
+        Generate the MiniZinc code for the declaration of identifiers used in this tuple list expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this TupleList
+        Generate the MiniZinc code for this TupleList
         """
         return codeGenerator.generateCode(self)

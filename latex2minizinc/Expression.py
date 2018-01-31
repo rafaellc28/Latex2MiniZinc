@@ -18,10 +18,10 @@ class Expression:
         return 1
 
     def getIndice(self):
-    	return self.indice
+        return self.indice
 
     def setIndice(self, indice):
-    	self.indice = indice
+        self.indice = indice
 
     def getIdentifier(self):
         return self.identifier
@@ -40,3 +40,9 @@ class Expression:
 
     def setIdentifierList(self, identifierList):
         self.identifierList = identifierList
+
+    def enableCheckDummyIndices(self):
+        pass
+
+    def disableCheckDummyIndices(self):
+        pass

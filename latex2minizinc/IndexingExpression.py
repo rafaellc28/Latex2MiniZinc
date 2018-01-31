@@ -3,10 +3,10 @@ from Utils import *
 
 class IndexingExpression(Expression):
     """
-    Class representing an indexing expression in the AST of the MLP
+    Class representing an indexing expression in the AST
     """
 
-    # Get the MathProg code for a given constraint
+    # Get the MiniZinc code for a given constraint
     @staticmethod
     def _getCodePredicateEntry(entry): return entry.generatePredicateCode()
 
@@ -75,14 +75,26 @@ class IndexingExpression(Expression):
         
         return list(set(dep))
 
+    def enableCheckDummyIndices(self):
+        map(lambda el: el.enableCheckDummyIndices(), self.entriesIndexingExpression)
+
+        if self.logicalExpression:
+            self.logicalExpression.enableCheckDummyIndices()
+
+    def disableCheckDummyIndices(self):
+        map(lambda el: el.disableCheckDummyIndices(), self.entriesIndexingExpression)
+
+        if self.logicalExpression:
+            self.logicalExpression.disableCheckDummyIndices()
+
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this indexing expression
+        Generate the MiniZinc code for this indexing expression
         """
         return codeGenerator.generateCode(self)

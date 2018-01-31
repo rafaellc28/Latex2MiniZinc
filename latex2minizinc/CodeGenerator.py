@@ -555,6 +555,7 @@ class CodeGenerator:
             for stmt in sorted(self.tuples[name], reverse=True):
 
                 setWithIndices = self.tuples[name][stmt]["setWithIndices"]
+                
                 if setWithIndices:
                     realtype = "set of int"
 
@@ -605,7 +606,7 @@ class CodeGenerator:
                                             index1 = None
                                             _type = None
                                             pos = {}
-                                            realtype = None
+                                            #realtype = None
                                             sizeTuple = None
 
                                             continue
@@ -619,7 +620,7 @@ class CodeGenerator:
                                     index1 = None
                                     _type = None
                                     pos = {}
-                                    realtype = None
+                                    #realtype = None
                                     sizeTuple = None
 
                                     continue
@@ -628,7 +629,7 @@ class CodeGenerator:
                             index1 = None
                             _type = None
                             pos = {}
-                            realtype = None
+                            #realtype = None
                             sizeTuple = None
 
                             continue
@@ -645,8 +646,9 @@ class CodeGenerator:
                 index1 = None
                 _type = None
                 pos = {}
-                realtype = None
+                #realtype = None
                 sizeTuple = None
+
 
             if index1 == None and not ".." in name:
                 index1 = "INDEX_SET_"+name
@@ -661,6 +663,9 @@ class CodeGenerator:
                 aux = realtype
                 realtype = _type
                 _type = aux
+
+            if realtype == "int":
+                realtype = None
 
             if name in self.setsWitOperationsInv:
                 if index2 != None:
@@ -1568,6 +1573,17 @@ class CodeGenerator:
 
         return ""
 
+    def removeInvalidConstraint(self, constraint):
+        valid =  constraint != None and constraint.strip() != "" and constraint.strip() != "constraint ;"
+
+        if valid:
+            match = re.search("forall\(.+\)\(\)", constraint)
+
+            if match:
+                valid = False
+
+        return valid
+
     def _stripDomains(self, domains):
         return map(lambda el: el.strip(), domains)
 
@@ -2304,7 +2320,7 @@ class CodeGenerator:
             _type = "enum"
 
         if varDecl != None and varDecl.getValue() != None:
-
+            
             _subIndices = []
             if varDecl.getSubIndices():
                 for key in varDecl.getSubIndices():
@@ -2333,6 +2349,7 @@ class CodeGenerator:
             value = varDecl.getValue().attribute.generateCode(self)
 
             dependencies = varDecl.getValue().attribute.getDependencies(self)
+            
             if name in dependencies:
                 
                 if isArray:
@@ -2357,7 +2374,7 @@ class CodeGenerator:
                     value = ""
 
                 else:
-
+                    
                     self.getOriginalIndices = True
                     value2 = varDecl.getValue().attribute.generateCode(self)
                     self.getOriginalIndices = False
@@ -2386,6 +2403,7 @@ class CodeGenerator:
                     self.removeAdditionalParameter = False
 
                     rangeSet = self._getRange(varDecl.getValue().attribute)
+                    
                     if rangeSet != None:
                         _type = "set of int:"
                         value = rangeSet.generateCode(self)
@@ -2492,6 +2510,7 @@ class CodeGenerator:
 
         if _type == "enum":
             self.listEnums.append(name)
+
         elif _type == "set of int:":
             self.listSetOfInts.append(name)
         
@@ -2622,7 +2641,7 @@ class CodeGenerator:
         if preModel != "":
             preModel += "\n"
 
-        res = "\n\n".join(map(lambda el: self._getCodeConstraint(el), constraints)) + "\n\n"
+        res = "\n\n".join(filter(lambda cnt: self.removeInvalidConstraint(cnt), map(lambda el: self._getCodeConstraint(el), constraints))) + "\n\n"
 
         if len(objectives) > 0:
             obj = objectives[0]
@@ -2734,7 +2753,7 @@ class CodeGenerator:
 
     # Constraints
     def generateCode_Constraints(self, node):
-        return "\n\n".join(filter(lambda el: el != "" and el != None, map(self._getCodeConstraint, node.constraints)))
+        return "\n\n".join(filter(lambda el: self.removeInvalidConstraint(el), map(self._getCodeConstraint, node.constraints)))
 
     def generateCode_Constraint(self, node):
         self.scope = 0
@@ -2781,6 +2800,20 @@ class CodeGenerator:
         res += node.linearExpression.generateCode(self) + " " + oppOp + " " + node.numericExpression1.generateCode(self)
 
         return res
+
+    def generateCode_ConditionalConstraintExpression(self, node):
+        res = node.logicalExpression.generateCode(self) + " " + node.op + " " + node.constraintExpression1.generateCode(self)
+        
+        if node.constraintExpression2:
+            res += " else " + node.constraintExpression2.generateCode(self)
+
+        #else:
+        #    res += " else 0"
+
+        #res += " endif"
+
+        return res
+
 
     # Linear Expression
     def generateCode_ValuedLinearExpression(self, node):
@@ -2850,15 +2883,18 @@ class CodeGenerator:
             previousParentScope = self.parentScope
             self.parentScope = self.scope
 
-        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.linearExpression1.generateCode(self)
+        res = "if " + node.logicalExpression.generateCode(self)
 
-        if node.linearExpression2:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope}
+        if node.linearExpression1:
+            res += " then " + node.linearExpression1.generateCode(self)
 
-            res += " else " + node.linearExpression2.generateCode(self)
+            if node.linearExpression2:
+                self.scope += 1
+                self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope}
 
-        res += " endif"
+                res += " else " + node.linearExpression2.generateCode(self)
+
+            res += " endif"
 
         if self.stmtIndex > -1:
             self.parentScope = previousParentScope
@@ -2952,8 +2988,17 @@ class CodeGenerator:
     def generateCode_NumericExpressionWithArithmeticOperation(self, node):
         res = ""
 
+        if isinstance(node.numericExpression1, ValuedNumericExpression):
+            node.numericExpression1 = node.numericExpression1.value
+
         if node.op == NumericExpressionWithArithmeticOperation.POW:# and not (isinstance(node.numericExpression2, ValuedNumericExpression) or isinstance(node.numericExpression2, NumericExpressionBetweenParenthesis)):
             res += "pow(" + node.numericExpression1.generateCode(self) + ","+node.numericExpression2.generateCode(self) + ")"
+
+        elif (node.op == NumericExpressionWithArithmeticOperation.QUOT or node.op == NumericExpressionWithArithmeticOperation.MOD) and \
+            not isinstance(node.numericExpression1, Identifier) and not isinstance(node.numericExpression1, Number):
+
+            res += "floor(" + node.numericExpression1.generateCode(self) + ") " + node.op + " " + node.numericExpression2.generateCode(self)
+
         else:
             res += node.numericExpression1.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
 
