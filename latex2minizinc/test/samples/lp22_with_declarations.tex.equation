@@ -17,7 +17,6 @@ tla_{a} \leq Tmax: a \in PLACES\\
 ted_{a} \leq Tmax: a \in PLACES\\
 tld_{a} \leq Tmax: a \in PLACES\\
 tea_{a}, tla_{a}, ted_{a}, tld_{a}, Tmax \in \mathbb{R}^{+}\\
-start, finish \in \mathbb{S}\\
 y_{a,b} \in \mathbb{Z}^{+}; tlv_{a}, tar_{a} \in \mathbb{R}; x_{a,b} \in \mathbb{B}\\
 lat_{p},lng_{p} : p \in PLACES\\
 S2_{p}, \geq S1_{p}: p \in PLACES\\

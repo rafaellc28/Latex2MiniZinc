@@ -4,7 +4,7 @@
 \sum_{r \in REACTIONS} n_{s} \leq 0: s \in RAWMATERIALS\\
 \sum_{r \in REACTIONS} n_{s} \geq 0: s \in SPECIES \setminus RAWMATERIALS\\
 \sum_{s \in RAWMATERIALS} -n_{s} \leq 1\\
-n_{s}, x_{r} \in \mathbb{R}; name_{s} \in \mathbb{S}: s \in SPECIES\\
+n_{s}, x_{r} \in \mathbb{R}; name_{s} \in \mathbb{P}: s \in SPECIES\\
 amu_{a}, \geq 0; formula_{s,a}, \geq 0: s \in SPECIES, a \in ATOMS\\
 mw_{s} := \sum_{a \in ATOMS} amu_{a}*formula_{s,a}\\
 RAWMATERIALS, PRODUCTS \subset SPECIES\\

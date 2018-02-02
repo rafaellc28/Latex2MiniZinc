@@ -640,39 +640,19 @@ class CodeSetup:
         """
         Generate the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
+
+        ident1 = self._getIdentifier(node.symbolicExpression1)
+        ident2 = self._getIdentifier(node.symbolicExpression2)
+
+        if isinstance(ident1, Identifier):
+            ident1.isSymbolic = True
+
+        if isinstance(ident2, Identifier):
+            ident2.isSymbolic = True
+
         node.symbolicExpression1.setupEnvironment(self)
         node.symbolicExpression2.setupEnvironment(self)
 
-    def setupEnvironment_ConditionalSymbolicExpression(self, node):
-        """
-        Generate the MiniZinc code for the identifiers and sets used in this symbolic expression
-        """
-        node.logicalExpression.setupEnvironment(self)
-
-        previousLevel = self.level
-        previousTable = self.currentTable
-        
-        self.level += 1
-        self.currentTable.setIsLeaf(False)
-        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
-
-        node.symbolicExpression1.setupEnvironment(self)
-
-        self.level = previousLevel
-        self.currentTable = previousTable
-
-        if node.symbolicExpression2 != None:
-            previousLevel = self.level
-            previousTable = self.currentTable
-            
-            self.level += 1
-            self.currentTable.setIsLeaf(False)
-            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
-
-            node.symbolicExpression2.setupEnvironment(self)
-
-            self.level = previousLevel
-            self.currentTable = previousTable
 
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
@@ -1320,7 +1300,7 @@ class CodeSetup:
                 self.codeGenerator.genSets.remove(self.identifierKey)
                 self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                _genParam = GenParameter(self.identifierKey, node.isSymbolic or node.isLogical, node.isInt or node.isInteger, str(self.stmtIndex))
+                _genParam = GenParameter(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger or node.isLogical, str(self.stmtIndex))
                 if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
                     _genParam.setCertainty(False)
 
@@ -1339,10 +1319,10 @@ class CodeSetup:
             elif node.isSymbolic or node.isLogical or node.isInt or node.isInteger:
                 _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
                 if _genParam != None:
-                    if node.isSymbolic or node.isLogical:
+                    if node.isSymbolic:
                         _genParam.setIsSymbolic(True)
 
-                    if node.isInt or node.isInteger:
+                    if node.isInt or node.isInteger or node.isLogical:
                         _genParam.setIsInteger(True)
 
             self._checkSubIndices(node)
@@ -1533,23 +1513,47 @@ class CodeSetup:
                 # attribute is not a conditional expression
                 (isinstance(name, str) and self.codeGenerator.genSets.has(name))
              ) and not identifier.isParam:
+            
+            if isinstance(name, list):
+                names = name
 
-            if not self.codeGenerator.genParameters.has(name):
-                self._setIsSet(identifier)
-                
-                if isinstance(var, Identifier):
-                    self._setIsSet(var)
-                
-                _symbolTableEntry = self.currentTable.lookup(name)
-                if _symbolTableEntry == None:
-                    _symbolTableEntry = SymbolTableEntry(name, node.attribute, GenProperties(name, [], None, None, None), 
-                                                         None, self.level, [], True, True)
-                    self.currentTable.insert(name, _symbolTableEntry)
+                for name in names:
 
-                else:
+                    if not self.codeGenerator.genParameters.has(name):
+                        self._setIsSet(identifier)
+                        
+                        if isinstance(var, Identifier):
+                            self._setIsSet(var)
+                            
+                        _symbolTableEntry = self.currentTable.lookup(name)
+                        if _symbolTableEntry == None:
+                            _symbolTableEntry = SymbolTableEntry(name, node.attribute, GenProperties(name, [], None, None, None), 
+                                                                 None, self.level, [], True, True)
+                            self.currentTable.insert(name, _symbolTableEntry)
 
-                    if _symbolTableEntry.getInferred():
-                        _symbolTableEntry.setType(None)
+                        else:
+
+                            if _symbolTableEntry.getInferred():
+                                _symbolTableEntry.setType(None)
+
+            else:
+
+                if not self.codeGenerator.genParameters.has(name):
+                    self._setIsSet(identifier)
+                    
+                    if isinstance(var, Identifier):
+                        self._setIsSet(var)
+                        
+                    _symbolTableEntry = self.currentTable.lookup(name)
+                    if _symbolTableEntry == None:
+                        _symbolTableEntry = SymbolTableEntry(name, node.attribute, GenProperties(name, [], None, None, None), 
+                                                             None, self.level, [], True, True)
+                        self.currentTable.insert(name, _symbolTableEntry)
+
+                    else:
+
+                        if _symbolTableEntry.getInferred():
+                            _symbolTableEntry.setType(None)
 
     def setupEnvironment_AttributeList(self, node, identifier):
         identifier1 = self._getIdentifier(node.attribute)

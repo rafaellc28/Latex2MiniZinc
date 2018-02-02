@@ -733,13 +733,13 @@ class CodeGenerator:
         obj = self._getIdentifierNode(obj)
         return isinstance(obj, ParameterSet) or isinstance(obj, SetSet) or isinstance(obj, VariableSet)
 
-    def _isNumberSet(self, obj):
+    def _isTypeSet(self, obj):
         obj = self._getIdentifierNode(obj)
-        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet)
+        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or isinstance(obj, SymbolicSet)
 
     def _isModifierSet(self, obj):
         obj = self._getIdentifierNode(obj)
-        return isinstance(obj, SymbolicSet) or isinstance(obj, LogicalSet)
+        return isinstance(obj, LogicalSet)
 
     def notInTypesThatAreNotDeclarable(self, value):
         if isinstance(value, Tuple):
@@ -755,10 +755,10 @@ class CodeGenerator:
         return filter(lambda el: not self._isIdentifierType(el.getObj()), _types)
 
     def _removePreDefinedTypes(self, _types):
-        return filter(lambda el: not self._isIdentifierType(el) and not self._isNumberSet(el) and not self._isModifierSet(el), _types)
+        return filter(lambda el: not self._isIdentifierType(el) and not self._isTypeSet(el) and not self._isModifierSet(el), _types)
 
     def _getTypes(self, _types):
-        return filter(lambda el: self._isNumberSet(el.getObj()), _types)
+        return filter(lambda el: self._isTypeSet(el.getObj()), _types)
 
     def _getModifiers(self, _types):
         return filter(lambda el: self._isModifierSet(el.getObj()), _types)
@@ -769,7 +769,7 @@ class CodeGenerator:
 
     def _domainIsNumberSet(self, domain):
         obj = domain.getObj()
-        return self._isNumberSet(obj)
+        return self._isTypeSet(obj)
 
     def _domainIsModifierSet(self, domain):
         obj = domain.getObj()
@@ -1396,6 +1396,9 @@ class CodeGenerator:
                     break
 
                 if t == None:
+                    if table != None:
+                        table = table.getParent()
+
                     continue
 
                 prop = t.getProperties()
@@ -1966,6 +1969,9 @@ class CodeGenerator:
 
                             _type = "int";
 
+                        elif isinstance(_type, SymbolicSet):
+                            _type = "string";
+
                         else:
                             const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
                             
@@ -2127,8 +2133,13 @@ class CodeGenerator:
             
             if isinstance(_type, BinarySet):
                 _type = "bool";
+
             elif isinstance(_type, IntegerSet):
                 _type = "int";
+
+            elif isinstance(_type, SymbolicSet):
+                _type = "string";
+
             else:
                 _type = "float";
 
@@ -2165,6 +2176,10 @@ class CodeGenerator:
         if not includedType:
             if _genParameter.getIsInteger():
                 _type = "int"
+
+            elif _genParameter.getIsSymbolic():
+                _type = "string"
+
             else:
                 _type = "float"
 
@@ -3110,19 +3125,6 @@ class CodeGenerator:
         return res
 
     # Symbolic Expression
-    def generateCode_SymbolicExpressionWithFunction(self, node):
-        res = str(node.function) + "("
-        if node.function == SymbolicExpressionWithFunction.SUBSTR:
-            res += node.symbolicExpression.generateCode(self) + "," + node.numericExpression1.generateCode(self)
-            if node.numericExpression2 != None:
-                res += "," + node.numericExpression2.generateCode(self)
-        
-        elif node.function == SymbolicExpressionWithFunction.TIME2STR:
-            res += node.numericExpression1.generateCode(self) + "," + node.symbolicExpression.generateCode(self)
-
-        res += ")"
-
-        return res
 
     def generateCode_StringSymbolicExpression(self, node):
         return node.value.generateCode(self)
@@ -3146,31 +3148,6 @@ class CodeGenerator:
     def generateCode_SymbolicExpressionWithOperation(self, node):
         return node.symbolicExpression1.generateCode(self) + " " + node.op + " " + node.symbolicExpression2.generateCode(self)
 
-    def generateCode_ConditionalSymbolicExpression(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_ConditionalSymbolicExpression1"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
-        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.symbolicExpression1.generateCode(self)
-
-        if node.symbolicExpression2 != None:
-
-            if self.stmtIndex > -1:
-                self.scope += 1
-                self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope, "where": "generateCode_ConditionalSymbolicExpression2"}
-
-            res += " else " + node.symbolicExpression2.generateCode(self)
-
-        res += " endif"
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
-        return res
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):
@@ -3943,7 +3920,7 @@ class CodeGenerator:
 
     # SymbolicSet
     def generateCode_SymbolicSet(self, node):
-        return "symbolic"
+        return "string"
 
     # LogicalSet
     def generateCode_LogicalSet(self, node):
@@ -3953,7 +3930,7 @@ class CodeGenerator:
     def generateCode_ParameterSet(self, node):
         return ""
 
-    # SymbolicSet
+    # VariableSet
     def generateCode_VariableSet(self, node):
         return ""
 
