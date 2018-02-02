@@ -46,6 +46,9 @@ class Compiler:
                 result = parser.parse(doc, debug=self.log)
 
             except SyntaxException as msg:
+                result = None
+
+                '''
                 stack = parser.symstack # stack of the parser when the error was thrown
                 
                 for i in range(len(stack)-1, 0, -1):
@@ -113,6 +116,7 @@ class Compiler:
 
                             doc = data
                             parsing = True
+                '''
 
         if not result:
 

@@ -174,7 +174,7 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
     Class representing a symbolic expression with operation node in the AST of a MLP
     """
     
-    CONCAT  = "&"
+    CONCAT  = "++"
 
     def __init__(self, op, symbolicExpression1, symbolicExpression2):
         """
@@ -196,7 +196,7 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
         to string
         """
         
-        return "OpSE:" + str(self.symbolicExpression1) + " " + self.op + " " + str(self.symbolicExpression2)
+        return "SymbolicExpressionWithOperation:" + str(self.symbolicExpression1) + " " + self.op + " " + str(self.symbolicExpression2)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.symbolicExpression1.getDependencies(codeGenerator) + self.symbolicExpression2.getDependencies(codeGenerator)))

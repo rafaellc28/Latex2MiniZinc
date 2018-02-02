@@ -592,3 +592,12 @@ def test_extras_test25():
 
 def test_extras_test26():
 	check_test_extras_num(26)
+
+def test_extras_test27():
+	check_test_extras_num(27)
+
+def test_extras_test28():
+	check_test_extras_num(28)
+
+def test_extras_test29():
+	check_test_extras_num(29)

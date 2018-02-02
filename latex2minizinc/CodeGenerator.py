@@ -31,6 +31,7 @@ from BinarySet import *
 from ParameterSet import *
 from VariableSet import *
 from SetSet import *
+from String import *
 
 import re
 
@@ -196,7 +197,8 @@ class CodeGenerator:
                    ", minVal: " + str(value.getProperties().getMinVal()) + ", maxVal: " + str(value.getProperties().getMaxVal()) + 
                    ", dimension: " + str(value.getProperties().getDimension()) + ", default: " + str(value.getProperties().getDefault()) + 
                    ", attributes: " + str(value.getProperties().getAttributes()) + "]; inferred = " + str(value.getInferred()) + 
-                   "; sub_indices = " + str(value.getSubIndices()) + "; isDefined = " + str(value.getIsDefined()) + ";"
+                   "; sub_indices = " + str(value.getSubIndices()) + "; isDefined = " + str(value.getIsDefined()) + 
+                   "; isInLogicalExpression = " + str(value.getIsInLogicalExpression()) + ";"
                    for key, value in dictStmt["table"]]))
             print("")
 
@@ -1092,7 +1094,16 @@ class CodeGenerator:
                     break
 
                 if t == None:
+                    if table != None:
+                        table = table.getParent()
+                            
                     continue
+
+                #if t.getIsInLogicalExpression():
+                #    if table != None:
+                #        table = table.getParent()
+
+                #    continue
 
                 sub_indices_list = list(t.getSubIndices())
                 sub_indices_list.reverse()
@@ -1302,7 +1313,7 @@ class CodeGenerator:
                 break
             
             leafs = self.symbolTables.getLeafs(stmt)
-            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, isDeclaration, domainsAlreadyComputed, True)
+            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, False, domainsAlreadyComputed, True)
 
             if domain != "" and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
@@ -1401,8 +1412,21 @@ class CodeGenerator:
                     if not inserted:
                         _types.append(domain)
 
-                if prop.getDimension() != None and prop.getDimension() > 1 and dim == None:
-                    dim = prop.getDimension()
+                if dim == None:
+                    if prop.getDimension() != None:
+                        dim = prop.getDimension()
+
+                    else:
+                        dim = 0
+
+                _sub_indices = t.getSubIndices()
+
+                if _sub_indices:
+                    for indices in _sub_indices:
+                        dimen = len(indices)
+
+                        if dimen > dim:
+                            dim = dimen
 
                 minVal = self._setMinVal(minVal, prop.getMinVal())
                 maxVal = self._setMaxVal(maxVal, prop.getMaxVal())
@@ -1883,11 +1907,19 @@ class CodeGenerator:
                             domains = domainMinMax
                             isArray = True
 
+                    elif dim > 0:
+                            domains_aux = ["int"]*dim
+                            domain = ", ".join(domains_aux)
+                            domains_with_indices = self._processDomainsWithIndices(domains_aux)
+                            domains = domains_aux
+                            isArray = True
+
                     if not domain and varDecl != None:
                         size = len(_subIndices)
                         if size > 0:
                             isArray = True
                             domains_aux = ["int"]*size
+                            domains_with_indices = self._processDomainsWithIndices(domains_aux)
 
                     if isArray:
                         
@@ -1897,11 +1929,14 @@ class CodeGenerator:
                                 index = "INDEX_SET_"+varName+"_"+str(i+1)
 
                                 setint = "set of int: "+index
+                                
+                                if i < len(domains) and (".." in domains[i] or domains[i] == "int"):
 
-                                if i < len(domains) and ".." in domains[i]:
-                                    setint += " = " + domains[i]
+                                    if domains[i] != "int":
+                                        setint += " = " + domains[i]
 
                                     if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
+                                        
                                         pos = domains_with_indices[i].find(" in ")
                                         domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
 
@@ -2068,6 +2103,13 @@ class CodeGenerator:
                 domains_with_indices = self._processDomainsWithIndices(domainMinMax)
                 isArray = True
 
+        elif dim > 0:
+                domains_aux = ["int"]*dim
+                domains = self._getDomains(domains_aux)
+                array += "array["+", ".join(domains)+"]"
+                domains_with_indices = self._processDomainsWithIndices(domains_aux)
+                isArray = True
+
         if not domain and varDecl != None:
             indexingExpression = None
             indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
@@ -2149,6 +2191,11 @@ class CodeGenerator:
 
                     else:
                         indexingExpression = None
+
+                if isinstance(varDecl.getValue().attribute, SymbolicExpression) or isinstance(varDecl.getValue().attribute, String):
+                    self.turnStringsIntoInts = False
+                    self.removeAdditionalParameter = False
+                    _type = "string"
 
                 value = varDecl.getValue().attribute.generateCode(self)
 
@@ -3371,14 +3418,14 @@ class CodeGenerator:
                     self.scopes[self.stmtIndex][self.scope]["new_indices"] = {}
 
                 self.countNewIndices = 1
-                self.includeNewIndices = True
+                #self.includeNewIndices = True
 
                 for v in values:
                     self.newIndexExpression = setExpression+"["+idx+","+str(self.countNewIndices)+"]"
                     v.generateCode(self)
 
                 self.countNewIndices = 0
-                self.includeNewIndices = False
+                #self.includeNewIndices = False
 
                 self.lastIdentifier = idx
                 node.setExpression.generateCode(self)

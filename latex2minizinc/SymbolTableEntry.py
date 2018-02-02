@@ -1,16 +1,17 @@
 class SymbolTableEntry(object):
-    def __init__(self, key, obj, properties, _type, scope, sub_indices = [], inferred = True, isDefined = False):
+    def __init__(self, key, obj, properties, _type, scope, sub_indices = [], inferred = True, isDefined = False, isInLogicalExpression = False):
         """
         Constructor
         
-        :param key         : string
-        :param obj         : object
-        :param properties  : GenProperties
-        :param _type       : VariableSet | ParameterSet | SetSet
-        :param scope       : int
-        :param sub_indices : [string]
-        :param inferred    : boolean
-        :param isDefined   : boolean
+        :param key                   : string
+        :param obj                   : object
+        :param properties            : GenProperties
+        :param _type                 : VariableSet | ParameterSet | SetSet
+        :param scope                 : int
+        :param sub_indices           : [string]
+        :param inferred              : boolean
+        :param isDefined             : boolean
+        :param isInLogicalExpression : boolean
         
         """
 
@@ -21,6 +22,7 @@ class SymbolTableEntry(object):
         self.scope = scope
         self.inferred = inferred
         self.isDefined = isDefined
+        self.isInLogicalExpression = isInLogicalExpression
 
         # python bug
         if len(sub_indices) == 0:
@@ -72,6 +74,12 @@ class SymbolTableEntry(object):
 
     def getIsDefined(self):
         return self.isDefined
+
+    def setIsInLogicalExpression(self, isInLogicalExpression):
+        self.isInLogicalExpression = isInLogicalExpression
+
+    def getIsInLogicalExpression(self):
+        return self.isInLogicalExpression
 
     def setSubIndices(self, sub_indices):
         self.sub_indices = sub_indices

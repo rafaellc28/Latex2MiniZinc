@@ -54,7 +54,7 @@ precedence = (
     ('left', 'CROSS'),
     ('left', 'SETOF'),
     ('right', 'DOTS', 'BY'),
-    ('right', 'AMPERSAND'),
+    ('right', 'CONCAT'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'SUM', 'PROD', 'MAX', 'MIN'),
     ('left', 'TIMES', 'DIVIDE', 'MOD', 'QUOTIENT'),
@@ -1910,13 +1910,13 @@ def p_StringSymbolicExpression(t):
     t[0] = StringSymbolicExpression(t[1])
 
 def p_SymbolicExpression_binop(t):
-    '''SymbolicExpression : Identifier AMPERSAND Identifier
-                          | Identifier AMPERSAND NumericSymbolicExpression
+    '''SymbolicExpression : Identifier CONCAT Identifier
+                          | Identifier CONCAT NumericSymbolicExpression
                           
-                          | NumericSymbolicExpression AMPERSAND Identifier
-                          | NumericSymbolicExpression AMPERSAND NumericSymbolicExpression'''
+                          | NumericSymbolicExpression CONCAT Identifier
+                          | NumericSymbolicExpression CONCAT NumericSymbolicExpression'''
 
-    if t.slice[2].type == "AMPERSAND":
+    if t.slice[2].type == "CONCAT":
         op = SymbolicExpressionWithOperation.CONCAT
 
     t[0] = SymbolicExpressionWithOperation(op, t[1], t[3])

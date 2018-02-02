@@ -205,8 +205,9 @@ class CodeSetup:
                 if not self.isDeclaredAsParam(var):
                     self.codeGenerator.genParameters.remove(name)
 
-    def _addBelongsTo(self, var, setExpressionNode, op = None, supExpressionObj = None):
-        self._addDomainExpression(var, setExpressionNode, op, supExpressionObj)
+    def _addBelongsTo(self, var, setExpressionNode, op = None, supExpressionObj = None, isLogicalExpression = False):
+
+        self._addDomainExpression(var, setExpressionNode, op, supExpressionObj, isLogicalExpression)
 
         if isinstance(var, Tuple):
             for var1 in var.getValues():
@@ -217,7 +218,7 @@ class CodeSetup:
             name = var.getSymbolName(self.codeGenerator)
             self._addItemBelongsTo(var, name)
 
-    def _addDomainExpression(self, var, setExpressionNode, op = None, supExpressionObj = None):
+    def _addDomainExpression(self, var, setExpressionNode, op = None, supExpressionObj = None, isLogicalExpression = False):
 
         name = var.getSymbolName(self.codeGenerator)
         setExpression = self._getSetExpression(setExpressionNode)
@@ -230,8 +231,8 @@ class CodeSetup:
 
         _symbolTableEntry = self.currentTable.lookup(name)
         if _symbolTableEntry == None:
-            _symbolTableEntry = SymbolTableEntry(name, var, GenProperties(name, [GenItemDomain(setExpression, op, dependencies, setExpressionObj)], setExpressionNode.getDimension(), None, None), 
-                                                 None, self.level, [])
+            _symbolTableEntry = SymbolTableEntry(name, var, GenProperties(name, [GenItemDomain(setExpression, op, dependencies, setExpressionObj)], None, None, None), 
+                                                 None, self.level, [], True, False, isLogicalExpression)
             self.currentTable.insert(name, _symbolTableEntry)
 
         else:
@@ -239,7 +240,6 @@ class CodeSetup:
                 _symbolTableEntry.setType(None)
 
             _symbolTableEntry.getProperties().addDomain(GenItemDomain(setExpression, op, dependencies, setExpressionObj))
-            _symbolTableEntry.getProperties().setDimension(setExpressionNode.getDimension())
 
         _symbolTableEntry = self.currentTable.lookup(setExpression)
         if _symbolTableEntry == None:
@@ -971,29 +971,30 @@ class CodeSetup:
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
 
-                    self._addBelongsTo(var, node.setExpression, node.op)
+                    self._addBelongsTo(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
-                self._addBelongsTo(var, node.setExpression, node.op)
+                self._addBelongsTo(var, node.setExpression, node.op, None, True)
 
         else:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
 
-                    self._addDomainExpression(var, node.setExpression, node.op)
+                    self._addDomainExpression(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
-                self._addDomainExpression(var, node.setExpression, node.op)
+                self._addDomainExpression(var, node.setExpression, node.op, None, True)
 
         if isinstance(node.identifier, Tuple):
             for var in tupleVal:
                 var.setupEnvironment(self)
+
         else:
             self.setupEnvironment_EntryExpressionWithSet(node, node.identifier)
         
         node.setExpression.setupEnvironment(self)
-
+        
     def setupEnvironment_EntryLogicalExpressionWithSetOperation(self, node):
         """
         Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression

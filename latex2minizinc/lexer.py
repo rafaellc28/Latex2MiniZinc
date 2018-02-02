@@ -109,7 +109,7 @@ tokens = [
    'SEMICOLON',
    'COLON',
    'DOTS',
-   'AMPERSAND',
+   'CONCAT',
    'FOR',
    'WHERE',
    'ID',
@@ -218,6 +218,11 @@ def t_INFINITY(t):
 def t_COMMENT(t):
     r'\%[^\n]*'
     pass
+
+def t_CONCAT(t):
+   r'\+\+|\\&'
+   return t
+
 
 # Regular expression rules for simple tokens
 t_PLUS = r'\+'
@@ -610,10 +615,6 @@ t_SEMICOLON = r';'
 
 def t_COLON(t):
    r':'
-   return t
-
-def t_AMPERSAND(t):
-   r'\\&'
    return t
 
 def t_ignore_AMP(t):

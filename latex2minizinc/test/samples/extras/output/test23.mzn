@@ -24,7 +24,7 @@ set of int: INDEX_SET_TYPE2;
 
 constraint forall(i1 in INDEX_SET_ISO, j in REST)(Assign2[ISO[i1,1],j,j] >= 0);
 
-constraint forall(i1 in INDEX_SET_ISO, j in REST)(Assign2[ISO[i1,1],ISO[i1,2],j] = 0 \/ Assign2[ISO[i1,1],ISO[i1,2],j] + sum(ii1 in ADJACENT[ISO[i1,1]] where ii1 in INDEX_SET_TYPE2)(Assign2[TYPE2[ii1,1],TYPE2[ii1,2],j]) >= 2);
+constraint forall(i1 in INDEX_SET_ISO, j in REST)(Assign2[ISO[i1,1],ISO[i1,2],j] = 0 \/ Assign2[ISO[i1,1],ISO[i1,2],j] + sum(ii1 in ADJACENT[ISO[i1,1]] where ii1 in INDEX_SET_TYPE2)(Assign2[ii1,ISO[i1,2],j]) >= 2);
 
 solve satisfy;
 
