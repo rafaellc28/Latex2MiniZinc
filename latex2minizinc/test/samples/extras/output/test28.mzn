@@ -8,7 +8,7 @@ array[INDEX_SET_TYPE2, 1..2] of REST: TYPE2;
 
 enum PEOPLE;
 
-array[INDEX_SET_upperbnd_1, INDEX_SET_upperbnd_2, INDEX_SET_upperbnd_3] of float: upperbnd = array3d(INDEX_SET_upperbnd_1, INDEX_SET_upperbnd_2, INDEX_SET_upperbnd_3, [min(ceil((number2[ISO[i1,1],ISO[i1,2]]/(card(PEOPLE))) * hiDine[j]) + give[ISO[i1,1],ISO[i1,2]],hiTargetTitle[ISO[i1,1],j] + giveTitle[ISO[i1,1]],hiTargetLoc[ISO[i1,2],j] + giveLoc[ISO[i1,2]],number2[ISO[i1,1],ISO[i1,2]]) | i1 in INDEX_SET_ISO, j in REST]);
+array[INDEX_SET_upperbnd_1, INDEX_SET_upperbnd_2, INDEX_SET_upperbnd_3] of float: upperbnd = array3d(INDEX_SET_upperbnd_1, INDEX_SET_upperbnd_2, INDEX_SET_upperbnd_3, [min(ceil((number2[ISO[i1,1],ISO[i1,2]]/card(PEOPLE)) * hiDine[j]) + give[ISO[i1,1],ISO[i1,2]],hiTargetTitle[ISO[i1,1],j] + giveTitle[ISO[i1,1]],hiTargetLoc[ISO[i1,2],j] + giveLoc[ISO[i1,2]],number2[ISO[i1,1],ISO[i1,2]]) | i1 in INDEX_SET_ISO, j in REST]);
 
 array[int, int] of float: number2;
 

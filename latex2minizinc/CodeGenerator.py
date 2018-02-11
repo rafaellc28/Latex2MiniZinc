@@ -735,7 +735,8 @@ class CodeGenerator:
 
     def _isTypeSet(self, obj):
         obj = self._getIdentifierNode(obj)
-        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or isinstance(obj, SymbolicSet)
+        return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or isinstance(obj, SymbolicSet) or \
+              (isinstance(obj, SetExpression) and obj.getSymbolName(self).replace(" ", "") == Constants.BINARY_0_1)
 
     def _isModifierSet(self, obj):
         obj = self._getIdentifierNode(obj)
@@ -3009,7 +3010,7 @@ class CodeGenerator:
         if isinstance(node.numerator, ValuedNumericExpression):
             numerator = numerator.value
             
-        if not isinstance(numerator, Identifier) and not isinstance(numerator, Number):
+        if not isinstance(numerator, Identifier) and not isinstance(numerator, Number) and not isinstance(numerator, NumericExpressionWithFunction):
             numerator = "("+numerator.generateCode(self)+")"
         else:
             numerator = numerator.generateCode(self)
@@ -3018,7 +3019,7 @@ class CodeGenerator:
         if isinstance(denominator, ValuedNumericExpression):
             denominator = denominator.value
             
-        if not isinstance(denominator, Identifier) and not isinstance(denominator, Number):
+        if not isinstance(denominator, Identifier) and not isinstance(denominator, Number) and not isinstance(denominator, NumericExpressionWithFunction):
             denominator = "("+denominator.generateCode(self)+")"
         else:
             denominator = denominator.generateCode(self)
