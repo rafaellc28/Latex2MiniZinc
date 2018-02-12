@@ -8,7 +8,7 @@ float: c;
 
 int: m;
 
-array[int, int] of float: z;
+array[int, int] of bool: z;
 
 int: n = sum(j in 1..m)(if exists(i in I)(z[i,j] = true) then 1 else 0 endif);
 

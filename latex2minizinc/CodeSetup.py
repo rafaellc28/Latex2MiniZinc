@@ -861,20 +861,24 @@ class CodeSetup:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
+                    var.isInt = True 
 
                     self._addBelongsTo(var, node.setExpression, node.op)
             else:
                 var = self._getIdentifier(node.identifier)
+                var.isInt = True 
                 self._addBelongsTo(var, node.setExpression, node.op)
 
         else:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
+                    var.isInt = True 
 
                     self._addDomainExpression(var, node.setExpression, node.op)
             else:
                 var = self._getIdentifier(node.identifier)
+                var.isInt = True
                 self._addBelongsTo(var, node.setExpression, node.op)
 
         if isinstance(node.identifier, Tuple):
@@ -919,6 +923,9 @@ class CodeSetup:
         """
         Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
+        if isinstance(node.numericOrSymbolicExpression, Identifier):
+            node.numericOrSymbolicExpression.isBinary = True
+
         node.numericOrSymbolicExpression.setupEnvironment(self)
 
     def setupEnvironment_EntryLogicalExpressionRelational(self, node):
@@ -950,20 +957,24 @@ class CodeSetup:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
+                    var.isInt = True
 
                     self._addBelongsTo(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
+                var.isInt = True
                 self._addBelongsTo(var, node.setExpression, node.op, None, True)
 
         else:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
+                    var.isInt = True
 
                     self._addDomainExpression(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
+                var.isInt = True
                 self._addDomainExpression(var, node.setExpression, node.op, None, True)
 
         if isinstance(node.identifier, Tuple):
@@ -1300,7 +1311,7 @@ class CodeSetup:
                 self.codeGenerator.genSets.remove(self.identifierKey)
                 self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                _genParam = GenParameter(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger or node.isLogical, str(self.stmtIndex))
+                _genParam = GenParameter(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger, node.isBinary or node.isLogical, str(self.stmtIndex))
                 if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
                     _genParam.setCertainty(False)
 
@@ -1316,14 +1327,17 @@ class CodeSetup:
 
                 self.codeGenerator.genParameters.add(_genParam)
 
-            elif node.isSymbolic or node.isLogical or node.isInt or node.isInteger:
+            elif node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
                 _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
                 if _genParam != None:
                     if node.isSymbolic:
                         _genParam.setIsSymbolic(True)
 
-                    if node.isInt or node.isInteger or node.isLogical:
+                    if node.isInt or node.isInteger:
                         _genParam.setIsInteger(True)
+
+                    if node.isBinary or node.isLogical:
+                        _genParam.setIsLogical(True)
 
             self._checkSubIndices(node)
 

@@ -1,8 +1,8 @@
-float: a;
+bool: a;
 
 float: b;
 
-float: c;
+bool: c;
 
 float: d;
 

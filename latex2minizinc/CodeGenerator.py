@@ -2181,6 +2181,9 @@ class CodeGenerator:
             elif _genParameter.getIsSymbolic():
                 _type = "string"
 
+            elif _genParameter.getIsLogical():
+                _type = "bool"
+
             else:
                 _type = "float"
 
@@ -3239,7 +3242,9 @@ class CodeGenerator:
                     self._checkRealType(setExpression, values)
                     self.lastIdentifier = None
 
-                res = ", ".join(map(lambda var: var + " " + node.op + " " + setExpression, entries))
+
+                res = ", ".join(map(lambda var: "not(" + var + " in " + setExpression + ")" if node.op == EntryIndexingExpressionWithSet.NOTIN else \
+                                                var + " " + node.op + " " + setExpression, entries))
 
                 return res
 
@@ -3380,7 +3385,8 @@ class CodeGenerator:
                     self._checkRealType(setExpression, values)
                     self.lastIdentifier = None
 
-                res = ", ".join(map(lambda var: var + " " + node.op + " " + setExpression, entries))
+                res = ", ".join(map(lambda var: "not(" + var + " in " + setExpression + ")" if node.op == EntryLogicalExpressionWithSet.NOTIN else \
+                                                var + " " + node.op + " " + setExpression, entries))
 
                 return res
 
