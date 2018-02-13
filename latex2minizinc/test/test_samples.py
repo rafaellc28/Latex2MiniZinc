@@ -43,6 +43,26 @@ def check_test_num(num, with_declarations = False):
 
 	check_test(name1, name2)
 
+def check_test_nonlinear_num(num, with_declarations = False):
+	if with_declarations:
+		name1 = 'latex2minizinc/test/samples/nonlinear/lp'+str(num)+'_nonlinear_with_declarations.tex.equation'
+		name2 = 'latex2minizinc/test/samples/nonlinear/output/lp'+str(num)+'_nonlinear_with_declarations.mzn'
+	else:
+		name1 = 'latex2minizinc/test/samples/nonlinear/lp'+str(num)+'_nonlinear.tex.equation'
+		name2 = 'latex2minizinc/test/samples/nonlinear/output/lp'+str(num)+'_nonlinear.mzn'
+
+	check_test(name1, name2)
+
+def check_test_constraint_num(num, with_declarations = False):
+	if with_declarations:
+		name1 = 'latex2minizinc/test/samples/constraint/lp'+str(num)+'_constraint_with_declarations.tex.equation'
+		name2 = 'latex2minizinc/test/samples/constraint/output/lp'+str(num)+'_constraint_with_declarations.mzn'
+	else:
+		name1 = 'latex2minizinc/test/samples/constraint/lp'+str(num)+'_constraint.tex.equation'
+		name2 = 'latex2minizinc/test/samples/constraint/output/lp'+str(num)+'_constraint.mzn'
+
+	check_test(name1, name2)
+
 def check_test_extras_num(num):
 	name1 = 'latex2minizinc/test/samples/extras/test'+str(num)+'.tex.equation'
 	name2 = 'latex2minizinc/test/samples/extras/output/test'+str(num)+'.mzn'
@@ -515,6 +535,134 @@ def test_lp76_with_declarations():
 	check_test_num(76, True)
 
 
+# Nonlinear Programming
+def test_lp0_nonlinear():
+	check_test_nonlinear_num(0)
+
+def test_lp1_nonlinear():
+	check_test_nonlinear_num(1)
+
+def test_lp2_nonlinear():
+	check_test_nonlinear_num(2)
+
+def test_lp3_nonlinear():
+	check_test_nonlinear_num(3)
+
+def test_lp4_nonlinear():
+	check_test_nonlinear_num(4)
+
+def test_lp5_nonlinear():
+	check_test_nonlinear_num(5)
+
+def test_lp6_nonlinear():
+	check_test_nonlinear_num(6)
+
+def test_lp7_nonlinear():
+	check_test_nonlinear_num(7)
+
+def test_lp8_nonlinear():
+	check_test_nonlinear_num(8)
+
+def test_lp9_nonlinear():
+	check_test_nonlinear_num(9)
+
+def test_lp10_nonlinear():
+	check_test_nonlinear_num(10)
+
+def test_lp11_nonlinear():
+	check_test_nonlinear_num(11)
+
+def test_lp12_nonlinear():
+	check_test_nonlinear_num(12)
+
+def test_lp13_nonlinear():
+	check_test_nonlinear_num(13)
+
+def test_lp14_nonlinear():
+	check_test_nonlinear_num(14)
+
+def test_lp15_nonlinear():
+	check_test_nonlinear_num(15)
+
+def test_lp16_nonlinear():
+	check_test_nonlinear_num(16)
+
+def test_lp17_nonlinear():
+	check_test_nonlinear_num(17)
+
+def test_lp18_nonlinear():
+	check_test_nonlinear_num(18)
+
+def test_lp19_nonlinear():
+	check_test_nonlinear_num(19)
+
+def test_lp20_nonlinear():
+	check_test_nonlinear_num(20)
+
+def test_lp21_nonlinear():
+	check_test_nonlinear_num(21)
+
+def test_lp22_nonlinear():
+	check_test_nonlinear_num(22)
+
+def test_lp23_nonlinear():
+	check_test_nonlinear_num(23)
+
+def test_lp24_nonlinear():
+	check_test_nonlinear_num(24)
+
+def test_lp25_nonlinear():
+	check_test_nonlinear_num(25)
+
+def test_lp26_nonlinear():
+	check_test_nonlinear_num(26)
+
+def test_lp27_nonlinear():
+	check_test_nonlinear_num(27)
+
+def test_lp28_nonlinear():
+	check_test_nonlinear_num(28)
+
+def test_lp29_nonlinear():
+	check_test_nonlinear_num(29)
+
+def test_lp30_nonlinear():
+	check_test_nonlinear_num(30)
+
+def test_lp31_nonlinear():
+	check_test_nonlinear_num(31)
+
+def test_lp32_nonlinear():
+	check_test_nonlinear_num(32)
+
+def test_lp33_nonlinear():
+	check_test_nonlinear_num(33)
+
+def test_lp34_nonlinear():
+	check_test_nonlinear_num(34)
+
+def test_lp35_nonlinear():
+	check_test_nonlinear_num(35)
+
+def test_lp36_nonlinear():
+	check_test_nonlinear_num(36)
+
+
+# Constraint Programming
+def test_lp0_constraint():
+	check_test_constraint_num(0)
+
+def test_lp1_constraint():
+	check_test_constraint_num(1)
+
+def test_lp2_constraint():
+	check_test_constraint_num(2)
+
+def test_lp3_constraint():
+	check_test_constraint_num(3)
+
+
+# Extras
 def test_extras_test1():
 	check_test_extras_num(1)
 

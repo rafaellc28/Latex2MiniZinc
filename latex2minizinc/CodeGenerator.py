@@ -2012,6 +2012,8 @@ class CodeGenerator:
                         cnt = ""
                         attr = varDecl.getRelationEqualTo()
                         if attr != None:
+
+                            indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
                             attribute = attr.attribute.generateCode(self)
 
                             if not self._hasFunctionsToRemove(attribute):
@@ -3039,7 +3041,7 @@ class CodeGenerator:
         
         if self.stmtIndex > -1:
             self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_NumericExpressionBetweenParenthesis"}
+            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_NumericExpressionBetweenParenthesis", "context": "(" + node.numericExpression.generateCode(self) + ")"}
 
             previousParentScope = self.parentScope
             self.parentScope = self.scope
@@ -3508,19 +3510,33 @@ class CodeGenerator:
         return node.setExpression1.generateCode(self) + " " + node.op + " " + node.setExpression2.generateCode(self)
 
     def generateCode_SetExpressionBetweenBraces(self, node):
+        isRange = False
+
         if node.setExpression != None:
             self.checkSetExpressionWithIndexingExpression = True
             self.isSetExpressionWithIndexingExpression = False
             self.turnStringsIntoInts = True
 
-            setExpression = node.setExpression.generateCode(self)
+            if isinstance(node.setExpression, SetExpressionWithValue):
+                setExpression = node.setExpression.value
+            else:
+                setExpression = node.setExpression
+
+            if isinstance(setExpression, Range):
+                isRange = True
+
+            setExpression = setExpression.generateCode(self)
 
             self.checkSetExpressionWithIndexingExpression = False
             self.turnStringsIntoInts = False
+
         else:
             setExpression = ""
 
-        return "{" + setExpression + "}"
+        if not isRange:
+            setExpression = "{" + setExpression + "}"
+
+        return setExpression
 
     def generateCode_SetExpressionBetweenParenthesis(self, node):
         res =  "(" + node.setExpression.generateCode(self) + ")"
@@ -3802,6 +3818,9 @@ class CodeGenerator:
 
     def _setNewIndex(self, ident):
         if self.stmtIndex > -1:
+            if not self.scope in self.scopes[self.stmtIndex]:
+                self.scopes[self.stmtIndex][self.scope] = {}
+
             if not "new_indices" in self.scopes[self.stmtIndex][self.scope]:
                 self.scopes[self.stmtIndex][self.scope]["new_indices"] = {}
 

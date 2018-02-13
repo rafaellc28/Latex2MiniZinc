@@ -867,6 +867,7 @@ class CodeSetup:
             else:
                 var = self._getIdentifier(node.identifier)
                 var.isInt = True 
+
                 self._addBelongsTo(var, node.setExpression, node.op)
 
         else:
@@ -879,13 +880,13 @@ class CodeSetup:
             else:
                 var = self._getIdentifier(node.identifier)
                 var.isInt = True
+
                 self._addBelongsTo(var, node.setExpression, node.op)
 
         if isinstance(node.identifier, Tuple):
             for var in tupleVal:
-                #self.setupEnvironment_EntryExpressionWithSet(node, var)
                 var.setupEnvironment(self)
-
+                
         else:
             self.setupEnvironment_EntryExpressionWithSet(node, node.identifier)
 
