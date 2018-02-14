@@ -19,6 +19,7 @@ from SetExpression import *
 from ValueList import *
 from TupleList import *
 from Tuple import *
+from Array import *
 from Range import *
 from Value import *
 from Identifier import *
@@ -151,10 +152,18 @@ def p_Constraint(t):
                   | ValueListInExpression COLON IndexingExpression
                   | ValueListInExpression
 
+                  | NumericSymbolicExpression FOR IndexingExpression
+                  | NumericSymbolicExpression WHERE IndexingExpression
+                  | NumericSymbolicExpression COLON IndexingExpression
+                  | NumericSymbolicExpression
+                   
                   | EntryConstraintLogicalExpression FOR IndexingExpression
                   | EntryConstraintLogicalExpression WHERE IndexingExpression
                   | EntryConstraintLogicalExpression COLON IndexingExpression
                   | EntryConstraintLogicalExpression'''
+
+    if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
+      t[1] = ValueList([t[1]])
     
     if not isinstance(t[1], ConstraintExpression) and not isinstance(t[1], LogicalExpression):
       t[1] = LogicalExpression([t[1]])
@@ -783,6 +792,8 @@ def p_EntryConstraintLogicalExpression(t):
 
                                         | Identifier LE NumericSymbolicExpression
                                         | Identifier LE Identifier
+                                        | Identifier EQ SetExpression
+                                        | Identifier EQ Array
                                         | Identifier EQ NumericSymbolicExpression
                                         | Identifier EQ Identifier
                                         | Identifier GE NumericSymbolicExpression
@@ -1175,10 +1186,6 @@ def p_Declaration(t):
                    | Identifier WHERE IndexingExpression
                    | Identifier COLON IndexingExpression
                    
-                   | NumericSymbolicExpression FOR IndexingExpression
-                   | NumericSymbolicExpression WHERE IndexingExpression
-                   | NumericSymbolicExpression COLON IndexingExpression
-                   
                    | DeclarationExpression'''
 
     if isinstance(t[1], EntryLogicalExpression):
@@ -1207,12 +1214,15 @@ def p_DeclarationExpression(t):
                              | ValueList DIMEN Identifier
                              | ValueList DIMEN NumericSymbolicExpression
                              | ValueList ASSIGN SetExpression
+                             | ValueList ASSIGN Array
                              | ValueList ASSIGN Identifier
                              | ValueList ASSIGN NumericSymbolicExpression
                              | ValueList LE Identifier
                              | ValueList LE NumericSymbolicExpression
                              | ValueList GE Identifier
                              | ValueList GE NumericSymbolicExpression
+                             | ValueList EQ SetExpression
+                             | ValueList EQ Array
                              | ValueList EQ Identifier
                              | ValueList EQ NumericSymbolicExpression
                              | ValueList LT Identifier
@@ -1229,6 +1239,7 @@ def p_DeclarationExpression(t):
                              | NumericSymbolicExpression DIMEN Identifier
                              | NumericSymbolicExpression DIMEN NumericSymbolicExpression
                              | NumericSymbolicExpression ASSIGN SetExpression
+                             | NumericSymbolicExpression ASSIGN Array
                              | NumericSymbolicExpression ASSIGN Identifier
                              | NumericSymbolicExpression ASSIGN NumericSymbolicExpression
                              | NumericSymbolicExpression COMMA DeclarationAttributeList
@@ -1239,6 +1250,7 @@ def p_DeclarationExpression(t):
                              | Identifier DIMEN Identifier
                              | Identifier DIMEN NumericSymbolicExpression
                              | Identifier ASSIGN SetExpression
+                             | Identifier ASSIGN Array
                              | Identifier ASSIGN Identifier
                              | Identifier ASSIGN NumericSymbolicExpression
                              | Identifier COMMA DeclarationAttributeList
@@ -1339,6 +1351,7 @@ def p_DeclarationAttribute(t):
                           | DIMEN NumericSymbolicExpression
                           
                           | ASSIGN SetExpression
+                          | ASSIGN Array
                           | ASSIGN Identifier
                           | ASSIGN NumericSymbolicExpression
                           
@@ -1348,6 +1361,8 @@ def p_DeclarationAttribute(t):
                           | LE Identifier
                           | LE NumericSymbolicExpression
                           
+                          | EQ SetExpression
+                          | EQ Array
                           | EQ Identifier
                           | EQ NumericSymbolicExpression
                           
@@ -1729,14 +1744,9 @@ def p_SetExpressionWithValue(t):
 
 
 def p_SetExpressionWithIndices(t):
-    '''SetExpression : Identifier LBRACKET ValueList RBRACKET
-                     | Identifier LBRACKET Identifier RBRACKET
-                     | Identifier LBRACKET NumericSymbolicExpression RBRACKET'''
+    '''SetExpression : Identifier Array'''
 
-    if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
-      t[3] = ValueList([t[3]])
-
-    t[0] = SetExpressionWithIndices(t[1], t[3])
+    t[0] = SetExpressionWithIndices(t[1], t[2].value)
 
 def p_IteratedSetExpression(t):
     '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE TupleListItem
@@ -1861,6 +1871,7 @@ def p_EntryIndexingExpressionEq(t):
                                | Identifier GE Identifier
                                | Identifier GE NumericSymbolicExpression
                                | Identifier EQ SetExpression
+                               | Identifier EQ Array
                                | Identifier EQ Identifier
                                | Identifier EQ NumericSymbolicExpression
                                | Identifier LT Identifier
@@ -2327,9 +2338,7 @@ def p_Identifier(t):
                   | ID UNDERLINE LBRACE Identifier RBRACE
                   | ID UNDERLINE LBRACE NumericSymbolicExpression RBRACE
                   
-                  | ID LBRACKET ValueList RBRACKET
-                  | ID LBRACKET Identifier RBRACKET
-                  | ID LBRACKET NumericSymbolicExpression RBRACKET
+                  | ID Array
                   
                   | ID'''
 
@@ -2342,30 +2351,33 @@ def p_Identifier(t):
           t[0] = Identifier(ID(t[1]), [t[4]])
 
     elif len(t) > 2:
-
-        if isinstance(t[3], ValueList):
-          t[0] = Identifier(ID(t[1]), t[3].getValues())
-
-        else:
-          t[0] = Identifier(ID(t[1]), [t[3]])
+        t[0] = Identifier(ID(t[1]), t[2].value.getValues())
 
     else:
         t[0] = Identifier(ID(t[1]))
 
 def p_ValueList(t):
     '''ValueList : ValueList COMMA SetExpression
+                 | ValueList COMMA TupleList
                  | ValueList COMMA Identifier
                  | ValueList COMMA NumericSymbolicExpression
 
+                 | TupleList COMMA SetExpression
+                 | TupleList COMMA Identifier
+                 | TupleList COMMA NumericSymbolicExpression
+
                  | SetExpression COMMA SetExpression
+                 | SetExpression COMMA TupleList
                  | SetExpression COMMA Identifier
                  | SetExpression COMMA NumericSymbolicExpression
                  
                  | Identifier COMMA SetExpression
+                 | Identifier COMMA TupleList
                  | Identifier COMMA Identifier
                  | Identifier COMMA NumericSymbolicExpression
                  
                  | NumericSymbolicExpression COMMA SetExpression
+                 | NumericSymbolicExpression COMMA TupleList
                  | NumericSymbolicExpression COMMA Identifier
                  | NumericSymbolicExpression COMMA NumericSymbolicExpression'''
 
@@ -2406,6 +2418,18 @@ def p_TupleList(t):
         t[0] = TupleList([t[1]])
     else:
         t[0] = t[1].add(t[3])
+
+def p_Array(t):
+  '''Array : LBRACKET ValueList RBRACKET
+           | LBRACKET TupleList RBRACKET
+           | LBRACKET SetExpression RBRACKET
+           | LBRACKET Identifier RBRACKET
+           | LBRACKET NumericSymbolicExpression RBRACKET'''
+
+  if not isinstance(t[2], ValueList) and not isinstance(t[2], TupleList):
+      t[2] = ValueList([t[2]])
+
+  t[0] = Array(t[2])
 
 def p_error(t):
   if t:

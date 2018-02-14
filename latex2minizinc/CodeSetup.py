@@ -661,7 +661,9 @@ class CodeSetup:
         """
 
         if node.hasSup:
-            if len(node.entriesIndexingExpression) != 1 or not isinstance(node.entriesIndexingExpression[0], EntryIndexingExpressionEq):
+            if len(node.entriesIndexingExpression) != 1 or not isinstance(node.entriesIndexingExpression[0], EntryIndexingExpressionEq) or \
+               not (isinstance(node.entriesIndexingExpression[0].value, Identifier) or isinstance(node.entriesIndexingExpression[0].value, NumericExpression)):
+
                 raise CodeGenerationException(self.stmtIndex+1, ", ".join(map(lambda el: el.getSymbolName(self.codeGenerator), node.entriesIndexingExpression)), 'Iterated expression (\sum, \prod, \max, \min, \cup or \cap) with a upper limit expression must have a single entry of the form "identifier = identifier2 | numeric expression" as the lower limit expression. Ex.: \sum_{i = 1}^{n}x_{i}')
 
             else:
@@ -1208,6 +1210,13 @@ class CodeSetup:
         Generate the MiniZinc code for the declaration of identifiers used in this range expression
         """
         map(self._setupValue, node.values)
+
+    # Array
+    def setupEnvironment_Array(self, node):
+        """
+        Generate the MiniZinc code for the declaration of identifiers used in this array expression
+        """
+        map(self._setupValue, node.value)
 
     # Value
     def setupEnvironment_Value(self, node):

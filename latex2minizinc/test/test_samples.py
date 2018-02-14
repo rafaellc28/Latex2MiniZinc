@@ -872,3 +872,12 @@ def test_extras_test69():
 
 def test_extras_test70():
 	check_test_extras_num(70)
+
+def test_extras_test71():
+	check_test_extras_num(71)
+
+def test_extras_test72():
+	check_test_extras_num(72)
+
+def test_extras_test73():
+	check_test_extras_num(73)

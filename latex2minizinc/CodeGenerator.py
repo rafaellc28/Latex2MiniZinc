@@ -2,6 +2,7 @@ from Utils import *
 from ValueList import *
 from Tuple import *
 from TupleList import *
+from Array import *
 from Range import *
 from Objectives import *
 from Range import *
@@ -1556,8 +1557,8 @@ class CodeGenerator:
     # Get the MathProg code for a given relational expression
     def _getCodeValue(self, value):
         val = value.generateCode(self)
-        if val.replace('.','',1).isdigit():
-            val = str(int(float(val)))
+        #if val.replace('.','',1).isdigit():
+        #    val = str(int(float(val)))
 
         return val
 
@@ -1571,8 +1572,8 @@ class CodeGenerator:
             id_.setIsSubIndice(True)
 
         val = id_.generateCode(self)
-        if val.replace('.','',1).isdigit():
-            val = str(int(float(val)))
+        #if val.replace('.','',1).isdigit():
+        #    val = str(int(float(val)))
 
         return val
 
@@ -1953,42 +1954,7 @@ class CodeGenerator:
                         varStr += "array["
                         varStr += ", ".join(domains_aux) + "]"
 
-                    _types = self._removeTypesThatAreNotDeclarable(_types)
-                    _types = self._getTypes(_types)
-                    
-                    if len(_types) > 0:
-                        _type = _types[0].getObj()
-                        
-                        if isinstance(_type, BinarySet):
-                            _type = "bool";
-
-                        elif isinstance(_type, IntegerSet):
-                            const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
-                            
-                            if const:
-                                self.additionalConstraints.append(const)
-
-                            _type = "int";
-
-                        elif isinstance(_type, SymbolicSet):
-                            _type = "string";
-
-                        else:
-                            const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
-                            
-                            if const:
-                                self.additionalConstraints.append(const)
-
-                            _type = "float";
-
-                        if _type.strip() != "":
-                            includedVar = True
-                            if isArray:
-                                varStr += " of var " + _type
-                            else:
-                                varStr += "var " + _type
-
-                    elif varDecl != None:
+                    if varDecl != None:
                         ins_vec = varDecl.getIn()
                         ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
 
@@ -2001,6 +1967,42 @@ class CodeGenerator:
                                     varStr += " of var " + ins
                                 else:
                                     varStr += "var " + ins
+
+                    if not includedVar:
+                        _types = self._removeTypesThatAreNotDeclarable(_types)
+                        _types = self._getTypes(_types)
+                        
+                        if len(_types) > 0:
+                            _type = _types[0].getObj()
+                            
+                            if isinstance(_type, BinarySet):
+                                _type = "bool";
+
+                            elif isinstance(_type, IntegerSet):
+                                const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
+                                
+                                if const:
+                                    self.additionalConstraints.append(const)
+
+                                _type = "int";
+
+                            elif isinstance(_type, SymbolicSet):
+                                _type = "string";
+
+                            else:
+                                const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
+                                
+                                if const:
+                                    self.additionalConstraints.append(const)
+
+                                _type = "float";
+
+                            if _type.strip() != "":
+                                includedVar = True
+                                if isArray:
+                                    varStr += " of var " + _type
+                                else:
+                                    varStr += "var " + _type
 
                     if not includedVar:
                         if isArray:
@@ -2127,39 +2129,43 @@ class CodeGenerator:
                 domain = indexingExpression
                 isArray = True
                 array += "array[" + domain + "]"
-            
-        _types = self._removeTypesThatAreNotDeclarable(_types)
-        _types = self._getTypes(_types)
 
-        if len(_types) > 0:
-            _type = _types[0].getObj()
-            
-            if isinstance(_type, BinarySet):
-                _type = "bool";
-
-            elif isinstance(_type, IntegerSet):
-                _type = "int";
-
-            elif isinstance(_type, SymbolicSet):
-                _type = "string";
-
-            else:
-                _type = "float";
-
-            if _type.strip() != "":
-                includedType = True
-
-        elif varDecl != None:
+        #print(varDecl)
+        if varDecl != None:
             
             ins_vec = varDecl.getIn()
+            #print("ins_vec1", ins_vec)
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
-            
+            #print("ins_vec2", ins_vec)
             if ins_vec != None and len(ins_vec) > 0:
                 ins = ins_vec[-1].generateCode(self)
+                #print("ins", ins)
 
                 if ins != "":
                     includedType = True
                     _type = ins
+        
+        if not includedType:
+            _types = self._removeTypesThatAreNotDeclarable(_types)
+            _types = self._getTypes(_types)
+
+            if len(_types) > 0:
+                _type = _types[0].getObj()
+                
+                if isinstance(_type, BinarySet):
+                    _type = "bool";
+
+                elif isinstance(_type, IntegerSet):
+                    _type = "int";
+
+                elif isinstance(_type, SymbolicSet):
+                    _type = "string";
+
+                else:
+                    _type = "float";
+
+                if _type.strip() != "":
+                    includedType = True
 
         if (not includedType or _type == "int") and param in self.parameterIsIndexOf:
             value = self.parameterIsIndexOf[param]
@@ -2220,106 +2226,108 @@ class CodeGenerator:
 
                 value = varDecl.getValue().attribute.generateCode(self)
 
-                dependencies = varDecl.getValue().attribute.getDependencies(self)
-                if param in dependencies:
-                    
-                    cnt = None
-                    if isArray:
-                        indices = map(lambda el: el.generateCode(self), _subIndices)
-                        indices = self._getIndices(indices, domains_with_indices)
+                if not isinstance(varDecl.getValue().attribute, Array):
+
+                    dependencies = varDecl.getValue().attribute.getDependencies(self)
+                    if param in dependencies:
                         
-                        if indexingExpression:
-                            cnt = "constraint forall(" + indexingExpression + ")(" + param + "[" + ",".join(indices) + "] = " + value + ");";
+                        cnt = None
+                        if isArray:
+                            indices = map(lambda el: el.generateCode(self), _subIndices)
+                            indices = self._getIndices(indices, domains_with_indices)
+                            
+                            if indexingExpression:
+                                cnt = "constraint forall(" + indexingExpression + ")(" + param + "[" + ",".join(indices) + "] = " + value + ");";
 
-                    else:
-                        cnt = "constraint " + param + " = " + value + ";";
+                        else:
+                            cnt = "constraint " + param + " = " + value + ";";
 
-                    if cnt:
-                        self.additionalConstraints.append(cnt)
+                        if cnt:
+                            self.additionalConstraints.append(cnt)
 
-                    value = ""
-                    
-                else:
-                    if self._hasFunctionsToRemove(value):
                         value = ""
-
+                        
                     else:
-
-                        self.getOriginalIndices = True
-                        value2 = varDecl.getValue().attribute.generateCode(self)
-                        self.getOriginalIndices = False
-                        
-                        if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
-                            value = self.setsWitOperations[value2]
-                            self.setsWitOperationsUsed.append(value)
-                            
-                            if value2 in self.setsWitOperationsIndices:
-                                v = self.setsWitOperationsIndices[value2]
-
-                                if v["dimen"] > 0:
-                                    value += "["
-                                    inds = []
-                                    for i in range(v["dimen"]):
-                                        inds.append(v["indices"][i])
-                                    value += ",".join(inds) + "]"
-                            
-                            _type = "set of int:"
-                            
-                        self.newType = "int"
-                        self.turnStringsIntoInts = False
-                        self.removeAdditionalParameter = False
-
-                        rangeSet = self._getRange(varDecl.getValue().attribute)
-                        if rangeSet != None:
-                            _type = "set of int:"
-                            value = rangeSet.generateCode(self)
-
-                        elif value.startswith("["):
-                            _type = "set of int:"
-                        
-                        if "{" in value and (self.isSetExpressionWithIndexingExpression or isArray):
+                        if self._hasFunctionsToRemove(value):
                             value = ""
-                            self.isSetExpressionWithIndexingExpression = False
 
-                        elif isArray or len(_subIndices) > 0 or "[" in value:
+                        else:
+
+                            self.getOriginalIndices = True
+                            value2 = varDecl.getValue().attribute.generateCode(self)
+                            self.getOriginalIndices = False
                             
-                            if indexingExpression != None and indexingExpression.strip() != "":
-                                value = "["+value+" | "+indexingExpression+"]"
+                            if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
+                                value = self.setsWitOperations[value2]
+                                self.setsWitOperationsUsed.append(value)
+                                
+                                if value2 in self.setsWitOperationsIndices:
+                                    v = self.setsWitOperationsIndices[value2]
 
-                                if not value.startswith("array"):
-                                    
-                                    if len(domains) > 0:
-                                        length_domains = len(domains)
-                                        indices = []
-                                        array = "array["
+                                    if v["dimen"] > 0:
+                                        value += "["
+                                        inds = []
+                                        for i in range(v["dimen"]):
+                                            inds.append(v["indices"][i])
+                                        value += ",".join(inds) + "]"
+                                
+                                _type = "set of int:"
+                                
+                            self.newType = "int"
+                            self.turnStringsIntoInts = False
+                            self.removeAdditionalParameter = False
 
-                                        for i in range(length_domains):
-                                            d = domains[i]
-                                            if d == "int":
-                                                index = "INDEX_SET_"+param+"_"+str(i+1)
-                                                setint = "set of int: "+index
+                            rangeSet = self._getRange(varDecl.getValue().attribute)
+                            if rangeSet != None:
+                                _type = "set of int:"
+                                value = rangeSet.generateCode(self)
 
-                                                if i < len(domains_aux) and ".." in domains_aux[i]:
-                                                    setint += " = " + domains_aux[i]
+                            elif value.startswith("["):
+                                _type = "set of int:"
+                            
+                            if "{" in value and (self.isSetExpressionWithIndexingExpression or isArray):
+                                value = ""
+                                self.isSetExpressionWithIndexingExpression = False
 
-                                                    if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
-                                                        pos = domains_with_indices[i].find(" in ")
-                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
+                            elif isArray or len(_subIndices) > 0 or "[" in value:
+                                
+                                if indexingExpression != None and indexingExpression.strip() != "":
+                                    value = "["+value+" | "+indexingExpression+"]"
 
-                                                setint += ";\n\n"
+                                    if not value.startswith("array"):
+                                        
+                                        if len(domains) > 0:
+                                            length_domains = len(domains)
+                                            indices = []
+                                            array = "array["
 
-                                                self.additionalParameters[index] = setint
-                                                indices.append(index)
+                                            for i in range(length_domains):
+                                                d = domains[i]
+                                                if d == "int":
+                                                    index = "INDEX_SET_"+param+"_"+str(i+1)
+                                                    setint = "set of int: "+index
 
-                                            else:
-                                                indices.append(d)
+                                                    if i < len(domains_aux) and ".." in domains_aux[i]:
+                                                        setint += " = " + domains_aux[i]
 
-                                        array += ", ".join(indices) + "]"
-                                        isArray = True
+                                                        if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
+                                                            pos = domains_with_indices[i].find(" in ")
+                                                            domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
 
-                                        value = "array"+str(length_domains)+"d("+", ".join(indices)+", "+value+")"
+                                                    setint += ";\n\n"
 
-                        self.genValueAssigned.add(GenObj(param))
+                                                    self.additionalParameters[index] = setint
+                                                    indices.append(index)
+
+                                                else:
+                                                    indices.append(d)
+
+                                            array += ", ".join(indices) + "]"
+                                            isArray = True
+
+                                            value = "array"+str(length_domains)+"d("+", ".join(indices)+", "+value+")"
+
+                            self.genValueAssigned.add(GenObj(param))
 
         if _type == "set of int:":
             self.listSetOfInts.append(param)
@@ -3329,6 +3337,10 @@ class CodeGenerator:
 
         if node.hasSup:
             res = node.identifier.generateCode(self) + " in " + Utils._getInt(node.value.generateCode(self)) # completed in generateCode_IteratedNumericExpression
+
+        elif isinstance(node.value, Array):
+            res = node.identifier.generateCode(self) + " in {" + node.value.value.generateCode(self) + "}"
+
         else:
             res = node.identifier.generateCode(self) + " in " + node.value.generateCode(self)
 
@@ -3657,6 +3669,10 @@ class CodeGenerator:
     # Tuple List
     def generateCode_TupleList(self, node):
         return ",".join(map(self._getCodeValue, node.values))
+
+    # Tuple
+    def generateCode_Array(self, node):
+        return "[" + ",".join(map(self._getCodeValue, node.value)) + "]"
 
     # Value
     def generateCode_Value(self, node):

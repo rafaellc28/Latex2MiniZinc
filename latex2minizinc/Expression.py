@@ -8,6 +8,23 @@ class Expression:
         self.identifierName = None
         self.identifierList = None
 
+        self.isInSet = False
+        self.isSet = None
+        self.isVar = None
+        self.isParam = None
+        self.isReal = False
+        self.isSymbolic = False
+        self.isLogical = False
+        self.isBinary = False
+        self.isInteger = False
+        self.isNatural = False
+        self.isSubIndice = False
+        self.isInt = False
+        self.isDeclaredAsParam = None
+        self.isDeclaredAsSet = None
+        self.isDeclaredAsVar = None
+        self.checkIfIsDummyIndex = False
+
     def getSymbol(self):
         return self
 

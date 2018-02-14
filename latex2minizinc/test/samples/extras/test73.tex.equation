@@ -1,0 +1,4 @@
+% Test array value with tuples
+n := 5, \in \mathbb{Z}, \in \mathbb{P}\\
+a[i] \in \mathbb{Z}, \in 1 \dots n: i \in 1 \dots n\\
+b[i] := [(3,5+d),(2/c,3+f,1)], \in 1 \dots n: i \in 1 \dots n\\
