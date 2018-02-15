@@ -13,7 +13,7 @@ array[int] of float: lb;
 array[int] of float: x0;
 
 
-array[INDEX_SET_x_1] of var float: x;
+array[INDEX_SET_x_1] of var float: x = array1d(I, [x0[i] | i in I]);
 
 var float: G1;
 
@@ -25,8 +25,6 @@ var float: G6;
 
 set of int: INDEX_SET_x_1;
 
-
-constraint forall(i in I)(x[i] <= ub[i] /\ x[i] >= lb[i]);
 
 constraint G1 = 35.82 - 0.222 * x[10] - b * x[9];
 

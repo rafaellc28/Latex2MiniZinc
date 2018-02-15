@@ -5,7 +5,7 @@ array[int] of float: a;
 array[int] of float: c;
 
 
-array[INDEX_SET_x_1] of var float: x;
+array[INDEX_SET_x_1] of var float: x = array1d(I, [0.01 | i in I]);
 
 set of int: INDEX_SET_x_1;
 

@@ -69,6 +69,11 @@ def check_test_extras_num(num):
 
 	check_test(name1, name2)
 
+def check_test_minizinc_num(num):
+	name1 = 'latex2minizinc/test/samples/minizinc/minizinc'+str(num)+'.tex.equation'
+	name2 = 'latex2minizinc/test/samples/minizinc/output/minizinc'+str(num)+'.mzn'
+
+
 def test_lp0():
 	check_test_num(0)
 
@@ -881,3 +886,16 @@ def test_extras_test72():
 
 def test_extras_test73():
 	check_test_extras_num(73)
+
+# MiniZinc
+def test_minizinc_test0():
+	check_test_minizinc_num(0)
+
+def test_minizinc_test1():
+	check_test_minizinc_num(1)
+
+def test_minizinc_test2():
+	check_test_minizinc_num(2)
+
+def test_minizinc_test3():
+	check_test_minizinc_num(3)

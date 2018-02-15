@@ -1,0 +1,7 @@
+% specialization-examples/introduction/army/gatheringanarmy-strong.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{maximize } 6*A + 10*B + 8*C + 40*D\\
+13*A + 21*B + 17*C + 90*D \leq budget
+budget := 10000, \in \mathbb{Z}, \in \mathbb{P}\\
+A \in 0 \dots 1000, \in \mathbb{Z}, := 0; B \in 0 \dots 400, := 0, \in \mathbb{Z}\\
+C := 0, \in 0 \dots 500, \in \mathbb{Z}; D \in 0 \dots 150, \in \mathbb{Z}\\
+

@@ -1,0 +1,6 @@
+% specialization-examples/introduction/army/armyd.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{maximize } 6*F + 10*L + 8*Z + 40*J\\
+budget \in \mathbb{Z}, \in \mathbb{P}\\
+13*F + 21*L + 17*Z + 100*J \leq budget\\
+F \in 0 \dots 1000, \in \mathbb{Z}; L \in 0 \dots 400, \in \mathbb{Z}\\
+Z \in 0 \dots 500, \in \mathbb{Z}; J \in 0 \dots 150, \in \mathbb{Z}\\

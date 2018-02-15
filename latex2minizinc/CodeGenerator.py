@@ -1866,6 +1866,7 @@ class CodeGenerator:
                     previousParentScope = self.parentScope
                     self.parentScope = self.scope
 
+                    value = ""
                     domain = None
                     varName = var.getName()
                     _type = None
@@ -2011,55 +2012,188 @@ class CodeGenerator:
                             varStr += "var float"
 
                     if varDecl != None:
-                        cnt = ""
-                        attr = varDecl.getRelationEqualTo()
-                        if attr != None:
 
+                        if varDecl.getValue() != None:
+                            
+                            self.newType = varName
+                            self.turnStringsIntoInts = True
+                            self.removeAdditionalParameter = True
+                            self.isSetExpressionWithIndexingExpression = False
+
+                            indexingExpression = None
                             indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
-                            attribute = attr.attribute.generateCode(self)
 
-                            if not self._hasFunctionsToRemove(attribute):
+                            if not indexingExpression:
+                                indexingExpression = self._getDomainsWithIndicesByIdentifier(varName)
+                                if indexingExpression != None and len(indexingExpression) > 0:
+                                    indexingExpression = self._getDomainsWithIndices(indexingExpression)
+                                    indexingExpression = ", ".join(indexingExpression)
 
-                                if isArray:
-                                    domains = self._getDomainsWithIndices(domains_with_indices)
-                                    indices = self._getIndices(sub_indices_vec, domains_with_indices)
-                                    cnt += "constraint forall("+", ".join(domains)+")(" + varName + "["+",".join(indices)+"] = " + attribute + ");";
                                 else:
-                                    cnt += "constraint " + varName + " = " + attribute + ";";
+                                    indexingExpression = None
 
-                                self.additionalConstraints.append(cnt)
+                            if isinstance(varDecl.getValue().attribute, SymbolicExpression) or isinstance(varDecl.getValue().attribute, String):
+                                self.turnStringsIntoInts = False
+                                self.removeAdditionalParameter = False
+                                _type = "string"
 
+                            value = varDecl.getValue().attribute.generateCode(self)
+                            if not isinstance(varDecl.getValue().attribute, Array):
+
+                                dependencies = varDecl.getValue().attribute.getDependencies(self)
+                                if varName in dependencies:
+                                    
+                                    cnt = None
+                                    if isArray:
+                                        indices = map(lambda el: el.generateCode(self), _subIndices)
+                                        indices = self._getIndices(indices, domains_with_indices)
+                                        
+                                        if indexingExpression:
+                                            cnt = "constraint forall(" + indexingExpression + ")(" + varName + "[" + ",".join(indices) + "] = " + value + ");";
+
+                                    else:
+                                        cnt = "constraint " + varName + " = " + value + ";";
+
+                                    if cnt:
+                                        self.additionalConstraints.append(cnt)
+
+                                    value = ""
+                                    
+                                else:
+                                    if self._hasFunctionsToRemove(value):
+                                        value = ""
+
+                                    else:
+
+                                        self.getOriginalIndices = True
+                                        value2 = varDecl.getValue().attribute.generateCode(self)
+                                        self.getOriginalIndices = False
+                                        
+                                        if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
+                                            value = self.setsWitOperations[value2]
+                                            self.setsWitOperationsUsed.append(value)
+                                            
+                                            if value2 in self.setsWitOperationsIndices:
+                                                v = self.setsWitOperationsIndices[value2]
+
+                                                if v["dimen"] > 0:
+                                                    value += "["
+                                                    inds = []
+                                                    for i in range(v["dimen"]):
+                                                        inds.append(v["indices"][i])
+                                                    value += ",".join(inds) + "]"
+                                            
+                                            _type = "set of int:"
+                                            
+                                        self.newType = "int"
+                                        self.turnStringsIntoInts = False
+                                        self.removeAdditionalParameter = False
+
+                                        rangeSet = self._getRange(varDecl.getValue().attribute)
+                                        if rangeSet != None:
+                                            _type = "set of int:"
+                                            value = rangeSet.generateCode(self)
+
+                                        elif value.startswith("["):
+                                            _type = "set of int:"
+                                        
+                                        if "{" in value and (self.isSetExpressionWithIndexingExpression or isArray):
+                                            value = ""
+                                            self.isSetExpressionWithIndexingExpression = False
+
+                                        elif isArray or len(_subIndices) > 0 or "[" in value:
+                                            
+                                            if indexingExpression != None and indexingExpression.strip() != "":
+                                                value = "["+value+" | "+indexingExpression+"]"
+
+                                                if not value.startswith("array"):
+                                                    
+                                                    if len(domains) > 0:
+                                                        length_domains = len(domains)
+                                                        indices = []
+                                                        array = "array["
+
+                                                        for i in range(length_domains):
+                                                            d = domains[i]
+                                                            if d == "int":
+                                                                index = "INDEX_SET_"+varName+"_"+str(i+1)
+                                                                setint = "set of int: "+index
+
+                                                                if i < len(domains_aux) and ".." in domains_aux[i]:
+                                                                    setint += " = " + domains_aux[i]
+
+                                                                    if i < len(domains_with_indices) and " in " in domains_with_indices[i]:
+                                                                        pos = domains_with_indices[i].find(" in ")
+                                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + " in " + index
+
+                                                                setint += ";\n\n"
+
+                                                                self.additionalParameters[index] = setint
+                                                                indices.append(index)
+
+                                                            else:
+                                                                indices.append(d)
+
+                                                        array += ", ".join(indices) + "]"
+                                                        isArray = True
+
+                                                        value = "array"+str(length_domains)+"d("+", ".join(indices)+", "+value+")"
+
+                                        self.genValueAssigned.add(GenObj(varName))
                         else:
 
                             cnt = ""
-                            cntAux = ""
-                            attr = varDecl.getRelationLessThanOrEqualTo()
-
+                            attr = varDecl.getRelationEqualTo()
                             if attr != None:
-                                if isArray:
-                                    indices = self._getIndices(sub_indices_vec, domains_with_indices)
-                                    cntAux += varName + "["+",".join(indices)+"] <= " + attr.attribute.generateCode(self)
-                                else:
-                                    cntAux += varName + " <= " + attr.attribute.generateCode(self)
 
-                            attr = varDecl.getRelationGreaterThanOrEqualTo()
-                            if attr != None:
+                                indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
+                                attribute = attr.attribute.generateCode(self)
+
+                                if not self._hasFunctionsToRemove(attribute):
+
+                                    if isArray:
+                                        domains = self._getDomainsWithIndices(domains_with_indices)
+                                        indices = self._getIndices(sub_indices_vec, domains_with_indices)
+                                        cnt += "constraint forall("+", ".join(domains)+")(" + varName + "["+",".join(indices)+"] = " + attribute + ");";
+                                    else:
+                                        cnt += "constraint " + varName + " = " + attribute + ";";
+
+                                    self.additionalConstraints.append(cnt)
+
+                            else:
+
+                                cnt = ""
+                                cntAux = ""
+                                attr = varDecl.getRelationLessThanOrEqualTo()
+
+                                if attr != None:
+                                    if isArray:
+                                        indices = self._getIndices(sub_indices_vec, domains_with_indices)
+                                        cntAux += varName + "["+",".join(indices)+"] <= " + attr.attribute.generateCode(self)
+                                    else:
+                                        cntAux += varName + " <= " + attr.attribute.generateCode(self)
+
+                                attr = varDecl.getRelationGreaterThanOrEqualTo()
+                                if attr != None:
+                                    if cntAux != "":
+                                        cntAux += " /\\ "
+
+                                    if isArray:
+                                        indices = self._getIndices(sub_indices_vec, domains_with_indices)
+                                        cntAux += varName + "["+",".join(indices)+"] >= " + attr.attribute.generateCode(self)
+                                    else:
+                                        cntAux += varName + " >= " + attr.attribute.generateCode(self)
+
                                 if cntAux != "":
-                                    cntAux += " /\\ "
+                                    if isArray:
+                                        domains = self._getDomainsWithIndices(domains_with_indices)
+                                        cnt += "constraint forall("+", ".join(domains)+")(" + cntAux + ");"
+                                    else:
+                                        cnt += "constraint " + cntAux + ";"
+                                    self.additionalConstraints.append(cnt)
 
-                                if isArray:
-                                    indices = self._getIndices(sub_indices_vec, domains_with_indices)
-                                    cntAux += varName + "["+",".join(indices)+"] >= " + attr.attribute.generateCode(self)
-                                else:
-                                    cntAux += varName + " >= " + attr.attribute.generateCode(self)
-
-                            if cntAux != "":
-                                if isArray:
-                                    domains = self._getDomainsWithIndices(domains_with_indices)
-                                    cnt += "constraint forall("+", ".join(domains)+")(" + cntAux + ");"
-                                else:
-                                    cnt += "constraint " + cntAux + ";"
-                                self.additionalConstraints.append(cnt)
+                    if value != "" and value.strip() != "":
+                        varName += " = " + value.strip()
 
                     varStr += ": " + varName
                     varStr += ";\n\n"
@@ -2130,16 +2264,12 @@ class CodeGenerator:
                 isArray = True
                 array += "array[" + domain + "]"
 
-        #print(varDecl)
         if varDecl != None:
             
             ins_vec = varDecl.getIn()
-            #print("ins_vec1", ins_vec)
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
-            #print("ins_vec2", ins_vec)
             if ins_vec != None and len(ins_vec) > 0:
                 ins = ins_vec[-1].generateCode(self)
-                #print("ins", ins)
 
                 if ins != "":
                     includedType = True

@@ -1,4 +1,4 @@
-array[INDEX_SET_x_1] of var float: x;
+array[INDEX_SET_x_1] of var float: x = 1;
 
 set of int: INDEX_SET_x_1 = 1..2;
 
