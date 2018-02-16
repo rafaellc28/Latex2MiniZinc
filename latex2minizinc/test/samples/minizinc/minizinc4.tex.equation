@@ -1,0 +1,5 @@
+% specialization-examples/introduction/banquet/banquet.mzn. From https://github.com/MiniZinc/specialization-examples
+amt_{i} \geq 0: i \in DISH\\
+\sum_{i \in DISH}size_{i} * amt_{i} \leq capacity\\
+amt \in \mathbb{Z}; capacity, size, satisf \in \mathbb{Z}, \in \mathbb{P}\\
+\text{maximize } \sum_{i \in DISH}satisf_{i} * amt_{i}\\
