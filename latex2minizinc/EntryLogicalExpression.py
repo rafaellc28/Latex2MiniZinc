@@ -35,7 +35,7 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
         to string
         """
 
-        return str(self.numericExpression1) + " " + self.op + " " + str(self.numericExpression2)
+        return "EntryLogicalExpressionRelational: " + str(self.numericExpression1) + " " + self.op + " " + str(self.numericExpression2)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.numericExpression1.getDependencies(codeGenerator) + self.numericExpression2.getDependencies(codeGenerator)))
@@ -88,7 +88,7 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
         to string
         """
 
-        return str(self.identifier) + " " + self.op + " " + str(self.setExpression)
+        return "EntryLogicalExpressionWithSet: " + str(self.identifier) + " " + self.op + " " + str(self.setExpression)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
@@ -138,7 +138,7 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
         to string
         """
 
-        return str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
+        return "EntryLogicalExpressionWithSetOperation: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.setExpression1.getDependencies(codeGenerator) + self.setExpression2.getDependencies(codeGenerator)))
@@ -184,7 +184,7 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
         to string
         """
 
-        return self.op + "{" + str(self.indexingExpression) + "} " +  str(self.logicalExpression)
+        return "EntryLogicalExpressionIterated: " + self.op + "{" + str(self.indexingExpression) + "} " +  str(self.logicalExpression)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.indexingExpression.getDependencies(codeGenerator) + self.logicalExpression.getDependencies(codeGenerator)))
@@ -221,7 +221,7 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
         to string
         """
         
-        return "LogicalE: (" + str(self.logicalExpression) + ")"
+        return "EntryLogicalExpressionBetweenParenthesis: (" + str(self.logicalExpression) + ")"
  
     def getDependencies(self, codeGenerator):
         return self.logicalExpression.getDependencies(codeGenerator)
@@ -257,7 +257,7 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
         to string
         """
         
-        return "LogicalE_NumSymbE: (" + str(self.numericOrSymbolicExpression) + ")"
+        return "EntryLogicalExpressionNumericOrSymbolic: (" + str(self.numericOrSymbolicExpression) + ")"
 
     def getDependencies(self, codeGenerator):
         return self.numericOrSymbolicExpression.getDependencies(codeGenerator)
@@ -293,7 +293,7 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
         to string
         """
         
-        return "LogicalE_Not: (NOT " + str(self.logicalExpression) + ")"
+        return "EntryLogicalExpressionNot: (NOT " + str(self.logicalExpression) + ")"
 
     def getDependencies(self, codeGenerator):
         return self.logicalExpression.getDependencies(codeGenerator)

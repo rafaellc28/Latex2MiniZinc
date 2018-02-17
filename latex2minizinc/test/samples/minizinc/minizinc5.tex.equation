@@ -1,0 +1,34 @@
+% specialization-examples/introduction/color/color.mzn. From https://github.com/MiniZinc/specialization-examples
+Liang \neq Yong\\
+Yong \neq Yi\\
+Yong \neq Jing\\
+Yong \neq Si\\
+Yi \neq Jing\\
+Yi \neq Jiao\\
+Jiao \neq Jing\\
+Jiao \neq Yang\\
+Jing \neq Yang\\
+Jing \neq Yong\\
+Jing \neq Si\\
+Jing \neq Yu\\
+Yang \neq Yu\\
+Yang \neq Xu\\
+Yu \neq Si\\
+Yu \neq Yan\\
+Yu \neq Xu\\
+Xu \neq Yan\\
+Xu \neq Qing\\
+Yan \neq Si\\
+Yan \neq Ji\\
+Yan \neq Ji\\
+Yan \neq Qing\\
+Qing \neq Ji\\
+Ji \neq You\\
+Ji \neq Bing\\
+Ji \neq Si\\
+You \neq Bing\\
+Bing \neq Si\\
+
+COLOR := \{"GREEN", "BLUE", "PINK", "YELLOW"\}\\
+    
+Si, Yan, Yu, Xu, Qing, Ji, You, Bing, Yong, Liang, Yi, Jing, Yang, Jiao, \in COLOR, \in \mathbb{V}\\

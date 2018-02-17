@@ -3482,10 +3482,10 @@ class CodeGenerator:
     def generateCode_LogicalExpression(self, node):
         res = ""
         first = True
-
+        
         for i in range(len(node.entriesLogicalExpression)):
             conj, code = self._getCodeEntryByKey(node.entriesLogicalExpression[i])
-
+            
             if code != 0:
                 if first:
                     first = False
@@ -3529,7 +3529,7 @@ class CodeGenerator:
                     self._checkRealType(setExpression, values)
                     self.lastIdentifier = None
 
-                res = ", ".join(map(lambda var: "not(" + var + " in " + setExpression + ")" if node.op == EntryLogicalExpressionWithSet.NOTIN else \
+                res = " /\\ ".join(map(lambda var: "not(" + var + " in " + setExpression + ")" if node.op == EntryLogicalExpressionWithSet.NOTIN else \
                                                 var + " " + node.op + " " + setExpression, entries))
 
                 return res
