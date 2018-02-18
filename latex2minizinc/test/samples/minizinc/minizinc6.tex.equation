@@ -1,0 +1,4 @@
+army \bmod 5 = 2\\
+army \bmod 7 = 2\\
+army \bmod 12 = 1\\
+army \in 100 \dots 800, \in \mathbb{V}\\

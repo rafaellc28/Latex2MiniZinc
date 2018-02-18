@@ -905,3 +905,6 @@ def test_minizinc_test4():
 
 def test_minizinc_test5():
 	check_test_minizinc_num(5)
+
+def test_minizinc_test6():
+	check_test_minizinc_num(6)
