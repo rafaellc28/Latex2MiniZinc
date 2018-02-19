@@ -1961,7 +1961,7 @@ class CodeGenerator:
 
                         if ins_vec != None and len(ins_vec) > 0:
                             ins = ins_vec[-1].generateCode(self)
-
+                            
                             if ins != "":
                                 includedVar = True
                                 if isArray:
@@ -3758,10 +3758,7 @@ class CodeGenerator:
     # Range
     def generateCode_Range(self, node):
         initValue = node.rangeInit.generateCode(self)
-        initValue = Utils._getInt(initValue)
-
         endValue = node.rangeEnd.generateCode(self)
-        endValue = Utils._getInt(endValue)
 
         if node.by != None:
 

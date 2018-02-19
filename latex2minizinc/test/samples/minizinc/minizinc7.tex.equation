@@ -1,0 +1,6 @@
+% specialization-examples/introduction/loan/loan.mzn. From https://github.com/MiniZinc/specialization-examples
+B1 = P * (1.0 + I) - R\\
+B2 = B1 * (1.0 + I) - R\\
+B3 = B2 * (1.0 + I) - R\\
+B4 = B3 * (1.0 + I) - R\\
+R, P, B1, B2, B3, B4, I \in \mathbb{R}; I \in 0.0 \dots 2.0\\
