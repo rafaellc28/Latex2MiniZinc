@@ -7,9 +7,7 @@ constraint 10 * (x[2] - pow(x[1],2)) = 0;
 
 
 
-var float: obj = pow((1 - x[1]),2);
-
-solve minimize obj;
+solve minimize pow((1 - x[1]),2);
 
 
 

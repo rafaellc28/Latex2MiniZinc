@@ -42,9 +42,7 @@ constraint forall(j in J)(z >= x[j,sigma[j,m]] + p[j,sigma[j,m]]);
 
 
 
-var float: obj = z;
-
-solve minimize obj;
+solve minimize z;
 
 
 

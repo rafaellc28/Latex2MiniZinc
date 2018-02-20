@@ -16,9 +16,7 @@ constraint 13 * A + 21 * B + 17 * C + 90 * D <= budget;
 
 
 
-var float: obj = strength;
-
-solve maximize obj;
+solve maximize strength;
 
 
 

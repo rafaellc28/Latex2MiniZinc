@@ -23,9 +23,7 @@ constraint x[6] <= 2E+8 /\ x[6] >= 0;
 
 
 
-var float: obj = -exp(-h / 2);
-
-solve minimize obj;
+solve minimize -exp(-h / 2);
 
 
 

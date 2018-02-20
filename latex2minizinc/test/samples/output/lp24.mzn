@@ -202,9 +202,7 @@ constraint forall(a in INDEX_SET_N)(tld[N[a,1],N[a,2]] >= 0);
 
 
 
-var float: obj = 5 * timePenalty + totalDistance / Maxspeed;
-
-solve minimize obj;
+solve minimize 5 * timePenalty + totalDistance / Maxspeed;
 
 
 

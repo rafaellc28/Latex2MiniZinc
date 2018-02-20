@@ -48,9 +48,7 @@ constraint forall(d in DEMAND, s in SCENARIOS)(D[d,s] = sum(p in PLANTS)(y[p,d,s
 
 
 
-var float: obj = capcost + sum(s in SCENARIOS)(0.25 * v[s]);
-
-solve minimize obj;
+solve minimize capcost + sum(s in SCENARIOS)(0.25 * v[s]);
 
 
 

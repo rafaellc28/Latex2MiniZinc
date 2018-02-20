@@ -38,9 +38,7 @@ constraint forall(i in I, j in J)(x[i,j] <= min(supply[i],demand[j]) * y[i,j]);
 
 
 
-var float: obj = sum(i in I, j in J)(varcost[i,j] * x[i,j] + sum(i in I, j in J)(fixcost[i,j] * y[i,j]));
-
-solve minimize obj;
+solve minimize sum(i in I, j in J)(varcost[i,j] * x[i,j] + sum(i in I, j in J)(fixcost[i,j] * y[i,j]));
 
 
 

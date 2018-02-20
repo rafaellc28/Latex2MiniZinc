@@ -20,9 +20,7 @@ constraint forall(i in I)(B[i] >= 0);
 
 
 
-var float: obj = if a != 1 then sum(i in I)(A[i]) else sum(i in I)(A[i] + B[i]) endif;
-
-solve minimize obj;
+solve minimize if a != 1 then sum(i in I)(A[i]) else sum(i in I)(A[i] + B[i]) endif;
 
 
 

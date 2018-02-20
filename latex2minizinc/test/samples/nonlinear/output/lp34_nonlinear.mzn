@@ -18,9 +18,7 @@ constraint forall(j in J)(x[j] >= 0 /\ x[j] <= 10);
 
 
 
-var float: obj = -sum(i in I)(1 / (sum(j in J)(pow((x[j] - a[i,j]),2) + c[i])));
-
-solve minimize obj;
+solve minimize -sum(i in I)(1 / (sum(j in J)(pow((x[j] - a[i,j]),2) + c[i])));
 
 
 

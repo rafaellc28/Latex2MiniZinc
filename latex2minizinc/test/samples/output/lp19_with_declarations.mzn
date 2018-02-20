@@ -26,9 +26,7 @@ constraint forall(i in I)(sum(j in J)(a[i,j] * x[i,j]) <= b[i]);
 
 
 
-var float: obj = sum(i in I, j in J)(c[i,j] * x[i,j]);
-
-solve minimize obj;
+solve minimize sum(i in I, j in J)(c[i,j] * x[i,j]);
 
 
 

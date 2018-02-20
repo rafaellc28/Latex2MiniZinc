@@ -26,9 +26,7 @@ constraint forall(i in I)(b * x[i] + a + u[i] - v[i] = y[i]);
 
 
 
-var float: obj = sum(i in I)(u[i] + sum(i in I)(v[i]));
-
-solve minimize obj;
+solve minimize sum(i in I)(u[i] + sum(i in I)(v[i]));
 
 
 

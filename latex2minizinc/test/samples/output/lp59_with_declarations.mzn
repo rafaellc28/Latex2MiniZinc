@@ -26,9 +26,7 @@ constraint forall(i in INDEX_SET_E)(k[E[i,2]] - k[E[i,1]] >= 1 - card(V) * x[E[i
 
 
 
-var float: obj = sum(i in INDEX_SET_E)(x[E[i,1],E[i,2]]);
-
-solve minimize obj;
+solve minimize sum(i in INDEX_SET_E)(x[E[i,1],E[i,2]]);
 
 
 

@@ -19,14 +19,14 @@ set of int: INDEX_SET_E;
 
 set of int: INDEX_SET_EE;
 
-set of int: INDEX_SET_u_1;
+set of int: INDEX_SET_u_1 = 1..nc;
 
 set of int: INDEX_SET_x_1;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = 1..nc;
 
 
-constraint forall(i in V, case in 0..1)(z[EE[i,1],case] = (if case = 0 then (min(c in 1..z[i,1])((if not exists(j in V where j < i /\ i in INDEX_SET_EE)(z[EE[i,2],0] = c) then c else z[EE[i,1],1] + 1 endif))) else (if not exists(j in V where j < i)(i in INDEX_SET_EE) then 1 else max(j in V where j < i /\ i in INDEX_SET_EE)(z[EE[i,2],0]) endif) endif));
+constraint forall(i in V, case in 0..1)(z[i,case] = (if case = 0 then (min(c in 1..z[i,1])((if not exists(j in V where j < i /\ i in INDEX_SET_EE)(z[j,0] = c) then c else z[i,1] + 1 endif))) else (if not exists(j in V where j < i)(i in INDEX_SET_EE) then 1 else max(j in V where j < i /\ i in INDEX_SET_EE)(z[j,0]) endif) endif));
 
 constraint forall(i in V)(sum(c in 1..nc)(x[i,c]) = 1);
 
@@ -34,9 +34,7 @@ constraint forall(i in INDEX_SET_E, c in 1..nc)(x[E[i,1],c] + x[E[i,2],c] <= u[c
 
 
 
-var float: obj = sum(c in 1..nc)(u[c]);
-
-solve minimize obj;
+solve minimize sum(c in 1..nc)(u[c]);
 
 
 

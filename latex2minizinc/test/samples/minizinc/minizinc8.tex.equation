@@ -1,0 +1,5 @@
+% specialization-examples/introduction/production/prod-plan.mzn. From https://github.com/MiniZinc/specialization-examples
+produce_{p} \geq 0: p \in PRODUCT\\
+\sum_{p \in PRODUCT}consumption_{p, r} * produce_{p} \leq capacity_{r}: r \in RESOURCE\\
+\text{maximize } \sum_{p \in PRODUCT}profit_{p}*produce_{p}\\
+produce \in \mathbb{Z}\\

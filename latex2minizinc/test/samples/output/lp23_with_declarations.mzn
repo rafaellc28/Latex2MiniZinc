@@ -136,9 +136,7 @@ constraint forall(p in P)(routeLegs[p] <= maxLegs);
 
 
 
-var float: obj = sum(p in P)(routeDistance[p]);
-
-solve minimize obj;
+solve minimize sum(p in P)(routeDistance[p]);
 
 
 

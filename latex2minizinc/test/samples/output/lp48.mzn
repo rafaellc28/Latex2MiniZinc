@@ -24,9 +24,7 @@ constraint forall(j in J)(sum(i in I)(W[i] * x[i,j]) <= C * used[j]);
 
 
 
-var float: obj = sum(j in J)(used[j]);
-
-solve minimize obj;
+solve minimize sum(j in J)(used[j]);
 
 
 

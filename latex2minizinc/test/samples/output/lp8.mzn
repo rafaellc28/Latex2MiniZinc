@@ -42,9 +42,7 @@ constraint forall(i in INDEX_SET_TASKS, j in INDEX_SET_TASKS where TASKS[i,1] < 
 
 
 
-var float: obj = BigM * makespan + sum(j in INDEX_SET_TASKS)(start[TASKS[j,1],TASKS[j,2]]);
-
-solve minimize obj;
+solve minimize BigM * makespan + sum(j in INDEX_SET_TASKS)(start[TASKS[j,1],TASKS[j,2]]);
 
 
 

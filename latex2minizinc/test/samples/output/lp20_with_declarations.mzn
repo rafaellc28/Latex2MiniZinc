@@ -72,9 +72,7 @@ constraint forall(c1 in INDEX_SET_schedule)(X[schedule[c1,1],schedule[c1,2],sche
 
 
 
-var float: obj = sum(c in cities)(U[c,last] + sum(c1 in INDEX_SET_schedule where schedule[c1,4] < schedule[c1,2])(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]]));
-
-solve minimize obj;
+solve minimize sum(c in cities)(U[c,last] + sum(c1 in INDEX_SET_schedule where schedule[c1,4] < schedule[c1,2])(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]]));
 
 
 

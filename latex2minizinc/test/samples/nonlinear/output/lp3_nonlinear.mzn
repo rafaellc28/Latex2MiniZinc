@@ -30,9 +30,7 @@ constraint forall(i in I)(sum(j in INDEX_SET_PAIRS)(E[PAIRS[j,1],PAIRS[j,2],i] *
 
 
 
-var float: obj = sum(j in INDEX_SET_PAIRS)(x[PAIRS[j,1],PAIRS[j,2]] * (c[PAIRS[j,1],PAIRS[j,2]] + ln(x[PAIRS[j,1],PAIRS[j,2]] / sum(m in J where m in INDEX_SET_PAIRS)(x[m,PAIRS[j,2]]))));
-
-solve minimize obj;
+solve minimize sum(j in INDEX_SET_PAIRS)(x[PAIRS[j,1],PAIRS[j,2]] * (c[PAIRS[j,1],PAIRS[j,2]] + ln(x[PAIRS[j,1],PAIRS[j,2]] / sum(m in J where m in INDEX_SET_PAIRS)(x[m,PAIRS[j,2]]))));
 
 
 

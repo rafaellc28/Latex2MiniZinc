@@ -48,9 +48,7 @@ constraint forall(k in SENSORS)(eneg[k] <= emax[k] + bigM * gerr[k]);
 
 
 
-var float: obj = sum(k in SENSORS)((epos[k] + eneg[k] + bigM * gerr[k]));
-
-solve minimize obj;
+solve minimize sum(k in SENSORS)((epos[k] + eneg[k] + bigM * gerr[k]));
 
 
 

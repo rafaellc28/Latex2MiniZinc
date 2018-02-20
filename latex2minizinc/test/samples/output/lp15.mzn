@@ -54,9 +54,7 @@ constraint forall(r in RAWMATERIALS, s in S[r])(BigM * u[r,to_enum(RAWMATERIALS,
 
 
 
-var float: obj = sum(r in RAWMATERIALS, s in S[r])(RLength[r] * to_enum(RAWMATERIALS,s) * u[r,to_enum(RAWMATERIALS,s)]);
-
-solve minimize obj;
+solve minimize sum(r in RAWMATERIALS, s in S[r])(RLength[r] * to_enum(RAWMATERIALS,s) * u[r,to_enum(RAWMATERIALS,s)]);
 
 
 

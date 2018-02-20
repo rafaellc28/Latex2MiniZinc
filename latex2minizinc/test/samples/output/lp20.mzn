@@ -48,9 +48,7 @@ constraint forall(c1 in INDEX_SET_Links)(Distance[Links[c1,1],Links[c1,2]] >= 0)
 
 
 
-var float: obj = sum(c in cities)(U[c,Last] + sum(c1 in INDEX_SET_schedule where schedule[c1,4] < schedule[c1,2])(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]]));
-
-solve minimize obj;
+solve minimize sum(c in cities)(U[c,Last] + sum(c1 in INDEX_SET_schedule where schedule[c1,4] < schedule[c1,2])(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]]));
 
 
 

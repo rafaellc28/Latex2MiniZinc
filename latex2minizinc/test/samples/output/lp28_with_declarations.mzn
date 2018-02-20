@@ -28,9 +28,7 @@ constraint V[N] = N;
 
 
 
-var float: obj = sum(x in X)(V[x]);
-
-solve minimize obj;
+solve minimize sum(x in X)(V[x]);
 
 
 

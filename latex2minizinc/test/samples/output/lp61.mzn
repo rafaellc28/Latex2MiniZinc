@@ -30,9 +30,7 @@ constraint forall(i in U, j in N)(X[i,j] >= 0);
 
 
 
-var float: obj = sum(j in N)(alfa[j] + beta);
-
-solve minimize obj;
+solve minimize sum(j in N)(alfa[j] + beta);
 
 
 

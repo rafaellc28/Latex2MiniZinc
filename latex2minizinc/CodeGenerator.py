@@ -2931,8 +2931,7 @@ class CodeGenerator:
         return objStr;
 
     def _getObjectiveCode(self, obj):
-        objStr = "var float: obj = " + obj.linearExpression.generateCode(self)
-        objStr += ";\n\nsolve " + obj.type + " obj;\n\n";
+        objStr = "solve " + obj.type + " "+ obj.linearExpression.generateCode(self) +";\n\n";
 
         return objStr;
 

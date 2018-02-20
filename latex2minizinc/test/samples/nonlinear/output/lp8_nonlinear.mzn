@@ -44,9 +44,7 @@ constraint forall(i in 4..8)(x[i] <= 1000 /\ x[i] >= 10);
 
 
 
-var float: obj = x[1] + x[2] + x[3];
-
-solve minimize obj;
+solve minimize x[1] + x[2] + x[3];
 
 
 

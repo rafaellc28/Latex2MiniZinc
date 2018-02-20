@@ -11,9 +11,7 @@ constraint if c = true then d else 0 endif <= 1;
 
 
 
-var float: obj = if a = true then b else 0 endif;
-
-solve maximize obj;
+solve maximize if a = true then b else 0 endif;
 
 
 

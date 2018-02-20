@@ -13,9 +13,7 @@ constraint x[3,2] + x[3,2] <= 100;
 
 
 
-var float: obj = 3 * x[1,1] + 2 * x[2,2];
-
-solve maximize obj;
+solve maximize 3 * x[1,1] + 2 * x[2,2];
 
 
 

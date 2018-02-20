@@ -32,9 +32,7 @@ constraint forall(td in dmus)(sum(d in dmus)(lambda[d,td]) = 1);
 
 
 
-var float: obj = sum(td in dmus)(theta[td]);
-
-solve minimize obj;
+solve minimize sum(td in dmus)(theta[td]);
 
 
 

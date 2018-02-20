@@ -24,9 +24,7 @@ constraint forall(j in J)(T[j] >= 0);
 
 
 
-var float: obj = z;
-
-solve minimize obj;
+solve minimize z;
 
 
 

@@ -46,9 +46,7 @@ constraint forall(s in INDEX_SET_rows_cols)(sum(i in INDEX_SET_B where rows_cols
 
 
 
-var float: obj = 0;
-
-solve minimize obj;
+solve minimize 0;
 
 
 

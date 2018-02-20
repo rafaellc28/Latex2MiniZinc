@@ -14,9 +14,7 @@ constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] <= 1);
 
 
 
-var float: obj = sum(i in V)(x[i]);
-
-solve maximize obj;
+solve maximize sum(i in V)(x[i]);
 
 
 

@@ -30,9 +30,7 @@ constraint forall(e in EVENTS)(sum(m in MARKETS)(Payout[m,e] * x[m,e]) >= minpay
 
 
 
-var float: obj = minpayout;
-
-solve maximize obj;
+solve maximize minpayout;
 
 
 

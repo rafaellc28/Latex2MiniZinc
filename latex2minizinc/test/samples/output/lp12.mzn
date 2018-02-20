@@ -46,9 +46,7 @@ constraint forall(j in J, a in M)(x[j,a] >= 0);
 
 
 
-var float: obj = z;
-
-solve minimize obj;
+solve minimize z;
 
 
 

@@ -15,9 +15,7 @@ constraint f2 = 1 - x[1];
 
 
 
-var float: obj = pow(f1,2) + pow(f2,2);
-
-solve minimize obj;
+solve minimize pow(f1,2) + pow(f2,2);
 
 
 

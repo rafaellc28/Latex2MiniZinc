@@ -66,9 +66,7 @@ constraint forall(n in 0..Nper)(u[n] <= fSave * salary[n]);
 
 
 
-var float: obj = fSave;
-
-solve minimize obj;
+solve minimize fSave;
 
 
 

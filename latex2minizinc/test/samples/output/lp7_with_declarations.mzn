@@ -38,9 +38,7 @@ constraint forall(j in JOBS, k in JOBS where j < k)(start[k] + dur[k] <= start[j
 
 
 
-var float: obj = sum(k in JOBS)(pastdue[k]);
-
-solve minimize obj;
+solve minimize sum(k in JOBS)(pastdue[k]);
 
 
 

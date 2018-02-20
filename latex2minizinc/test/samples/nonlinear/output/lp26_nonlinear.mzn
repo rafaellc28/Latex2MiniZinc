@@ -30,9 +30,7 @@ constraint forall(i in INDEX_SET_P)(r[P[i,1],P[i,2]] = sqrt(sum(k in D)(pow((x[P
 
 
 
-var float: obj = sum(i in INDEX_SET_P)((pow(r[P[i,1],P[i,2]],-12) - 2 * pow(r[P[i,1],P[i,2]],-6)));
-
-solve minimize obj;
+solve minimize sum(i in INDEX_SET_P)((pow(r[P[i,1],P[i,2]],-12) - 2 * pow(r[P[i,1],P[i,2]],-6)));
 
 
 

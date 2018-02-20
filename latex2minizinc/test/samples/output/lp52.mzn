@@ -24,9 +24,7 @@ constraint forall(i in INDEX_SET_E, c in 1..Nc)(x[E[i,1],c] + x[E[i,2],c] <= u[c
 
 
 
-var float: obj = sum(c in 1..Nc)(u[c]);
-
-solve minimize obj;
+solve minimize sum(c in 1..Nc)(u[c]);
 
 
 

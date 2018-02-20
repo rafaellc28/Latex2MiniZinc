@@ -9,9 +9,7 @@ constraint x[2] <= 3 /\ x[2] >= -3;
 
 
 
-var float: obj = sin(x[1] + x[2]) + pow((x[1] - x[2]),2) - 1.5 * x[1] + 2.5 * x[2] + 1;
-
-solve minimize obj;
+solve minimize sin(x[1] + x[2]) + pow((x[1] - x[2]),2) - 1.5 * x[1] + 2.5 * x[2] + 1;
 
 
 

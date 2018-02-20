@@ -58,9 +58,7 @@ constraint forall(j in INDEX_SET_ARCS)(Tlf[ARCS[j,1]] <= Tls[ARCS[j,2]]);
 
 
 
-var float: obj = card(TASKS) * Tf - sum(j in TASKS)(Tsl[j]);
-
-solve minimize obj;
+solve minimize card(TASKS) * Tf - sum(j in TASKS)(Tsl[j]);
 
 
 

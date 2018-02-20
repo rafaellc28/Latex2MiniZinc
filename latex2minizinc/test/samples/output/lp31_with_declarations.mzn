@@ -50,9 +50,7 @@ constraint sum(s in RAWMATERIALS)(-n[s]) <= 1;
 
 
 
-var float: obj = sum(s in PRODUCTS)(mw[s] * n[s]);
-
-solve maximize obj;
+solve maximize sum(s in PRODUCTS)(mw[s] * n[s]);
 
 
 

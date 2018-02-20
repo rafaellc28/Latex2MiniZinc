@@ -58,9 +58,7 @@ constraint (x[2] + x[5]) / x[1] - x[8] = 0;
 
 
 
-var float: obj = 5.04 * x[1] + 0.035 * x[2] + 10 * x[3] + 3.36 * x[5] - 0.063 * x[4] * x[7];
-
-solve minimize obj;
+solve minimize 5.04 * x[1] + 0.035 * x[2] + 10 * x[3] + 3.36 * x[5] - 0.063 * x[4] * x[7];
 
 
 

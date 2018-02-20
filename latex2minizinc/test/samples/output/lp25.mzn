@@ -34,9 +34,7 @@ constraint forall(i in V)(sum(j in INDEX_SET_E)(y[E[j,1],E[j,2]] + (if E[j,2] = 
 
 
 
-var float: obj = sum(i in INDEX_SET_E)(C[E[i,1],E[i,2]] * x[E[i,1],E[i,2]]);
-
-solve minimize obj;
+solve minimize sum(i in INDEX_SET_E)(C[E[i,1],E[i,2]] * x[E[i,1],E[i,2]]);
 
 
 

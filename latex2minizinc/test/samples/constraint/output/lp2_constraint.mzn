@@ -32,9 +32,7 @@ constraint forall(m in 1..nMach, j in 1..nJobs)(Start[m,j] + duration[m,j] <= Ma
 
 
 
-var float: obj = Makespan;
-
-solve minimize obj;
+solve minimize Makespan;
 
 
 

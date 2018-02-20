@@ -11,9 +11,7 @@ constraint x - y <= 2;
 
 
 
-var float: obj = 3 * x + 4 * y;
-
-solve maximize obj;
+solve maximize 3 * x + 4 * y;
 
 
 

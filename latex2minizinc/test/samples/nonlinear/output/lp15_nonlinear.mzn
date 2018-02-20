@@ -17,9 +17,7 @@ constraint x[2] * x[2] - x[1] >= 0;
 
 
 
-var float: obj = x[1] * x[1] + x[2] * x[2];
-
-solve minimize obj;
+solve minimize x[1] * x[1] + x[2] * x[2];
 
 
 

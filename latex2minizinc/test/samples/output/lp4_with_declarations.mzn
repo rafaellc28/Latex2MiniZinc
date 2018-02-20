@@ -43,9 +43,7 @@ constraint 0.02 * bin1 + 0.06 * bin2 + 0.08 * bin3 + 0.12 * bin4 + 0.02 * bin5 +
 
 
 
-var float: obj = 0.03 * bin1 + 0.08 * bin2 + 0.17 * bin3 + 0.12 * bin4 + 0.15 * bin5 + 0.21 * alum + 0.38 * silicon;
-
-solve minimize obj;
+solve minimize 0.03 * bin1 + 0.08 * bin2 + 0.17 * bin3 + 0.12 * bin4 + 0.15 * bin5 + 0.21 * alum + 0.38 * silicon;
 
 
 

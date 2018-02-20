@@ -15,9 +15,7 @@ constraint x1 <= 40;
 
 
 
-var float: obj = 3 * x1 + 2 * x2;
-
-solve maximize obj;
+solve maximize 3 * x1 + 2 * x2;
 
 
 

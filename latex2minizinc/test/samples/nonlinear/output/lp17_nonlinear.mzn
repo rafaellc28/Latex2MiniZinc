@@ -19,9 +19,7 @@ constraint 5 - x[3] - x[4] >= 0;
 
 
 
-var float: obj = x[1] - x[2] - x[3] - x[1] * x[3] + x[1] * x[4] + x[2] * x[3] - x[2] * x[4];
-
-solve minimize obj;
+solve minimize x[1] - x[2] - x[3] - x[1] * x[3] + x[1] * x[4] + x[2] * x[3] - x[2] * x[4];
 
 
 

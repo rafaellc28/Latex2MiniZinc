@@ -36,9 +36,7 @@ constraint forall(t in T)((y[t] - z[t]) = sum(s in S)((Rt[s,t] - R[s]) * w[s]));
 
 
 
-var float: obj = (1 / card(T)) * sum(t in T)((y[t] + z[t]));
-
-solve minimize obj;
+solve minimize (1 / card(T)) * sum(t in T)((y[t] + z[t]));
 
 
 

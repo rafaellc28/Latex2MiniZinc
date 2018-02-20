@@ -9,9 +9,7 @@ constraint forall(i0 in INDEX_SET_x_1)(x[i0] <= 10);
 
 
 
-var float: obj = pow((2 * pow(x[1],3) * x[2] - pow(x[2],3)),2) + pow((6 * x[1] - pow(x[2],2) + x[2]),2);
-
-solve minimize obj;
+solve minimize pow((2 * pow(x[1],3) * x[2] - pow(x[2],3)),2) + pow((6 * x[1] - pow(x[2],2) + x[2]),2);
 
 
 

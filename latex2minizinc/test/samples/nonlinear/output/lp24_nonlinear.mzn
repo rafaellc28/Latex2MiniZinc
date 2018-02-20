@@ -20,9 +20,7 @@ constraint forall(i0 in INDEX_SET_x_1)(x[i0] >= 0 /\ x[i0] <= 0.42);
 
 
 
-var float: obj = sum(i in I)(pow((a[i] - x[1] * (pow(b[i],2) + b[i] * x[2]) / (pow(b[i],2) + b[i] * x[3] + x[4])),2));
-
-solve minimize obj;
+solve minimize sum(i in I)(pow((a[i] - x[1] * (pow(b[i],2) + b[i] * x[2]) / (pow(b[i],2) + b[i] * x[3] + x[4])),2));
 
 
 

@@ -30,9 +30,7 @@ constraint forall(x in X, u in U[x])(to_enum(X,u) >= 0);
 
 
 
-var float: obj = sum(x in X)(V[x]);
-
-solve minimize obj;
+solve minimize sum(x in X)(V[x]);
 
 
 

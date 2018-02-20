@@ -22,9 +22,7 @@ constraint forall(i in V)(k[i] <= card(V));
 
 
 
-var float: obj = sum(i in V)(x[i]);
-
-solve minimize obj;
+solve minimize sum(i in V)(x[i]);
 
 
 

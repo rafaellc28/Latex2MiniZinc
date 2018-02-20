@@ -46,9 +46,7 @@ constraint forall(s in STATES[NPeriods])(P[NPeriods,to_enum(PERIODS,s)] >= max(0
 
 
 
-var float: obj = P[0,0];
-
-solve minimize obj;
+solve minimize P[0,0];
 
 
 

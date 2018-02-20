@@ -40,9 +40,7 @@ constraint sum(i in J)(x[i] / d[i] + f * sum(i in J)(x[i + neq] / b[i + neq])) =
 
 
 
-var float: obj = sum(i in I)(a[i] * x[i]);
-
-solve minimize obj;
+solve minimize sum(i in I)(a[i] * x[i]);
 
 
 

@@ -32,9 +32,7 @@ constraint forall(k in SCENS)(y[k] <= D[k]);
 
 
 
-var float: obj = ExProfit;
-
-solve maximize obj;
+solve maximize ExProfit;
 
 
 

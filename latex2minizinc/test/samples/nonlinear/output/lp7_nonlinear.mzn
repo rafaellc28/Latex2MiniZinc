@@ -42,9 +42,7 @@ constraint forall(i in 6..8)(x[i] <= 25 /\ x[i] >= 5);
 
 
 
-var float: obj = -sum(i in I)(ln((a[i] + b[i] + c[i]) / sqrt(2 * PI)));
-
-solve minimize obj;
+solve minimize -sum(i in I)(ln((a[i] + b[i] + c[i]) / sqrt(2 * PI)));
 
 
 

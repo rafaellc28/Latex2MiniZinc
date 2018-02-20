@@ -74,9 +74,7 @@ constraint forall(m in month)(useoil[m,OIL1] + useoil[m,OIL2] + useoil[m,OIL3] <
 
 
 
-var float: obj = sum(m in month)(productprice * production[m] - sum(m in month, o in oils)(buyingprices[m,o] * buys[m,o] - sum(m in month, o in oils)(storagecost * stock[m,o])));
-
-solve maximize obj;
+solve maximize sum(m in month)(productprice * production[m] - sum(m in month, o in oils)(buyingprices[m,o] * buys[m,o] - sum(m in month, o in oils)(storagecost * stock[m,o])));
 
 
 

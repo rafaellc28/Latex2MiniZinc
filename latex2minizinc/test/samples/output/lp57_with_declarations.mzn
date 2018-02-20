@@ -32,9 +32,7 @@ constraint forall(i in V)(x[i] >= 0);
 
 
 
-var float: obj = sum(i in INDEX_SET_E)(w[E[i,1],E[i,2]] * (x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]]));
-
-solve maximize obj;
+solve maximize sum(i in INDEX_SET_E)(w[E[i,1],E[i,2]] * (x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]]));
 
 
 

@@ -30,9 +30,7 @@ constraint forall(x in X)(V[T,x] = ln(x));
 
 
 
-var float: obj = sum(t in 0..floor(T - 1), x in X)(V[t,x]);
-
-solve minimize obj;
+solve minimize sum(t in 0..floor(T - 1), x in X)(V[t,x]);
 
 
 

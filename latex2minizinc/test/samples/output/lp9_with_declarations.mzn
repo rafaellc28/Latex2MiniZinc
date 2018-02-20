@@ -22,9 +22,7 @@ constraint forall(a in TASKS, b in TASKS, c in TASKS where a < b /\ a < c /\ b <
 
 
 
-var float: obj = sum(a in INDEX_SET_PAIRS)((saving[PAIRS[a,1],PAIRS[a,2]] * before[PAIRS[a,1],PAIRS[a,2]] + saving[PAIRS[a,2],PAIRS[a,1]] * (1 - before[PAIRS[a,1],PAIRS[a,2]])));
-
-solve maximize obj;
+solve maximize sum(a in INDEX_SET_PAIRS)((saving[PAIRS[a,1],PAIRS[a,2]] * before[PAIRS[a,1],PAIRS[a,2]] + saving[PAIRS[a,2],PAIRS[a,1]] * (1 - before[PAIRS[a,1],PAIRS[a,2]])));
 
 
 

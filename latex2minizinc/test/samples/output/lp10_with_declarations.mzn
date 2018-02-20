@@ -52,9 +52,7 @@ constraint forall(u in INDEX_SET_PAIRS)(sum(t in TASKS, w in WEEKS)(p[PAIRS[u,1]
 
 
 
-var float: obj = z;
-
-solve minimize obj;
+solve minimize z;
 
 
 

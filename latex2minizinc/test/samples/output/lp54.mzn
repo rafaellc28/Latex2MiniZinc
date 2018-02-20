@@ -160,9 +160,7 @@ constraint forall(c in commod)(sum(pl in ccPos[c])(1) >= 0);
 
 
 
-var float: obj = Psip + Psil + Psii;
-
-solve minimize obj;
+solve minimize Psip + Psil + Psii;
 
 
 

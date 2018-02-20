@@ -32,9 +32,7 @@ constraint forall(i in I)(-sum(j in J)(x[i,j]) >= c[i]);
 
 
 
-var float: obj = sum(j in J)(u[j] * (product(i in I)(pow(a[i,j],x[i,j]) - 1)));
-
-solve minimize obj;
+solve minimize sum(j in J)(u[j] * (product(i in I)(pow(a[i,j],x[i,j]) - 1)));
 
 
 

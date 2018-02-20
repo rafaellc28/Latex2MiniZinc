@@ -11,9 +11,7 @@ constraint x[1] <= 0.5;
 
 
 
-var float: obj = 100 * pow((x[2] - pow(x[1],2)),2) + pow((1 - x[1]),2);
-
-solve minimize obj;
+solve minimize 100 * pow((x[2] - pow(x[1],2)),2) + pow((1 - x[1]),2);
 
 
 

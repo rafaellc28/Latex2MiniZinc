@@ -36,9 +36,7 @@ constraint forall(s in SPECIES)(n[s] <= 1);
 
 
 
-var float: obj = sum(s in PRODUCTS)(MW[s] * n[s]);
-
-solve maximize obj;
+solve maximize sum(s in PRODUCTS)(MW[s] * n[s]);
 
 
 

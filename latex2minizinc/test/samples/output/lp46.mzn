@@ -34,9 +34,7 @@ constraint forall(n in 0..N)(Fi[n] >= 0);
 
 
 
-var float: obj = f;
-
-solve maximize obj;
+solve maximize f;
 
 
 

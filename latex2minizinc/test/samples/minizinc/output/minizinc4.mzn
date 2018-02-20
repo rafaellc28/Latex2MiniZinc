@@ -18,9 +18,7 @@ constraint sum(i in DISH)(size[i] * amt[i]) <= capacity;
 
 
 
-var float: obj = sum(i in DISH)(satisf[i] * amt[i]);
-
-solve maximize obj;
+solve maximize sum(i in DISH)(satisf[i] * amt[i]);
 
 
 

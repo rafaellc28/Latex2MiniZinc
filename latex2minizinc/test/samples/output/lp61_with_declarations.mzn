@@ -38,9 +38,7 @@ constraint forall(i in U_diff_D)(sum(j in N)(alfa[j] * x[i,j]) >= beta + 1);
 
 
 
-var float: obj = sum(j in N)(alfa[j] + beta);
-
-solve minimize obj;
+solve minimize sum(j in N)(alfa[j] + beta);
 
 
 

@@ -80,9 +80,7 @@ constraint x[13] <= 150 /\ x[13] >= 0.0001;
 
 
 
-var float: obj = x[11] + x[12] + x[13];
-
-solve minimize obj;
+solve minimize x[11] + x[12] + x[13];
 
 
 

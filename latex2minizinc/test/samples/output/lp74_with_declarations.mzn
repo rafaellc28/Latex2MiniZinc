@@ -1,8 +1,8 @@
-enum E;
-
 enum V;
 
-float: file = graph.eps;
+enum E;
+
+string: file = "graph.eps";
 
 float: R = 2;
 

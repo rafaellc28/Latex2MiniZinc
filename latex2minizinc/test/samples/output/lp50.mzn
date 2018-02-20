@@ -32,9 +32,7 @@ constraint forall(i in I)(z - v[i] >= 0);
 
 
 
-var float: obj = z;
-
-solve minimize obj;
+solve minimize z;
 
 
 

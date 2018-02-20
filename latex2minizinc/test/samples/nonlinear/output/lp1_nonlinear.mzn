@@ -12,9 +12,7 @@ constraint x[2] <= 15 /\ x[2] >= 0;
 
 
 
-var float: obj = pow((x[2] - 5.1 * pow(x[1],2) / (4 * pi * pi) + 5 * x[1] / pi - 6),2) + 10 * (1 - 1 / (8 * pi)) * cos(x[1]) + 10;
-
-solve minimize obj;
+solve minimize pow((x[2] - 5.1 * pow(x[1],2) / (4 * pi * pi) + 5 * x[1] / pi - 6),2) + 10 * (1 - 1 / (8 * pi)) * cos(x[1]) + 10;
 
 
 

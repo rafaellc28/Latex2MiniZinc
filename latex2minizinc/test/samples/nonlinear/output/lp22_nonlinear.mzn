@@ -9,9 +9,7 @@ constraint 1 >= 4 / x[1] + 32 / x[2] + 120 / x[3];
 
 
 
-var float: obj = 5 * x[1] + 50000 / x[1] + 20 * x[2] + 72000 / x[2] + 10 * x[3] + 144000 / x[3];
-
-solve minimize obj;
+solve minimize 5 * x[1] + 50000 / x[1] + 20 * x[2] + 72000 / x[2] + 10 * x[3] + 144000 / x[3];
 
 
 

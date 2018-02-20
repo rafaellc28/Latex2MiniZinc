@@ -22,9 +22,7 @@ constraint forall(j in J)(z >= x[j] + t[j]);
 
 
 
-var float: obj = z;
-
-solve minimize obj;
+solve minimize z;
 
 
 

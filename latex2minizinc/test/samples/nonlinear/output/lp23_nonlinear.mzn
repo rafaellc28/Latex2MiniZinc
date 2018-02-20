@@ -9,9 +9,7 @@ constraint x[1] * x[2] = 9;
 
 
 
-var float: obj = -1;
-
-solve minimize obj;
+solve minimize -1;
 
 
 

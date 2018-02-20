@@ -42,9 +42,7 @@ constraint Removal[numTanks] + full[numTanks] <= numJobs * Period;
 
 
 
-var float: obj = Period;
-
-solve minimize obj;
+solve minimize Period;
 
 
 

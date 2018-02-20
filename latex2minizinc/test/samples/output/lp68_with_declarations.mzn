@@ -20,9 +20,7 @@ constraint sum(j in 1..n)(a[j] * x[j]) <= b;
 
 
 
-var float: obj = sum(j in 1..n)(a[j] * x[j]);
-
-solve maximize obj;
+solve maximize sum(j in 1..n)(a[j] * x[j]);
 
 
 

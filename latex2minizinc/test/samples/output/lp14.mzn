@@ -24,9 +24,7 @@ constraint forall(c in CUSTOMERS)(sum(s in SOURCES)(x[c,s]) = Demand[c]);
 
 
 
-var float: obj = sum(c in CUSTOMERS, s in SOURCES)(Tcost[c,s] * x[c,s]);
-
-solve minimize obj;
+solve minimize sum(c in CUSTOMERS, s in SOURCES)(Tcost[c,s] * x[c,s]);
 
 
 

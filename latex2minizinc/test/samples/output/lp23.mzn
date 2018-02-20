@@ -118,9 +118,7 @@ constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(y[p,N[a,1],N[a,2],
 
 
 
-var float: obj = sum(p in P)(routeDistance[p]);
-
-solve minimize obj;
+solve minimize sum(p in P)(routeDistance[p]);
 
 
 

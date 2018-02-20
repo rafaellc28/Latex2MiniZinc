@@ -20,9 +20,7 @@ constraint forall(i in 6..14)(x[i] <= 0.03);
 
 
 
-var float: obj = sum(i in I)(a[i] / x[i]);
-
-solve minimize obj;
+solve minimize sum(i in I)(a[i] / x[i]);
 
 
 

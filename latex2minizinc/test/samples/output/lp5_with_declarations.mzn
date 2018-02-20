@@ -22,9 +22,7 @@ constraint forall(n in N)(sum(c in C)(Data[c,n] * x[c]) >= Allowance[n]);
 
 
 
-var float: obj = sum(c in C)(x[c]);
-
-solve minimize obj;
+solve minimize sum(c in C)(x[c]);
 
 
 

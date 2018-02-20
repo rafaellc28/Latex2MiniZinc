@@ -116,9 +116,7 @@ constraint forall(a in PLACES)(tld[a] <= Tmax);
 
 
 
-var float: obj = sum(a in PLACES)((1 * tea[a] + 2 * tla[a] + 2 * ted[a] + 1 * tld[a]) + 2 * Tmax);
-
-solve minimize obj;
+solve minimize sum(a in PLACES)((1 * tea[a] + 2 * tla[a] + 2 * ted[a] + 1 * tld[a]) + 2 * Tmax);
 
 
 

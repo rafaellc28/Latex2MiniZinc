@@ -14,9 +14,7 @@ constraint 13 * F + 21 * L + 17 * Z + 100 * J <= budget;
 
 
 
-var float: obj = 6 * F + 10 * L + 8 * Z + 40 * J;
-
-solve maximize obj;
+solve maximize 6 * F + 10 * L + 8 * Z + 40 * J;
 
 
 

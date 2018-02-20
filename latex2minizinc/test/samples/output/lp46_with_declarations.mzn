@@ -30,9 +30,7 @@ constraint f = sum(n in 1..N)((fi[n - 1] * z[n] + (fi[n] - fi[n - 1]) * s[n]));
 
 
 
-var float: obj = f;
-
-solve maximize obj;
+solve maximize f;
 
 
 

@@ -50,9 +50,7 @@ constraint forall(j in STREAMS)(x[j] >= 0);
 
 
 
-var float: obj = sum(k in SENSORS)((epos[k] + eneg[k] + BigM * gerr[k]));
-
-solve minimize obj;
+solve minimize sum(k in SENSORS)((epos[k] + eneg[k] + BigM * gerr[k]));
 
 
 

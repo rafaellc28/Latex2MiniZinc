@@ -34,9 +34,7 @@ constraint forall(t in TABLES)(sum(p in PEOPLE)(x[p,t]) = 3);
 
 
 
-var float: obj = sum(p in INDEX_SET_PAIRS)(y[PAIRS[p,1],PAIRS[p,2]]);
-
-solve maximize obj;
+solve maximize sum(p in INDEX_SET_PAIRS)(y[PAIRS[p,1],PAIRS[p,2]]);
 
 
 

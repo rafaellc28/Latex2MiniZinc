@@ -20,9 +20,7 @@ constraint x[1,1,1] <= 40;
 
 
 
-var float: obj = sum(c in C)(3 * x[1,1,c] + 2 * x[2,2,c]);
-
-solve maximize obj;
+solve maximize sum(c in C)(3 * x[1,1,c] + 2 * x[2,2,c]);
 
 
 

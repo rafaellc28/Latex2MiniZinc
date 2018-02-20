@@ -22,9 +22,7 @@ constraint forall(h in H, d in D)(sum(s in S)(crew[s] * shifts[d,h,s]) >= dmnd[h
 
 
 
-var float: obj = sum(s in S)(crew[s]);
-
-solve minimize obj;
+solve minimize sum(s in S)(crew[s]);
 
 
 

@@ -30,9 +30,7 @@ constraint forall(i in INDEX_SET_E)(x[E[i,1],E[i,2]] <= A[E[i,1],E[i,2]]);
 
 
 
-var float: obj = flow;
-
-solve maximize obj;
+solve maximize flow;
 
 
 

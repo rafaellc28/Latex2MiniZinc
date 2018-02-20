@@ -210,9 +210,7 @@ constraint Psii / exch = sum(c in cFinal, r in region, po in port)(pImp[c] * Vf[
 
 
 
-var float: obj = Psip + Psil + Psii;
-
-solve minimize obj;
+solve minimize Psip + Psil + Psii;
 
 
 

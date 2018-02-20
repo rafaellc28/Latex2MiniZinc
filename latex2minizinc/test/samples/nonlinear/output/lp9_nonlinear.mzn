@@ -42,9 +42,7 @@ constraint forall(i in 8..9)(x[i] <= 800 /\ x[i] >= -400);
 
 
 
-var float: obj = 3 * x[1] + 1E-6 * pow(x[1],3) + 2 * x[2] + 0.522074E-6 * pow(x[2],3);
-
-solve minimize obj;
+solve minimize 3 * x[1] + 1E-6 * pow(x[1],3) + 2 * x[2] + 0.522074E-6 * pow(x[2],3);
 
 
 

@@ -11,9 +11,7 @@ constraint x[1] >= 2;
 
 
 
-var float: obj = 0.01 * pow(x[1],2) + pow(x[2],2);
-
-solve minimize obj;
+solve minimize 0.01 * pow(x[1],2) + pow(x[2],2);
 
 
 

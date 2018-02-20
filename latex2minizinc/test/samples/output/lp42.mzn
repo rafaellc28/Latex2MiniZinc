@@ -18,9 +18,7 @@ constraint forall(k in 3..floor(N + N - 1))(sum(i in 1..N, j in 1..N where i + j
 
 
 
-var float: obj = sum(i in 1..N, j in 1..N)(x[i,j]);
-
-solve maximize obj;
+solve maximize sum(i in 1..N, j in 1..N)(x[i,j]);
 
 
 
