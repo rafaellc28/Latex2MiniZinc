@@ -2172,6 +2172,7 @@ def p_FunctionNumericExpression(t):
                          | ID LPAREN SetExpression RPAREN
                          | ID LPAREN Identifier RPAREN
                          | ID LPAREN NumericSymbolicExpression RPAREN
+                         | ID LPAREN Array RPAREN
                          
                          | ID LPAREN RPAREN'''
 
@@ -2359,25 +2360,36 @@ def p_Identifier(t):
 def p_ValueList(t):
     '''ValueList : ValueList COMMA SetExpression
                  | ValueList COMMA TupleList
+                 | ValueList COMMA Array
                  | ValueList COMMA Identifier
                  | ValueList COMMA NumericSymbolicExpression
 
+                 | SetExpression COMMA SetExpression
+                 | SetExpression COMMA TupleList
+                 | SetExpression COMMA Array
+                 | SetExpression COMMA Identifier
+                 | SetExpression COMMA NumericSymbolicExpression
+
                  | TupleList COMMA SetExpression
+                 | TupleList COMMA Array
                  | TupleList COMMA Identifier
                  | TupleList COMMA NumericSymbolicExpression
 
-                 | SetExpression COMMA SetExpression
-                 | SetExpression COMMA TupleList
-                 | SetExpression COMMA Identifier
-                 | SetExpression COMMA NumericSymbolicExpression
+                 | Array COMMA SetExpression
+                 | Array COMMA TupleList
+                 | Array COMMA Array
+                 | Array COMMA Identifier
+                 | Array COMMA NumericSymbolicExpression
                  
                  | Identifier COMMA SetExpression
                  | Identifier COMMA TupleList
+                 | Identifier COMMA Array
                  | Identifier COMMA Identifier
                  | Identifier COMMA NumericSymbolicExpression
                  
                  | NumericSymbolicExpression COMMA SetExpression
                  | NumericSymbolicExpression COMMA TupleList
+                 | NumericSymbolicExpression COMMA Array
                  | NumericSymbolicExpression COMMA Identifier
                  | NumericSymbolicExpression COMMA NumericSymbolicExpression'''
 
@@ -2421,8 +2433,9 @@ def p_TupleList(t):
 
 def p_Array(t):
   '''Array : LBRACKET ValueList RBRACKET
-           | LBRACKET TupleList RBRACKET
            | LBRACKET SetExpression RBRACKET
+           | LBRACKET TupleList RBRACKET
+           | LBRACKET Array RBRACKET
            | LBRACKET Identifier RBRACKET
            | LBRACKET NumericSymbolicExpression RBRACKET'''
 

@@ -112,6 +112,9 @@ class CodeGenerator:
 
         self.lastIdentifier = None
 
+        self.LIBRARIES = ["alldifferent"]
+        self.include = []
+
     def generateCode(self, node):
         cls = node.__class__
         method_name = 'generateCode_' + cls.__name__
@@ -2459,6 +2462,9 @@ class CodeGenerator:
 
                             self.genValueAssigned.add(GenObj(param))
 
+        if not _type or _type.strip() == "":
+            _type = "float"
+
         if _type == "set of int:":
             self.listSetOfInts.append(param)
 
@@ -2847,6 +2853,11 @@ class CodeGenerator:
         if preModel != "":
             preModel += "\n"
 
+        # check libraries to include
+        if len(self.include) > 0:
+            preModel += "\n\n".join(map(lambda lb: "include \"" + lb + ".mzn\";", self.include))
+            preModel += "\n\n"
+
         res = "\n\n".join(filter(lambda cnt: self.removeInvalidConstraint(cnt), map(lambda el: self._getCodeConstraint(el), constraints))) + "\n\n"
 
         if len(objectives) > 0:
@@ -3122,6 +3133,9 @@ class CodeGenerator:
             function = node.function
 
         function = self._getNumericFunction(function)
+
+        if function in self.LIBRARIES and not function in self.include:
+            self.include.append(function)
 
         res = function + "("
 

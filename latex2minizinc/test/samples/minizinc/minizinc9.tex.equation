@@ -1,0 +1,7 @@
+% specialization-examples/introduction/rods/rods.mzn. From https://github.com/MiniZinc/specialization-examples
+rods[M1] + rods[M2] + rods[M3] + rods[M4] + rods[M5] = 12\\
+2303 + M1 * 10 + 980 + M2 * 1000 + M3 = 301 + M4 * 1000 + M5 * 10\\
+alldifferent([M1,M2,M3,M4,M5])\\
+rods := [1,2,3,4,5,2,3,4,5], \in \mathbb{Z}, \in \mathbb{P}\\
+DIGIT := 1 \dots 9\\
+M1, M2, M3, M4, M5 \in DIGIT, \in \mathbb{V}
