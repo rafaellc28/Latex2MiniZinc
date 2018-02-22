@@ -11,6 +11,7 @@ from Constraints import *
 from ConstraintExpression import *
 from NumericExpression import *
 from SymbolicExpression import *
+from ExpressionList import *
 from IndexingExpression import *
 from EntryIndexingExpression import *
 from LogicalExpression import *
@@ -1798,6 +1799,30 @@ def p_ConditionalSetExpression(t):
     if len(t) > 5:
       t[0].addElseExpression(t[6])
 
+def p_ExpressionList(t):
+    '''ExpressionList : Identifier PIPE LogicalExpression
+                      | Identifier PIPE ValueListInExpression
+                      | Identifier PIPE EntryConstraintLogicalExpression
+                      | Identifier PIPE Identifier
+                      | Identifier PIPE NumericSymbolicExpression
+
+                      | NumericSymbolicExpression PIPE LogicalExpression
+                      | NumericSymbolicExpression PIPE ValueListInExpression
+                      | NumericSymbolicExpression PIPE EntryConstraintLogicalExpression
+                      | NumericSymbolicExpression PIPE Identifier
+                      | NumericSymbolicExpression PIPE NumericSymbolicExpression'''
+
+    t[1] = ExpressionList([t[1]])
+
+    if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
+      t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
+
+    if not isinstance(t[3], LogicalExpression):
+      t[3] = LogicalExpression([t[3]])
+
+    t[0] = t[1].setLogicalExpression(t[3])
+
+
 
 def p_IndexingExpression(t):
     '''IndexingExpression : EntryIndexingExpression
@@ -1814,6 +1839,11 @@ def p_IndexingExpression(t):
     if len(t) > 3:
 
         if t.slice[2].type == "PIPE":
+
+            if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
+              t[1] = EntryLogicalExpressionNumericOrSymbolic(t[1])
+              t[1] = LogicalExpression([t[1]])
+              t[1] = IndexingExpression([t[1]])
 
             if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
               t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
@@ -2435,6 +2465,7 @@ def p_Array(t):
   '''Array : LBRACKET ValueList RBRACKET
            | LBRACKET SetExpression RBRACKET
            | LBRACKET TupleList RBRACKET
+           | LBRACKET ExpressionList RBRACKET
            | LBRACKET Array RBRACKET
            | LBRACKET Identifier RBRACKET
            | LBRACKET NumericSymbolicExpression RBRACKET'''

@@ -917,3 +917,9 @@ def test_minizinc_test8():
 
 def test_minizinc_test9():
 	check_test_minizinc_num(9)
+
+def test_minizinc_test10():
+	check_test_minizinc_num(10)
+
+def test_minizinc_test11():
+	check_test_minizinc_num(11)

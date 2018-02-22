@@ -112,7 +112,7 @@ class CodeGenerator:
 
         self.lastIdentifier = None
 
-        self.LIBRARIES = ["alldifferent"]
+        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "cumulative": "globals.mzn"}
         self.include = []
 
     def generateCode(self, node):
@@ -2281,7 +2281,7 @@ class CodeGenerator:
         if not includedType:
             _types = self._removeTypesThatAreNotDeclarable(_types)
             _types = self._getTypes(_types)
-
+            
             if len(_types) > 0:
                 _type = _types[0].getObj()
                 
@@ -2294,13 +2294,13 @@ class CodeGenerator:
                 elif isinstance(_type, SymbolicSet):
                     _type = "string";
 
-                else:
+                elif isinstance(_type, RealSet):
                     _type = "float";
 
                 if _type.strip() != "":
                     includedType = True
 
-        if (not includedType or _type == "int") and param in self.parameterIsIndexOf:
+        if not includedType and param in self.parameterIsIndexOf:
             value = self.parameterIsIndexOf[param]
             var = value["indexOf"]
             pos = value["pos"]
@@ -2855,7 +2855,7 @@ class CodeGenerator:
 
         # check libraries to include
         if len(self.include) > 0:
-            preModel += "\n\n".join(map(lambda lb: "include \"" + lb + ".mzn\";", self.include))
+            preModel += "\n\n".join(map(lambda lb: "include \"" + lb + "\";", self.include))
             preModel += "\n\n"
 
         res = "\n\n".join(filter(lambda cnt: self.removeInvalidConstraint(cnt), map(lambda el: self._getCodeConstraint(el), constraints))) + "\n\n"
@@ -3135,7 +3135,7 @@ class CodeGenerator:
         function = self._getNumericFunction(function)
 
         if function in self.LIBRARIES and not function in self.include:
-            self.include.append(function)
+            self.include.append(self.LIBRARIES[function])
 
         res = function + "("
 
@@ -3305,6 +3305,34 @@ class CodeGenerator:
     def generateCode_SymbolicExpressionWithOperation(self, node):
         return node.symbolicExpression1.generateCode(self) + " " + node.op + " " + node.symbolicExpression2.generateCode(self)
 
+
+    # Expression List
+    def generateCode_ExpressionList(self, node):
+        if self.checkSetExpressionWithIndexingExpression:
+            self.isSetExpressionWithIndexingExpression = True
+
+        indexing = filter(Utils._deleteEmpty, map(self._getCodeEntry, node.entriesIndexingExpression))
+        res = ", ".join(indexing)
+
+        if self.array2dIndex2 != None:
+            res += ", idx2 in " + self.array2dIndex2
+
+        if node.logicalExpression:
+            res += " | " + node.logicalExpression.generateCode(self)
+
+        if self.stmtIndex > -1:
+            if "newEntryLogicalExpression" in self.scopes[self.stmtIndex][self.scope] and len(self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"]) > 0:
+                if not node.logicalExpression:
+                    res += " where "
+                else:
+                    res += " /\ "
+
+                entries = " /\ ".join(self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"])
+
+                res += entries
+
+
+        return res
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):

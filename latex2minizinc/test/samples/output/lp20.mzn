@@ -6,7 +6,7 @@ enum times;
 
 array[INDEX_SET_Links, 1..2] of int: Links;
 
-times: Last;
+int: Last;
 
 array[int, int] of float: Distance;
 

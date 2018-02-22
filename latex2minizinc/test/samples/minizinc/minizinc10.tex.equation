@@ -1,0 +1,7 @@
+% specialization-examples/scheduling/basic/basic_sched.mzn. From https://github.com/MiniZinc/specialization-examples
+start_{pre_{i,1}} + duration_{pre_{i,1}} \leq start_{pre_{i,2}}: i \in PREC\\
+\text{minimize } makespan\\
+makespan := \max_{t \in TASK}start_{t} + duration_{t}, \in 0 \dots t, \in \mathbb{V}\\
+start \in 0 \dots t, \in \mathbb{V}\\
+t, duration, \in \mathbb{Z}, \in \mathbb{P}\\
+t := sum(duration); PREC := 1 \dots p\\

@@ -654,6 +654,19 @@ class CodeSetup:
         node.symbolicExpression2.setupEnvironment(self)
 
 
+    # Expression List
+    def setupEnvironment_ExpressionList(self, node):
+        """
+        Generate the MiniZinc code for entries in this expression list
+        """
+        
+        node.enableCheckDummyIndices()
+        map(self._setupEntry, node.entriesIndexingExpression)
+        node.disableCheckDummyIndices()
+        
+        if node.logicalExpression:
+            node.logicalExpression.setupEnvironment(self)
+
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
         """
