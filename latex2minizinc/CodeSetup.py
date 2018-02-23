@@ -693,10 +693,12 @@ class CodeSetup:
         
         node.enableCheckDummyIndices()
         map(self._setupEntry, node.entriesIndexingExpression)
-        node.disableCheckDummyIndices()
+        
         
         if node.logicalExpression:
             node.logicalExpression.setupEnvironment(self)
+
+        node.disableCheckDummyIndices()
 
     # Indexing Expression
     def setupEnvironment_IndexingExpression(self, node):
@@ -716,11 +718,12 @@ class CodeSetup:
 
         node.enableCheckDummyIndices()
         map(self._setupEntry, node.entriesIndexingExpression)
-        node.disableCheckDummyIndices()
+        
 
         if node.logicalExpression:
             node.logicalExpression.setupEnvironment(self)
 
+        node.disableCheckDummyIndices()
 
     def setupEnvironment_EntryExpressionWithSet(self, node, identifier):
 
