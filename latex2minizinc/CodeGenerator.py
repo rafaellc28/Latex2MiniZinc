@@ -3017,16 +3017,38 @@ class CodeGenerator:
 
         return res
 
-    def generateCode_ConditionalConstraintExpression(self, node):
+    def generateCode_LogicalConstraintExpression(self, node):
         res = node.logicalExpression.generateCode(self) + " " + node.op + " " + node.constraintExpression1.generateCode(self)
         
         if node.constraintExpression2:
             res += " else " + node.constraintExpression2.generateCode(self)
 
-        #else:
-        #    res += " else 0"
+        return res
 
-        #res += " endif"
+    def generateCode_ConditionalConstraintExpression(self, node):
+        if self.stmtIndex > -1:
+            self.scope += 1
+            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_ConditionalConstraintExpression1"}
+
+            previousParentScope = self.parentScope
+            self.parentScope = self.scope
+
+        res = "if " + node.logicalExpression.generateCode(self) + " then " + node.constraintExpression1.generateCode(self)
+
+        if node.constraintExpression2:
+            if self.stmtIndex > -1:
+                self.scope += 1
+                self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope, "where": "generateCode_ConditionalConstraintExpression2"}
+
+            res += " else " + node.constraintExpression2.generateCode(self)
+
+        else:
+            res += " else true"
+
+        res += " endif"
+
+        if self.stmtIndex > -1:
+            self.parentScope = previousParentScope
 
         return res
 
@@ -3838,9 +3860,13 @@ class CodeGenerator:
     def generateCode_TupleList(self, node):
         return ",".join(map(self._getCodeValue, node.values))
 
-    # Tuple
+    # Array
     def generateCode_Array(self, node):
         return "[" + ",".join(map(self._getCodeValue, node.value)) + "]"
+
+    # Array with operation
+    def generateCode_ArrayWithOperation(self, node):
+        return node.array1.generateCode(self) + " " + node.op + " " + node.array2.generateCode(self)
 
     # Value
     def generateCode_Value(self, node):

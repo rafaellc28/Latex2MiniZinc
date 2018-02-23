@@ -94,7 +94,7 @@ class ConstraintExpression3(ConstraintExpression):
         return codeGenerator.generateCode(self)
 
 
-class ConditionalConstraintExpression(ConstraintExpression):
+class LogicalConstraintExpression(ConstraintExpression):
     """
     Class representing a conditional constraint expression node in the AST of a MLP
     """
@@ -122,7 +122,7 @@ class ConditionalConstraintExpression(ConstraintExpression):
         """
         to string
         """
-        res = "CondConstraintExpr: " + str(self.logicalExpression) + " " + self.op + " " + str(self.constraintExpression1)
+        res = "LogicalConstraintExpression: " + str(self.logicalExpression) + " " + self.op + " " + str(self.constraintExpression1)
 
         if self.constraintExpression2 != None:
             res += " ELSE " + str(self.constraintExpression2)
@@ -141,5 +141,58 @@ class ConditionalConstraintExpression(ConstraintExpression):
     def generateCode(self, codeGenerator):
         """
         Generate the MiniZinc code for this contitional constraint expression
+        """
+        return codeGenerator.generateCode(self)
+
+class ConditionalConstraintExpression(ConstraintExpression):
+    """
+    Class representing a conditional constraint expression node in the AST of a MLP
+    """
+    
+    def __init__(self, logicalExpression, constraintExpression1, constraintExpression2 = None):
+        """
+        Set the conditional constraint expression
+        
+        :param logicalExpression     : LogicalExpression
+        :param constraintExpression1 : ConstraintExpression
+        :param constraintExpression2 : ConstraintExpression
+        """
+        ConstraintExpression.__init__(self)
+
+        self.logicalExpression      = logicalExpression
+        self.constraintExpression1  = constraintExpression1
+        self.constraintExpression2  = constraintExpression2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        res = "ConditionalConstraintExpression: " + "("+str(self.logicalExpression)+")?" + str(self.constraintExpression1)
+        
+        if self.constraintExpression2 != None:
+            res += ": " + str(self.constraintExpression2)
+        
+        return res
+
+    def addElseExpression(self, elseExpression):
+        self.constraintExpression2 = elseExpression
+
+    def getDependencies(self, codeGenerator):
+        dep = self.logicalExpression.getDependencies(codeGenerator) + self.constraintExpression1.getDependencies(codeGenerator)
+
+        if self.constraintExpression2 != None:
+            dep += self.constraintExpression2.getDependencies(codeGenerator)
+
+        return list(set(dep))
+
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MathProg code for the identifiers and sets used in this conditional constraint expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MathProg code for this contitional constraint expression
         """
         return codeGenerator.generateCode(self)

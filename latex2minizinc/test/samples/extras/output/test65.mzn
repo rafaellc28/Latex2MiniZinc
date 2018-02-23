@@ -1,11 +1,11 @@
 bool: a;
 
-float: b;
+bool: b;
 
 float: c;
 
 
-constraint if a = true then b else c endif > 5;
+constraint if a = true then b = true else c > 5 endif;
 
 solve satisfy;
 

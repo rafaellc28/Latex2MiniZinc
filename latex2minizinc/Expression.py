@@ -18,6 +18,7 @@ class Expression:
         self.isBinary = False
         self.isInteger = False
         self.isNatural = False
+        self.isArray = False
         self.isSubIndice = False
         self.isInt = False
         self.isDeclaredAsParam = None

@@ -129,6 +129,7 @@ tokens = [
    'IF',
    'THEN',
    'ELSE',
+   'ENDIF',
    'IMPLIES',
    'ISIMPLIEDBY',
    'IFANDONLYIF'
@@ -171,6 +172,10 @@ def t_THEN(t):
 
 def t_ELSE(t):
    r'\\text\{\s*else\s*\}|\s*else(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_ENDIF(t):
+   r'\\text\{\s*endif\s*\}|\s*endif(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_IMPLIES(t):

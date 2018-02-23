@@ -1,0 +1,19 @@
+start_{nS+1} = maxt\\
+end_{nS+1} = maxt\\
+end_{s} = start_{s} + len*speed_{s}: s \in SHIP\\
+alldifferent(next)\\
+\text{if } kind_{s} + kind_{next_{s}} = 3 \text{ then }
+	end_{s} \leq start_{next_{s}}\\ 
+\text{ else } 
+	start_{s} + speed_{s} * leeway \leq start_{next_{s}} \land end_{s} + speede_{next_{s}} * leeway \leq end_{next_{s}}
+\text{ endif }: s \in SHIP\\
+start_{s} \geq desired_{s}: s \in SHIP\\
+\text{minimize } \max_{s \in SHIP}end_{s}\\
+SHIP := 1 \dots nS; SHIPE := 1 \dots nS+1; TIME := 0 \dots maxt;\\
+enter := 1; leave := 2; dummy := 3\\
+enter, leave, dummy, speed, speede, desired, leeway, maxt \in \mathbb{Z},\in \mathbb{P}\\
+dirn_{s}, \in enter \dots leave: s \in SHIP\\
+kind := dirn ++ [ dummy ], \in enter \dots dummy\\
+speede := speed ++ [0]\\
+start, end \in TIME, \in \mathbb{V}; next \in SHIPE, \in \mathbb{V}\\
+

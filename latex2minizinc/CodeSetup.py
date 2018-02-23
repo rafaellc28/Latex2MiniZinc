@@ -373,7 +373,7 @@ class CodeSetup:
         node.linearExpression.setupEnvironment(self)
         node.numericExpression2.setupEnvironment(self)
 
-    def setupEnvironment_ConditionalConstraintExpression(self, node):
+    def setupEnvironment_LogicalConstraintExpression(self, node):
         """
         Generate the AMPL code for the identifiers and sets used in this constraint expression
         """
@@ -404,6 +404,37 @@ class CodeSetup:
             self.level = previousLevel
             self.currentTable = previousTable
 
+
+    def setupEnvironment_ConditionalConstraintExpression(self, node):
+        """
+        Generate the MiniZinc code for the identifiers and sets used in this constraint expression
+        """
+        node.logicalExpression.setupEnvironment(self)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+        node.constraintExpression1.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+        if node.constraintExpression2 != None:
+            previousLevel = self.level
+            previousTable = self.currentTable
+            
+            self.level += 1
+            self.currentTable.setIsLeaf(False)
+            self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+            node.constraintExpression2.setupEnvironment(self)
+
+            self.level = previousLevel
+            self.currentTable = previousTable
 
     # Linear Expression
     def setupEnvironment_ValuedLinearExpression(self, node):
@@ -1230,6 +1261,23 @@ class CodeSetup:
         Generate the MiniZinc code for the declaration of identifiers used in this array expression
         """
         map(self._setupValue, node.value)
+
+    def setupEnvironment_ArrayWithOperation(self, node):
+        """
+        Generate the MiniZinc code for the identifiers and sets used in this array expression
+        """
+
+        ident1 = self._getIdentifier(node.array1)
+        ident2 = self._getIdentifier(node.array2)
+
+        if isinstance(ident1, Identifier):
+            ident1.isArray = True
+
+        if isinstance(ident2, Identifier):
+            ident2.isArray = True
+
+        node.array1.setupEnvironment(self)
+        node.array2.setupEnvironment(self)
 
     # Value
     def setupEnvironment_Value(self, node):

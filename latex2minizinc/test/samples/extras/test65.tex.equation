@@ -1,2 +1,2 @@
 % Test conditional expression
-if a then b else c > 5
+if a then b else c > 5 endif

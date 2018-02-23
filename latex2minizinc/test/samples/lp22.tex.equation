@@ -5,7 +5,7 @@
 \sum_{b \in PLACES} x_{b,a} = 1: a \in PLACES \mid a \neq Start\\
 \sum_{b \in PLACES} x_{b,Start} = 0\\
 y_{a,b} \leq (card(PLACES)-1)*x_{a,b}: a \in PLACES, b \in PLACES, y_{a,b} \in \mathbb{Z}^{+}\\
-\sum_{b \in PLACES} y_{b,a} + (\text{ if } a=Start \text{ then } card(PLACES)) = 1 + \sum_{b \in PLACES} y_{a,b}: a \in PLACES\\
+\sum_{b \in PLACES} y_{b,a} + (\text{ if } a=Start \text{ then } card(PLACES) \text{ endif }) = 1 + \sum_{b \in PLACES} y_{a,b}: a \in PLACES\\
 tlv_{a} \geq tar_{a}: a \in PLACES, tlv_{a} \in \mathbb{R}, tar_{a} \in \mathbb{R}\\
 tar_{b} \geq tlv_{a} + Gcdist_{a,b}/Maxspeed - BigM*(1-x_{a,b}): a \in PLACES, b \in PLACES, x_{a,b} \in \mathbb{B}\\
 tea_{a} \geq S1_{a} - tar_{a}: a \in PLACES \mid a \neq Start\\
