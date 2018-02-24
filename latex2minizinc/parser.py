@@ -1920,9 +1920,15 @@ def p_SetExpressionWithIndices(t):
 def p_IteratedSetExpression(t):
     '''SetExpression : SETOF LLBRACE IndexingExpression RRBRACE TupleListItem
                      | SETOF LLBRACE IndexingExpression RRBRACE Identifier
-                     | SETOF LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression'''
+                     | SETOF LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression
+                     | SETOF TupleListItem
+                     | SETOF Identifier
+                     | SETOF NumericSymbolicExpression'''
     
-    t[0] = IteratedSetExpression(t[3], t[5])
+    if len(t) > 3:
+      t[0] = IteratedSetExpression(t[3], t[5])
+    else:
+      t[0] = IteratedSetExpression(None, t[2])
 
 def p_ConditionalSetExpression(t):
     '''ConditionalSetExpression : IF LogicalExpression THEN SetExpression ELSE SetExpression ENDIF

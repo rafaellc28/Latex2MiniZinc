@@ -1,0 +1,23 @@
+% specialization-examples/scheduling/seqdependent/doubleChannel.mzn. From https://github.com/MiniZinc/specialization-examples
+start_{s} = maxt \land end_{s} = maxt: s \in nS + 1 \dots nS + nC\\
+channel_{s} = s - nS: s \in nS + 1 \dots nS + nC\\
+end_{s} = start_{s} + len_{channel_{s}}*speed_{s}: s \in SHIP\\
+alldifferent(next)\\
+\text{if } kind_{s} + kind_{next_{s}} = 3 \text{ then }\\
+    end_{s} \leq start_{next_{s}}\\
+\text{ else }\\
+	start_{s}+speed_{s}*leeway \leq start_{next_{s}} \land
+  end_{s}+speede_{next_{s}}*leeway \leq end_{next_{s}}\\
+\text{ endif }: s \in SHIP\\
+start_{s} \geq desired_{s}: s \in SHIP\\
+channel_{next_{s}} = channel_{s}: s \in SHIP\\
+\text{minimize } \max_{s \in SHIP}end_{s}\\
+len_{i} \in \mathbb{Z}, \in \mathbb{P}: i \in 1 \dots nC\\
+SHIP := 1 \dots nS; SHIPE := 1 \dots nS+nC; TIME := 0 \dots maxt;\\
+enter := 1; leave := 2; dummy := 3\\
+enter, leave, dummy, speed, speede, desired, leeway, maxt \in \mathbb{Z},\in \mathbb{P}\\
+dirn_{s}, \in enter \dots leave: s \in SHIP\\
+kind := dirn ++ [ dummy \mid i \in 1 \dots nC ], \in enter \dots dummy\\
+speede := speed ++ [0 \mid i \in 1 \dots nC]\\
+start, end \in TIME, \in \mathbb{V}; next \in SHIPE, \in \mathbb{V}\\
+channel \in 1 \dots nC, \in \mathbb{V}\\

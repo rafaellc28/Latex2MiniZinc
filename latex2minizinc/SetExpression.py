@@ -5,9 +5,9 @@ from Utils import *
 
 class SetExpression(Expression):
     """
-    Class representing a set in the AST of the MLP
+    Class representing a set in the AST
     """
-    def __init__(self, dimension = 1):
+    def __init__(self, dimension = 0):
         Expression.__init__(self)
         self.dimension = dimension
 
@@ -19,10 +19,10 @@ class SetExpression(Expression):
 
 class SetExpressionWithValue(SetExpression):
     """
-    Class representing a set with value in the AST of the MLP
+    Class representing a set with value in the AST
     """
 
-    def __init__(self, value, dimension = 1):
+    def __init__(self, value, dimension = 0):
         """
         Set the value that correspond to the Set expression
         
@@ -38,9 +38,9 @@ class SetExpressionWithValue(SetExpression):
         to string
         """
         if isinstance(self.value, ValueList):
-            return "SEV: {" + str(self.value) + "}"
+            return "SetExpression: {" + str(self.value) + "}"
         else:
-            return "SEV: "+str(self.value)
+            return "SetExpression: "+str(self.value)
 
     def setDimension(self, dimension):
         self.dimension = dimension
@@ -70,20 +70,20 @@ class SetExpressionWithValue(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this set expression
+        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Set expression
+        Generate the MiniZinc code for this Set expression
         """
         return codeGenerator.generateCode(self)
 
 
 class SetExpressionWithIndices(SetExpression):
     """
-    Class representing a set with indices in the AST of the MLP
+    Class representing a set with indices in the AST
     """
 
     def __init__(self, identifier, indices, dimension = 0):
@@ -104,11 +104,7 @@ class SetExpressionWithIndices(SetExpression):
         to string
         """
 
-        #if isinstance(self.indices, Identifier):
-        #    return "SEI: " + str(self.identifier) + "[" + str(self.indices) + "]"
-        #else:
-        #    return "SEI: " + str(self.identifier) + "[" + ",".join(map(lambda ind: str(ind), self.indices)) + "]"
-        return "SEI: " + str(self.identifier)
+        return "SetExpressionWithIndices: " + str(self.identifier)
 
     def setDimension(self, dimension):
         self.dimension = dimension
@@ -122,26 +118,26 @@ class SetExpressionWithIndices(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this set expression
+        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Set expression
+        Generate the MiniZinc code for this Set expression
         """
         return codeGenerator.generateCode(self)
 
 
 class SetExpressionWithOperation(SetExpression):
     """
-    Class representing a set with operation in the AST of the MLP
+    Class representing a set with operation in the AST
     """
 
     DIFF    = "diff"
     SYMDIFF = "symdiff"
     UNION   = "union"
-    INTER   = "inter"
+    INTER   = "intersect"
     CROSS   = "cross"
 
     def __init__(self, op, setExpression1, setExpression2):
@@ -159,26 +155,26 @@ class SetExpressionWithOperation(SetExpression):
         to string
         """
 
-        return "SETWithOeration: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
+        return "SetExpressionWithOperation: " + str(self.setExpression1) + " " + self.op + " " + str(self.setExpression2)
 
     def getDependencies(self, codeGenerator):
         return list(set(self.setExpression1.getDependencies(codeGenerator) + self.setExpression2.getDependencies(codeGenerator)))
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets used in this set expression
+        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Set expression
+        Generate the MiniZinc code for this Set expression
         """
         return codeGenerator.generateCode(self)
 
 class SetExpressionBetweenParenthesis(SetExpression):
     """
-    Class representing a set expression between parenthesis node in the AST of a MLP
+    Class representing a set expression between parenthesis node in the AST
     """
 
     def __init__(self, setExpression):
@@ -196,26 +192,26 @@ class SetExpressionBetweenParenthesis(SetExpression):
         to string
         """
         
-        return "SEBetweenParen: (" + str(self.setExpression) + ")"
+        return "SetExpressionBetweenParenthesis: (" + str(self.setExpression) + ")"
 
     def getDependencies(self, codeGenerator):
         return self.setExpression.getDependencies(codeGenerator)
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this set expression
+        Generate the MiniZinc code for the identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this set expression
+        Generate the MiniZinc code for this set expression
         """
         return codeGenerator.generateCode(self)
 
 class SetExpressionBetweenBraces(SetExpression):
     """
-    Class representing a set expression between braces node in the AST of a MLP
+    Class representing a set expression between braces node in the AST
     """
 
     def __init__(self, setExpression):
@@ -233,7 +229,7 @@ class SetExpressionBetweenBraces(SetExpression):
         to string
         """
         setExpr = str(self.setExpression) if self.setExpression != None else ""
-        return "SEBeteweenBraces: {" + setExpr + "}"
+        return "SetExpressionBetweenBraces: {" + setExpr + "}"
 
     def getDependencies(self, codeGenerator):
         if self.setExpression != None:
@@ -243,19 +239,19 @@ class SetExpressionBetweenBraces(SetExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this set expression
+        Generate the MiniZinc code for the identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this set expression
+        Generate the MiniZinc code for this set expression
         """
         return codeGenerator.generateCode(self)
 
 class IteratedSetExpression(SetExpression):
     """
-    Class representing a iterated set expression node in the AST of a MLP
+    Class representing a iterated set expression node in the AST
     """
     
     def __init__(self, indexingExpression, integrand):
@@ -274,29 +270,40 @@ class IteratedSetExpression(SetExpression):
         """
         to string
         """
-        res = "setof {" + str(self.indexingExpression) + "} "
+        res = "setof "
+
+        if self.indexingExpression:
+            res += "{" + str(self.indexingExpression) + "} "
+
         res += str(self.integrand)
 
-        return "ItSetExpr: " + res
+        return "IteratedSetExpression: " + res
 
     def getDependencies(self, codeGenerator):
-        return list(set(self.indexingExpression.getDependencies(codeGenerator) + self.integrand.getDependencies(codeGenerator)))
+        deps = []
+
+        if self.indexingExpression:
+            deps += self.indexingExpression.getDependencies(codeGenerator)
+
+        deps += self.integrand.getDependencies(codeGenerator)
+
+        return list(set(deps))
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this iterated set expression
+        Generate the MiniZinc code for the identifiers and sets used in this iterated set expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this contitional set expression
+        Generate the MiniZinc code for this contitional set expression
         """
         return codeGenerator.generateCode(self)
 
 class ConditionalSetExpression(SetExpression):
     """
-    Class representing a conditional set expression node in the AST of a MLP
+    Class representing a conditional set expression node in the AST
     """
     
     def __init__(self, logicalExpression, setExpression1, setExpression2 = None):
@@ -317,7 +324,7 @@ class ConditionalSetExpression(SetExpression):
         """
         to string
         """
-        res = "CondSetExpr: " + "("+str(self.logicalExpression)+")?" + str(self.setExpression1)
+        res = "ConditionalSetExpression: " + "("+str(self.logicalExpression)+")?" + str(self.setExpression1)
         
         if self.setExpression2 != None:
             res += ": " + str(self.setExpression2)
@@ -337,12 +344,12 @@ class ConditionalSetExpression(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this conditional set expression
+        Generate the MiniZinc code for the identifiers and sets used in this conditional set expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this contitional set expression
+        Generate the MiniZinc code for this contitional set expression
         """
         return codeGenerator.generateCode(self)

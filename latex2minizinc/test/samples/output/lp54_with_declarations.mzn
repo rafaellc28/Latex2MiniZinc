@@ -30,9 +30,9 @@ enum proc;
 
 enum unit;
 
-enum pCap;
+array[int] of int: pCap;
 
-enum pExcept;
+array[int] of int: pExcept;
 
 array[INDEX_SET_cPos_1] of set of int: cPos = array1d(INDEX_SET_cPos_1, [cpPosc_union_ccPosc[c] | c in commod]);
 

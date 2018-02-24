@@ -1,0 +1,6 @@
+% specialization-examples/sets/bagua/bagua.mzn. From https://github.com/MiniZinc/specialization-examples
+card(attacks \cap group_{s}) \leq 1: s \in SYMB\\
+totalDamages := \sum_{p \in attacks}damage_{p}, \in \mathbb{Z}; damage \in \mathbb{Z}, \in \mathbb{P}\\
+\text{maximize } (totalDamages)\\
+attacks \in \text{setof } SPOT, \in \mathbb{V}; group_{s} \in \text{setof } SPOT: s \in SYMB\\
+SPOT := 1 \dots nSpots\\

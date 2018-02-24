@@ -186,6 +186,7 @@ class CodeSetup:
                 var.setupEnvironment(self)
 
     def _setDimension(self, setExpression, dimen):
+        #print("_setDimension", setExpression, dimen)
         if isinstance(setExpression, SetExpressionWithValue) or isinstance(setExpression, SetExpressionWithIndices):
             setExpression.setDimension(dimen)
         elif isinstance(setExpression, SetExpressionBetweenParenthesis):
@@ -207,6 +208,7 @@ class CodeSetup:
 
     def _addBelongsTo(self, var, setExpressionNode, op = None, supExpressionObj = None, isLogicalExpression = False):
 
+        #print("_addBelongsTo", var.getSymbolName(self.codeGenerator), setExpressionNode.getDimension())
         self._addDomainExpression(var, setExpressionNode, op, supExpressionObj, isLogicalExpression)
 
         if isinstance(var, Tuple):
@@ -225,6 +227,7 @@ class CodeSetup:
         setExpressionObj = self._getSetExpressionObj(setExpressionNode)
         dependencies = setExpressionNode.getDependencies(self.codeGenerator)
 
+        #print("_addDomainExpression", name, setExpression, setExpressionNode.getDimension())
         if supExpressionObj != None:
             setExpression += ".." + supExpressionObj.getSymbolName(self.codeGenerator)
             dependencies = list(set(dependencies + supExpressionObj.getDependencies(self.codeGenerator)))
@@ -925,6 +928,7 @@ class CodeSetup:
                     var = self._getIdentifier(var)
                     var.isInt = True 
 
+                    #print("setupEnvironment_EntryIndexingExpressionWithSet", setExpression, node.setExpression.getDimension())
                     self._addDomainExpression(var, node.setExpression, node.op)
             else:
                 var = self._getIdentifier(node.identifier)
@@ -1021,10 +1025,12 @@ class CodeSetup:
                     var = self._getIdentifier(var)
                     var.isInt = True
 
+                    #print("setupEnvironment_EntryLogicalExpressionWithSet1", setExpression, node.setExpression.getDimension())
                     self._addDomainExpression(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
                 var.isInt = True
+                #print("setupEnvironment_EntryLogicalExpressionWithSet2", setExpression, node.setExpression.getDimension())
                 self._addDomainExpression(var, node.setExpression, node.op, None, True)
 
         if isinstance(node.identifier, Tuple):
@@ -1122,6 +1128,16 @@ class CodeSetup:
         """
         Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
+
+        ident1 = self._getIdentifier(node.setExpression1)
+        ident2 = self._getIdentifier(node.setExpression2)
+
+        if isinstance(ident1, Identifier):
+            ident1.isSet = True
+
+        if isinstance(ident2, Identifier):
+            ident2.isSet = True
+
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)
 
@@ -1160,7 +1176,9 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
-        node.indexingExpression.setupEnvironment(self)
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
         node.integrand.setupEnvironment(self)
 
         self.level = previousLevel
