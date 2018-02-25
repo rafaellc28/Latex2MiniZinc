@@ -2211,6 +2211,8 @@ def p_IteratedNumericExpression(t):
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE Identifier
                          | SUM UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE LPAREN LogicalExpression RPAREN
+                         | SUM UNDERLINE LBRACE IndexingExpression RBRACE LPAREN EntryConstraintLogicalExpression RPAREN
                          
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
@@ -2218,6 +2220,8 @@ def p_IteratedNumericExpression(t):
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE Identifier
                          | PROD UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE LPAREN LogicalExpression RPAREN
+                         | PROD UNDERLINE LBRACE IndexingExpression RBRACE LPAREN EntryConstraintLogicalExpression RPAREN
                          
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
@@ -2225,13 +2229,17 @@ def p_IteratedNumericExpression(t):
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE Identifier
                          | MAX UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE LPAREN LogicalExpression RPAREN
+                         | MAX UNDERLINE LBRACE IndexingExpression RBRACE LPAREN EntryConstraintLogicalExpression RPAREN
                          
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE Identifier
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE Identifier RBRACE NumericSymbolicExpression
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE Identifier
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE CARET LBRACE NumericSymbolicExpression RBRACE NumericSymbolicExpression
                          | MIN UNDERLINE LBRACE IndexingExpression RBRACE Identifier
-                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression'''
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE NumericSymbolicExpression
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE LPAREN LogicalExpression RPAREN
+                         | MIN UNDERLINE LBRACE IndexingExpression RBRACE LPAREN EntryConstraintLogicalExpression RPAREN'''
 
     _type = t.slice[1].type
     if _type == "SUM":
@@ -2246,7 +2254,7 @@ def p_IteratedNumericExpression(t):
     elif _type == "MIN":
         op = IteratedNumericExpression.MIN
 
-    if len(t) > 7:
+    if len(t) > 9:
         if isinstance(t[8], Identifier):
           t[8] = ValuedNumericExpression(t[8])
 
@@ -2254,6 +2262,10 @@ def p_IteratedNumericExpression(t):
           t[10] = ValuedNumericExpression(t[10])
 
         t[0] = IteratedNumericExpression(op, t[10], t[4], t[8])
+
+    elif len(t) > 7:
+        t[0] = IteratedNumericExpression(op, t[7], t[4])
+
     else:
         if isinstance(t[6], Identifier):
           t[6] = ValuedNumericExpression(t[6])

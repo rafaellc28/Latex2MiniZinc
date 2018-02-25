@@ -186,7 +186,7 @@ class CodeSetup:
                 var.setupEnvironment(self)
 
     def _setDimension(self, setExpression, dimen):
-        #print("_setDimension", setExpression, dimen)
+        
         if isinstance(setExpression, SetExpressionWithValue) or isinstance(setExpression, SetExpressionWithIndices):
             setExpression.setDimension(dimen)
         elif isinstance(setExpression, SetExpressionBetweenParenthesis):
@@ -208,7 +208,6 @@ class CodeSetup:
 
     def _addBelongsTo(self, var, setExpressionNode, op = None, supExpressionObj = None, isLogicalExpression = False):
 
-        #print("_addBelongsTo", var.getSymbolName(self.codeGenerator), setExpressionNode.getDimension())
         self._addDomainExpression(var, setExpressionNode, op, supExpressionObj, isLogicalExpression)
 
         if isinstance(var, Tuple):
@@ -227,7 +226,6 @@ class CodeSetup:
         setExpressionObj = self._getSetExpressionObj(setExpressionNode)
         dependencies = setExpressionNode.getDependencies(self.codeGenerator)
 
-        #print("_addDomainExpression", name, setExpression, setExpressionNode.getDimension())
         if supExpressionObj != None:
             setExpression += ".." + supExpressionObj.getSymbolName(self.codeGenerator)
             dependencies = list(set(dependencies + supExpressionObj.getDependencies(self.codeGenerator)))
@@ -906,7 +904,7 @@ class CodeSetup:
             tupleVal = node.identifier.getValues()
             dimen = len(tupleVal)
 
-            if dimen > 1:
+            if dimen > 0:
                 self._setDimension(node.setExpression, dimen)
 
         if not self._checkIsModifierSet(setExpressionObj):
@@ -928,7 +926,6 @@ class CodeSetup:
                     var = self._getIdentifier(var)
                     var.isInt = True 
 
-                    #print("setupEnvironment_EntryIndexingExpressionWithSet", setExpression, node.setExpression.getDimension())
                     self._addDomainExpression(var, node.setExpression, node.op)
             else:
                 var = self._getIdentifier(node.identifier)
@@ -1004,7 +1001,7 @@ class CodeSetup:
             tupleVal = node.identifier.getValues()
             dimen = len(tupleVal)
 
-            if dimen > 1:
+            if dimen > 0:
                 self._setDimension(node.setExpression, dimen)
 
         if not self._checkIsModifierSet(setExpressionObj):
@@ -1025,12 +1022,11 @@ class CodeSetup:
                     var = self._getIdentifier(var)
                     var.isInt = True
 
-                    #print("setupEnvironment_EntryLogicalExpressionWithSet1", setExpression, node.setExpression.getDimension())
                     self._addDomainExpression(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
                 var.isInt = True
-                #print("setupEnvironment_EntryLogicalExpressionWithSet2", setExpression, node.setExpression.getDimension())
+                
                 self._addDomainExpression(var, node.setExpression, node.op, None, True)
 
         if isinstance(node.identifier, Tuple):

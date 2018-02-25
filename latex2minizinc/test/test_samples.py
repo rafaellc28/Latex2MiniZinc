@@ -932,3 +932,6 @@ def test_minizinc_test13():
 
 def test_minizinc_test14():
 	check_test_minizinc_num(14)
+
+def test_minizinc_test15():
+	check_test_minizinc_num(15)

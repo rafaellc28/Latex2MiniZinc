@@ -364,7 +364,6 @@ class CodeGenerator:
             self.tuples[_tuple][stmt]["identifiers"][ident][order].append({"index": index, "pos": pos})
 
     def _checkIsSetOperation(self, key):
-        #print("_checkIsSetOperation", key, self.SET_OPERATIONS)
         for op in self.SET_OPERATIONS:
             op = " " + op + " "
             if op in key:
@@ -1422,7 +1421,7 @@ class CodeGenerator:
                         _types.append(domain)
 
                 if dim == None:
-                    #print("1", name, prop.getDimension())
+                    
                     if prop.getDimension() != None:
                         dim = prop.getDimension()
 
@@ -2334,7 +2333,6 @@ class CodeGenerator:
             _type = "int"
 
         value = ""
-        #print(param, self.setsWitOperations)
         if varDecl != None:
             if varDecl.getValue() != None:
                 
@@ -2393,7 +2391,6 @@ class CodeGenerator:
                             value2 = varDecl.getValue().attribute.generateCode(self)
                             self.getOriginalIndices = False
                             
-                            #print(param, value2, self.setsWitOperations)
                             if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
                                 value = self.setsWitOperations[value2]
                                 self.setsWitOperationsUsed.append(value)
@@ -2519,19 +2516,21 @@ class CodeGenerator:
         array = ""
         deleteTupleIndex = False
         arrayFromTuple = False
+        domainOriginal = None
 
         domain, domains, domains_with_indices, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
         _types, dim, minVal, maxVal = self._getProperties(_genSet.getName())
-
+        
         _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
-        #print("0", name, domain, _subIndices, dim)
+        
         if domain != None and domain.strip() != "":
             domains_aux = domains
             domains = self._getDomains(domains)
+            domainOriginal = domain
             domain = ", ".join(domains)
             array += "array[" + domain + "]"
             isArray = True
-
+            
         elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0:
             if self._hasAllIndices(minVal, maxVal):
                 domainMinMax = []
@@ -2568,7 +2567,7 @@ class CodeGenerator:
             _type = "enum"
 
         if varDecl != None:
-            #print(name, domain)
+            
             if not domain:
                 indexingExpression = None
                 indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
@@ -2730,7 +2729,6 @@ class CodeGenerator:
 
                         self.genValueAssigned.add(GenObj(name))
 
-        
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
             index1 = _tuple["index1"]
@@ -2741,13 +2739,14 @@ class CodeGenerator:
             else:
                 index2 = _tuple["index2"]
                 _type  = _tuple["type"]
+                #if _type.strip() == "" or _type == "int" or _type == "int:" or "{" in _type or "[" in _type or _tuple["type"] == "set of int":
 
                 if _type != "enum" and not _type.endswith(":"):
                     _type = _type+":"
 
                 if _type == "enum":
                     _type = "int:"
-
+                
                 arrayFromTuple = True
                 array = "array["+index1
 
@@ -2759,7 +2758,9 @@ class CodeGenerator:
                 self.array2dIndex1 = index1
                 self.array2dIndex2 = index2
 
-        #print(name, array, _type, value, arrayFromTuple)
+                #if domainOriginal and domainOriginal != "int" and not "{" in domainOriginal and not "[" in domainOriginal:
+                #    self.additionalParameters[index1] = self.additionalParameters[index1][:-3] + " = " + domainOriginal + ";\n\n"
+
         if array != "":
             setStr += array
 
@@ -2786,7 +2787,7 @@ class CodeGenerator:
 
         elif _type == "set of int:":
             self.listSetOfInts.append(name)
-        
+            
         setStr += ";\n\n"
         
         self.parentScope = previousParentScope
