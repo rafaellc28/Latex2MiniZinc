@@ -1923,11 +1923,16 @@ def p_IteratedSetExpression(t):
                      | SETOF LLBRACE IndexingExpression RRBRACE NumericSymbolicExpression
                      | SETOF TupleListItem
                      | SETOF Identifier
-                     | SETOF NumericSymbolicExpression'''
+                     | SETOF NumericSymbolicExpression
+                     | SETOF INTEGERSET'''
     
     if len(t) > 3:
       t[0] = IteratedSetExpression(t[3], t[5])
     else:
+
+      if t.slice[2].type == "INTEGERSET":
+        t[2] = SetExpressionWithValue(t.slice[2].value2)
+
       t[0] = IteratedSetExpression(None, t[2])
 
 def p_ConditionalSetExpression(t):

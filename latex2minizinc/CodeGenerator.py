@@ -4165,7 +4165,7 @@ class CodeGenerator:
 
     # IntegerSet
     def generateCode_IntegerSet(self, node):
-        res = "integer"
+        res = "int"
         
         firstBound  = None if node.firstBound  == None else node.firstBound.getSymbolName(self)
         secondBound = None if node.secondBound == None else node.secondBound.getSymbolName(self)
