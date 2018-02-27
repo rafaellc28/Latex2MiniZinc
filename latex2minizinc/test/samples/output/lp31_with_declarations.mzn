@@ -1,14 +1,14 @@
-enum PRODUCTS;
+set of int: PRODUCTS;
 
 enum REACTIONS;
 
-enum SPECIES;
+set of int: SPECIES;
 
-enum RAWMATERIALS;
+set of int: RAWMATERIALS;
 
 enum ATOMS;
 
-set of int: BYPRODUCTS = SPECIES_diff_RAWMATERIALS_diff_PRODUCTS;
+set of int: BYPRODUCTS = (SPECIES diff RAWMATERIALS diff PRODUCTS);
 
 array[INDEX_SET_mw_1] of float: mw = array1d(INDEX_SET_mw_1, [sum(a in ATOMS)(amu[a] * formula[s,a]) | s in PRODUCTS]);
 
@@ -27,8 +27,6 @@ array[INDEX_SET_x_1] of var float: x;
 
 set of int: INDEX_SET_SPECIES_diff_RAWMATERIALS;
 
-set of int: INDEX_SET_SPECIES_diff_RAWMATERIALS_diff_PRODUCTS;
-
 set of int: INDEX_SET_mw_1;
 
 set of int: INDEX_SET_n_1;
@@ -36,8 +34,6 @@ set of int: INDEX_SET_n_1;
 set of int: INDEX_SET_x_1;
 
 array[INDEX_SET_SPECIES_diff_RAWMATERIALS] of int: SPECIES_diff_RAWMATERIALS;
-
-array[INDEX_SET_SPECIES_diff_RAWMATERIALS_diff_PRODUCTS] of int: SPECIES_diff_RAWMATERIALS_diff_PRODUCTS;
 
 
 constraint forall(s in SPECIES)(n[s] = sum(r in REACTIONS)(stoich[s,r] * x[r]));

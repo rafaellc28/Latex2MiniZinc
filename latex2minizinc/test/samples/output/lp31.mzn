@@ -2,9 +2,9 @@ enum PRODUCTS;
 
 enum REACTIONS;
 
-enum SPECIES;
+set of int: SPECIES;
 
-enum RAWMATERIALS;
+set of int: RAWMATERIALS;
 
 array[int] of float: MW;
 

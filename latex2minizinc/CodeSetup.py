@@ -1131,8 +1131,16 @@ class CodeSetup:
         if isinstance(ident1, Identifier):
             ident1.isSet = True
 
+            self._addGenDeclaration(ident1.getSymbolName(self.codeGenerator), ident1.sub_indices, 
+                                    [DeclarationAttribute(IteratedSetExpression(None, SetExpressionWithValue(IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<="))), DeclarationAttribute.IN)], 
+                                    self.indexingExpression)
+
         if isinstance(ident2, Identifier):
             ident2.isSet = True
+
+            self._addGenDeclaration(ident2.getSymbolName(self.codeGenerator), ident2.sub_indices, 
+                                    [DeclarationAttribute(IteratedSetExpression(None, SetExpressionWithValue(IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<="))), DeclarationAttribute.IN)], 
+                                    self.indexingExpression)
 
         node.setExpression1.setupEnvironment(self)
         node.setExpression2.setupEnvironment(self)

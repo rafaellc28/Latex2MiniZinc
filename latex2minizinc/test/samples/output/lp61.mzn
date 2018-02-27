@@ -1,8 +1,8 @@
 enum N;
 
-enum D;
+set of int: D;
 
-enum U;
+set of int: U;
 
 array[int, int] of float: X;
 

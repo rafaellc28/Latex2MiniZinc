@@ -345,11 +345,13 @@ class CodeGenerator:
         return False
 
     def _addTuple(self, _tuple, stmt, dimen, setWithIndices, index, ident, order, pos = None, higherPriority = False):
+
         if not _tuple in self.tuples:
             self.tuples[_tuple] = {}
         
         if not stmt in self.tuples[_tuple]:
             self.tuples[_tuple][stmt] = {"dimen":dimen, "setWithIndices": setWithIndices, "identifiers": {}}
+
         elif higherPriority:
             self.tuples[_tuple][stmt]["dimen"] = dimen
             self.tuples[_tuple][stmt]["setWithIndices"] = setWithIndices
@@ -377,6 +379,7 @@ class CodeGenerator:
 
         setExpression = setExpression[1:-1]
         values = self._splitDomain(setExpression)
+
         for value in values:
             if not re.search("^[_a-zA-Z][_a-zA-Z0-9]*$", value) and not re.search('"(?:[^\\\\]|\\\\.)*?(?:"|$)|\'(?:[^\\\\]|\\\\.)*?(?:\'|$)', value):
                 return False
@@ -390,6 +393,9 @@ class CodeGenerator:
             return False
 
         return setExpression[0] == "{" and setExpression[len(setExpression)-1] == "}" and not ".." in setExpression and not setExpression == "{}"
+
+    def _checkIsSetExpressionWithTuple(self, setExpression):
+        return re.search("\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+in\s+", setExpression)
 
     def _cleanKeyWithSetOperation(self, key):
         key = key.replace("{", "")
@@ -2073,7 +2079,7 @@ class CodeGenerator:
                                         value2 = varDecl.getValue().attribute.generateCode(self)
                                         self.getOriginalIndices = False
                                         
-                                        if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
+                                        if value2 in self.setsWitOperations and self._checkIsValuesBetweenBraces(value2):
                                             value = self.setsWitOperations[value2]
                                             self.setsWitOperationsUsed.append(value)
                                             
@@ -2644,24 +2650,26 @@ class CodeGenerator:
                         value2 = varDecl.getValue().attribute.generateCode(self)
                         self.getOriginalIndices = False
                         
-                        if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
-                            value = self.setsWitOperations[value2]
-                            self.setsWitOperationsUsed.append(value)
+                        #print(name, value, value2, value2 in self.setsWitOperations, isArray)
+                        if value2 in self.setsWitOperations:
+                            if self._checkIsSetExpressionWithTuple(value2) or (isArray and not value2.startswith("array") and not value2.startswith("[")):
+                                value = self.setsWitOperations[value2]
+                                self.setsWitOperationsUsed.append(value)
 
-                            if value2 in self.setsWitOperationsIndices:
-                                v = self.setsWitOperationsIndices[value2]
-                                
-                                if v["dimen"] > 0:
-                                    value += "["
-                                    inds = []
+                                if value2 in self.setsWitOperationsIndices:
+                                    v = self.setsWitOperationsIndices[value2]
+                                    
+                                    if v["dimen"] > 0:
+                                        value += "["
+                                        inds = []
 
-                                    for i in range(v["dimen"]):
-                                        inds.append(v["indices"][i])
+                                        for i in range(v["dimen"]):
+                                            inds.append(v["indices"][i])
 
-                                    value += ",".join(inds) + "]"
-
-                            
-                            _type = "set of int:"
+                                        value += ",".join(inds) + "]"
+                                        
+                            if not self._checkIsSetBetweenBraces(value2):
+                                _type = "set of int:"
 
                         self.newType = "int"
                         self.turnStringsIntoInts = False
@@ -2680,7 +2688,7 @@ class CodeGenerator:
                             value = ""
                             self.isSetExpressionWithIndexingExpression = False
 
-                        elif isArray or len(_subIndices) > 0 or "[" in value:
+                        elif not value.startswith("array") and (isArray or len(_subIndices) > 0 or "[" in value):
 
                             if indexingExpression != None and indexingExpression.strip() != "":
                                 value = "["+value+" | "+indexingExpression+"]"

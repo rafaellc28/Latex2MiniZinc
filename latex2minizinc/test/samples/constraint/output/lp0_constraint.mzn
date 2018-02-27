@@ -1,6 +1,6 @@
 array[INDEX_SET_Neighbors, 1..2] of Countries: Neighbors;
 
-enum Countries;
+set of int: Countries;
 
 float: NumColors;
 

@@ -1,4 +1,4 @@
-enum cFinal;
+set of int: cFinal;
 
 enum port;
 
@@ -14,9 +14,9 @@ enum cShip;
 
 array[INDEX_SET_ccPos] of set of int: ccPos;
 
-enum cRaw;
+set of int: cRaw;
 
-set of int: commod = cFinal_union_cInter_union_cRaw;
+set of int: commod = cFinal union cInter union cRaw;
 
 enum plant;
 
@@ -24,15 +24,15 @@ array[INDEX_SET_mPos] of set of int: mPos;
 
 enum center;
 
-enum cInter;
+set of int: cInter;
 
 enum proc;
 
 enum unit;
 
-array[int] of int: pCap;
+array[int] of set of int: pCap;
 
-array[int] of int: pExcept;
+array[int] of set of int: pExcept;
 
 array[INDEX_SET_cPos_1] of set of int: cPos = array1d(INDEX_SET_cPos_1, [cpPosc_union_ccPosc[c] | c in commod]);
 
@@ -129,8 +129,6 @@ set of int: INDEX_SET_Z_1;
 
 set of int: INDEX_SET_Z_2;
 
-set of int: INDEX_SET_cFinal_union_cInter_union_cRaw;
-
 set of int: INDEX_SET_cPos_1;
 
 set of int: INDEX_SET_ccPos;
@@ -174,8 +172,6 @@ set of int: INDEX_SET_tranInter_1;
 set of int: INDEX_SET_tranInter_2;
 
 set of int: INDEX_SET_tranRaw_1;
-
-array[INDEX_SET_cFinal_union_cInter_union_cRaw] of int: cFinal_union_cInter_union_cRaw;
 
 array[INDEX_SET_cpPosc_union_ccPosc] of int: cpPosc_union_ccPosc;
 

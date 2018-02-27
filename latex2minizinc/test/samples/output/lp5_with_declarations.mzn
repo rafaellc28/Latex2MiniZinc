@@ -1,6 +1,6 @@
 enum C;
 
-enum N;
+set of int: N;
 
 array[int, int] of float: Data;
 
