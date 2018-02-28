@@ -1,0 +1,8 @@
+% specialization-examples/sets/bagua/baguaBoundedIntW.mzn. From https://github.com/MiniZinc/specialization-examples
+\sum_{i \in 1 \dots size}(attacks_{i} \in group_{s}) \leq 1: s \in SYMB\\
+attacks_{i} \geq (attacks_{i} \neq 0) + attacks_{i+1}: i \in 1 \dots size-1\\
+totalDamages := \sum_{p \in attacks}damage_{p}, \in \mathbb{Z}; damage, size \in \mathbb{Z}, \in \mathbb{P}\\
+\text{maximize } (totalDamages)\\
+attacks_{i} \in 0 \dots nSpots, \in \mathbb{V}: i \in 1 \dots size; group_{s} \in \text{setof } \mathbb{Z}: s \in SYMB\\
+SPOT := 1 \dots nSpots\\
+SPOTx := \{0\} \cup SPOT\\
