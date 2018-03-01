@@ -30,11 +30,11 @@ constraint forall(i in INDEX_SET_Removal_1)(Removal[i] <= numJobs * perMax /\ Re
 
 constraint Period <= perMax /\ Period >= 0;
 
-constraint forall(t in 0..numTanks)(Removal[t] + full[t] = Entry[floor((t + 1)) mod (numTanks + 1)]);
+constraint forall(t in 0..numTanks)(Removal[t] + full[t] = Entry[floor((t + 1)) mod floor((numTanks + 1))]);
 
 constraint forall(t in 1..numTanks)(Entry[t] + minTime[t] <= Removal[t] /\ Entry[t] + maxTime[t] >= Removal[t]);
 
-constraint forall(t1 in 0..floor(numTanks - 1), t2 in floor(t1 + 1)..numTanks, k in 1..floor(numJobs - 1))(Entry[floor((t1 + 1)) mod (numTanks + 1)] + empty[floor((t1 + 1)) mod (numTanks + 1),t2] <= Removal[t2] - k * Period \/ Entry[floor((t2 + 1)) mod (numTanks + 1)] + empty[floor((t2 + 1)) mod (numTanks + 1),t1] <= Removal[t1] + k * Period);
+constraint forall(t1 in 0..floor(numTanks - 1), t2 in floor(t1 + 1)..numTanks, k in 1..floor(numJobs - 1))(Entry[floor((t1 + 1)) mod floor((numTanks + 1))] + empty[floor((t1 + 1)) mod floor((numTanks + 1)),t2] <= Removal[t2] - k * Period \/ Entry[floor((t2 + 1)) mod floor((numTanks + 1))] + empty[floor((t2 + 1)) mod floor((numTanks + 1)),t1] <= Removal[t1] + k * Period);
 
 constraint Removal[0] = 0;
 

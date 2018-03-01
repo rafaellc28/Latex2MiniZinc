@@ -3298,23 +3298,36 @@ class CodeGenerator:
 
     def generateCode_NumericExpressionWithArithmeticOperation(self, node):
         res = ""
-
-        if isinstance(node.numericExpression1, ValuedNumericExpression):
-            node.numericExpression1 = node.numericExpression1.value
-
+        
+        numericExpression1 = node.numericExpression1
+        if isinstance(numericExpression1, ValuedNumericExpression):
+            numericExpression1 = numericExpression1.value
+            
+        numericExpression2 = node.numericExpression2
+        if isinstance(numericExpression2, ValuedNumericExpression):
+            numericExpression2 = numericExpression2.value
+            
+        numericExpressionStr1 = node.numericExpression1.generateCode(self)
+        numericExpressionStr2 = node.numericExpression2.generateCode(self)
+        
         if node.op == NumericExpressionWithArithmeticOperation.POW:# and not (isinstance(node.numericExpression2, ValuedNumericExpression) or isinstance(node.numericExpression2, NumericExpressionBetweenParenthesis)):
-            res += "pow(" + node.numericExpression1.generateCode(self) + ","+node.numericExpression2.generateCode(self) + ")"
-
-        elif (node.op == NumericExpressionWithArithmeticOperation.QUOT or node.op == NumericExpressionWithArithmeticOperation.MOD) and \
-            not isinstance(node.numericExpression1, Identifier) and not isinstance(node.numericExpression1, Number):
-
-            res += "floor(" + node.numericExpression1.generateCode(self) + ") " + node.op + " " + node.numericExpression2.generateCode(self)
-
+            res += "pow(" + numericExpressionStr1 + "," + numericExpressionStr2 + ")"
+            
+        elif node.op == NumericExpressionWithArithmeticOperation.QUOT or node.op == NumericExpressionWithArithmeticOperation.MOD:
+            
+            if not isinstance(numericExpression1, Identifier) and not isinstance(numericExpression1, Number):
+                numericExpressionStr1 = "floor(" + numericExpressionStr1 + ")"
+                
+            if not isinstance(numericExpression2, Identifier) and not isinstance(numericExpression2, Number):
+                numericExpressionStr2 = "floor(" + numericExpressionStr2 + ")"
+                
+            res += numericExpressionStr1 + " " + node.op + " " + numericExpressionStr2
+            
         else:
-            res += node.numericExpression1.generateCode(self) + " " + node.op + " " + node.numericExpression2.generateCode(self)
-
+            res += numericExpressionStr1 + " " + node.op + " " + numericExpressionStr2
+            
         return res
-
+        
     def generateCode_MinusNumericExpression(self, node):
         return "-" + node.numericExpression.generateCode(self)
 

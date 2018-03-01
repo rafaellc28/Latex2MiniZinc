@@ -1,0 +1,5 @@
+% specialization-examples/sets/yellowturban/yellow01.mzn. From https://github.com/MiniZinc/specialization-examples
+\left(\sum_{i \in MOVES}duration_{i} * occur_{i}\right) \leq timeBound\\
+\text{maximize } \sum_{i \in MOVES}power_{i} * occur_{i}\\
+MOVES := 1 \dots nMoves; timeBound \in \mathbb{Z}, \in \mathbb{P}\\
+power_{i} \in 1 \dots 20; duration_{i} \in 1 \dots 10; occur_{i} \in 0 \dots 1, \in \mathbb{V}: i \in MOVES\\

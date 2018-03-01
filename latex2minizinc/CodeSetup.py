@@ -1348,7 +1348,7 @@ class CodeSetup:
                 self.codeGenerator.genParameters.remove(self.identifierKey)
                 self.codeGenerator.genSets.remove(self.identifierKey)
 
-                _genVar = GenVariable(self.identifierKey, None)
+                _genVar = GenVariable(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger, node.isBinary or node.isLogical, None)
                 if (node.isVar != None and not node.isVar) or (node.isDeclaredAsVar != None and not node.isDeclaredAsVar):
                     _genVar.setCertainty(False)
 
@@ -1364,6 +1364,18 @@ class CodeSetup:
                     _symbolTableEntry.setInferred(False)
                 
                 self.codeGenerator.genVariables.add(_genVar)
+
+            elif node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
+                _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
+                if _genVar != None:
+                    if node.isSymbolic:
+                        _genVar.setIsSymbolic(True)
+
+                    if node.isInt or node.isInteger:
+                        _genVar.setIsInteger(True)
+
+                    if node.isBinary or node.isLogical:
+                        _genVar.setIsLogical(True)
 
             self._checkSubIndices(node)
 
