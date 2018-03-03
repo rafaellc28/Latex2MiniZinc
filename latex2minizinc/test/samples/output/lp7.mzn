@@ -32,9 +32,9 @@ constraint forall(k in JOBS)(start[k] >= Rel[k]);
 
 constraint forall(k in JOBS)(start[k] + Dur[k] <= Due[k] + pastdue[k]);
 
-constraint forall(j in JOBS, k in JOBS where j < k)(start[j] + Dur[j] <= start[k] + BigM * (1 - y[j,k]));
+constraint forall(j,k in JOBS where j < k)(start[j] + Dur[j] <= start[k] + BigM * (1 - y[j,k]));
 
-constraint forall(j in JOBS, k in JOBS where j < k)(start[k] + Dur[k] <= start[j] + BigM * y[j,k]);
+constraint forall(j,k in JOBS where j < k)(start[k] + Dur[k] <= start[j] + BigM * y[j,k]);
 
 
 

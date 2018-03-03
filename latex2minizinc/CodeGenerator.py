@@ -3529,8 +3529,9 @@ class CodeGenerator:
                     self.lastIdentifier = None
 
 
-                res = ", ".join(map(lambda var: "not(" + var + " in " + setExpression + ")" if node.op == EntryIndexingExpressionWithSet.NOTIN else \
-                                                var + " " + node.op + " " + setExpression, entries))
+                varList = ",".join(entries)
+                res = "not(" + varList + " in " + setExpression + ")" if node.op == EntryIndexingExpressionWithSet.NOTIN else \
+                               varList + " " + node.op + " " + setExpression
 
                 return res
 

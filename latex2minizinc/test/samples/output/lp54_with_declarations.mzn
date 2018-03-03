@@ -58,7 +58,7 @@ array[INDEX_SET_tranFinal_1, INDEX_SET_tranFinal_2] of float: tranFinal = array2
 
 array[INDEX_SET_tranImport_1, INDEX_SET_tranImport_2] of float: tranImport = array2d(INDEX_SET_tranImport_1, INDEX_SET_tranImport_2, [if road[r,po] > 0 then 0.5 + 0.0144 * road[r,po] else 0 endif | r in region, po in port]);
 
-array[INDEX_SET_tranInter_1, INDEX_SET_tranInter_2] of float: tranInter = array2d(INDEX_SET_tranInter_1, INDEX_SET_tranInter_2, [if rail[p1,p2] > 0 then 3.5 + 0.03 * rail[p1,p2] else 0 endif | p1 in plant, p2 in plant]);
+array[INDEX_SET_tranInter_1, INDEX_SET_tranInter_2] of float: tranInter = array2d(INDEX_SET_tranInter_1, INDEX_SET_tranInter_2, [if rail[p1,p2] > 0 then 3.5 + 0.03 * rail[p1,p2] else 0 endif | p1,p2 in plant]);
 
 array[INDEX_SET_tranRaw_1] of float: tranRaw = array1d(INDEX_SET_tranRaw_1, [(if impdBarg[pl] > 0 then 1.0 + 0.0030 * impdBarg[pl] else 0 endif) + (if impdRoad[pl] > 0 then 0.5 + 0.0144 * impdRoad[pl] else 0 endif) | pl in plant]);
 
@@ -68,7 +68,7 @@ array[int, int] of float: road;
 
 array[int, int] of float: railHalf;
 
-array[INDEX_SET_rail_1, INDEX_SET_rail_2] of float: rail = array2d(INDEX_SET_rail_1, INDEX_SET_rail_2, [if railHalf[p1,p2] > 0 then railHalf[p1,p2] else railHalf[p2,p1] endif | p1 in plant, p2 in plant]);
+array[INDEX_SET_rail_1, INDEX_SET_rail_2] of float: rail = array2d(INDEX_SET_rail_1, INDEX_SET_rail_2, [if railHalf[p1,p2] > 0 then railHalf[p1,p2] else railHalf[p2,p1] endif | p1,p2 in plant]);
 
 array[int] of float: impdBarg;
 

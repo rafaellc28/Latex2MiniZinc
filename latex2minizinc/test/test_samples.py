@@ -962,3 +962,6 @@ def test_minizinc_test23():
 
 def test_minizinc_test24():
 	check_test_minizinc_num(24)
+
+def test_minizinc_test25():
+	check_test_minizinc_num(25)
