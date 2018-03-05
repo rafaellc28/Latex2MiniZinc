@@ -112,8 +112,8 @@ class CodeGenerator:
 
         self.lastIdentifier = None
 
-        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "cumulative": "globals.mzn"}
-        self.include = []
+        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "cumulative": "globals.mzn", "lex_lesseq": "lex_lesseq.mzn"}
+        self.include = {}
 
     def generateCode(self, node):
         cls = node.__class__
@@ -2925,7 +2925,7 @@ class CodeGenerator:
 
         # check libraries to include
         if len(self.include) > 0:
-            preModel += "\n\n".join(map(lambda lb: "include \"" + lb + "\";", self.include))
+            preModel += "\n\n".join(["include \"" + lb + "\";" for (k,lb) in self.include.iteritems()])
             preModel += "\n\n"
 
         res = "\n\n".join(filter(lambda cnt: self.removeInvalidConstraint(cnt), map(lambda el: self._getCodeConstraint(el), constraints))) + "\n\n"
@@ -3227,7 +3227,7 @@ class CodeGenerator:
         function = self._getNumericFunction(function)
 
         if function in self.LIBRARIES and not function in self.include:
-            self.include.append(self.LIBRARIES[function])
+            self.include[function] = self.LIBRARIES[function]
 
         res = function + "("
 

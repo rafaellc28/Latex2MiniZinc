@@ -1,0 +1,8 @@
+% specialization-examples/symmetry/road/road.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{alldifferent}(road)\\
+road_{1} < road_{n}\\
+\text{maximize } scoop\\
+scoop := \sum_{i \in 1 \dots n-1}coop_{road_{i}, road_{i+1}}, \in \mathbb{Z}\\
+GEN := 1 \dots n; ROAD := 1 \dots n\\
+coop_{i,i} \in \mathbb{Z}, \in \mathbb{P}: i \in GEN\\
+road_{j} \in GEN, \in \mathbb{V}: j \in ROAD\\
