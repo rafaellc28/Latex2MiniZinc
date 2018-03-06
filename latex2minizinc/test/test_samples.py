@@ -977,3 +977,27 @@ def test_minizinc_test28():
 
 def test_minizinc_test29():
 	check_test_minizinc_num(29)
+
+def test_minizinc_test30():
+	check_test_minizinc_num(30)
+
+def test_minizinc_test31():
+	check_test_minizinc_num(31)
+
+def test_minizinc_test32():
+	check_test_minizinc_num(32)
+
+def test_minizinc_test33():
+	check_test_minizinc_num(33)
+
+def test_minizinc_test34():
+	check_test_minizinc_num(34)
+
+def test_minizinc_test35():
+	check_test_minizinc_num(35)
+
+def test_minizinc_test36():
+	check_test_minizinc_num(36)
+
+def test_minizinc_test37():
+	check_test_minizinc_num(37)

@@ -1336,6 +1336,7 @@ class CodeSetup:
         elif node.sub_indices != None:
             _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
+
         if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node):
 
             _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
@@ -1451,6 +1452,7 @@ class CodeSetup:
 
         else:
             self._checkSubIndices(node)
+
 
         self.identifier = None
         self.identifierKey = None

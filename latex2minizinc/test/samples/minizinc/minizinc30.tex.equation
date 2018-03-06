@@ -1,0 +1,9 @@
+% specialization-examples/symmetry/road/roaddom.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{alldifferent}(road)\\
+road_{1} < road_{n}\\
+\forall\{i \in 2 \dots n-2\}\forall\{j \in i+1 \dots n-1\}coop[road[i-1], road[i]] + coop[road[j], road[j+1]] \geq coop[road[i-1], road[j]] + coop[road[i], road[j+1]]\\
+\text{maximize } scoop\\
+scoop := \sum_{i \in 1 \dots n-1}coop_{road_{i}, road_{i+1}}, \in \mathbb{Z}\\
+GEN := 1 \dots n; ROAD := 1 \dots n\\
+coop_{i,i} \in \mathbb{Z}, \in \mathbb{P}: i \in GEN\\
+road_{j} \in GEN, \in \mathbb{V}: j \in ROAD\\

@@ -23,6 +23,7 @@ reserved = {
 
 tokens = [
    'CARD',
+   'LENGTH',
    'OR',
    'AND',
    'NOT',
@@ -160,6 +161,10 @@ t_ignore  = ' \t\r'
 
 def t_CARD(t):
    r'\\text\{\s*card\s*\}|\s*card(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_LENGTH(t):
+   r'\\text\{\s*length\s*\}|\s*length(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_IF(t):

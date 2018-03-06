@@ -1646,13 +1646,11 @@ def p_ConditionalSetExpression(t):
       t[0].addElseExpression(t[6])
 
 def p_ExpressionList(t):
-    '''ExpressionList : Identifier PIPE LogicalExpression
-                      | Identifier PIPE ValueListInExpression
+    '''ExpressionList : Identifier PIPE IndexingExpression
                       | Identifier PIPE Identifier
                       | Identifier PIPE NumericSymbolicExpression
 
-                      | NumericSymbolicExpression PIPE LogicalExpression
-                      | NumericSymbolicExpression PIPE ValueListInExpression
+                      | NumericSymbolicExpression PIPE IndexingExpression
                       | NumericSymbolicExpression PIPE Identifier
                       | NumericSymbolicExpression PIPE NumericSymbolicExpression'''
 
@@ -2104,6 +2102,9 @@ def p_FunctionNumericExpression(t):
 
                          | CARD LPAREN SetExpression RPAREN
                          | CARD LPAREN Identifier RPAREN
+
+                         | LENGTH LPAREN SetExpression RPAREN
+                         | LENGTH LPAREN Identifier RPAREN
                          
                          | ID LPAREN ValueList RPAREN
                          | ID LPAREN SetExpression RPAREN
@@ -2119,6 +2120,12 @@ def p_FunctionNumericExpression(t):
 
     elif _type == "CARD":
         op = NumericExpressionWithFunction.CARD
+
+        if not isinstance(t[3], SetExpression):
+          t[3] = SetExpressionWithValue(t[3])
+
+    elif _type == "LENGTH":
+        op = NumericExpressionWithFunction.LENGTH
 
         if not isinstance(t[3], SetExpression):
           t[3] = SetExpressionWithValue(t[3])

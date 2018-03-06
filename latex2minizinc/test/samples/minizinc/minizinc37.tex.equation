@@ -1,0 +1,7 @@
+% specialization-examples/workshops/composition_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent(diffs)\\
+alldifferent(order)\\
+diffs_{i} = \left|order_{i} - order_{i+1}\right|: i \in PDIFF\\
+NOTE, POSN := 1 \dots n; DIFF, PDIFF := 1 \dots n-1\\
+order_{i} \in NOTE, \in \mathbb{V}: i \in POSN\\
+diffs_{i} \in DIFF, \in \mathbb{V}: i \in PDIFF\\

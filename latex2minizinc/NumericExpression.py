@@ -13,6 +13,7 @@ class NumericExpressionWithFunction(NumericExpression):
     """
 
     CARD      = "card"
+    LENGTH    = "length"
     ABS       = "abs"
     CEIL      = "ceil"
     FLOOR     = "floor"
@@ -56,7 +57,7 @@ class NumericExpressionWithFunction(NumericExpression):
         """
         to string
         """
-        res = str(self.function) + "("
+        res = "NumericExpressionWithFunction: " + str(self.function) + "("
 
         if self.numericExpression1 != None:
             res += str(self.numericExpression1)
@@ -81,13 +82,13 @@ class NumericExpressionWithFunction(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this numeric expression with function
+        Generate the MiniZinc code for this numeric expression with function
         """
         return codeGenerator.generateCode(self)
     
@@ -200,13 +201,13 @@ class ValuedNumericExpression(NumericExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
         
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this valued linear expression
+        Generate the MiniZinc code for this valued linear expression
         """
         return codeGenerator.generateCode(self)
 
@@ -239,13 +240,13 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this numeric expression
+        Generate the MiniZinc code for this numeric expression
         """
         return codeGenerator.generateCode(self)
 
@@ -295,13 +296,13 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this numeric expression with arithmetic operation
+        Generate the MiniZinc code for this numeric expression with arithmetic operation
         """
         return codeGenerator.generateCode(self)
 
@@ -334,13 +335,13 @@ class MinusNumericExpression(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this minus numeric expression
+        Generate the MiniZinc code for this minus numeric expression
         """
         return codeGenerator.generateCode(self)
 
@@ -396,13 +397,13 @@ class IteratedNumericExpression(NumericExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this iterated numeric expression
+        Generate the MiniZinc code for this iterated numeric expression
         """
         return codeGenerator.generateCode(self)
 
@@ -450,12 +451,12 @@ class ConditionalNumericExpression(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this conditional numeric expression
+        Generate the MiniZinc code for the identifiers and sets used in this conditional numeric expression
         """
         codeSetup.setupEnvironment(self)
 
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this conditional numeric expression
+        Generate the MiniZinc code for this conditional numeric expression
         """
         return codeGenerator.generateCode(self)

@@ -1,0 +1,14 @@
+% specialization-examples/symmetry/wind/windprec.mzn. From https://github.com/MiniZinc/specialization-examples
+all\_different(array1d(tribute))\\
+\forall\{j \in VERTEX\}ncoins[i,j] = \left|rank_{tribute[i,j]} - rank_{tribute[i+1,j]}\right|: i \in 1 \dots m-1\\
+tribute_{1,j} < tribute_{1,j+1}: j \in 1 \dots n-1\\
+tribute_{1,1} < tribute_{m,1}\\
+lex\_lesseq([tribute_{i,j} \mid i \in POLYGON], [tribute_{i,j+1} \mid i \in POLYGON]): j \in 1 \dots n-1\\
+lex\_lesseq([tribute_{i,j} \mid i \in 1 \dots round(m \text{ div } 2), j \in VERTEX], [tribute_{m+1-i,j} \mid i \in 1 \dots round(m \text{ div } 2), j \in VERTEX])\\
+value\_precede\_chain([i \mid i \in (r-1)*m+1 \dots r*m], array1d(tribute)): r \in RANK\\
+\text{maximize } tcoins\\
+tcoins := \sum_{i \in 1 \dots m-1, j \in VERTEX}ncoins_{i,j}, \in \mathbb{Z}\\
+VERTEX, RANK := 1 \dots n; POLYGON := 1 \dots m\\
+rank_{t} := [(i-1) \text{ div } m + 1 | i \in 1 \dots n*m], \in RANK: t \in TRIBUTE\\
+tribute_{p,v} \in TRIBUTE, \in \mathbb{V}: p \in POLYGON, v \in VERTEX\\
+ncoins_{i,v} \in 0 \dots n-1, \in \mathbb{V}: i \in 1 \dots m-1, v \in VERTEX\\

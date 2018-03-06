@@ -112,7 +112,7 @@ class CodeGenerator:
 
         self.lastIdentifier = None
 
-        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "cumulative": "globals.mzn", "lex_lesseq": "lex_lesseq.mzn"}
+        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "all_different": "all_different.mzn", "inverse": "inverse.mzn", "cumulative": "cumulative.mzn", "lex_lesseq": "lex_lesseq.mzn", "value_precede_chain": "value_precede_chain.mzn"}
         self.include = {}
 
     def generateCode(self, node):
@@ -2226,6 +2226,7 @@ class CodeGenerator:
 
         paramStr = ""
         param = _genParameter.getName()
+        
         domain = None
         _type = None
         isArray = False
@@ -2650,7 +2651,6 @@ class CodeGenerator:
                         value2 = varDecl.getValue().attribute.generateCode(self)
                         self.getOriginalIndices = False
                         
-                        #print(name, value, value2, value2 in self.setsWitOperations, isArray)
                         if value2 in self.setsWitOperations:
                             if self._checkIsSetExpressionWithTuple(value2) or (isArray and not value2.startswith("array") and not value2.startswith("[")):
                                 value = self.setsWitOperations[value2]
