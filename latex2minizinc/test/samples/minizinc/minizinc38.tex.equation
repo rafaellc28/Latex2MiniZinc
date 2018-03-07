@@ -1,0 +1,11 @@
+% specialization-examples/workshops/compositiondual_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+inverse(posn,order)\\
+diffs_{i} = \left|order_{i} - order_{i+1}\right|: i \in DIFF//\\
+inverse(diffs,dposn)\\
+\left|posn_{1} - posn_{n}\right| = 1\\
+dposn_{n-1} = \min(posn_{1},posn_{n})\\
+NOTE, POSN := 1 \dots n; DIFF, PDIFF := 1 \dots n-1\\
+posn_{i} \in POSN, \in \mathbb{V}: i \in NOTE\\
+order_{i} \in NOTE, \in \mathbb{V}: i \in POSN\\
+diffs_{i} \in DIFF, \in \mathbb{V}: i \in PDIFF\\
+dposn_{i} \in PDIFF, \in \mathbb{V}: i \in DIFF\\
