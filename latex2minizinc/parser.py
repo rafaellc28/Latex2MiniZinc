@@ -11,6 +11,7 @@ from Constraints import *
 from ConstraintExpression import *
 from NumericExpression import *
 from SymbolicExpression import *
+from TrueFalse import *
 from ExpressionList import *
 from IndexingExpression import *
 from EntryIndexingExpression import *
@@ -1305,6 +1306,8 @@ def p_LogicalExpression(t):
 
                          | EntryConstraintLogicalExpression
 
+                         | TrueFalse
+
                          | LogicalExpression OR LogicalExpression
                          | LogicalExpression OR ValueListInExpression
                          | LogicalExpression OR NumericSymbolicExpression
@@ -1652,7 +1655,11 @@ def p_ExpressionList(t):
 
                       | NumericSymbolicExpression PIPE IndexingExpression
                       | NumericSymbolicExpression PIPE Identifier
-                      | NumericSymbolicExpression PIPE NumericSymbolicExpression'''
+                      | NumericSymbolicExpression PIPE NumericSymbolicExpression
+
+                      | Array PIPE IndexingExpression
+                      | Array PIPE Identifier
+                      | Array PIPE NumericSymbolicExpression'''
 
     t[1] = ExpressionList([t[1]])
 
@@ -1738,6 +1745,7 @@ def p_EntryIndexingExpressionWithSet(t):
 def p_NumericSymbolicExpression(t):
     '''NumericSymbolicExpression : NumericExpression
                                  | SymbolicExpression
+                                 | ArrayChoose
                                  | LPAREN NumericSymbolicExpression RPAREN'''
 
     if len(t) > 2:
@@ -1768,21 +1776,27 @@ def p_NumericExpression_binop(t):
     '''NumericExpression : Identifier PLUS Identifier
                          | Identifier PLUS NumericSymbolicExpression
                          | Identifier PLUS LPAREN LogicalExpression RPAREN
+                         | Identifier PLUS TrueFalse
                          | Identifier MINUS Identifier
                          | Identifier MINUS NumericSymbolicExpression
                          | Identifier MINUS LPAREN LogicalExpression RPAREN
+                         | Identifier MINUS TrueFalse
                          | Identifier TIMES Identifier
                          | Identifier TIMES NumericSymbolicExpression
                          | Identifier TIMES LPAREN LogicalExpression RPAREN
+                         | Identifier TIMES TrueFalse
                          | Identifier DIVIDE Identifier
                          | Identifier DIVIDE NumericSymbolicExpression
                          | Identifier DIVIDE LPAREN LogicalExpression RPAREN
+                         | Identifier DIVIDE TrueFalse
                          | Identifier MOD Identifier
                          | Identifier MOD NumericSymbolicExpression
                          | Identifier MOD LPAREN LogicalExpression RPAREN
+                         | Identifier MOD TrueFalse
                          | Identifier QUOTIENT Identifier
                          | Identifier QUOTIENT NumericSymbolicExpression
                          | Identifier QUOTIENT LPAREN LogicalExpression RPAREN
+                         | Identifier QUOTIENT TrueFalse
                          | Identifier CARET LBRACE Identifier RBRACE
                          | Identifier CARET LBRACE NumericSymbolicExpression RBRACE
                          | Identifier CARET LBRACE LogicalExpression RBRACE
@@ -1790,21 +1804,27 @@ def p_NumericExpression_binop(t):
                          | NumericSymbolicExpression PLUS Identifier
                          | NumericSymbolicExpression PLUS NumericSymbolicExpression
                          | NumericSymbolicExpression PLUS LPAREN LogicalExpression RPAREN
+                         | NumericSymbolicExpression PLUS TrueFalse
                          | NumericSymbolicExpression MINUS Identifier
                          | NumericSymbolicExpression MINUS NumericSymbolicExpression
                          | NumericSymbolicExpression MINUS LPAREN LogicalExpression RPAREN
+                         | NumericSymbolicExpression MINUS TrueFalse
                          | NumericSymbolicExpression TIMES Identifier
                          | NumericSymbolicExpression TIMES NumericSymbolicExpression
                          | NumericSymbolicExpression TIMES LPAREN LogicalExpression RPAREN
+                         | NumericSymbolicExpression TIMES TrueFalse
                          | NumericSymbolicExpression DIVIDE Identifier
                          | NumericSymbolicExpression DIVIDE NumericSymbolicExpression
                          | NumericSymbolicExpression DIVIDE LPAREN LogicalExpression RPAREN
+                         | NumericSymbolicExpression DIVIDE TrueFalse
                          | NumericSymbolicExpression MOD Identifier
                          | NumericSymbolicExpression MOD NumericSymbolicExpression
                          | NumericSymbolicExpression MOD LPAREN LogicalExpression RPAREN
+                         | NumericSymbolicExpression MOD TrueFalse
                          | NumericSymbolicExpression QUOTIENT Identifier
                          | NumericSymbolicExpression QUOTIENT NumericSymbolicExpression
                          | NumericSymbolicExpression QUOTIENT LPAREN LogicalExpression RPAREN
+                         | NumericSymbolicExpression QUOTIENT TrueFalse
                          | NumericSymbolicExpression CARET LBRACE Identifier RBRACE
                          | NumericSymbolicExpression CARET LBRACE NumericSymbolicExpression RBRACE
                          | NumericSymbolicExpression CARET LBRACE LogicalExpression RBRACE
@@ -1812,24 +1832,58 @@ def p_NumericExpression_binop(t):
                          | LPAREN LogicalExpression RPAREN PLUS Identifier
                          | LPAREN LogicalExpression RPAREN PLUS NumericSymbolicExpression
                          | LPAREN LogicalExpression RPAREN PLUS LPAREN LogicalExpression RPAREN
+                         | LPAREN LogicalExpression RPAREN PLUS TrueFalse
                          | LPAREN LogicalExpression RPAREN MINUS Identifier
                          | LPAREN LogicalExpression RPAREN MINUS NumericSymbolicExpression
                          | LPAREN LogicalExpression RPAREN MINUS LPAREN LogicalExpression RPAREN
+                         | LPAREN LogicalExpression RPAREN MINUS TrueFalse
                          | LPAREN LogicalExpression RPAREN TIMES Identifier
                          | LPAREN LogicalExpression RPAREN TIMES NumericSymbolicExpression
                          | LPAREN LogicalExpression RPAREN TIMES LPAREN LogicalExpression RPAREN
+                         | LPAREN LogicalExpression RPAREN TIMES TrueFalse
                          | LPAREN LogicalExpression RPAREN DIVIDE Identifier
                          | LPAREN LogicalExpression RPAREN DIVIDE NumericSymbolicExpression
                          | LPAREN LogicalExpression RPAREN DIVIDE LPAREN LogicalExpression RPAREN
+                         | LPAREN LogicalExpression RPAREN DIVIDE TrueFalse
                          | LPAREN LogicalExpression RPAREN MOD Identifier
                          | LPAREN LogicalExpression RPAREN MOD NumericSymbolicExpression
                          | LPAREN LogicalExpression RPAREN MOD LPAREN LogicalExpression RPAREN
+                         | LPAREN LogicalExpression RPAREN MOD TrueFalse
                          | LPAREN LogicalExpression RPAREN QUOTIENT Identifier
                          | LPAREN LogicalExpression RPAREN QUOTIENT NumericSymbolicExpression
                          | LPAREN LogicalExpression RPAREN QUOTIENT LPAREN LogicalExpression RPAREN
+                         | LPAREN LogicalExpression RPAREN QUOTIENT TrueFalse
                          | LPAREN LogicalExpression RPAREN CARET LBRACE Identifier RBRACE
                          | LPAREN LogicalExpression RPAREN CARET LBRACE NumericSymbolicExpression RBRACE
-                         | LPAREN LogicalExpression RPAREN CARET LBRACE LogicalExpression RBRACE'''
+                         | LPAREN LogicalExpression RPAREN CARET LBRACE LogicalExpression RBRACE
+
+                         | TrueFalse PLUS Identifier
+                         | TrueFalse PLUS NumericSymbolicExpression
+                         | TrueFalse PLUS LPAREN LogicalExpression RPAREN
+                         | TrueFalse PLUS TrueFalse
+                         | TrueFalse MINUS Identifier
+                         | TrueFalse MINUS NumericSymbolicExpression
+                         | TrueFalse MINUS LPAREN LogicalExpression RPAREN
+                         | TrueFalse MINUS TrueFalse
+                         | TrueFalse TIMES Identifier
+                         | TrueFalse TIMES NumericSymbolicExpression
+                         | TrueFalse TIMES LPAREN LogicalExpression RPAREN
+                         | TrueFalse TIMES TrueFalse
+                         | TrueFalse DIVIDE Identifier
+                         | TrueFalse DIVIDE NumericSymbolicExpression
+                         | TrueFalse DIVIDE LPAREN LogicalExpression RPAREN
+                         | TrueFalse DIVIDE TrueFalse
+                         | TrueFalse MOD Identifier
+                         | TrueFalse MOD NumericSymbolicExpression
+                         | TrueFalse MOD LPAREN LogicalExpression RPAREN
+                         | TrueFalse MOD TrueFalse
+                         | TrueFalse QUOTIENT Identifier
+                         | TrueFalse QUOTIENT NumericSymbolicExpression
+                         | TrueFalse QUOTIENT LPAREN LogicalExpression RPAREN
+                         | TrueFalse QUOTIENT TrueFalse
+                         | TrueFalse CARET LBRACE Identifier RBRACE
+                         | TrueFalse CARET LBRACE NumericSymbolicExpression RBRACE
+                         | TrueFalse CARET LBRACE LogicalExpression RBRACE'''
 
     if t.slice[1].type == "LPAREN":
 
@@ -2389,6 +2443,24 @@ def p_Array(t):
         t[2] = ValueList([t[2]])
 
     t[0] = Array(t[2])
+
+def p_ArrayChoose(t):
+  '''ArrayChoose : Array Array'''
+
+  t[0] = ArrayChoose(t[1].value, t[2].value)
+
+def p_TrueFalse(t):
+  '''TrueFalse : TRUE 
+               | FALSE'''
+
+  value = None
+  if t.slice[1].type == "TRUE":
+      value = TrueFalse.TRUE
+
+  else:
+      value = TrueFalse.FALSE
+
+  t[0] = TrueFalse(value)
 
 def p_error(t):
   if t:

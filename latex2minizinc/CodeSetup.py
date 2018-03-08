@@ -531,6 +531,14 @@ class CodeSetup:
             self.level = previousLevel
             self.currentTable = previousTable
 
+
+    # True or False Expression
+    def setupEnvironment_TrueFalse(self, node):
+        """
+        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        pass
+
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """
@@ -1303,6 +1311,13 @@ class CodeSetup:
 
         node.array1.setupEnvironment(self)
         node.array2.setupEnvironment(self)
+
+    def setupEnvironment_ArrayChoose(self, node):
+        """
+        Generate the MiniZinc code for the declaration of identifiers used in this array expression
+        """
+        map(self._setupValue, node.value1)
+        map(self._setupValue, node.value2)
 
     # Value
     def setupEnvironment_Value(self, node):

@@ -13,6 +13,7 @@ from SetExpression import *
 from EntryIndexingExpression import *
 from EntryLogicalExpression import *
 from SymbolicExpression import *
+from TrueFalse import *
 from TopologicalSort import *
 from Constants import *
 from SymbolTables import *
@@ -112,7 +113,8 @@ class CodeGenerator:
 
         self.lastIdentifier = None
 
-        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "all_different": "all_different.mzn", "inverse": "inverse.mzn", "cumulative": "cumulative.mzn", "lex_lesseq": "lex_lesseq.mzn", "value_precede_chain": "value_precede_chain.mzn"}
+        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "all_different": "all_different.mzn", "inverse": "inverse.mzn", "cumulative": "cumulative.mzn", 
+                          "lex_lesseq": "lex_lesseq.mzn", "value_precede_chain": "value_precede_chain.mzn", "diffn": "diffn.mzn"}
         self.include = {}
 
     def generateCode(self, node):
@@ -2047,6 +2049,9 @@ class CodeGenerator:
                                 self.removeAdditionalParameter = False
                                 _type = "string"
 
+                            elif isinstance(varDecl.getValue().attribute, TrueFalse):
+                                _type = "bool"
+
                             value = varDecl.getValue().attribute.generateCode(self)
                             if not isinstance(varDecl.getValue().attribute, Array):
 
@@ -2364,6 +2369,9 @@ class CodeGenerator:
                     self.turnStringsIntoInts = False
                     self.removeAdditionalParameter = False
                     _type = "string"
+
+                elif isinstance(varDecl.getValue().attribute, TrueFalse):
+                    _type = "bool"
 
                 value = varDecl.getValue().attribute.generateCode(self)
 
@@ -3217,6 +3225,11 @@ class CodeGenerator:
 
         return function
 
+
+    # True or False Expression
+    def generateCode_TrueFalse(self, node):
+        return node.value
+
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):
         if not isinstance(node.function, str):
@@ -3961,6 +3974,10 @@ class CodeGenerator:
     def generateCode_ArrayWithOperation(self, node):
         return node.array1.generateCode(self) + " " + node.op + " " + node.array2.generateCode(self)
 
+    # ArrayChoose
+    def generateCode_ArrayChoose(self, node):
+        return "[" + ",".join(map(self._getCodeValue, node.value1)) + "][" + ",".join(map(self._getCodeValue, node.value2)) + "]"
+
     # Value
     def generateCode_Value(self, node):
         return node.value.generateCode(self)
@@ -4175,6 +4192,9 @@ class CodeGenerator:
 
             self.newIndexExpression = param
             self._setNewIndex(string)
+
+            if self.genParameters.has(param):
+                self.genParameters.remove(param)
 
             return param
 

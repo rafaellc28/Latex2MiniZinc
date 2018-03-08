@@ -31,7 +31,12 @@ class Array(Expression):
         return [self]
     
     def getDependencies(self, codeGenerator):
-        return [self.getSymbolName(codeGenerator)]
+        deps = self.getSymbolName(codeGenerator)
+
+        if not isinstance(deps, list):
+            deps = list(deps)
+
+        return deps
     
     def setupEnvironment(self, codeSetup):
         """
@@ -86,5 +91,65 @@ class ArrayWithOperation(Array):
     def generateCode(self, codeGenerator):
         """
         Generate the MiniZinc code for this array expression with operation
+        """
+        return codeGenerator.generateCode(self)
+
+class ArrayChoose(Expression):
+    """
+    Class representing a ArrayChoose node in the AST of the MLP
+    """
+    
+    def __init__(self, value1, value2):
+        """
+        Set the ValueList inside the arrayChoose
+        
+        :param value : ValueList
+        :param value2: ValueList
+        """
+
+        Expression.__init__(self)
+        
+        self.value1 = value1
+        self.value2 = value2
+    
+    def __str__(self):
+        """
+        to string
+        """
+        return "ArrayChoose: [" +str(self.value1) + "]["+str(self.value2)+"]"
+
+    def __iter__(self):
+        """
+        Get the iterator of the class
+        """
+
+        return [self]
+    
+    def getDependencies(self, codeGenerator):
+        deps = self.value.getSymbolName(codeGenerator)
+        
+        if not isinstance(deps, list):
+            deps = list(deps)
+
+        deps2 = self.value2.getSymbolName(codeGenerator)
+
+        if isinstance(deps2, list):
+            for dep in deps2:
+                deps.append(dep)
+
+        else:
+            deps.append(deps2)
+
+        return deps
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MiniZinc code for the declaration of this ID
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MiniZinc code for this Identifier
         """
         return codeGenerator.generateCode(self)

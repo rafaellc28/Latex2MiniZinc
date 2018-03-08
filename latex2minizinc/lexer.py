@@ -133,7 +133,9 @@ tokens = [
    'ENDIF',
    'IMPLIES',
    'ISIMPLIEDBY',
-   'IFANDONLYIF'
+   'IFANDONLYIF',
+   'TRUE',
+   'FALSE'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -193,6 +195,14 @@ def t_ISIMPLIEDBY(t):
 
 def t_IFANDONLYIF(t):
    r'\\iff|\\Leftrightarrow'
+   return t
+
+def t_TRUE(t):
+   r'\\text\{\s*true\s*\}|\s*true(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_FALSE(t):
+   r'\\text\{\s*false\s*\}|\s*false(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_ASSIGN(t):
