@@ -1,0 +1,31 @@
+% specialization-examples/workshops/plasters_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+lex\_lesseq([ u_{p}, x_{p}, y_{p} ], [u_{p+1}, x_{p+1}, y_{p+1} ]): p \in 1 \dots total-1 \mid t_{p} = t_{p+1}\\
+u_{p} = Not \implies x_{p} = 1 \land y_{p} = 1: p \in PLASTER\\
+used_{ty} = \sum_{p \in PLASTER \mid t_{p} = ty}(u_{p} \neq Not): ty \in TYPE\\
+\sum_{ty \in TYPE}used_{ty}*dim_{ty,1}*dim_{ty,2} \geq total\_wounds\\
+\text{if } dim_{t_{p},1} = dim_{t_{p},2} \text{ then } u_{p} \neq Wide \text{ else } true \text{ endif }: p \in PLASTER\\
+diffn(x,y,len,wid)\\
+x_{p} + len_{p} -1 \leq length1 \land y_{p} + wid_{p} -1 \leq width: p \in PLASTER\\
+u_{p} \neq Not \implies (\forall\{i \in LENGTH, j \in WIDTH\}((x_{p} \leq i \land x_{p}+len_{p} > i \land y_{p} \leq j \land y_{p}+wid_{p} > j) \implies (covered_{i, j}))): p \in PLASTER\\
+covered[i,j] \implies \exists\{p \in PLASTER\}(x_{p} \leq i \land x_{p} + len_{p} > i \land y_{p} \leq j \land y_{p} + wid_{p} > j): i \in LENGTH, j \in WIDTH\\
+wound_{i,j} \implies covered_{i,j}: i \in LENGTH, j \in WIDTH\\
+used_{5} \geq 1\\
+used_{2} \geq 1\\
+used_{6} \geq 1 \implies \exists\{t \in TYPE \mid [0, 1, 1, 0, 0, 0]_{t} \geq 1\}number_{t} - used_{t} < [0, 1, 1, 0, 0, 0]_{t}\\
+used_{5} \geq 1 \implies \exists\{t \in TYPE \mid [0, 1, 1, 1, 0, 0]_{t} \geq 1\}number_{t} - used_{t} < [0, 1, 1, 1, 0, 0]_{t}\\
+\text{minimize } cost\\
+LENGTH := 1 \dots length1; WIDTH := 1 \dots width; TYPE := 1 \dots ntypes; PLASTER := 1 \dots total\\
+wound_{l,w} \in \mathbb{B}, \in \mathbb{P}; covered_{l,w} \in \mathbb{B}: l \in LENGTH, w \in WIDTH\\
+number_{t}, price_{t} \in \mathbb{Z}, \in \mathbb{P}: t \in TYPE\\
+psum_{j} := [ \sum_{i \in 1 \dots t-1}number_{i} \mid t \in TYPE ], \in \mathbb{Z}, \in \mathbb{P}: j \in TYPE\\
+t_{j} := [\max_{t \in TYPE}t*(p > psum_{t}) \mid p \in PLASTER], \in TYPE: j \in PLASTER\\
+total\_wounds := sum(array1d(wound)), \in \mathbb{Z}, \in \mathbb{P}\\
+maxdim := \max(array1d(dim)), \in \mathbb{Z}, \in \mathbb{P}\\
+dim_{t,i} \in \mathbb{Z}, \in \mathbb{P}: t \in TYPE, i \in 1 \dots 2\\
+total := sum(number), \in \mathbb{Z}, \in \mathbb{P}\\
+USAGE := \{ "Long", "Wide", "Not" \}\\
+x_{p} \in LENGTH, \in \mathbb{V}; y_{p} \in WIDTH, \in \mathbb{V}; u_{p} \in USAGE, \in \mathbb{V}: p \in PLASTER\\
+used_{t} \in 0 \dots \max(number), \in \mathbb{V}: t \in TYPE\\
+len_{p1} := [ [dim_{t_{p},1}, dim_{t_{p},2}, 0][u_{p}] \mid p \in PLASTER ], \in 0 \dots maxdim, \in \mathbb{V}: p1 \in PLASTER\\
+wid_{p1} := [ [dim_{t_{p},2}, dim_{t_{p},1}, 0][u_{p}] \mid p \in PLASTER ], \in 0 \dots maxdim, \in \mathbb{V}: p1 \in PLASTER\\
+cost := \sum_{t \in TYPE}used_{t} * price_{t}, \in \mathbb{Z}\\
