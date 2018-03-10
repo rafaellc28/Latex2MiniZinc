@@ -1,0 +1,13 @@
+% specialization-examples/workshops/poetry_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+what_{1} \neq other \land \forall\{i \in 1 \dots n-1\}what_{i} = other \land what_{i+1} = other \implies \forall\{j \in i \dots n\}what_{j} = other\\
+place_{i} = j \iff what_{j} = i: i \in ESSTANZA, j \in POSN\\
+alldifferent(place)\\
+kind_{p1} = kind_{p2} \implies \left|place_{p1} - place_{p2}\right| > 1: p1, p2 \in ESSTANZA \mid p1 < p2\\
+\text{maximize } obj\\
+ESSTANZA := 1 \dots k+l; STANZA := 0 \dots k+l; POSN := 1 \dots n\\
+n := k+l+m; other := 0; k, l, m, other \in \mathbb{Z}, \in \mathbb{P}\\
+KIND := \{"E", "S", "O"\}\\
+kind_{e} := [E \mid i \in 1 \dots k] \& [S \mid i \in 1 \dots l], \in KIND; effect \in \mathbb{Z}, \in \mathbb{P}: e \in ESSTANZA\\
+place_{e} \in POSN, \in \mathbb{V}: e \in ESSTANZA\\
+what_{p} \in STANZA, \in \mathbb{V}: p \in POSN\\
+obj := \sum_{p \in 1 \dots n-1}\text{if } what_{p} \neq other \land what_{p+1} \neq other \text{ then } \left|effect_{what_{p}} - effect_{what_{p+1}}\right| \text{ else } 0 \text{ endif}, \in \mathbb{Z}\\

@@ -1013,3 +1013,6 @@ def test_minizinc_test40():
 
 def test_minizinc_test41():
 	check_test_minizinc_num(41)
+
+def test_minizinc_test42():
+	check_test_minizinc_num(42)

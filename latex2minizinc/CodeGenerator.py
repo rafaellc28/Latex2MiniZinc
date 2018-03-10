@@ -4196,6 +4196,9 @@ class CodeGenerator:
             if self.genParameters.has(param):
                 self.genParameters.remove(param)
 
+            if self.genSets.has(param):
+                self.genSets.remove(param)
+
             return param
 
         if self.replaceNewIndices:
