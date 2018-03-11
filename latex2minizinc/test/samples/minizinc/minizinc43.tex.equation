@@ -1,0 +1,9 @@
+% specialization-examples/workshops/surrender_solution_set.mzn. From https://github.com/MiniZinc/specialization-examples
+card(party) \geq l \land card(party) \leq u\\
+\neg (dummy \in party)\\
+\sum_{i,j \in party \mid i < j}joint_{i,j} \geq m\\
+obj = \left(\min_{j \in party}honor_{j}\right)\\
+\text{maximize } obj\\
+dummy \in NEGOTIATOR; l, u, m, honor, joint, obj \in \mathbb{Z}, \in \mathbb{P}\\
+honor_{n}, joint_{n,n}: n \in NEGOTIATOR\\
+party, obj \in \mathbb{V}; party \in \text{setof } NEGOTIATOR

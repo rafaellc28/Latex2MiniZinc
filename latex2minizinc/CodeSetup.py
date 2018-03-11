@@ -1352,7 +1352,7 @@ class CodeSetup:
             _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
 
-        if (node.isVar or node.isDeclaredAsVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node):
+        if node.isDeclaredAsVar or ((node.isVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node)):
 
             _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
             if node.isDeclaredAsVar and _genVar != None:
@@ -1395,7 +1395,7 @@ class CodeSetup:
 
             self._checkSubIndices(node)
 
-        elif (node.isSet or node.isDeclaredAsSet) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node):
+        elif node.isDeclaredAsSet or (node.isSet and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node)):
             _genSet = self.codeGenerator.genSets.get(self.identifierKey)
             if node.isDeclaredAsSet and _genSet != None:
                 _genSet.setCertainty(True)
@@ -1424,7 +1424,7 @@ class CodeSetup:
 
             self._checkSubIndices(node)
 
-        elif (node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)))) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node):
+        elif node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)) and not self.codeGenerator.genSets.has(self.identifierKey) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)):
             _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
             if node.isDeclaredAsParam and _genParam != None:
                 _genParam.setCertainty(True)
