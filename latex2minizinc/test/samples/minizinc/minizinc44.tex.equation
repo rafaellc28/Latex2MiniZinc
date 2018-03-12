@@ -1,0 +1,9 @@
+% specialization-examples/workshops/surrender_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+party_{i} > dummy: i \in 1 \dots l\\
+party_{i} \geq party_{i+1} + (party_{i+1} \neq dummy): i \in 1 \dots u-1\\
+\sum_{i,j \in 1 \dots u \mid i < j}joint_{party_{i},party_{j}} \geq m\\
+obj = (\min_{j \in 1 \dots u}(party_{j} = dummy)*\max(honor) + honor_{party_{j}})\\
+\text{maximize } obj\\
+dummy \in NEGOTIATOR; l, u, m, honor, joint, obj \in \mathbb{Z}, \in \mathbb{P}\\
+honor_{n}, joint_{n,n}: n \in NEGOTIATOR\\
+party, obj \in \mathbb{V}; party_{i} \in NEGOTIATOR: i \in 1 \dots u\\
