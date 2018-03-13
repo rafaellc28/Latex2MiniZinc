@@ -296,6 +296,15 @@ class CodeGenerator:
 
         return None, [], [], []
 
+    def _hasVariable(self, expression):
+        dependencies = expression.getDependencies(self)
+
+        for dep in dependencies:
+            if self.genVariables.has(dep):
+                return True
+
+        return False
+
     def _getKeyForIndex(self, index, table):
         keys = []
         t = table
@@ -3169,12 +3178,12 @@ class CodeGenerator:
         SUM = "sum"
 
         indexingExpression = node.indexingExpression.generateCode(self)
-        if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation):
+        if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
             indexingExpression = "floor(" + indexingExpression + ")"
             
         if node.numericExpression:
             numericExpression = node.numericExpression.generateCode(self)
-            if isinstance(node.numericExpression, NumericExpressionWithArithmeticOperation):
+            if isinstance(node.numericExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.numericExpression):
                 numericExpression = "floor(" + numericExpression + ")"
             else:
                 numericExpression = "(" + numericExpression + ")"
@@ -3328,10 +3337,10 @@ class CodeGenerator:
             
         elif node.op == NumericExpressionWithArithmeticOperation.QUOT or node.op == NumericExpressionWithArithmeticOperation.MOD:
             
-            if not isinstance(numericExpression1, Identifier) and not isinstance(numericExpression1, Number):
+            if not isinstance(numericExpression1, Identifier) and not isinstance(numericExpression1, Number) and not self._hasVariable(numericExpression1):
                 numericExpressionStr1 = "floor(" + numericExpressionStr1 + ")"
                 
-            if not isinstance(numericExpression2, Identifier) and not isinstance(numericExpression2, Number):
+            if not isinstance(numericExpression2, Identifier) and not isinstance(numericExpression2, Number) and not self._hasVariable(numericExpression2):
                 numericExpressionStr2 = "floor(" + numericExpressionStr2 + ")"
                 
             res += numericExpressionStr1 + " " + node.op + " " + numericExpressionStr2
@@ -3354,12 +3363,12 @@ class CodeGenerator:
             self.parentScope = self.scope
 
         indexingExpression = node.indexingExpression.generateCode(self)
-        if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation):
+        if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
             indexingExpression = "floor(" + indexingExpression + ")"
 
         if node.supNumericExpression:
             supNumericExpression = node.supNumericExpression.generateCode(self)
-            if isinstance(node.supNumericExpression, NumericExpressionWithArithmeticOperation):
+            if isinstance(node.supNumericExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.supNumericExpression):
                 supNumericExpression = "floor(" + supNumericExpression + ")"
             else:
                 supNumericExpression = "(" + supNumericExpression + ")"
@@ -3940,10 +3949,10 @@ class CodeGenerator:
                 if not newEntry in self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"]:
                     self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"].append(newEntry)
 
-        if isinstance(node.rangeInit, NumericExpressionWithArithmeticOperation):
+        if isinstance(node.rangeInit, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.rangeInit):
             initValue = "floor("+initValue+")"
 
-        if isinstance(node.rangeEnd, NumericExpressionWithArithmeticOperation):
+        if isinstance(node.rangeEnd, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.rangeEnd):
             endValue = "floor("+endValue+")"
 
         res = initValue + ".." + endValue

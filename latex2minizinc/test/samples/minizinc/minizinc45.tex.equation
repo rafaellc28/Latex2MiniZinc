@@ -1,0 +1,12 @@
+% specialization-examples/workshops/temperature_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+temp_{0} = start\\
+temp_{h} = (temp_{h-1} + readings_{h}) \text{ div } 2 + effect_{choice_{h}}: h \in HOUR\\
+obj = \sum_{h \in HOUR}cost_{choice_{h}}\\
+\text{minimize } obj\\
+start, n, readings, cost, effect, obj \in \mathbb{Z}, \in \mathbb{P}\\
+HOUR := 1 \dots n; HOUR0 := 0 \dots n; n := length(readings)\\
+cost := [1,5,3,9,0]; effect := [1,4,-2,-5,0];\\
+CHOICE := \{"heat", "strongly_heat", "cool", "strongly_cool", "do_nothing"\}\\
+temp, choice, obj \in \mathbb{V}\\
+temp_{h} \in 25 \dots 30: h \in HOUR0;\\
+choice_{h} \in CHOICE: h \in HOUR\\
