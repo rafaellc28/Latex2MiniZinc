@@ -77,23 +77,22 @@ def p_LinearEquations(t):
     '''LinearEquations : ConstraintList'''
     t[0] = LinearEquations(Constraints(t[1]))
 
+
+def p_BEGININDEXINGEXPRESSION(t):
+  '''BEGININDEXINGEXPRESSION : FOR
+                             | WHERE
+                             | COLON'''
+  t[0] = t[1]
+
 def p_Objective(t):
-    '''Objective : MAXIMIZE Identifier FOR IndexingExpression
-                 | MAXIMIZE Identifier WHERE IndexingExpression
-                 | MAXIMIZE Identifier COLON IndexingExpression
+    '''Objective : MAXIMIZE Identifier BEGININDEXINGEXPRESSION IndexingExpression
                  | MAXIMIZE Identifier
-                 | MAXIMIZE NumericSymbolicExpression FOR IndexingExpression
-                 | MAXIMIZE NumericSymbolicExpression WHERE IndexingExpression
-                 | MAXIMIZE NumericSymbolicExpression COLON IndexingExpression
+                 | MAXIMIZE NumericSymbolicExpression BEGININDEXINGEXPRESSION IndexingExpression
                  | MAXIMIZE NumericSymbolicExpression
                  
-                 | MINIMIZE Identifier FOR IndexingExpression
-                 | MINIMIZE Identifier WHERE IndexingExpression
-                 | MINIMIZE Identifier COLON IndexingExpression
+                 | MINIMIZE Identifier BEGININDEXINGEXPRESSION IndexingExpression
                  | MINIMIZE Identifier
-                 | MINIMIZE NumericSymbolicExpression WHERE IndexingExpression
-                 | MINIMIZE NumericSymbolicExpression FOR IndexingExpression
-                 | MINIMIZE NumericSymbolicExpression COLON IndexingExpression
+                 | MINIMIZE NumericSymbolicExpression BEGININDEXINGEXPRESSION IndexingExpression
                  | MINIMIZE NumericSymbolicExpression'''
 
     _type = t.slice[1].type
@@ -139,28 +138,18 @@ def p_ConstraintList(t):
         t[0] = [t[1]]
 
 def p_Constraint(t):
-    '''Constraint : ConstraintExpression FOR IndexingExpression
-                  | ConstraintExpression WHERE IndexingExpression
-                  | ConstraintExpression COLON IndexingExpression
+    '''Constraint : ConstraintExpression BEGININDEXINGEXPRESSION IndexingExpression
                   | ConstraintExpression
 
-                  | LogicalExpression FOR IndexingExpression
-                  | LogicalExpression WHERE IndexingExpression
-                  | LogicalExpression COLON IndexingExpression
+                  | LogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
                   | LogicalExpression
 
-                  | EntryConstraintLogicalExpression FOR IndexingExpression
-                  | EntryConstraintLogicalExpression WHERE IndexingExpression
-                  | EntryConstraintLogicalExpression COLON IndexingExpression
+                  | EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                  | ValueListInExpression FOR IndexingExpression
-                  | ValueListInExpression WHERE IndexingExpression
-                  | ValueListInExpression COLON IndexingExpression
+                  | ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression
                   | ValueListInExpression
 
-                  | NumericSymbolicExpression FOR IndexingExpression
-                  | NumericSymbolicExpression WHERE IndexingExpression
-                  | NumericSymbolicExpression COLON IndexingExpression
+                  | NumericSymbolicExpression BEGININDEXINGEXPRESSION IndexingExpression
                   | NumericSymbolicExpression'''
 
     if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
@@ -795,33 +784,45 @@ def p_ConditionalConstraintExpression(t):
 def p_EntryConstraintLogicalExpression(t):
     '''EntryConstraintLogicalExpression : NumericSymbolicExpression LE NumericSymbolicExpression
                                         | NumericSymbolicExpression LE Identifier
+                                        | NumericSymbolicExpression LE TrueFalse
                                         | NumericSymbolicExpression EQ NumericSymbolicExpression
                                         | NumericSymbolicExpression EQ Identifier
+                                        | NumericSymbolicExpression EQ TrueFalse
                                         | NumericSymbolicExpression GE NumericSymbolicExpression
                                         | NumericSymbolicExpression GE Identifier
+                                        | NumericSymbolicExpression GE TrueFalse
 
                                         | Identifier LE NumericSymbolicExpression
                                         | Identifier LE Identifier
+                                        | Identifier LE TrueFalse
                                         | Identifier EQ SetExpression
                                         | Identifier EQ Array
                                         | Identifier EQ NumericSymbolicExpression
                                         | Identifier EQ Identifier
+                                        | Identifier EQ TrueFalse
                                         | Identifier GE NumericSymbolicExpression
                                         | Identifier GE Identifier
+                                        | Identifier GE TrueFalse
 
                                         | NumericSymbolicExpression LT NumericSymbolicExpression
                                         | NumericSymbolicExpression LT Identifier
+                                        | NumericSymbolicExpression LT TrueFalse
                                         | NumericSymbolicExpression GT NumericSymbolicExpression
                                         | NumericSymbolicExpression GT Identifier
+                                        | NumericSymbolicExpression GT TrueFalse
                                         | NumericSymbolicExpression NEQ NumericSymbolicExpression
                                         | NumericSymbolicExpression NEQ Identifier
+                                        | NumericSymbolicExpression NEQ TrueFalse
 
                                         | Identifier LT NumericSymbolicExpression
                                         | Identifier LT Identifier
+                                        | Identifier LT TrueFalse
                                         | Identifier GT NumericSymbolicExpression
                                         | Identifier GT Identifier
+                                        | Identifier GT TrueFalse
                                         | Identifier NEQ NumericSymbolicExpression
                                         | Identifier NEQ Identifier
+                                        | Identifier NEQ TrueFalse
 
                                         | NumericSymbolicExpression IN SetExpression
                                         | NumericSymbolicExpression IN Identifier
@@ -971,109 +972,45 @@ def p_DeclarationList(t):
                        | DeclarationList SEMICOLON ValueListInExpression
                        | DeclarationList SEMICOLON EntryConstraintLogicalExpression
 
-                       | DeclarationList SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | DeclarationList SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | DeclarationList SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | DeclarationList SEMICOLON ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | DeclarationList SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | DeclarationList SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | DeclarationList SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
+                       | DeclarationList SEMICOLON EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
 
                        | ValueListInExpression SEMICOLON Declaration
                        | ValueListInExpression SEMICOLON ValueListInExpression
                        | ValueListInExpression SEMICOLON EntryConstraintLogicalExpression
 
-                       | ValueListInExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | ValueListInExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | ValueListInExpression SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | ValueListInExpression SEMICOLON ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | ValueListInExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | ValueListInExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | ValueListInExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
+                       | ValueListInExpression SEMICOLON EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON Declaration
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON Declaration
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON Declaration
+                       | ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON Declaration
                         
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON ValueListInExpression
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON ValueListInExpression
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON ValueListInExpression
+                       | ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON ValueListInExpression
 
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON EntryConstraintLogicalExpression
 
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON ValueListInExpression COLON IndexingExpression
-
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression
-
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | ValueListInExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
-
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | ValueListInExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
-
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | ValueListInExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
+                       | ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
 
                        | EntryConstraintLogicalExpression SEMICOLON Declaration
                        | EntryConstraintLogicalExpression SEMICOLON ValueListInExpression
                        | EntryConstraintLogicalExpression SEMICOLON EntryConstraintLogicalExpression
 
-                       | EntryConstraintLogicalExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | EntryConstraintLogicalExpression SEMICOLON ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | EntryConstraintLogicalExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
+                       | EntryConstraintLogicalExpression SEMICOLON EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON Declaration
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON Declaration
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON Declaration
+                       | EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON Declaration
 
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON ValueListInExpression
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON ValueListInExpression
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON ValueListInExpression
+                       | EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON ValueListInExpression
 
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON ValueListInExpression BEGININDEXINGEXPRESSION IndexingExpression
 
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON ValueListInExpression COLON IndexingExpression
+                       | EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON EntryConstraintLogicalExpression
 
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON ValueListInExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON ValueListInExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON ValueListInExpression COLON IndexingExpression
-
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression
-
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression FOR IndexingExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
-
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression WHERE IndexingExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
-
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression FOR IndexingExpression
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression WHERE IndexingExpression
-                       | EntryConstraintLogicalExpression COLON IndexingExpression SEMICOLON EntryConstraintLogicalExpression COLON IndexingExpression
+                       | EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression SEMICOLON EntryConstraintLogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
 
                        | Declaration'''
 
@@ -1144,17 +1081,11 @@ def p_DeclarationList(t):
       t[0] = [t[1]]
 
 def p_Declaration(t):
-    '''Declaration : DeclarationExpression FOR IndexingExpression
-                   | DeclarationExpression WHERE IndexingExpression
-                   | DeclarationExpression COLON IndexingExpression
+    '''Declaration : DeclarationExpression BEGININDEXINGEXPRESSION IndexingExpression
                    
-                   | ValueList FOR IndexingExpression
-                   | ValueList WHERE IndexingExpression
-                   | ValueList COLON IndexingExpression
+                   | ValueList BEGININDEXINGEXPRESSION IndexingExpression
                    
-                   | Identifier FOR IndexingExpression
-                   | Identifier WHERE IndexingExpression
-                   | Identifier COLON IndexingExpression
+                   | Identifier BEGININDEXINGEXPRESSION IndexingExpression
                    
                    | DeclarationExpression'''
 
@@ -1758,17 +1689,17 @@ def p_ConditionalSetExpression(t):
       t[0].addElseExpression(t[6])
 
 def p_ExpressionList(t):
-    '''ExpressionList : Identifier PIPE IndexingExpression
-                      | Identifier PIPE Identifier
-                      | Identifier PIPE NumericSymbolicExpression
+    '''ExpressionList : Identifier BEGININDEXINGEXPRESSION IndexingExpression
+                      | Identifier BEGININDEXINGEXPRESSION Identifier
+                      | Identifier BEGININDEXINGEXPRESSION NumericSymbolicExpression
 
-                      | NumericSymbolicExpression PIPE IndexingExpression
-                      | NumericSymbolicExpression PIPE Identifier
-                      | NumericSymbolicExpression PIPE NumericSymbolicExpression
+                      | NumericSymbolicExpression BEGININDEXINGEXPRESSION IndexingExpression
+                      | NumericSymbolicExpression BEGININDEXINGEXPRESSION Identifier
+                      | NumericSymbolicExpression BEGININDEXINGEXPRESSION NumericSymbolicExpression
 
-                      | Array PIPE IndexingExpression
-                      | Array PIPE Identifier
-                      | Array PIPE NumericSymbolicExpression'''
+                      | Array BEGININDEXINGEXPRESSION IndexingExpression
+                      | Array BEGININDEXINGEXPRESSION Identifier
+                      | Array BEGININDEXINGEXPRESSION NumericSymbolicExpression'''
 
     t[1] = ExpressionList([t[1]])
 

@@ -8,7 +8,7 @@ inverse(array1d(tribute), position)\\
 \text{maximize } tcoins\\
 tcoins := \sum_{i \in 1 \dots m-1, j \in VERTEX}ncoins_{i,j}, \in \mathbb{Z}\\
 VERTEX, RANK := 1 \dots n; POLYGON := 1 \dots m; PVERTEX := 1 \dots n*m\\
-rank_{t} := [(i-1) \text{ div } m + 1 | i \in 1 \dots n*m], \in RANK: t \in TRIBUTE\\
+rank_{t} := [(i-1) \text{ div } m + 1 : i \in 1 \dots n*m], \in RANK: t \in TRIBUTE\\
 tribute_{p,v} \in TRIBUTE, \in \mathbb{V}: p \in POLYGON, v \in VERTEX\\
 ncoins_{i,v} \in 0 \dots n-1, \in \mathbb{V}: i \in 1 \dots m-1, v \in VERTEX\\
 position_{i} \in PVERTEX, \in \mathbb{V}: i \in 1 \dots length(TRIBUTE)\\

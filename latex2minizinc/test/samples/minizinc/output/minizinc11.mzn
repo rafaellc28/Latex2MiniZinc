@@ -10,9 +10,9 @@ array[int] of int: duration;
 
 array[int, int] of int: res;
 
-int: t = sum(duration);
-
 array[int] of int: L;
+
+int: t = sum(duration);
 
 int: p;
 
@@ -24,7 +24,7 @@ array[INDEX_SET_start_1] of var 0..t: start;
 set of int: INDEX_SET_start_1;
 
 
-include "globals.mzn";
+include "cumulative.mzn";
 
 constraint forall(i in PREC)(start[pre[i,1]] + duration[pre[i,1]] <= start[pre[i,2]]);
 

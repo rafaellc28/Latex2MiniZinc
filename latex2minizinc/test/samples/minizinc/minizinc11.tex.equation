@@ -1,6 +1,6 @@
 % specialization-examples/scheduling/cumulative/cumul_sched.mzn. From https://github.com/MiniZinc/specialization-examples
 start_{pre_{i,1}} + duration_{pre_{i,1}} \leq start_{pre_{i,2}}: i \in PREC\\
-cumulative(start, duration, [res_{r,t} \mid t \in TASK], L_{r}): r \in RESOURCE\\
+cumulative(start, duration, [res_{r,t} : t \in TASK], L_{r}): r \in RESOURCE\\
 \text{minimize } makespan\\
 makespan := \max_{t \in TASK}start_{t} + duration_{t}, \in \mathbb{Z}\\
 start \in 0 \dots t, \in \mathbb{V}\\

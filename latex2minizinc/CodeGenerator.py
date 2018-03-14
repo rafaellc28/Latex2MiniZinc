@@ -114,7 +114,8 @@ class CodeGenerator:
         self.lastIdentifier = None
 
         self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "all_different": "all_different.mzn", "inverse": "inverse.mzn", "cumulative": "cumulative.mzn", 
-                          "lex_lesseq": "lex_lesseq.mzn", "value_precede_chain": "value_precede_chain.mzn", "diffn": "diffn.mzn"}
+                          "lex_lesseq": "lex_lesseq.mzn", "value_precede_chain": "value_precede_chain.mzn", "diffn": "diffn.mzn", 
+                          "disjunctive": "disjunctive.mzn"}
         self.include = {}
 
     def generateCode(self, node):

@@ -73,6 +73,7 @@ def check_test_minizinc_num(num):
 	name1 = 'latex2minizinc/test/samples/minizinc/minizinc'+str(num)+'.tex.equation'
 	name2 = 'latex2minizinc/test/samples/minizinc/output/minizinc'+str(num)+'.mzn'
 
+	check_test(name1, name2)
 
 def test_lp0():
 	check_test_num(0)
@@ -1025,3 +1026,9 @@ def test_minizinc_test44():
 
 def test_minizinc_test45():
 	check_test_minizinc_num(45)
+
+def test_minizinc_test46():
+	check_test_minizinc_num(46)
+
+def test_minizinc_test47():
+	check_test_minizinc_num(47)

@@ -17,7 +17,7 @@ SHIP := 1 \dots nS; SHIPE := 1 \dots nS+nC; TIME := 0 \dots maxt;\\
 enter := 1; leave := 2; dummy := 3\\
 enter, leave, dummy, speed, speede, desired, leeway, maxt \in \mathbb{Z},\in \mathbb{P}\\
 dirn_{s}, \in enter \dots leave: s \in SHIP\\
-kind := dirn ++ [ dummy \mid i \in 1 \dots nC ], \in enter \dots dummy\\
-speede := speed ++ [0 \mid i \in 1 \dots nC]\\
+kind := dirn ++ [ dummy : i \in 1 \dots nC ], \in enter \dots dummy\\
+speede := speed ++ [0 : i \in 1 \dots nC]\\
 start, end \in TIME, \in \mathbb{V}; next \in SHIPE, \in \mathbb{V}\\
 channel \in 1 \dots nC, \in \mathbb{V}\\
