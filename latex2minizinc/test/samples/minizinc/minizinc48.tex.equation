@@ -1,0 +1,22 @@
+% specialization-examples/workshops/visit_zhuge_solution_output.mzn. From https://github.com/MiniZinc/specialization-examples
+start_{prec_{p,1}} + duration_{prec_{p,1}} \leq start_{prec_{p,2}}: p \in PREC\\
+disjunctive(start, duration)\\
+disjunctive(weekday ++ weekends, weekdur ++ weekend\_dur)\\
+start_{p} + duration_{p} \leq end: p \in PERSON\\
+rank\_violation = \sum_{p1,p2 \in PERSON \mid rank_{p1} < rank_{p2}}(start_{p1} > start_{p2})\\
+start_{p} \leq t \land start_{p} + duration_{p} > t \iff pp_{t} = p: p \in PERSON, t \in TIME\\
+pp_{t} > 0 \implies start_{to\_enum(PERSON, pp_{t})} \leq t \land start_{to\_enum(PERSON, pp_{t})} + duration_{to\_enum(PERSON, pp_{t})} > t: t \in TIME\\
+\text{minimize } card(PERSON)*card(PERSON)*end + rank\_violation\\
+duration_{p}, rank_{p} \in \mathbb{Z}, \in \mathbb{P}; on\_weekend_{p} \in \mathbb{B}, \in \mathbb{P}: p \in PERSON\\
+prec_{i,j} \in PERSON, \in \mathbb{P}: j \in 1 \dots 2\\
+PREC := index\_set\_1of2(prec), \in \text{setof } \mathbb{Z}\\
+starting\_day \in 0 \dots 6; TIME := 0 \dots total\\
+total, weekdur, weekend\_dur \in \mathbb{Z}, \in \mathbb{P}\\
+total := sum(duration) + 7*\sum_{p \in PERSON}(on\_weekend[p] = false)\\
+weekdur_{i} := [ duration_{t} : t \in PERSON \mid on\_weekend_{t} = false ]\\
+weekends_{i} = [ t : t \in TIME \mid (t + starting\_day) \bmod 7 = 5 ], \in TIME\\
+weekend\_dur_{i} := [ 2 : t \in TIME \mid (t + starting\_day) \bmod 7 = 5 ]\\
+PP := 0 \dots card(PERSON)\\
+start_{p}, end \in TIME, \in \mathbb{V}: p \in PERSON\\
+weekday_{i} := [ start_{t} : t \in PERSON \mid on\_weekend_{t} = false ], \in TIME, \in \mathbb{V}\\
+rank\_violation \in \mathbb{Z}; pp_{t} \in PP, \in \mathbb{V}: t \in TIME\\
