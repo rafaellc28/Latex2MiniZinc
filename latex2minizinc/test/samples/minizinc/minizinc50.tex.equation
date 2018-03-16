@@ -1,0 +1,13 @@
+% specialization-examples/packing/rotation/sbprgeost.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{minimize } l\\
+coord_{i,1} = x_{i} \land coord_{i,2} = y_{i}: i \in BLOCK\\
+kind_{i} \in shapeind_{i}: i \in BLOCK\\
+geost\_bb(2, rsize, roff, shape, coord, kind, [0,0], [l,h])\\
+BLOCK := 1 \dots n; ROFF := 1 \dots m\\
+shape_{i}, \in \text{setof } ROFF\\
+d_{r,i} \in \mathbb{Z}, \in \mathbb{P}: r \in ROFF, i \in 1 \dots 4\\
+rsize_{r,i} := array2d(ROFF, 1 \dots 2, [d_{i,j} : i \in ROFF, j \in 3 \dots 4]), \in \mathbb{Z}, \in \mathbb{P};\\
+roff_{r,i} := array2d(ROFF, 1 \dots 2, [d_{i,j} : i \in ROFF, j \in 1 \dots 2]), \in \mathbb{Z}, \in \mathbb{P}: r \in ROFF, i \in 1 \dots 2\\
+shapeind_{b}, \in \text{setof } \mathbb{Z}: b \in BLOCK\\
+coord_{b,i}, kind_{b} \in \mathbb{Z}: b \in BLOCK, i \in 1 \dots 2\\
+x_{b}, l \in 0 \dots maxl, \in \mathbb{V}; y_{b} \in 0 \dots h, \in \mathbb{V}: b \in BLOCK\\

@@ -16,7 +16,7 @@ set of int: INDEX_SET_x_1;
 
 constraint forall(j in J)(x[j] >= 0);
 
-constraint forall(j in J, k in P[j])(x[j] >= x[to_enum(J,k)] + T[to_enum(J,k)]);
+constraint forall(j in J, k in P[j])(x[j] >= x[k] + T[k]);
 
 constraint forall(j in J)(z >= x[j] + T[j]);
 

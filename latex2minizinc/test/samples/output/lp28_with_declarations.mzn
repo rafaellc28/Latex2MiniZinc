@@ -20,7 +20,7 @@ set of int: INDEX_SET_U_1;
 set of int: INDEX_SET_V_1;
 
 
-constraint forall(x in 1..floor(N - 1), u in U[x])(V[x] >= a * (p * V[x + to_enum(X,u)] + q * V[x - to_enum(X,u)]));
+constraint forall(x in 1..floor(N - 1), u in U[x])(V[x] >= a * (p * V[x + u] + q * V[x - u]));
 
 constraint V[0] = 0;
 

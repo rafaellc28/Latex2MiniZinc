@@ -4,7 +4,7 @@ array[INDEX_SET_STATES_1] of set of int: STATES = array1d(INDEX_SET_STATES_1, [0
 
 array[INDEX_SET_B_1, INDEX_SET_B_2] of float: B = array2d(INDEX_SET_B_1, INDEX_SET_B_2, [B0 * pow((1 + rf * Tf / nPeriods),p) | p in PERIODS, s in STATES[p]]);
 
-array[INDEX_SET_S_1, INDEX_SET_S_2] of float: S = array2d(INDEX_SET_S_1, INDEX_SET_S_2, [S0 * (pow(d,p - to_enum(PERIODS,s))) * (pow(u,to_enum(PERIODS,s))) | p in PERIODS, s in STATES[p]]);
+array[INDEX_SET_S_1, INDEX_SET_S_2] of float: S = array2d(INDEX_SET_S_1, INDEX_SET_S_2, [S0 * (pow(d,p - s)) * (pow(u,s)) | p in PERIODS, s in STATES[p]]);
 
 int: nPeriods = 2;
 
@@ -58,17 +58,17 @@ set of int: INDEX_SET_y_1;
 set of int: INDEX_SET_y_2;
 
 
-constraint forall(p in PERIODS, s in STATES[p])(P[p,to_enum(PERIODS,s)] = x[p,to_enum(PERIODS,s)] * B[p,to_enum(PERIODS,s)] + y[p,to_enum(PERIODS,s)] * S[p,to_enum(PERIODS,s)]);
+constraint forall(p in PERIODS, s in STATES[p])(P[p,s] = x[p,s] * B[p,s] + y[p,s] * S[p,s]);
 
-constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,to_enum(PERIODS,s)] * B[p + 1,to_enum(PERIODS,s)] + y[p,to_enum(PERIODS,s)] * S[p + 1,to_enum(PERIODS,s)] >= P[p + 1,to_enum(PERIODS,s)]);
+constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,s] * B[p + 1,s] + y[p,s] * S[p + 1,s] >= P[p + 1,s]);
 
-constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,to_enum(PERIODS,s)] * B[p + 1,to_enum(PERIODS,s) + 1] + y[p,to_enum(PERIODS,s)] * S[p + 1,to_enum(PERIODS,s) + 1] >= P[p + 1,to_enum(PERIODS,s) + 1]);
+constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,s] * B[p + 1,s + 1] + y[p,s] * S[p + 1,s + 1] >= P[p + 1,s + 1]);
 
-constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,to_enum(PERIODS,s)] * B[p + 1,to_enum(PERIODS,s)] + y[p,to_enum(PERIODS,s)] * S[p + 1,to_enum(PERIODS,s)] >= Kstrike - S[p + 1,to_enum(PERIODS,s)]);
+constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,s] * B[p + 1,s] + y[p,s] * S[p + 1,s] >= Kstrike - S[p + 1,s]);
 
-constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,to_enum(PERIODS,s)] * B[p + 1,to_enum(PERIODS,s) + 1] + y[p,to_enum(PERIODS,s)] * S[p + 1,to_enum(PERIODS,s) + 1] >= Kstrike - S[p + 1,to_enum(PERIODS,s) + 1]);
+constraint forall(p in PERIODS, s in STATES[p] where p < nPeriods)(x[p,s] * B[p + 1,s + 1] + y[p,s] * S[p + 1,s + 1] >= Kstrike - S[p + 1,s + 1]);
 
-constraint forall(s in STATES[nPeriods])(P[nPeriods,to_enum(PERIODS,s)] >= max(0,Kstrike - S[nPeriods,to_enum(PERIODS,s)]));
+constraint forall(s in STATES[nPeriods])(P[nPeriods,s] >= max(0,Kstrike - S[nPeriods,s]));
 
 
 

@@ -22,13 +22,13 @@ set of int: INDEX_SET_V_2;
 
 constraint forall(t in INDEX_SET_V_1, x in X)(V[t,x] >= 0);
 
-constraint forall(t in 0..floor(T - 1), x in 1..N, u in U[to_enum(X,x)])(V[t,to_enum(X,x)] >= P * V[t + 1,to_enum(X,x) + to_enum(X,u)] + Q * V[t + 1,to_enum(X,x) - to_enum(X,u)]);
+constraint forall(t in 0..floor(T - 1), x in 1..N, u in U[to_enum(X,x)])(V[t,to_enum(X,x)] >= P * V[t + 1,to_enum(X,x) + u] + Q * V[t + 1,to_enum(X,x) - u]);
 
 constraint forall(x in X)(V[T,x] = ln(x));
 
 constraint forall(t in 0..T, x in X)(V[t,x] >= 0);
 
-constraint forall(x in X, u in U[x])(to_enum(X,u) >= 0);
+constraint forall(x in X, u in U[x])(u >= 0);
 
 
 

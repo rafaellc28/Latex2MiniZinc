@@ -190,19 +190,19 @@ constraint forall(c in cRaw, pl in ccPos[c])(Vr[c,pl] >= 0);
 
 constraint forall(c in cRaw, pl in ccPos[c])(U[c,pl] >= 0);
 
-constraint forall(n in nutr, r in region)(sum(c in cFinal)(fn[c,n] * (sum(po in port)(Vf[c,r,po] + sum(pl in cpPos[c])(Xf[c,to_enum(commod,pl),r])))) >= cn75[r,n]);
+constraint forall(n in nutr, r in region)(sum(c in cFinal)(fn[c,n] * (sum(po in port)(Vf[c,r,po] + sum(pl in cpPos[c])(Xf[c,pl,r])))) >= cn75[r,n]);
 
-constraint forall(c in cFinal, r in region where cf75[r,c] > 0)(sum(po in port)(Vf[c,r,po] + sum(pl in cpPos[c])(Xf[c,to_enum(commod,pl),r])) >= cf75[r,c]);
+constraint forall(c in cFinal, r in region where cf75[r,c] > 0)(sum(po in port)(Vf[c,r,po] + sum(pl in cpPos[c])(Xf[c,pl,r])) >= cf75[r,c]);
 
-constraint forall(c in commod, pl in plant)(sum(pr in pPos[pl])(io[c,to_enum(plant,pr)] * Z[pl,to_enum(plant,pr)] + (if c in cShip then (if pl in cpPos[c] then sum(p2 in ccPos[c])(Xi[c,to_enum(commod,pl),to_enum(commod,p2)]) else 0 endif) - (if pl in ccPos[c] then sum(p2 in cpPos[c])(Xi[c,to_enum(commod,p2),to_enum(commod,pl)]) else 0 endif) else 0 endif) + (if c in cRaw /\ pl in ccPos[c] then ((if pImp[c] > 0 then Vr[c,to_enum(commod,pl)] else 0 endif) + (if pDom[to_enum(commod,pl),c] > 0 then U[c,to_enum(commod,pl)] else 0 endif)) else 0 endif)) >= if c in cFinal /\ pl in cpPos[c] then sum(r in region)(Xf[c,to_enum(commod,pl),r]) else 0 endif);
+constraint forall(c in commod, pl in plant)(sum(pr in pPos[pl])(io[c,pr] * Z[pl,pr] + (if c in cShip then (if pl in cpPos[c] then sum(p2 in ccPos[c])(Xi[c,pl,p2]) else 0 endif) - (if pl in ccPos[c] then sum(p2 in cpPos[c])(Xi[c,p2,pl]) else 0 endif) else 0 endif) + (if c in cRaw /\ pl in ccPos[c] then ((if pImp[c] > 0 then Vr[c,pl] else 0 endif) + (if pDom[pl,c] > 0 then U[c,pl] else 0 endif)) else 0 endif)) >= if c in cFinal /\ pl in cpPos[c] then sum(r in region)(Xf[c,pl,r]) else 0 endif);
 
-constraint forall(pl in plant, u in mPos[pl])(sum(pr in pPos[pl])(util[to_enum(plant,u),to_enum(plant,pr)] * Z[pl,to_enum(plant,pr)]) <= utilPct * icap[to_enum(plant,u),pl]);
+constraint forall(pl in plant, u in mPos[pl])(sum(pr in pPos[pl])(util[u,pr] * Z[pl,pr]) <= utilPct * icap[u,pl]);
 
-constraint Psip = sum(c in cRaw, pl in ccPos[c])(pDom[to_enum(commod,pl),c] * U[c,to_enum(commod,pl)]);
+constraint Psip = sum(c in cRaw, pl in ccPos[c])(pDom[pl,c] * U[c,pl]);
 
-constraint Psil = sum(c in cFinal)((sum(pl in cpPos[c], r in region)(tranFinal[to_enum(commod,pl),r] * Xf[c,to_enum(commod,pl),r] + sum(po in port, r in region)(tranImport[r,po] * Vf[c,r,po]))) + sum(c in cShip, p1 in cpPos[c], p2 in ccPos[c])(tranInter[to_enum(commod,p1),to_enum(commod,p2)] * Xi[c,to_enum(commod,p1),to_enum(commod,p2)] + sum(c in cRaw, pl in ccPos[c] where pImp[c] > 0)(tranRaw[to_enum(commod,pl)] * Vr[c,to_enum(commod,pl)])));
+constraint Psil = sum(c in cFinal)((sum(pl in cpPos[c], r in region)(tranFinal[pl,r] * Xf[c,pl,r] + sum(po in port, r in region)(tranImport[r,po] * Vf[c,r,po]))) + sum(c in cShip, p1 in cpPos[c], p2 in ccPos[c])(tranInter[p1,p2] * Xi[c,p1,p2] + sum(c in cRaw, pl in ccPos[c] where pImp[c] > 0)(tranRaw[pl] * Vr[c,pl])));
 
-constraint Psii / exch = sum(c in cFinal, r in region, po in port)(pImp[c] * Vf[c,r,po] + sum(c in cRaw, pl in ccPos[c])(pImp[c] * Vr[c,to_enum(commod,pl)]));
+constraint Psii / exch = sum(c in cFinal, r in region, po in port)(pImp[c] * Vf[c,r,po] + sum(c in cRaw, pl in ccPos[c])(pImp[c] * Vr[c,pl]));
 
 
 

@@ -44,17 +44,17 @@ set of int: INDEX_SET_y_4;
 
 constraint forall(r in RAWMATERIALS, s in S[r])(w[r,s] >= 0);
 
-constraint forall(p in PRODUCTS, q in Q[p])(sum(r in RAWMATERIALS, s in S[r])(y[p,to_enum(PRODUCTS,q),r,to_enum(RAWMATERIALS,s)]) = 1);
+constraint forall(p in PRODUCTS, q in Q[p])(sum(r in RAWMATERIALS, s in S[r])(y[p,q,r,s]) = 1);
 
-constraint forall(p in PRODUCTS)(sum(q in Q[p], r in RAWMATERIALS, s in S[r])(y[p,to_enum(PRODUCTS,q),r,to_enum(RAWMATERIALS,s)]) = Demand[p]);
+constraint forall(p in PRODUCTS)(sum(q in Q[p], r in RAWMATERIALS, s in S[r])(y[p,q,r,s]) = Demand[p]);
 
-constraint forall(r in RAWMATERIALS, s in S[r])(sum(p in PRODUCTS, q in Q[p])(PLength[p] * y[p,to_enum(PRODUCTS,q),r,to_enum(RAWMATERIALS,s)] + w[r,to_enum(RAWMATERIALS,s)]) = RLength[r]);
+constraint forall(r in RAWMATERIALS, s in S[r])(sum(p in PRODUCTS, q in Q[p])(PLength[p] * y[p,q,r,s] + w[r,s]) = RLength[r]);
 
-constraint forall(r in RAWMATERIALS, s in S[r])(BigM * u[r,to_enum(RAWMATERIALS,s)] >= sum(p in PRODUCTS, q in Q[p])(y[p,to_enum(PRODUCTS,q),r,to_enum(RAWMATERIALS,s)]));
+constraint forall(r in RAWMATERIALS, s in S[r])(BigM * u[r,s] >= sum(p in PRODUCTS, q in Q[p])(y[p,q,r,s]));
 
 
 
-solve minimize sum(r in RAWMATERIALS, s in S[r])(RLength[r] * to_enum(RAWMATERIALS,s) * u[r,to_enum(RAWMATERIALS,s)]);
+solve minimize sum(r in RAWMATERIALS, s in S[r])(RLength[r] * s * u[r,s]);
 
 
 
