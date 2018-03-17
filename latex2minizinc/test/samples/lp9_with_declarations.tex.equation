@@ -5,4 +5,3 @@ before_{a,b} + before_{b,c} - before_{a,c} \leq 1: a \in TASKS, b \in TASKS, c \
 saving_{d,e}: d \in 1 \dots M, e \in 1 \dots M\\
 before_{a,b} \in \mathbb{B}\\
 TASKS := 1 \ldots M\\
-PAIRS := \{a \in TASKS, b \in TASKS\mid a < b\}\\

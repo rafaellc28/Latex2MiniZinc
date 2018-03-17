@@ -785,6 +785,7 @@ def p_EntryConstraintLogicalExpression(t):
     '''EntryConstraintLogicalExpression : NumericSymbolicExpression LE NumericSymbolicExpression
                                         | NumericSymbolicExpression LE Identifier
                                         | NumericSymbolicExpression LE TrueFalse
+                                        | NumericSymbolicExpression EQ SetExpression
                                         | NumericSymbolicExpression EQ NumericSymbolicExpression
                                         | NumericSymbolicExpression EQ Identifier
                                         | NumericSymbolicExpression EQ TrueFalse
@@ -810,6 +811,7 @@ def p_EntryConstraintLogicalExpression(t):
                                         | NumericSymbolicExpression GT NumericSymbolicExpression
                                         | NumericSymbolicExpression GT Identifier
                                         | NumericSymbolicExpression GT TrueFalse
+                                        | NumericSymbolicExpression NEQ SetExpression
                                         | NumericSymbolicExpression NEQ NumericSymbolicExpression
                                         | NumericSymbolicExpression NEQ Identifier
                                         | NumericSymbolicExpression NEQ TrueFalse
@@ -820,6 +822,7 @@ def p_EntryConstraintLogicalExpression(t):
                                         | Identifier GT NumericSymbolicExpression
                                         | Identifier GT Identifier
                                         | Identifier GT TrueFalse
+                                        | Identifier NEQ SetExpression
                                         | Identifier NEQ NumericSymbolicExpression
                                         | Identifier NEQ Identifier
                                         | Identifier NEQ TrueFalse
@@ -1130,6 +1133,7 @@ def p_DeclarationExpression(t):
                              | ValueList LT NumericSymbolicExpression
                              | ValueList GT Identifier
                              | ValueList GT NumericSymbolicExpression
+                             | ValueList NEQ SetExpression
                              | ValueList NEQ Identifier
                              | ValueList NEQ NumericSymbolicExpression
                              | ValueList COMMA DeclarationAttributeList
@@ -1273,6 +1277,7 @@ def p_DeclarationAttribute(t):
                           | GE Identifier
                           | GE NumericSymbolicExpression
                           
+                          | NEQ SetExpression
                           | NEQ Identifier
                           | NEQ NumericSymbolicExpression'''
 
@@ -1561,7 +1566,7 @@ def p_SetExpressionWithValue(t):
                      | LLBRACE SetExpression RRBRACE
                      | LLBRACE Identifier RRBRACE
                      | LLBRACE NumericSymbolicExpression RRBRACE
-                     | LLBRACE IndexingExpression RRBRACE
+                     | LLBRACE ExpressionList RRBRACE
                      | LLBRACE RRBRACE
 
                      | LPAREN SetExpression RPAREN
@@ -1699,7 +1704,11 @@ def p_ExpressionList(t):
 
                       | Array BEGININDEXINGEXPRESSION IndexingExpression
                       | Array BEGININDEXINGEXPRESSION Identifier
-                      | Array BEGININDEXINGEXPRESSION NumericSymbolicExpression'''
+                      | Array BEGININDEXINGEXPRESSION NumericSymbolicExpression
+
+                      | SetExpression BEGININDEXINGEXPRESSION IndexingExpression
+                      | SetExpression BEGININDEXINGEXPRESSION Identifier
+                      | SetExpression BEGININDEXINGEXPRESSION NumericSymbolicExpression'''
 
     t[1] = ExpressionList([t[1]])
 

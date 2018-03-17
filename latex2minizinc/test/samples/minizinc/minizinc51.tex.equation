@@ -1,0 +1,11 @@
+% specialization-examples/packing/rotation/sbprotate.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{minimize } l\\
+shape_{i,rot_{i}} \neq \emptyset: i \in BLOCK\\
+\forall\{r \in ROFF\}r \in shape_{i,rot_{i}} \implies (x_{i} + d_{r,1} + d_{r,3} \leq l \land y_{i} + d_{r,2} + d_{r,4} \leq h): i \in BLOCK\\
+\forall\{r1,r2 \in ROFF\}r1 \in shape_{i,rot_{i}} \land r2 \in shape_{j,rot_{j}} \implies (x_{i} + d_{r1,1} + d_{r1,3} \leq x_{j} + d_{r2,1} \lor x_{j} + d_{r2,1} + d_{r2,3} \leq x_{i} + d_{r1,1} \lor y_{i} + d_{r1,2} + d_{r1,4} \leq y_{j} + d_{r2,2} \lor y_{j} + d_{r2,2} + d_{r2,4} \leq y_{i} + d_{r1,2}): i,j \in BLOCK \mid i < j\\
+BLOCK := 1 \dots n; ROFF := 1 \dots m; ROT := 1 \dots 4\\
+shape_{b,r}, \in \text{setof } ROFF: b \in BLOCK, r \in ROT\\
+d_{r,i} \in \mathbb{Z}, \in \mathbb{P}: r \in ROFF, i \in 1 \dots 4\\
+rsize_{r,i} := array2d(ROFF, 1 \dots 2, [d_{i,j} : i \in ROFF, j \in 3 \dots 4]), \in \mathbb{Z}, \in \mathbb{P};\\
+roff_{r,i} := array2d(ROFF, 1 \dots 2, [d_{i,j} : i \in ROFF, j \in 1 \dots 2]), \in \mathbb{Z}, \in \mathbb{P}: r \in ROFF, i \in 1 \dots 2\\
+x_{b}, l \in 0 \dots maxl, \in \mathbb{V}; y_{b} \in 0 \dots h, \in \mathbb{V}; rot_{b} \in ROT, \in \mathbb{V}: b \in BLOCK\\

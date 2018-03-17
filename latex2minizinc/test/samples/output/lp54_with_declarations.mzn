@@ -2,8 +2,6 @@ set of int: cFinal;
 
 enum port;
 
-array[INDEX_SET_cpPos] of set of int: cpPos;
-
 enum nutr;
 
 enum region;
@@ -11,8 +9,6 @@ enum region;
 array[INDEX_SET_pPos_1] of set of int: pPos = array1d(INDEX_SET_pPos_1, [pCappl_diff_pExceptpl[pl] | pl in plant]);
 
 enum cShip;
-
-array[INDEX_SET_ccPos] of set of int: ccPos;
 
 set of int: cRaw;
 
@@ -29,8 +25,6 @@ set of int: cInter;
 enum proc;
 
 enum unit;
-
-array[int] of set of int: pCap;
 
 array[int] of set of int: pExcept;
 
@@ -79,6 +73,12 @@ array[int] of float: pR;
 array[int, int] of float: pPr;
 
 array[int, int] of float: dcap;
+
+array[int] of set of int: pCap;
+
+array[int] of set of int: cpPos;
+
+array[int] of set of int: ccPos;
 
 
 var float: Psip;
@@ -131,13 +131,9 @@ set of int: INDEX_SET_Z_2;
 
 set of int: INDEX_SET_cPos_1;
 
-set of int: INDEX_SET_ccPos;
-
 set of int: INDEX_SET_cn75_1;
 
 set of int: INDEX_SET_cn75_2;
-
-set of int: INDEX_SET_cpPos;
 
 set of int: INDEX_SET_cpPosc_union_ccPosc;
 

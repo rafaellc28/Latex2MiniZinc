@@ -1,8 +1,8 @@
 array[INDEX_SET_P, 1..2] of int: P;
 
-set of int: I = 1..N;
-
 set of int: D = 1..d;
+
+set of int: I = 1..N;
 
 int: d;
 

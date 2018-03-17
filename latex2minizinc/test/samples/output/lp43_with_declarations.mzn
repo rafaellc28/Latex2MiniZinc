@@ -8,8 +8,6 @@ set of int: rows1 = 1..(ndim + 1);
 
 set of int: cols1 = 1..(ndim + 1);
 
-array[INDEX_SET_V, 1..2] of int: V;
-
 int: ndim = 10;
 
 array[int, int] of int: givens;
@@ -18,10 +16,6 @@ array[int, int] of int: givens;
 array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5, INDEX_SET_x_6] of var bool: x;
 
 set of int: INDEX_SET_B;
-
-set of int: INDEX_SET_V;
-
-set of int: INDEX_SET_V_rows_cols_rows1_cols1;
 
 set of int: INDEX_SET_rows_cols;
 
@@ -36,8 +30,6 @@ set of int: INDEX_SET_x_4;
 set of int: INDEX_SET_x_5;
 
 set of int: INDEX_SET_x_6;
-
-array[INDEX_SET_V_rows_cols_rows1_cols1,1..6] of int: V_rows_cols_rows1_cols1;
 
 array[INDEX_SET_rows_cols,1..2] of int: rows_cols;
 

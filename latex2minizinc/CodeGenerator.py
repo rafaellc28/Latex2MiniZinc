@@ -410,6 +410,7 @@ class CodeGenerator:
         return re.search("\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+in\s+", setExpression)
 
     def _cleanKeyWithSetOperation(self, key):
+        key = key.replace("floor(", "")
         key = key.replace("{", "")
         key = key.replace("}", "")
         key = key.replace("(", "")
@@ -465,7 +466,7 @@ class CodeGenerator:
             while table != None:
 
                 for key, value in table:
-
+                    
                     if self._checkIsSetOperation(key) or self._checkIsSetBetweenBraces(key):
                         indicesSetOp = self._getIndicesFromSetOperation(key)
 
@@ -494,6 +495,7 @@ class CodeGenerator:
 
                         parts = key.split("[")
                         domain = parts[0].strip()
+                        domain = self._cleanKeyWithSetOperation(domain)
                         parts = parts[1].split("]")
 
                         indices = self._splitDomain(parts[0])
@@ -533,7 +535,8 @@ class CodeGenerator:
                                         self.setsWitOperationsIndices[d] = {"dimen": dimen, "indices": indicesSetOp}
 
                                     d = dnew
-                                    
+                                
+                                d = self._cleanKeyWithSetOperation(d)
                                 for index in indices:
                                     keys = self._isIndexOf(index, table, stmt)
 
@@ -617,8 +620,6 @@ class CodeGenerator:
                             domains = self._stripDomains(domainIdents)
                             if not setWithIndices and all(map(lambda el: el == domains[0], domains)):
                                 _type = domains[0]
-                                #isSetWithIndices = setWithIndices
-                                #print("t1", _type)
 
                             else:
                                 size = len(domains)
@@ -634,7 +635,6 @@ class CodeGenerator:
                                             index1 = None
                                             _type = None
                                             pos = {}
-                                            #realtype = None
                                             sizeTuple = None
 
                                             continue
@@ -643,14 +643,11 @@ class CodeGenerator:
 
                                 if not setWithIndices and len(d) > 0 and all(map(lambda el: el == d[0], d)):
                                     _type = d[0]
-                                    #isSetWithIndices = setWithIndices
-                                    #print("t2", _type)
 
                                 else:
                                     index1 = None
                                     _type = None
                                     pos = {}
-                                    #realtype = None
                                     sizeTuple = None
 
                                     continue
@@ -659,7 +656,6 @@ class CodeGenerator:
                             index1 = None
                             _type = None
                             pos = {}
-                            #realtype = None
                             sizeTuple = None
 
                             continue
@@ -676,7 +672,6 @@ class CodeGenerator:
                 index1 = None
                 _type = None
                 pos = {}
-                #realtype = None
                 sizeTuple = None
 
 
@@ -688,15 +683,11 @@ class CodeGenerator:
 
             if _type == None:
                 _type = "int"
-                #isSetWithIndices = False
 
-            #print("1", name, realtype, isSetWithIndices)
             if realtype != None and not isSetWithIndices:
                 aux = realtype
                 realtype = _type
                 _type = aux
-            #print("2", name, realtype, isSetWithIndices)
-            #print("")
 
             if realtype == "int":
                 realtype = None
@@ -710,8 +701,6 @@ class CodeGenerator:
             self.tuplesDeclared[name] = {"index1": index1, "index2": index2, "type": _type, "realtype": realtype, "dimen": sizeTuple, "isSetWithIndices": isSetWithIndices}
 
     def _isSetForTuple(self, setExpression):
-        #print("_isSetForTuple", setExpression, setExpression in self.tuplesDeclared, None if not setExpression in self.tuplesDeclared else self.tuplesDeclared[setExpression]["isSetWithIndices"])
-
         if not setExpression in self.tuplesDeclared:
             return False
 
@@ -1884,6 +1873,19 @@ class CodeGenerator:
                 
         return []
 
+    def _deleteIndexSet(self, array, name):
+        aux = re.search("array\[(.*)\]", array)
+        
+        if not aux:
+            return
+
+        aux = aux.groups(0)[0]
+        domains = map(lambda el: el.strip(), aux.split(","))
+        index = "INDEX_SET_"+name
+
+        if index in self.additionalParameters and not index in domains:
+            del self.additionalParameters[index]
+
 
     def _declareVars(self):
         """
@@ -1991,8 +1993,11 @@ class CodeGenerator:
 
                                 domains_aux[i] = index
 
-                        varStr += "array["
-                        varStr += ", ".join(domains_aux) + "]"
+                        array  = "array["
+                        array += ", ".join(domains_aux) + "]"
+                        self._deleteIndexSet(array, varName)
+
+                        varStr += array
 
                     if varDecl != None:
                         ins_vec = varDecl.getIn()
@@ -2141,7 +2146,6 @@ class CodeGenerator:
                                             _type = "set of int:"
                                         
                                         if "{" in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                                            value = ""
                                             self.isSetExpressionWithIndexingExpression = False
 
                                         elif isArray or len(_subIndices) > 0 or "[" in value:
@@ -2178,6 +2182,7 @@ class CodeGenerator:
                                                                 indices.append(d)
 
                                                         array += ", ".join(indices) + "]"
+                                                        self._deleteIndexSet(array, varName)
                                                         isArray = True
 
                                                         value = "array"+str(length_domains)+"d("+", ".join(indices)+", "+value+")"
@@ -2233,6 +2238,7 @@ class CodeGenerator:
                                         cnt += "constraint forall("+", ".join(domains)+")(" + cntAux + ");"
                                     else:
                                         cnt += "constraint " + cntAux + ";"
+
                                     self.additionalConstraints.append(cnt)
 
                     if value != "" and value.strip() != "":
@@ -2273,9 +2279,6 @@ class CodeGenerator:
 
         _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
 
-        #print("1", param, domain, domains, domains_with_indices, dependencies_vec, sub_indices_vec, stmtIndex)
-        #print("2", param, map(lambda el: el.getName(), _types), dim, minVal, maxVal)
-        #print("3", param, _subIndices)
         if domain != None and domain.strip() != "":
             domains_aux = domains
             domains = self._getDomains(domains)
@@ -2317,17 +2320,14 @@ class CodeGenerator:
             if ins_vec != None and len(ins_vec) > 0:
                 ins = ins_vec[-1].generateCode(self)
 
-                #print("param", ins, param, self._isSetForTuple(param))
                 if ins != "" and not self._checkIsSetBetweenBraces(ins) and not (ins == "set of int" and self._isSetForTuple(param)):
                     includedType = True
                     _type = ins
-        
+                    
         if not includedType:
-            #print("_types1", _types, map(lambda el: el.getName(), _types))
             _types = self._removeTypesThatAreNotDeclarable(_types)
-            #print("_types2", _types, map(lambda el: el.getName(), _types))
             _types = self._getTypes(_types)
-            #print("_types3", _types, map(lambda el: el.getName(), _types))
+            
             if len(_types) > 0:
                 _type = _types[0].getObj()
                 
@@ -2346,7 +2346,6 @@ class CodeGenerator:
                 if _type.strip() != "":
                     includedType = True
 
-        #print(param, _type)
         if not includedType and param in self.parameterIsIndexOf:
             value = self.parameterIsIndexOf[param]
             var = value["indexOf"]
@@ -2470,7 +2469,6 @@ class CodeGenerator:
                                 _type = "set of int:"
                             
                             if "{" in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                                value = ""
                                 self.isSetExpressionWithIndexingExpression = False
 
                             elif isArray or len(_subIndices) > 0 or "[" in value:
@@ -2488,6 +2486,7 @@ class CodeGenerator:
                                             for i in range(length_domains):
                                                 d = domains[i]
                                                 if d == "int":
+
                                                     index = "INDEX_SET_"+param+"_"+str(i+1)
                                                     setint = "set of int: "+index
 
@@ -2521,6 +2520,8 @@ class CodeGenerator:
 
         if array != "":
             paramStr += array
+            
+            self._deleteIndexSet(array, param)
 
         if _type[0] == "{" and _type[-1] == "}" and ".." in _type:
             _type = _type[1:-1]
@@ -2615,7 +2616,6 @@ class CodeGenerator:
         else:
             _type = "enum"
 
-        #print("set", name, _type)
         if varDecl != None:
             
             includedType = False
@@ -2633,14 +2633,11 @@ class CodeGenerator:
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
 
             if ins_vec != None and len(ins_vec) > 0:
-                #print("ins", name, map(lambda el: el.generateCode(self), ins_vec))
                 ins = ins_vec[-1].generateCode(self)
                 
-                #print("ins", ins, name, self._isSetForTuple(name))
                 if ins != "" and not self._checkIsSetBetweenBraces(ins) and not (ins == "set of int" and self._isSetForTuple(name)):
                     includedType = True
                     _type = ins
-                    #print("1", name, _type)
 
             if not includedType:
                 _types = self._removeTypesThatAreNotDeclarable(_types)
@@ -2664,8 +2661,6 @@ class CodeGenerator:
                     if _type.strip() != "":
                         includedType = True
 
-                    #print("2", name, _type)
-
             if not includedType and name in self.parameterIsIndexOf:
                 value = self.parameterIsIndexOf[name]
                 var = value["indexOf"]
@@ -2680,7 +2675,6 @@ class CodeGenerator:
                     if not ".." in _type_aux:
                         includedType = True
                         _type = _type_aux
-                        #print("3", name, _type)
 
             if _type in self.listSetOfInts:
                 _type = "int"
@@ -2761,10 +2755,8 @@ class CodeGenerator:
 
                                         value += ",".join(inds) + "]"
                             
-                            #print("value2", value2, name, self._isSetForTuple(name))
                             if not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name):
                                 _type = "set of int:"
-                                #print("aqui", name, value2, value, _type)
 
                         self.newType = "int"
                         self.turnStringsIntoInts = False
@@ -2780,7 +2772,6 @@ class CodeGenerator:
                             _type = "set of int:"
 
                         if "{" in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                            value = ""
                             self.isSetExpressionWithIndexingExpression = False
 
                         elif not value.startswith("array") and (isArray or len(_subIndices) > 0 or "[" in value):
@@ -2833,7 +2824,6 @@ class CodeGenerator:
 
                         self.genValueAssigned.add(GenObj(name))
 
-        #print("set1", name, _type)
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
             index1 = _tuple["index1"]
@@ -2867,9 +2857,10 @@ class CodeGenerator:
         if (_type == "set of int" or _type == "set of int:") and self._isSetForTuple(name):
             _type = "int:"
 
-        #print("set2", name, _type)
         if array != "":
             setStr += array
+            
+            self._deleteIndexSet(array, name)
 
             if _type == "enum":
                 _type = "int:"
@@ -3037,9 +3028,6 @@ class CodeGenerator:
             res += "solve satisfy;\n\n"
 
         res = preModel + res
-
-        #print("tuplesDeclared", self.tuplesDeclared)
-        #print("")
 
         return res
 
@@ -3584,7 +3572,7 @@ class CodeGenerator:
 
         
         if setExpression in self.tuplesDeclared:
-            #print("_checkRealType", setExpression, map(lambda el: el.identifier.value, values))
+            
             realtype = self.tuplesDeclared[setExpression]["realtype"]
             if realtype != None and realtype != "set of int":
                 self.includeNewIndices = True
