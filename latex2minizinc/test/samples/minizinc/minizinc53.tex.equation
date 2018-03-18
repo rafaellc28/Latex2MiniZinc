@@ -1,0 +1,7 @@
+% specialization-examples/packing/square/testing.mzn. From https://github.com/MiniZinc/specialization-examples
+y = \left[ \max_{j \in 1 \dots n}j*(i > base_{j}) : i \in 1 \dots len\right]\\
+x, len, base \in \mathbb{Z}, \in \mathbb{P}\\
+x_{i} := [3,2,0,5,4,3,4]: i \in 1 \dots n\\
+len := \sum_{i \in 1 \dots n}x_{i}\\
+base := [\text{if } i = 1 \text{ then } 0 \text{ else } \sum_{j \in 1 \dots i-1}x_{j} \text{ endif } : i \in 1 \dots n]\\
+y_{i} \in \mathbb{Z}: i \in 1 \dots len; n := 7\\
