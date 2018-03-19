@@ -1,0 +1,15 @@
+% specialization-examples/packing/square/multisqpack.mzn. From https://github.com/MiniZinc/specialization-examples
+global\_cardinality(size, [i : i \in SQUARE], ncopy)\\
+size_{i} \leq size_{i+1}: i \in 1 \dots nsq-1\\
+x_{s} + size_{s} \leq width: s \in NSQ\\
+y_{s} + size_{s} \leq height: s \in NSQ\\
+x_{s1} + size_{s1} \leq x_{s2} \lor x_{s2} + size_{s2} \leq x_{s1} \lor y_{s1} + size_{s1} \leq y_{s2} \lor y_{s2} + size_{s2} \leq y_{s1}: s1, s2 \in NSQ \mid s1 < s2\\
+\text{minimize } area\\
+SQUARE := 1 \dots n; NSQ := 1 \dots nsq\\
+ncopy, maxl, mina \in \mathbb{Z}, \in \mathbb{P}\\
+maxl := \sum_{i \in SQUARE}i*ncopy_{i}\\
+mina := \sum_{i \in SQUARE}i*i*ncopy_{i}\\
+nsq := \sum_{i \in SQUARE}ncopy_{i}\\
+height, width \in n \dots maxl, \in \mathbb{V}\\
+area := height * width, \in mina \dots n*maxl, \in \mathbb{V}\\
+x_{n}, y_{n} \in 0 \dots maxl, \in \mathbb{V}; size_{n} \in SQUARE, \in \mathbb{V}: n \in NSQ\\
