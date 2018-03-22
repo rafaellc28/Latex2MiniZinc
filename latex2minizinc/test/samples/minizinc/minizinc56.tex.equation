@@ -1,0 +1,20 @@
+% specialization-examples/packing/square/multisqpackimp.mzn. From https://github.com/MiniZinc/specialization-examples
+global\_cardinality(size, [i : i \in SQUARE], ncopy)\\
+size_{i} \leq size_{i+1}: i \in 1 \dots nsq-1\\
+x_{s} + size_{s} \leq width: s \in NSQ\\
+y_{s} + size_{s} \leq height: s \in NSQ\\
+diffn(x,y,size,size)\\
+cumulative(x, size, size, height)\\
+cumulative(y, size, size, width)\\
+\forall\{j \in 1 \dots ncopy_{i}-1\}lex\_greater([x_{base_{i}+j},y_{base_{i}+j}], [x_{base_{i}+j+1},y_{base_{i}+j+1}]): i \in SQUARE\\
+\text{minimize } area\\
+SQUARE := 1 \dots n; NSQ := 1 \dots nsq\\
+ncopy, maxl, mina, base \in \mathbb{Z}, \in \mathbb{P}\\
+maxl := \sum_{i \in SQUARE}i*ncopy_{i}\\
+mina := \sum_{i \in SQUARE}i*i*ncopy_{i}\\
+nsq := \sum_{i \in SQUARE}ncopy_{i}\\
+base_{s} := [\text{if } i = 1 \text{ then } 0 \text{ else } \sum_{j \in 1 \dots i-1}ncopy_{j} \text{ endif } : i \in SQUARE]: s \in SQUARE\\
+height, width \in n \dots maxl, \in \mathbb{V}\\
+area := height * width, \in mina \dots n*maxl, \in \mathbb{V}\\
+x_{n}, y_{n} \in 0 \dots maxl, \in \mathbb{V}\\
+size_{n} := [ \max_{j \in SQUARE}j*(i > base_{j}) : i \in NSQ], \in SQUARE, \in \mathbb{V}: n \in NSQ\\
