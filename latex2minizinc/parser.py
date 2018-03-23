@@ -782,17 +782,20 @@ def p_ConditionalConstraintExpression(t):
     t[0].addElseExpression(t[6])
 
 def p_EntryConstraintLogicalExpression(t):
-    '''EntryConstraintLogicalExpression : NumericSymbolicExpression LE NumericSymbolicExpression
+    '''EntryConstraintLogicalExpression : NumericSymbolicExpression LE SetExpression
+                                        | NumericSymbolicExpression LE NumericSymbolicExpression
                                         | NumericSymbolicExpression LE Identifier
                                         | NumericSymbolicExpression LE TrueFalse
                                         | NumericSymbolicExpression EQ SetExpression
                                         | NumericSymbolicExpression EQ NumericSymbolicExpression
                                         | NumericSymbolicExpression EQ Identifier
                                         | NumericSymbolicExpression EQ TrueFalse
+                                        | NumericSymbolicExpression GE SetExpression
                                         | NumericSymbolicExpression GE NumericSymbolicExpression
                                         | NumericSymbolicExpression GE Identifier
                                         | NumericSymbolicExpression GE TrueFalse
 
+                                        | Identifier LE SetExpression
                                         | Identifier LE NumericSymbolicExpression
                                         | Identifier LE Identifier
                                         | Identifier LE TrueFalse
@@ -801,13 +804,30 @@ def p_EntryConstraintLogicalExpression(t):
                                         | Identifier EQ NumericSymbolicExpression
                                         | Identifier EQ Identifier
                                         | Identifier EQ TrueFalse
+                                        | Identifier GE SetExpression
                                         | Identifier GE NumericSymbolicExpression
                                         | Identifier GE Identifier
                                         | Identifier GE TrueFalse
 
+                                        | SetExpression LE SetExpression
+                                        | SetExpression LE NumericSymbolicExpression
+                                        | SetExpression LE Identifier
+                                        | SetExpression LE TrueFalse
+                                        | SetExpression EQ SetExpression
+                                        | SetExpression EQ Array
+                                        | SetExpression EQ NumericSymbolicExpression
+                                        | SetExpression EQ Identifier
+                                        | SetExpression EQ TrueFalse
+                                        | SetExpression GE SetExpression
+                                        | SetExpression GE NumericSymbolicExpression
+                                        | SetExpression GE Identifier
+                                        | SetExpression GE TrueFalse
+
+                                        | NumericSymbolicExpression LT SetExpression
                                         | NumericSymbolicExpression LT NumericSymbolicExpression
                                         | NumericSymbolicExpression LT Identifier
                                         | NumericSymbolicExpression LT TrueFalse
+                                        | NumericSymbolicExpression GT SetExpression
                                         | NumericSymbolicExpression GT NumericSymbolicExpression
                                         | NumericSymbolicExpression GT Identifier
                                         | NumericSymbolicExpression GT TrueFalse
@@ -816,9 +836,11 @@ def p_EntryConstraintLogicalExpression(t):
                                         | NumericSymbolicExpression NEQ Identifier
                                         | NumericSymbolicExpression NEQ TrueFalse
 
+                                        | Identifier LT SetExpression
                                         | Identifier LT NumericSymbolicExpression
                                         | Identifier LT Identifier
                                         | Identifier LT TrueFalse
+                                        | Identifier GT SetExpression
                                         | Identifier GT NumericSymbolicExpression
                                         | Identifier GT Identifier
                                         | Identifier GT TrueFalse
@@ -826,6 +848,19 @@ def p_EntryConstraintLogicalExpression(t):
                                         | Identifier NEQ NumericSymbolicExpression
                                         | Identifier NEQ Identifier
                                         | Identifier NEQ TrueFalse
+
+                                        | SetExpression LT SetExpression
+                                        | SetExpression LT NumericSymbolicExpression
+                                        | SetExpression LT Identifier
+                                        | SetExpression LT TrueFalse
+                                        | SetExpression GT SetExpression
+                                        | SetExpression GT NumericSymbolicExpression
+                                        | SetExpression GT Identifier
+                                        | SetExpression GT TrueFalse
+                                        | SetExpression NEQ SetExpression
+                                        | SetExpression NEQ NumericSymbolicExpression
+                                        | SetExpression NEQ Identifier
+                                        | SetExpression NEQ TrueFalse
 
                                         | NumericSymbolicExpression IN SetExpression
                                         | NumericSymbolicExpression IN Identifier
