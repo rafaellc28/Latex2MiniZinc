@@ -1,0 +1,13 @@
+% specialization-examples/multiplemodeling/acupuncture/acupuncture.mzn. From https://github.com/MiniZinc/specialization-examples
+card(stage_{i}) = c: i \in 1 \dots m\\
+point_{i, j} < point_{i, j+1}: i \in 1 \dots m, j \in 1 \dots c-1\\
+\left(stage_{i1} \bigcap stage_{i2} \bigcap stage_{i3}\right) = \emptyset: i1, i2, i3 \in 1 \dots m \mid i1 < i2 \land i2 < i3\\
+point_{i, j} < point_{i+1, j}: i \in 1 \dots m-1, j \in 1 \dots c\\
+\sum_{i \in 1 \dots m}(ZHIYANG \in stage_{i}) \leq 1\\
+\sum_{i \in 1 \dots m}(ZHONGSHU \in stage_{i}) \leq 1\\
+(s \in stage_{i}) \implies \exists\{j \in 1 \dots c\}point_{i, j} = s: i \in 1 \dots m, s \in SPOT\\
+point_{i,j} \in stage_{i}: i \in 1 \dots m, j \in 1 \dots c\\
+global\_cardinality\_low\_up([point_{i,j} : i \in 1 \dots m, j \in 1 \dots c], [ZHIYANG, ZHONGSHU], [0,0], [1,1])\\
+SPOT := \{"DAZHUI", "TAODAOO", "SHENZHU", "LINGTAI", "ZHIYANG", "ZHONGSHU", "JIZHONG", "XUANSHU", "YAOYANGGUAN", "YAOYU"\}\\
+point_{i,j} \in SPOT, \in \mathbb{V}: i \in 1 \dots m, j \in 1 \dots c\\
+stage_{i} \in \text{setof } SPOT, \in \mathbb{V}: i \in 1 \dots m\\
