@@ -1,3 +1,6 @@
+import os
+import json
+
 from Utils import *
 from ValueList import *
 from Tuple import *
@@ -113,10 +116,10 @@ class CodeGenerator:
 
         self.lastIdentifier = None
 
-        self.LIBRARIES = {"alldifferent": "alldifferent.mzn", "all_different": "all_different.mzn", "inverse": "inverse.mzn", "cumulative": "cumulative.mzn", 
-                          "lex_lesseq": "lex_lesseq.mzn", "value_precede_chain": "value_precede_chain.mzn", "diffn": "diffn.mzn", 
-                          "disjunctive": "disjunctive.mzn", "geost_bb": "geost.mzn", "global_cardinality": "global_cardinality.mzn", 
-                          "lex_greater": "lex_greater.mzn", "global_cardinality_low_up": "global_cardinality_low_up.mzn"}
+        file = os.path.dirname(__file__) + os.sep + "libraries.json"
+
+        self.LIBRARIES = json.load(open(file))
+
         self.include = {}
 
     def generateCode(self, node):
