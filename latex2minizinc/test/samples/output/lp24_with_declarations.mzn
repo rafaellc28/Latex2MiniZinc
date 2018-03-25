@@ -2,9 +2,9 @@ set of int: P = [PLANES[p,1]| p in INDEX_SET_PLANES];
 
 array[INDEX_SET_N, 1..2] of LOCATIONS: N = CUSTOMERS_union_START_union_FINISH;
 
-array[INDEX_SET_START, 1..2] of int: START = array2d(INDEX_SET_START, 1..2, [if idx2 == 1 then PLANES[p,1] else PLANES[p,2] endif | p in INDEX_SET_PLANES, idx2 in 1..2]);
+array[INDEX_SET_START, 1..2] of int: START = array2d(INDEX_SET_START, 1..2, [if idx2 = 1 then PLANES[p,1] else PLANES[p,2] endif | p in INDEX_SET_PLANES, idx2 in 1..2]);
 
-array[INDEX_SET_FINISH, 1..2] of int: FINISH = array2d(INDEX_SET_FINISH, 1..2, [if idx2 == 1 then PLANES[p,1] else PLANES[p,3] endif | p in INDEX_SET_PLANES, idx2 in 1..2]);
+array[INDEX_SET_FINISH, 1..2] of int: FINISH = array2d(INDEX_SET_FINISH, 1..2, [if idx2 = 1 then PLANES[p,1] else PLANES[p,3] endif | p in INDEX_SET_PLANES, idx2 in 1..2]);
 
 array[INDEX_SET_CUSTOMERS, 1..2] of int: CUSTOMERS;
 
