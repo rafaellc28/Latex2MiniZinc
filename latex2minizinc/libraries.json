@@ -10,5 +10,6 @@
     "geost_bb": "geost.mzn", 
     "global_cardinality": "global_cardinality.mzn", 
     "lex_greater": "lex_greater.mzn", 
-	"global_cardinality_low_up": "global_cardinality_low_up.mzn"
+	"global_cardinality_low_up": "global_cardinality_low_up.mzn",
+    "inverse": "inverse.mzn"
 }

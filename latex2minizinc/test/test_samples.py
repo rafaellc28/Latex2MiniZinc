@@ -1065,3 +1065,12 @@ def test_minizinc_test57():
 
 def test_minizinc_test58():
 	check_test_minizinc_num(58)
+
+def test_minizinc_test59():
+	check_test_minizinc_num(59)
+
+def test_minizinc_test60():
+	check_test_minizinc_num(60)
+
+def test_minizinc_test61():
+	check_test_minizinc_num(61)

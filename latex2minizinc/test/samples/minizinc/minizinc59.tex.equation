@@ -1,0 +1,7 @@
+% specialization-examples/multiplemodeling/belt/beltComb.mzn. From https://github.com/MiniZinc/specialization-examples
+p_{d,c+1} = p_{d,c} + d + 1: d \in DIG, c \in 1 \dots m-1\\
+inverse(dc, [p_{d,c} : d \in DIG, c \in COPY])\\
+DIG := 1 \dots n; COPY := 1 \dots m;\\
+POS := 1 \dots l; DIGCOP := 1 \dots l; l := m*n\\
+p_{d,c} \in POS, \in \mathbb{V}: d \in DIG, c \in COPY\\
+dc_{p} \in DIGCOP, \in \mathbb{V}: p \in POS\\
