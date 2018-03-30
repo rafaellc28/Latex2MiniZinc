@@ -1,0 +1,5 @@
+% specialization-examples/multiplemodeling/cookingwine/foodToWine.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent(drink)\\
+\text{maximize } \sum_{f \in FOOD}joy_{f, drink_{f}}\\
+joy_{f,w} \in \mathbb{Z}, \in \mathbb{P}: f \in FOOD, w \in WINE\\
+drink_{f} \in WINE, \in \mathbb{V}: f \in FOOD\\
