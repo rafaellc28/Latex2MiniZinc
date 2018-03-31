@@ -1,0 +1,6 @@
+% specialization-examples/multiplemodeling/cookingwine/combined.mzn. From https://github.com/MiniZinc/specialization-examples
+inverse(eat, drink)\\
+\text{maximize } \sum_{w \in WINE}joy_{eat_{w}, w}\\
+joy_{f,w} \in \mathbb{Z}, \in \mathbb{P}: f \in FOOD, w \in WINE\\
+eat_{w} \in FOOD, \in \mathbb{V}: w \in WINE\\
+drink_{f} \in WINE, \in \mathbb{V}: f \in FOOD\\
