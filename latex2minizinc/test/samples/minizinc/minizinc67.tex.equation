@@ -1,0 +1,12 @@
+% specialization-examples/multiplemodeling/tunnel/tunnel.mzn. From https://github.com/MiniZinc/specialization-examples
+route_{1} = first\\
+alldifferent(order)\\
+alldifferent(route)\\
+inverse(order, route)\\
+order_{prev_{i}} < order_{post_{i}}: i \in 1 \dots m\\
+\text{minimize } \sum_{j \in 1 \dots card(PIVOT)-1}\left|coord_{route_{j+1}} - coord_{route_{j}}\right|\\
+POS := 1 \dots card(PIVOT); PREC := 1 \dots m\\
+prev_{p}, post_{p}, first \in PIVOT, \in \mathbb{P}: p \in PREC\\
+coord_{p} \in \mathbb{Z}, \in \mathbb{P}: p \in PIVOT\\
+order_{p} \in POS, \in \mathbb{V}: p \in PIVOT\\
+route_{p} \in PIVOT, \in \mathbb{V}: p \in POS\\
