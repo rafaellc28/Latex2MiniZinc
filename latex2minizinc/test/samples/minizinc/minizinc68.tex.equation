@@ -1,0 +1,12 @@
+% specialization-examples/functions/patrol/patrolV1.mzn. From https://github.com/MiniZinc/specialization-examples
+(roster_{s,d} = NIGHT) \land (roster_{s,d+1} = NIGHT) \implies (roster_{s,d+2} \neq NIGHT): d \in 1 \dots (nDays-2), s \in SOLDIER//\\
+(roster_{s,d} = EVE) \implies (roster_{s,d+1} \neq NIGHT): d \in 1 \dots (nDays-1), s \in SOLDIER\\
+\sum_{s \in SOLDIER}(roster_{s,d} = NIGHT) = o: d \in DAY\\
+\sum_{s \in SOLDIER}(roster_{s,d} = EVE) \geq l: d \in DAY\\
+\sum_{s \in SOLDIER}(roster_{s,d} = EVE) \leq u: d \in DAY\\
+\text{maximize } tOnEve\\
+SHIFT := \{"OFF", "EVE","NIGHT"\}\\
+tOnEve := \sum_{d \in DAY}\sum_{s \in SOLDIER}(roster_{s,d} = EVE), \in \mathbb{Z}\\
+o, l, u \in \mathbb{Z}, \in \mathbb{P}\\
+DAY := 1 \dots nDays\\
+roster_{s,d} \in SHIFT, \in \mathbb{V}: s \in SOLDIER, d \in DAY\\
