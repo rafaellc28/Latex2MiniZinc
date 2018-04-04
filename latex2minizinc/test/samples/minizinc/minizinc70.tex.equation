@@ -1,0 +1,9 @@
+% specialization-examples/functions/patrol/patrolV3.mzn. From https://github.com/MiniZinc/specialization-examples
+(roster_{s,d} = NIGHT) \land (roster_{s,d+1} = NIGHT) \implies (roster_{s,d+2} \neq NIGHT): d \in 1 \dots (nDays-2), s \in SOLDIER//\\
+(roster_{s,d} = EVE) \implies (roster_{s,d+1} \neq NIGHT): d \in 1 \dots (nDays-1), s \in SOLDIER\\
+global\_cardinality([roster_{s,d} : s \in SOLDIER], [NIGHT, EVE], [o, onEve_{d}]): d \in DAY\\
+\text{maximize } sum(onEve)\\
+SHIFT := \{"OFF", "EVE","NIGHT"\}\\
+o, l, u \in \mathbb{Z}, \in \mathbb{P}; DAY := 1 \dots nDays\\
+onEve_{d} \in l \dots u, \in \mathbb{V}: d \in DAY\\
+roster_{s,d} \in SHIFT, \in \mathbb{V}: s \in SOLDIER, d \in DAY\\
