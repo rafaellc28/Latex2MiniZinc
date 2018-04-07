@@ -1,0 +1,22 @@
+% specialization-examples/functions/patrol/patrolChannel.mzn. From https://github.com/MiniZinc/specialization-examples
+card(rosterShift_{NIGHT,d}) = o: d \in DAY\\
+card(rosterShift_{EVE,d}) \geq l: d \in DAY\\
+card(rosterShift_{EVE,d}) \leq u: d \in DAY\\
+rosterShift_{OFF,d} \bigcup rosterShift_{EVE,d} \bigcup rosterShift_{NIGHT,d} = SOLDIER: d \in DAY\\
+rosterShift_{OFF,d} \bigcap rosterShift_{EVE,d} = \emptyset: d \in DAY\\
+rosterShift_{OFF,d} \bigcap rosterShift_{NIGHT,d} = \emptyset: d \in DAY\\
+rosterShift_{EVE,d} \bigcap rosterShift_{NIGHT,d} = \emptyset: d \in DAY//\\
+(s \in rosterShift_{EVE, d}) \implies (\neg(s \in rosterShift_{NIGHT, d+1})): d \in 1 \dots (nDays-1), s \in SOLDIER//\\
+(s \in rosterShift_{NIGHT, d}) \land (s \in rosterShift_{NIGHT, d+1}) \implies (\neg(s \in rosterShift_{NIGHT, d+2})): d \in 1 \dots (nDays-2), s \in SOLDIER\\
+global\_cardinality([rosterSoldier_{s,d} : s \in SOLDIER], [NIGHT, EVE], [o, onEve_{d}]): d \in DAY//\\
+(rosterSoldier_{s, d} = EVE) \implies (rosterSoldier_{s, d+1} \neq NIGHT): d \in 1 \dots (nDays-1), s \in SOLDIER//\\
+(rosterSoldier_{s, d} = NIGHT) \land (rosterSoldier_{s, d+1} = NIGHT) \implies (rosterSoldier_{s, d+2} \neq NIGHT): d \in 1 \dots (nDays-2), s \in SOLDIER\\
+int\_set\_channel([rosterSoldier_{so,d} : so \in SOLDIER], [rosterShift_{sh,d} : sh \in SHIFT]): d \in DAY\\
+\text{maximize } (tOnEve)\\
+SHIFT := \{"OFF", "EVE","NIGHT"\}\\
+o, l, u \in \mathbb{Z}, \in \mathbb{P}; DAY := 1 \dots nDays\\
+tOnEve := \sum_{d \in DAY}onEve_{d}, \in \mathbb{Z}\\
+onEve_{d} \in l \dots u, \in \mathbb{V}: d \in DAY\\
+SOLDIER \in \mathbb{Set}\\
+rosterShift_{s,d} \in \text{setof } SOLDIER, \in \mathbb{R}: s \in SHIFT, d \in DAY\\
+rosterSoldier_{s,d} \in SHIFT, \in \mathbb{R}: s \in SOLDIER, d \in DAY\\

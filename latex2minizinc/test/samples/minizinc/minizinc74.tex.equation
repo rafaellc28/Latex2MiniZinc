@@ -1,0 +1,16 @@
+% specialization-examples/functions/patrol/patrolSet.mzn. From https://github.com/MiniZinc/specialization-examples
+card(roster_{NIGHT,d}) = o: d \in DAY\\
+card(roster_{EVE,d}) \geq l: d \in DAY\\
+card(roster_{EVE,d}) \leq u: d \in DAY\\
+roster_{OFF,d} \bigcup roster_{EVE,d} \bigcup roster_{NIGHT,d} = SOLDIER: d \in DAY\\
+roster_{OFF,d} \bigcap roster_{EVE,d} = \emptyset: d \in DAY\\
+roster_{OFF,d} \bigcap roster_{NIGHT,d} = \emptyset: d \in DAY\\
+roster_{EVE,d} \bigcap roster_{NIGHT,d} = \emptyset: d \in DAY//\\
+(s \in roster_{EVE, d}) \implies (\neg(s \in roster_{NIGHT, d+1})): d \in 1 \dots (nDays-1), s \in SOLDIER//\\
+(s \in roster_{NIGHT, d}) \land (s \in roster_{NIGHT, d+1}) \implies (\neg(s \in roster_{NIGHT, d+2})): d \in 1 \dots (nDays-2), s \in SOLDIER\\
+\text{maximize } (tOnEve)\\
+SHIFT := \{"OFF", "EVE","NIGHT"\}\\
+o, l, u \in \mathbb{Z}, \in \mathbb{P}; DAY := 1 \dots nDays\\
+tOnEve := \sum_{d \in DAY}card(roster_{EVE,d}), \in \mathbb{Z}\\
+SOLDIER \in \mathbb{Set}\\
+roster_{s,d} \in \text{setof } SOLDIER, \in \mathbb{R}: s \in SHIFT, d \in DAY\\
