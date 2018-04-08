@@ -1,0 +1,6 @@
+% specialization-examples/functions/lvbu/lvbu.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent(pos)\\
+\text{maximize } tDamages\\
+damage_{h,s} \in \mathbb{Z}, \in \mathbb{P}: h \in HERO, s \in SPOT\\
+pos_{h} \in SPOT, \in \mathbb{R}: h \in HERO\\
+tDamages := \sum_{h \in HERO}damage_{h,pos_{h}}, \in \mathbb{Z}\\
