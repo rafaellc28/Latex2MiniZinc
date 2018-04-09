@@ -1140,14 +1140,14 @@ class CodeSetup:
             ident1.isSet = True
 
             self._addGenDeclaration(ident1.getSymbolName(self.codeGenerator), ident1.sub_indices, 
-                                    [DeclarationAttribute(IteratedSetExpression(None, SetExpressionWithValue(IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<="))), DeclarationAttribute.IN)], 
+                                    [DeclarationAttribute(IteratedSetExpression(None, SetExpressionWithValue(IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<=")), True), DeclarationAttribute.IN)], 
                                     self.indexingExpression)
 
         if isinstance(ident2, Identifier):
             ident2.isSet = True
 
             self._addGenDeclaration(ident2.getSymbolName(self.codeGenerator), ident2.sub_indices, 
-                                    [DeclarationAttribute(IteratedSetExpression(None, SetExpressionWithValue(IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<="))), DeclarationAttribute.IN)], 
+                                    [DeclarationAttribute(IteratedSetExpression(None, SetExpressionWithValue(IntegerSet(Number("-Infinity"), ">=", Number("Infinity"), "<=")), True), DeclarationAttribute.IN)], 
                                     self.indexingExpression)
 
         node.setExpression1.setupEnvironment(self)
@@ -1176,6 +1176,9 @@ class CodeSetup:
         """
         if node.setExpression != None:
             node.setExpression.setupEnvironment(self)
+
+    def setupEnvironment_EnumSetExpression(self, node):
+        pass
 
     def setupEnvironment_IteratedSetExpression(self, node):
         """

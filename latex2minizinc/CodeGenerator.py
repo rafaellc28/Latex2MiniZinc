@@ -2628,8 +2628,13 @@ class CodeGenerator:
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
 
             if ins_vec != None and len(ins_vec) > 0:
-                ins = ins_vec[-1].generateCode(self)
-                
+                setExpression = ins_vec[-1]
+                ins = setExpression.generateCode(self)
+
+                if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
+                    if len(ins_vec) > 1:
+                        ins = ins_vec[-2].generateCode(self)
+
                 if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(name)):
                     includedType = True
                     _type = ins
@@ -3870,6 +3875,9 @@ class CodeGenerator:
     def generateCode_SetExpressionBetweenParenthesis(self, node):
         res =  BEGIN_ARGUMENT_LIST + node.setExpression.generateCode(self) + END_ARGUMENT_LIST
         return res
+
+    def generateCode_EnumSetExpression(self, node):
+        return ENUM
 
     def generateCode_IteratedSetExpression(self, node):
 

@@ -1690,6 +1690,11 @@ def p_IteratedSetExpression(t):
 
       t[0] = IteratedSetExpression(None, t[2])
 
+def p_EnumSetExpression(t):
+    '''SetExpression : ENUM'''
+    
+    t[0] = EnumSetExpression()
+
 def p_ConditionalSetExpression(t):
     '''ConditionalSetExpression : IF LogicalExpression THEN SetExpression ELSE SetExpression ENDIF
                                 | IF LogicalExpression THEN SetExpression ELSE Identifier ENDIF

@@ -1,0 +1,14 @@
+% specialization-examples/functions/cellBlock/cellBlock.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent([r_{p}*m + c_{p} : p \in PRISONER])\\
+r_{p} \leq ((n + 1) \text{ div } 2): p \in female\\
+r_{p} > ((n + 1) \text{ div } 2): p \in male//\\
+(|r_{d} - r_{p}| + |c_{d} - c_{p}|) > 1: d \in danger, p \in PRISONER \mid d \neq p\\
+\text{minimize } tCost\\
+ROW := 1 \dots n; COL := 1 \dots m\\
+cost_{r,c} \in \mathbb{Z}, \in \mathbb{P}: r \in ROW, c \in COL\\
+danger, male, female, \in \text{setof } PRISONER\\
+male := PRISONER \setminus female\\
+tCost := \sum_{p \in PRISONER}cost_{r_{p},c_{p}}, \in \mathbb{Z}\\
+r_{p} \in ROW, \in \mathbb{R}: p \in PRISONER\\
+c_{p} \in COL, \in \mathbb{R}: p \in PRISONER\\
+PRISONER, \in \mathbb{E}\\

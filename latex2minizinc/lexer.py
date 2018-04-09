@@ -10,6 +10,7 @@ from RealSet import *
 from SymbolicSet import *
 from LogicalSet import *
 from BinarySet import *
+from EnumSet import *
 from ParameterSet import *
 from VariableSet import *
 from SetSet import *
@@ -32,6 +33,7 @@ tokens = [
    'EXISTS',
    'NEXISTS',
    'EMPTYSET',
+   'ENUM',
    'INTEGERSET',
    'INTEGERSETPOSITIVE',
    'INTEGERSETNEGATIVE',
@@ -333,6 +335,11 @@ def t_SETS(t):
 def t_VARIABLES(t):
    r'\\mathbb{V}|\\mathbb{Var}|\\mathbb{Variable}|\\mathbb{Vars}|\\mathbb{Variables}'
    t.value2 = VariableSet()
+   return t
+
+def t_ENUM(t):
+   r'\\mathbb{E}|\\mathbb{Enum}'
+   t.value2 = EnumSet()
    return t
 
 def t_BINARYSET(t):

@@ -254,7 +254,7 @@ class IteratedSetExpression(SetExpression):
     Class representing a iterated set expression node in the AST
     """
     
-    def __init__(self, indexingExpression, integrand):
+    def __init__(self, indexingExpression, integrand, inferred = False):
         """
         Set the iterated set expression
         
@@ -265,6 +265,7 @@ class IteratedSetExpression(SetExpression):
 
         self.indexingExpression = indexingExpression
         self.integrand          = integrand
+        self.inferred           = inferred
         
     def __str__(self):
         """
@@ -288,6 +289,40 @@ class IteratedSetExpression(SetExpression):
         deps += self.integrand.getDependencies(codeGenerator)
 
         return list(set(deps))
+        
+    def setupEnvironment(self, codeSetup):
+        """
+        Generate the MiniZinc code for the identifiers and sets used in this iterated set expression
+        """
+        codeSetup.setupEnvironment(self)
+
+    def generateCode(self, codeGenerator):
+        """
+        Generate the MiniZinc code for this contitional set expression
+        """
+        return codeGenerator.generateCode(self)
+
+
+class EnumSetExpression(SetExpression):
+    """
+    Class representing a iterated set expression node in the AST
+    """
+    
+    def __init__(self):
+        """
+        Set the enum set expression
+        """
+        SetExpression.__init__(self)
+
+        
+    def __str__(self):
+        """
+        to string
+        """
+        return "enum"
+
+    def getDependencies(self, codeGenerator):
+        return []
         
     def setupEnvironment(self, codeSetup):
         """
