@@ -1,0 +1,10 @@
+% specialization-examples/functions/catapult/catapultExact.mzn. From https://github.com/MiniZinc/specialization-examples
+dist_{i, j} \leq maxSep: i,j \in SPOT \mid shot_{i} = shot_{j}\\
+value\_precede\_chain([i : i \in CLUSTER], shot)\\
+global\_cardinality\_low\_up\_closed(shot, [i : i \in CLUSTER], [1 : i \in CLUSTER], [nSpot-k+1 : i \in CLUSTER])\\
+\text{maximize } obj\\
+SPOT := 1 \dots nSpot; CLUSTER := 1 \dots k\\
+dist_{s,s}, maxSep, maxdist \in \mathbb{R}, \in \mathbb{P}: s \in SPOT\\
+maxdist := max([dist_{i, j} : i, j \in SPOT])\\
+obj := \min_{i, j \in SPOT \mid i < j}\text{if } shot_{i} = shot_{j} \text{ then } maxdist \text{ else } dist_{i, j} \text{ endif}, \in \mathbb{R}\\
+shot_{s} \in \mathbb{R}, \in CLUSTER: s \in SPOT\\

@@ -1,0 +1,12 @@
+% specialization-examples/debugging/wedge/wedge-corrected.mzn. From https://github.com/MiniZinc/specialization-examples
+speed_{h_{i}} < speed_{h_{i+1}} \land endur_{r_{i}} < endur_{r_{i+1}}: i \in 1 \dots n \text{ div } 2-1\\
+speed_{h_{i}} > speed_{h_{i+1}} \land endur_{r_{i}} > endur_{r_{i+1}}: i \in n \text{ div } 2 \dots n-1\\
+alldifferent(r)\\
+alldifferent(h)\\
+r_{p} \in compatible_{h_{p}}: p \in POS\\
+\text{maximize } \sum_{p \in POS}strength_{r_{p}}\\
+POS := 1 \dots n\\
+compatible_{h} \in \text{setof } RIDER; speed_{h} \in \mathbb{Z}, \in \mathbb{P}: h \in HORSE\\
+endur_{r}, strength_{r} \in \mathbb{Z}, \in \mathbb{P}: r \in RIDER\\
+RIDER, \in \mathbb{Enum}\\
+h_{p} \in HORSE, \in \mathbb{V}; r_{p} \in RIDER, \in \mathbb{V}: p \in POS\\

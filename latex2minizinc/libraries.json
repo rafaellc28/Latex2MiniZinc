@@ -12,5 +12,6 @@
     "lex_greater": "lex_greater.mzn", 
 	"global_cardinality_low_up": "global_cardinality_low_up.mzn",
     "inverse": "inverse.mzn",
-    "int_set_channel": "int_set_channel.mzn"
+    "int_set_channel": "int_set_channel.mzn",
+    "global_cardinality_low_up_closed": "global_cardinality_low_up_closed.mzn"
 }
