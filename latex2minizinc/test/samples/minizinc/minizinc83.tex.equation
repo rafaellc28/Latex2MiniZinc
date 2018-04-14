@@ -1,0 +1,11 @@
+% specialization-examples/debugging/twogenerals/twogenerals.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{maximize } \sum_{h \in HERO}damage_{h,pos1_{h}} + damage_{h,pos2_{h}}\\
+alldifferent(pos1)\\
+alldifferent(pos2)\\
+pos1_{h} \neq BAIHUI \land pos1_{h} \in LO \implies pos2_{h} \in HI: h \in HERO\\
+LO := \{"TIANSHU","YONGQUAN"\}, \in \text{setof } SPOT\\
+HI := SPOT \setminus LO, \in \text{setof } SPOT\\
+damage_{h,s} \in \mathbb{Z}, \in \mathbb{P}: h \in HERO, s \in SPOT\\
+HERO := \{"GUANYU", "ZHANGLIAO", "XUHUANG"\}\\
+SPOT := \{"BAIHUI", "DANZHONG", "QUCHI", "TIANSHU", "YONGQUAN"\}, \in \mathbb{E}\\
+pos1_{h}, pos2_{h} \in SPOT, \in \mathbb{V}: h \in HERO\\
