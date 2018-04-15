@@ -1,0 +1,11 @@
+% specialization-examples/debugging/sneak/sneakFixed.mzn. From https://github.com/MiniZinc/specialization-examples
+path \in POST \implies extra = guard_{path}\\
+\neg(path \in POST) \implies extra = 0\\
+\text{minimize } t\\
+PATH := 1 \dots 10; POST := 1 \dots 4\\
+time_{p} \in \mathbb{Z}, \in \mathbb{P}: p \in PATH\\
+guard_{p} \in \mathbb{Z}, \in \mathbb{P}: p \in POST\\
+weather \in 0 \dots 2, \in \mathbb{R}\\
+path \in PATH, \in \mathbb{R}\\
+t := time_{path} \text{ div } weather + extra * weather\\
+t, extra \in \mathbb{Z}\\
