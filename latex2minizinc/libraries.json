@@ -13,5 +13,6 @@
 	"global_cardinality_low_up": "global_cardinality_low_up.mzn",
     "inverse": "inverse.mzn",
     "int_set_channel": "int_set_channel.mzn",
-    "global_cardinality_low_up_closed": "global_cardinality_low_up_closed.mzn"
+    "global_cardinality_low_up_closed": "global_cardinality_low_up_closed.mzn",
+    "alldifferent_except_0": "alldifferent_except_0.mzn"
 }
