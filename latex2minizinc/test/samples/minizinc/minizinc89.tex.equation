@@ -1,0 +1,23 @@
+% specialization-examples/debugging/parade/parade.mzn. From https://github.com/MiniZinc/specialization-examples
+(r > nrow \implies x_{r,c} = 0) \land (c > ncol \implies x_{r,c} = 0): r \in ROW, c \in COL\\
+alldifferent\_except\_0([x_{r,c}: r \in ROW, c \in COL])\\
+\sum_{r \in ROW, c \in COL}(x_{r,c} \neq 0) = nsoldier\\
+r1 \in 1 \dots nrow \land c \in 1 \dots ncol \land x_{r1,c} = 0 \implies \exists\{r2 \in ROW\}r2 < r1 \land heightx_{x_{r2,c}} > strawheight: r1 \in ROW, c \in COL//\\
+(r \leq nrow \land c \leq ncol \land x_{r,c} = 0) \implies (\text{if } c < maxc \text{ then } x_{r,c+1} \neq 0 \text{ else } false \text{ endif } \lor \text{ if } c > 1 \text{ then } x_{r,c-1} \neq 0 \text{ else } false \text{ endif } \lor \text{ if } r < maxr \text{ then } x_{r+1,c} \neq 0 \text{ else } false \text{ endif } \lor \text{ if } r > 1 \text{ then } x_{r-1,c} \neq 0 \text{ else } false \text{ endif }): r \in ROW, c \in COL\\
+x_{r,c} = 0: r \in nrow+1 \dots maxr, c \in ncol+1 \dots maxc//\\
+(r > nrow \implies x_{r,c} = 0) \land (c > ncol \implies x_{r,c} = 0): r \in ROW, c \in COL\\
+x_{r1,c1} = 0 \lor x_{r1,c1} \neq x_{r2,c2}: r1, r2 \in ROW, c1, c2 \in COL \mid r1 \neq r2 \lor c1 \neq c2\\
+\exists\{r \in ROW, c \in COL\}r \leq nrow \land c \leq ncol \land x_{r,c} = s: s \in SOLDIER\\
+global\_cardinality\_low\_up([x_{r,c} : r \in ROW, c \in COL], [s : s \in SOLDIER], [1 : s \in SOLDIER], [1 : s \in SOLDIER])\\
+\nexists\{r1 \in ROW, c \in COL\}r1 \in 1 \dots nrow \land c \in 1 \dots ncol \land x_{r1,c} = 0 \land \forall\{r2 \in ROW\}r2 < r1 \implies (x_{r2,c} = 0 \lor height_{x_{r2,c}} \leq strawheight)\\
+\nexists\{r1 \in ROW, c \in COL\}(r1 \in 1 \dots nrow \land c \in 1 \dots ncol \land x_{r1,c} = 0 \land \forall\{r2 \in ROW\}(r2 < r1 \implies heightx_{x_{r2,c}} \leq strawheight))\\
+\forall\{c \in 1 \dots ncol-1\}(\text{if } r > nrow \lor c > ncol \text{ then } hd_{r,c} = 0 \text{ else } \text{if } x_{r,c} = 0 \text{ then } \text{if } x_{r,c+1} = 0 \text{ then } hd_{r,c} = 0 \text{ else } hd_{r,c} = abs(strawheight - height_{x_{r,c+1}}) \text{ endif }\text{ else } \text{if } x_{r,c+1} = 0 \text{ then } hd_{r,c} = abs(height_{x_{r,c}} - strawheight) \text{ else } hd_{r,c} = abs(height_{x_{r,c}} - height_{x_{r,c+1}}) \text{ endif } \text{ endif }\text{ endif }): r \in ROW\\
+hd_{nrow,c} = 0: c \in COL\\
+\text{maximize } nrow*ncol\\
+heightx_{s} := array1d(SOLDIER0,[strawheight] ++ height), \in \mathbb{Z}, \in \mathbb{P}: s \in SOLDIER0\\
+SOLDIER := 1 \dots nsoldier; SOLDIER0 := 0 \dots nsoldier\\
+ROW := 1 \dots maxr; COL := 1 \dots maxc\\
+height_{s}, strawheight \in \mathbb{Z}, \in \mathbb{P}: s \in SOLDIER\\
+DIFF := 0 \dots max(height)\\
+nrow \in ROW; ncol \in COL; hd_{r,c} \in DIFF; x_{r,c} \in SOLDIER0: r \in ROW, c \in COL\\
+nrow, ncol, x, hd \in \mathbb{R}\\
