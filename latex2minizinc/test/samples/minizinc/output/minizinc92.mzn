@@ -40,8 +40,6 @@ constraint forall(i in 1..floor(maxstep - 1))(table([path[i],path[i + 1]],edge))
 
 constraint sliding_sum(1,rest,rest,[guard[path[i]] = 0 | i in STEP]);
 
-constraint forall(e in EDGE, i in 1..2)(edge[e,i] in NODE);
-
 
 
 solve minimize sum(i in STEP)(guard[path[i]]);

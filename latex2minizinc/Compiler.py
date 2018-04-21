@@ -63,7 +63,7 @@ class Compiler:
 
                         break
 
-                    elif stack[i].type == "EntryConstraintLogicalExpression":
+                    elif stack[i].type == "EntryConstraintLogicalExpression" or stack[i].type == "ConstraintExpression":
                         pos = msg[1]
                         data = doc[:pos]
 
@@ -98,7 +98,7 @@ class Compiler:
                         doc = data
                         parsing = True
 
-                    elif lex_token.type == "EntryConstraintLogicalExpression":
+                    elif lex_token.type == "EntryConstraintLogicalExpression" or lex_token.type == "ConstraintExpression":
                         pos = msg[1]
                         data = doc[:pos]
 

@@ -52,8 +52,14 @@ class ValueList(Expression):
         """
         Add a value to the list
         """
+        if not isinstance(value, ValueList):
+            self.values += [value]
 
-        self.values += [value]
+        else:
+            values = value.getValues()
+            for v in values:
+                self.values += [v]
+                
         return self
 
     def getDependencies(self, codeGenerator):
