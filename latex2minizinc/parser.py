@@ -1748,7 +1748,15 @@ def p_ExpressionList(t):
 
                       | SetExpression BEGININDEXINGEXPRESSION IndexingExpression
                       | SetExpression BEGININDEXINGEXPRESSION Identifier
-                      | SetExpression BEGININDEXINGEXPRESSION NumericSymbolicExpression'''
+                      | SetExpression BEGININDEXINGEXPRESSION NumericSymbolicExpression
+
+                      | LogicalExpression BEGININDEXINGEXPRESSION IndexingExpression
+                      | LogicalExpression BEGININDEXINGEXPRESSION Identifier
+                      | LogicalExpression BEGININDEXINGEXPRESSION NumericSymbolicExpression
+
+                      | TrueFalse BEGININDEXINGEXPRESSION IndexingExpression
+                      | TrueFalse BEGININDEXINGEXPRESSION Identifier
+                      | TrueFalse BEGININDEXINGEXPRESSION NumericSymbolicExpression'''
 
     t[1] = ExpressionList([t[1]])
 

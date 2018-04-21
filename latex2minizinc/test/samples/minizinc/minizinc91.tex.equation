@@ -1,0 +1,13 @@
+% specialization-examples/debugging/escape/escape-fixed.mzn. From https://github.com/MiniZinc/specialization-examples
+path_{1} = start\\
+i \geq step \implies path_{i} = dest: i \in STEP\\
+table([path_{i},path_{i+1}],uedge): i \in 1 \dots maxstep-1\\
+sliding\_sum(1,rest,rest, [guard_{path_{i}} = 0: i \in STEP])\\
+\text{minimize } \sum_{i \in STEP}guard_{path_{i}}\\
+NODE := 1 \dots n; EDGE := 1 \dots m; STEP := 1 \dots maxstep\\
+guard_{n}, rest \in \mathbb{Z}, \in \mathbb{P}: n \in NODE\\
+edge_{e,i} \in NODE: e \in EDGE, i \in 1 \dots 2\\
+uedge_{i,j} := array2d(1 \dots 2*m, 1 \dots 2, [ edge_{i,j} : i \in EDGE, j \in 1 \dots 2 ] ++ [ edge_{i,3-j} : i \in EDGE, j \in 1 \dots 2 ]), \in NODE: i \in 1 \dots 2*m, j \in 1 \dots 2\\
+start, dest \in NODE, \in \mathbb{P}\\
+step \in STEP, \in \mathbb{R}\\
+path_{s} \in NODE, \in \mathbb{R}: s \in STEP\\
