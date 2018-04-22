@@ -1,0 +1,5 @@
+% specialization-examples/debugging/debug/debug1.mzn. From https://github.com/MiniZinc/specialization-examples
+assert(n-j \in 1 \dots n, "b[\(n-j)]"): j \in 1 \dots n\\
+a_{i}, b_{i}, \in 1 \dots n: i \in 1 \dots n\\
+b_{i} := [3,5,2,3,1]; a_{i} \in \mathbb{V}; n := 5\\
+
