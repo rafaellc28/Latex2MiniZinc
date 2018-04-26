@@ -1,0 +1,13 @@
+% specialization-examples/debugging/wedge/wedge-fixed.mzn. From https://github.com/MiniZinc/specialization-examples
+trace("speed[h[\(i)]] < speed[h[\(i+1)]]\n" ++ "endur[r[\(i)]] < endur[r[\(i+1)]]\n", speed_{h_{i}} < speed_{h_{i+1}} \land endur_{r_{i}} < endur_{r_{i+1}}): i \in 1 \dots n \text{ div } 2\\
+trace("speed[h[\(i)]] > speed[h[\(i+1)]]\n" ++ "endur[r[\(i)]] > endur[r[\(i+1)]]\n", speed_{h_{i}} > speed_{h_{i+1}} \land endur_{r_{i}} > endur_{r_{i+1}}): i \in n \text{ div } 2+1 \dots n-1\\
+alldifferent(r)\\
+alldifferent(h)\\
+r_{p} \in compatible_{h_{p}}: p \in POS\\
+\text{maximize } \sum_{p \in POS}strength_{r_{p}}\\
+POS := 1 \dots n\\
+speed_{h} \in \mathbb{Z}, \in \mathbb{P}; compatible_{h} \in \text{setof } RIDER: h \in HORSE\\
+endur_{r}, strength_{r} \in \mathbb{Z}, \in \mathbb{P}: r \in RIDER\\
+RIDER, \in \mathbb{E}\\
+h_{p}, r_{p} \in \mathbb{V}: p \in POS\\
+h \in HORSE; r \in RIDER\\
