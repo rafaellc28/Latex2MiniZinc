@@ -1,0 +1,19 @@
+% specialization-examples/predicates/armyselect/armySelect.mzn. From https://github.com/MiniZinc/specialization-examples
+all\_disjoint([Liu, Guan, Zhang])\\
+card(Liu \bigcap archer) \geq 1\\
+card(Liu \bigcap cavalry) \geq 2\\
+card(Liu \bigcap infantry) \geq 2\\
+card(Liu) = 6\\
+card(Guan \bigcap archer) \geq 1\\
+card(Guan \bigcap cavalry) \geq 2\\
+card(Guan \bigcap infantry) \geq 2\\
+card(Guan) = 6\\
+card(Zhang \bigcap archer) \geq 1\\
+card(Zhang \bigcap cavalry) \geq 2\\
+card(Zhang \bigcap infantry) \geq 2\\
+card(Zhang) = 6\\
+\text{maximize } obj\\
+liuValue_{e}, guanValue_{e}, zhangValue_{e} \in \mathbb{Z}, \in \mathbb{P}: e \in ELITE\\
+archer, cavalry, infantry, \in \text{setof } ELITE\\
+obj := (\sum_{e \in Liu}liuValue_{e}) + (\sum_{e \in Guan}guanValue_{e}) + (\sum_{e \in Zhang}zhangValue_{e}), \in \mathbb{Z}\\
+Liu, Guan, Zhang \in \text{setof } ELITE, \in \mathbb{V}\\

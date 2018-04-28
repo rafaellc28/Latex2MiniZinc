@@ -16,5 +16,6 @@
     "global_cardinality_low_up_closed": "global_cardinality_low_up_closed.mzn",
     "alldifferent_except_0": "alldifferent_except_0.mzn",
     "table": "table.mzn",
-    "sliding_sum": "sliding_sum.mzn"
+    "sliding_sum": "sliding_sum.mzn",
+    "all_disjoint": "all_disjoint.mzn"
 }
