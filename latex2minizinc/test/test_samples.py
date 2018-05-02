@@ -53,6 +53,16 @@ def check_test_nonlinear_num(num, with_declarations = False):
 
 	check_test(name1, name2)
 
+def check_test_linear_num(num, with_declarations = False):
+	if with_declarations:
+		name1 = 'latex2minizinc/test/samples/linear/lp'+str(num)+'_linear_with_declarations.tex.equation'
+		name2 = 'latex2minizinc/test/samples/linear/output/lp'+str(num)+'_linear_with_declarations.mzn'
+	else:
+		name1 = 'latex2minizinc/test/samples/linear/lp'+str(num)+'_linear.tex.equation'
+		name2 = 'latex2minizinc/test/samples/linear/output/lp'+str(num)+'_linear.mzn'
+
+	check_test(name1, name2)
+
 def check_test_constraint_num(num, with_declarations = False):
 	if with_declarations:
 		name1 = 'latex2minizinc/test/samples/constraint/lp'+str(num)+'_constraint_with_declarations.tex.equation'
@@ -1194,3 +1204,7 @@ def test_minizinc_test100():
 
 def test_minizinc_test101():
 	check_test_minizinc_num(101)
+
+# Linear Programming
+def test_lp0_linear():
+	check_test_linear_num(0)
