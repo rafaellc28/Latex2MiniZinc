@@ -1211,3 +1211,6 @@ def test_lp0_linear():
 
 def test_lp1_linear():
 	check_test_linear_num(1)
+
+def test_lp2_linear():
+	check_test_linear_num(2)
