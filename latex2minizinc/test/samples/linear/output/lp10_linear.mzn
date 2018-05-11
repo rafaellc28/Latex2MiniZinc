@@ -18,7 +18,7 @@ set of int: INDEX_SET_Trans_1;
 set of int: INDEX_SET_Trans_2;
 
 
-constraint forall(i in ORIG, j in DEST)(Trans[i,j] >= 0);
+constraint forall(i in ORIG, j in DEST)(Trans[i,j] <= 0.9999 * limit[i,j] /\ Trans[i,j] >= 0);
 
 constraint forall(i in ORIG)(sum(j in DEST)(Trans[i,j]) = supply[i]);
 
