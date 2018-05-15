@@ -1253,3 +1253,6 @@ def test_lp14_linear():
 
 def test_lp15_linear():
 	check_test_linear_num(15)
+
+def test_lp16_linear():
+	check_test_linear_num(16)
