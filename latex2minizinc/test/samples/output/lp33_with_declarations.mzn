@@ -12,13 +12,13 @@ array[int, int] of float: cov;
 
 array[int, int] of float: c;
 
-float: utc;
+float: utc = product(i in 1..2)((gmtime() - 1000000000));
 
 float: seed = utc - 100000 * floor(utc / 100000);
 
 int: N;
 
-array[int, int] of float: zn;
+array[INDEX_SET_zn_1, INDEX_SET_zn_2] of float: zn = array2d(INDEX_SET_zn_1, INDEX_SET_zn_2, [Normal(0,1) | j in S, t in T]);
 
 
 array[INDEX_SET_y_1] of var float: y;
@@ -36,6 +36,10 @@ set of int: INDEX_SET_w_1;
 set of int: INDEX_SET_y_1;
 
 set of int: INDEX_SET_z_1;
+
+set of int: INDEX_SET_zn_1;
+
+set of int: INDEX_SET_zn_2;
 
 
 constraint forall(i in S, j in S where i >= j)(c[i,j] = if i = j then sqrt(cov[i,i] - (sum(k in S where k < i)((c[i,k] * c[i,k])))) else (cov[i,j] - sum(k in S where k < j)(c[i,k] * c[j,k])) / c[j,j] endif);

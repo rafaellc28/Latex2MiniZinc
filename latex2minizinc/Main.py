@@ -20,9 +20,12 @@ class Main:
 
     def setupEnvironment(self, codeSetup):
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the code in MathProg for this Linear Program
+        Generate the code in MiniZinc for this Linear Program
         """
         return codeGenerator.generateCode(self)

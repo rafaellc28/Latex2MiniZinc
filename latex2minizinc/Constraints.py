@@ -24,13 +24,19 @@ class Constraints:
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in these constraints
+        Setup the MiniZinc code for the identifiers and sets used in these constraints
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in these constraints
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the code in MathProg for these Constraints
+        Generate the code in MiniZinc for these Constraints
         """
         return codeGenerator.generateCode(self)
     
@@ -39,11 +45,11 @@ class Constraint:
     Class representing a constraint node in the AST of a MLP
     """
     
-    # Get the MathProg code for a given IndexingExpression
+    # Get the MiniZinc code for a given IndexingExpression
     @staticmethod
     def _getCodeIndexingExpression(indexingExpression): return indexingExpression.generateCode()
     #def _getCodeIndexingExpression(indexingExpression): return SupportGenCode.emitIndexingExpression(indexingExpression.generateCode())
-
+    
     def __init__(self, constraintExpression, indexingExpression = None):
         """
         Set the constraint expression and the indexing expression of an constraint
@@ -54,7 +60,8 @@ class Constraint:
         
         self.constraintExpression = constraintExpression
         self.indexingExpression   = indexingExpression
-    
+        self.symbolTable = None
+        
     def __str__(self):
         """
         to string
@@ -66,15 +73,27 @@ class Constraint:
             res += ",\nfor " + str(self.indexingExpression)
         
         return "Cnt:" + res
-
+        
+    def getSymbolTable(self):
+        return self.symbolTable
+        
+    def setSymbolTable(self, symbolTable):
+        self.symbolTable = symbolTable
+        
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets in this constraint
+        Setup the MiniZinc code for declaration of identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets in this constraint
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this constraint
+        Generate the MiniZinc code for this constraint
         """
         return codeGenerator.generateCode(self)

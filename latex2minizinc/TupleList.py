@@ -12,6 +12,7 @@ class TupleList(Expression):
         
         :param values : [Identifier|NumericExpression|SymbolicExpression]
         """
+        Expression.__init__(self)
         
         self.values = values
         self.i = -1
@@ -67,9 +68,15 @@ class TupleList(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers used in this tuple list expression
+        Setup the MiniZinc code for the declaration of identifiers used in this tuple list expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers used in this tuple list expression
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """

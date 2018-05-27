@@ -13,6 +13,8 @@ class DeclarationExpression(Expression):
         :param identifiers: ValueList
         :param attributeList: [DeclarationAttribute]
         """
+        Expression.__init__(self)
+
         self.identifiers = identifiers
         self.attributeList = attributeList
         
@@ -53,13 +55,19 @@ class DeclarationExpression(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets in this declaration
+        Setup the MiniZinc code for the identifiers and sets in this declaration
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets in this declaration
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this declaration expression
+        Generate the MiniZinc code for this declaration expression
         """
         return codeGenerator.generateCode(self)
 
@@ -86,6 +94,9 @@ class DeclarationAttribute(Expression):
         
         :param attribute: SetExpression | NumericExpression | SymbolicExpression
         """
+
+        Expression.__init__(self)
+        
         self.attribute = attribute
         self.op = op
     
@@ -100,12 +111,18 @@ class DeclarationAttribute(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets in this declaration
+        Setup the MiniZinc code for the identifiers and sets in this declaration
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets in this declaration
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this declaration expression
+        Generate the MiniZinc code for this declaration expression
         """
         return codeGenerator.generateCode(self)

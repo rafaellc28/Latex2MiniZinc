@@ -50,6 +50,12 @@ class Number(Expression):
         Setup environment
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare environment
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """

@@ -5,6 +5,7 @@ import logging
 
 from SyntaxException import *
 from CodeSetup import *
+from CodePrepare import *
 from CodeGenerator import *
 from Identifier import *
 
@@ -132,6 +133,7 @@ class Compiler:
                 try:
                     codeGenerator = CodeGenerator()
                     result.setupEnvironment(CodeSetup(codeGenerator))
+                    result.prepare(CodePrepare(codeGenerator))
                     response = result.generateCode(codeGenerator)
                     res += response
 
@@ -143,7 +145,7 @@ class Compiler:
                     res += "Invalid indexing expression at statement %d: '%s'. %s.\nContext: %s." % (msg[0], msg[1], msg[2], line)
 
                 except:
-                    res += "Error while generating AMPL code. Please, check your Latex code!"
+                    res += "Error while generating MiniZinc code. Please, check your Latex code!"
 
             else:
                 if self.DEBUG:
@@ -151,6 +153,7 @@ class Compiler:
 
                 codeGenerator = CodeGenerator()
                 result.setupEnvironment(CodeSetup(codeGenerator))
+                result.prepare(CodePrepare(codeGenerator))
                 response = result.generateCode(codeGenerator)
                 res += response
 

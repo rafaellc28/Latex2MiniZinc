@@ -46,9 +46,15 @@ class IntegerSet(SetExpression):
         Setup environment
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare environment
+        """
+        codePrepare.prepare(self)
         
     def generateCode(self, codeGenerator):
         """
-        Generate the AMPL code for this Number
+        Generate the MiniZinc code for this Number
         """
         return codeGenerator.generateCode(self)

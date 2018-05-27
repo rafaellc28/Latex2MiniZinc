@@ -99,18 +99,24 @@ class Variable(Expression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of this variable
+        Setup the MiniZinc code for the declaration of this variable
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of this variable
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Variable
+        Generate the MiniZinc code for this Variable
         """
         return codeGenerator.generateCode(self)
     
     def generateCodeWithoutIndices(self, codeGenerator):
         """
-        Generate the MathProg code for this Variable without the Indexing, if there are 
+        Generate the MiniZinc code for this Variable without the Indexing, if there are 
         """
         return self.variable.generateCode(codeGenerator)

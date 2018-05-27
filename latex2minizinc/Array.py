@@ -44,6 +44,12 @@ class Array(Expression):
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of this ID
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
         Generate the MiniZinc code for this Identifier
@@ -87,6 +93,12 @@ class ArrayWithOperation(Array):
         Generate the MiniZinc code for the identifiers and sets used in this array expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this array expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -147,6 +159,12 @@ class ArrayChoose(Expression):
         Generate the MiniZinc code for the declaration of this ID
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of this ID
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """

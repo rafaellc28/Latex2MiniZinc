@@ -125,9 +125,15 @@ class Identifier(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of this Identifier
+        Setup the MiniZinc code for the declaration of this Identifier
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of this Identifier
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """

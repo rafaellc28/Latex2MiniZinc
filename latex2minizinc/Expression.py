@@ -25,10 +25,18 @@ class Expression:
         self.isDeclaredAsSet = None
         self.isDeclaredAsVar = None
         self.checkIfIsDummyIndex = False
-
+        
+        self.symbolTable = None
+        
+    def getSymbolTable(self):
+        return self.symbolTable
+        
+    def setSymbolTable(self, symbolTable):
+        self.symbolTable = symbolTable
+        
     def getSymbol(self):
         return self
-
+        
     def getSymbolName(self, codeGenerator):
         return self.generateCode(codeGenerator)
 

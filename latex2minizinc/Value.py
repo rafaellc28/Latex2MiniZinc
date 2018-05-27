@@ -11,7 +11,8 @@ class Value(Expression):
 
         :param value: float|Identifier
         """
-
+        Expression.__init__(self)
+        
         if isinstance(value, float):
             self.value = Number(value)
         else:
@@ -29,12 +30,18 @@ class Value(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of the identifier of this value
+        Setup the MiniZinc code for the declaration of the identifier of this value
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of the identifier of this value
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Value
+        Generate the MiniZinc code for this Value
         """
         return codeGenerator.generateCode(self)

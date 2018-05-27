@@ -82,9 +82,15 @@ class NumericExpressionWithFunction(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -143,9 +149,15 @@ class FractionalNumericExpression(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this fractional numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this fractional numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this fractional numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -201,9 +213,15 @@ class ValuedNumericExpression(NumericExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
         
     def generateCode(self, codeGenerator):
         """
@@ -240,9 +258,15 @@ class NumericExpressionBetweenParenthesis(NumericExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -296,9 +320,15 @@ class NumericExpressionWithArithmeticOperation(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -335,9 +365,15 @@ class MinusNumericExpression(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -397,9 +433,15 @@ class IteratedNumericExpression(NumericExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -451,9 +493,15 @@ class ConditionalNumericExpression(NumericExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this conditional numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this conditional numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this conditional numeric expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """

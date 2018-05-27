@@ -36,12 +36,18 @@ class ID(Expression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the declaration of this ID
+        Setup the MiniZinc code for the declaration of this ID
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of this ID
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this Identifier
+        Generate the MiniZinc code for this Identifier
         """
         return codeGenerator.generateCode(self)

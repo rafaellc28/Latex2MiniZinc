@@ -78,3 +78,6 @@ END_STATEMENT = ";"
 BREAKLINE = "\n"
 UNDERLINE = "_"
 PERIOD = "."
+
+IGNORE1 = "ignore1"
+IGNORE2 = "ignore2"

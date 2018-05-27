@@ -15,6 +15,8 @@ class ExpressionList(Expression):
         Set the entries for the indexing expression
         """
 
+        Expression.__init__(self)
+
         self.entriesIndexingExpression = entriesIndexingExpression
         self.logicalExpression = logicalExpression
         self.hasSup = False
@@ -91,9 +93,15 @@ class ExpressionList(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this numeric expression
+        Setup the MiniZinc code for the identifiers and sets used in this numeric expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this numeric expression
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """

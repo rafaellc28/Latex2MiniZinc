@@ -5,6 +5,9 @@ class EntryLogicalExpression(Expression):
     Class representing an entry of logical expression in the AST of the MLP
     """
 
+    def __init__(self):
+        Expression.__init__(self)
+
 class EntryLogicalExpressionRelational(EntryLogicalExpression):
     """
     Class representing an entry of relational logical expression in the AST of the MLP
@@ -26,6 +29,8 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
         :param numericExpression2 : NumericExpression
         """
 
+        EntryLogicalExpression.__init__(self)
+
         self.op = op
         self.numericExpression1 = numericExpression1
         self.numericExpression2 = numericExpression2
@@ -42,9 +47,15 @@ class EntryLogicalExpressionRelational(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        Setup the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -70,6 +81,8 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
         :param setExpression : setExpression
         """
         
+        EntryLogicalExpression.__init__(self)
+
         self.op = op
         self.identifier = identifier
         self.setExpression = setExpression
@@ -101,9 +114,15 @@ class EntryLogicalExpressionWithSet(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        Setup the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -129,6 +148,8 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
         :param setExpression2 : SetExpression
         """
 
+        EntryLogicalExpression.__init__(self)
+
         self.op = op
         self.setExpression1 = setExpression1
         self.setExpression2 = setExpression2
@@ -145,9 +166,15 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        Setup the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -175,6 +202,8 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
         :param logicalExpression  : LogicalExpression
         """
 
+        EntryLogicalExpression.__init__(self)
+
         self.op = op
         self.indexingExpression = indexingExpression
         self.logicalExpression  = logicalExpression
@@ -191,9 +220,15 @@ class EntryLogicalExpressionIterated(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        Setup the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers and sets used in this entry for logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -214,6 +249,8 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
         :param logicalExpression : LogicalExpression
         """
 
+        EntryLogicalExpression.__init__(self)
+
         self.logicalExpression = logicalExpression
 
     def __str__(self):
@@ -228,9 +265,15 @@ class EntryLogicalExpressionBetweenParenthesis(EntryLogicalExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this logical expression
+        Setup the MiniZinc code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -250,6 +293,8 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
         :param numericOrSymbolicExpression : NumericExpression|SymbolicExpression
         """
 
+        EntryLogicalExpression.__init__(self)
+
         self.numericOrSymbolicExpression = numericOrSymbolicExpression
 
     def __str__(self):
@@ -264,9 +309,15 @@ class EntryLogicalExpressionNumericOrSymbolic(EntryLogicalExpression):
    
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this logical expression
+        Setup the MiniZinc code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -286,6 +337,8 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
         :param logicalExpression : LogicalExpression
         """
 
+        EntryLogicalExpression.__init__(self)
+        
         self.logicalExpression = logicalExpression
 
     def __str__(self):
@@ -300,9 +353,15 @@ class EntryLogicalExpressionNot(EntryLogicalExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this logical expression
+        Setup the MiniZinc code for the identifiers and sets used in this logical expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this logical expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """

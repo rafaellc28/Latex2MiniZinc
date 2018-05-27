@@ -11,6 +11,8 @@ class ConstraintExpression(Expression):
     LT  = "<"
     GT  = ">"
 
+    def __init__(self):
+        Expression.__init__(self)
 
 class ConstraintExpression2(ConstraintExpression):
     """
@@ -25,6 +27,8 @@ class ConstraintExpression2(ConstraintExpression):
         :param linearExpression2: LinearExpression
         """
         
+        ConstraintExpression.__init__(self)
+
         self.linearExpression1 = linearExpression1
         self.linearExpression2 = linearExpression2
         self.op = op
@@ -41,9 +45,15 @@ class ConstraintExpression2(ConstraintExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets in this constraint
+        Setup the MiniZinc code for the identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets in this constraint
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
@@ -66,6 +76,8 @@ class ConstraintExpression3(ConstraintExpression):
         :param numericExpression2 : NumericExpression
         """
         
+        ConstraintExpression.__init__(self)
+
         self.linearExpression   = linearExpression
         self.numericExpression1 = numericExpression1
         self.numericExpression2 = numericExpression2
@@ -83,9 +95,15 @@ class ConstraintExpression3(ConstraintExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets in this constraint
+        Setup the MiniZinc code for the identifiers and sets in this constraint
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets in this constraint
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
@@ -113,6 +131,8 @@ class LogicalConstraintExpression(ConstraintExpression):
         :param constraintExpression2 : ConstraintExpression
         """
         
+        ConstraintExpression.__init__(self)
+        
         self.op = op
         self.logicalExpression = logicalExpression
         self.constraintExpression1 = constraintExpression1
@@ -134,9 +154,15 @@ class LogicalConstraintExpression(ConstraintExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this conditional constraint expression
+        Setup the MiniZinc code for the identifiers and sets used in this conditional constraint expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this conditional constraint expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -158,11 +184,11 @@ class ConditionalConstraintExpression(ConstraintExpression):
         :param constraintExpression2 : ConstraintExpression
         """
         ConstraintExpression.__init__(self)
-
+        
         self.logicalExpression      = logicalExpression
         self.constraintExpression1  = constraintExpression1
         self.constraintExpression2  = constraintExpression2
-    
+        
     def __str__(self):
         """
         to string
@@ -187,12 +213,19 @@ class ConditionalConstraintExpression(ConstraintExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this conditional constraint expression
+        Setup the MiniZinc code for the identifiers and sets used in this conditional constraint expression
         """
         codeSetup.setupEnvironment(self)
-
+        
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this conditional constraint expression
+        """
+        codePrepare.prepare(self)
+        
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this contitional constraint expression
+        Generate the MiniZinc code for this contitional constraint expression
         """
         return codeGenerator.generateCode(self)
+        

@@ -6,7 +6,7 @@ array[int] of float: profit;
 
 array[int, int] of float: rate;
 
-array[int] of float: avail;
+array[INDEX_SET_avail_1] of float: avail = array1d(INDEX_SET_avail_1, [max(Normal(avail_mean[s],avail_variance[s]),0) | s in STAGE]);
 
 array[int] of float: commit;
 
@@ -20,6 +20,8 @@ array[int] of float: avail_variance;
 array[INDEX_SET_Make_1] of var float: Make;
 
 set of int: INDEX_SET_Make_1;
+
+set of int: INDEX_SET_avail_1;
 
 
 constraint forall(p in PROD)(Make[p] <= market[p] /\ Make[p] >= commit[p]);

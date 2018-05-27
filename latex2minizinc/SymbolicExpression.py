@@ -63,13 +63,19 @@ class SymbolicExpressionWithFunction(SymbolicExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Setup the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this symbolic expression
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this symbolic expression with function
+        Generate the MiniZinc code for this symbolic expression with function
         """
         return codeGenerator.generateCode(self)
     
@@ -119,13 +125,19 @@ class StringSymbolicExpression(SymbolicExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the string used in this symbolic expression
+        Setup the MiniZinc code for the string used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the string used in this symbolic expression
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this string symbolic expression
+        Generate the MiniZinc code for this string symbolic expression
         """
         return codeGenerator.generateCode(self)
 
@@ -158,13 +170,19 @@ class SymbolicExpressionBetweenParenthesis(SymbolicExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Setup the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this symbolic expression
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this symbolic expression
+        Generate the MiniZinc code for this symbolic expression
         """
         return codeGenerator.generateCode(self)
 
@@ -203,13 +221,19 @@ class SymbolicExpressionWithOperation(SymbolicExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this symbolic expression
+        Setup the MiniZinc code for the identifiers and sets used in this symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this symbolic expression
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this symbolic expression with operation
+        Generate the MiniZinc code for this symbolic expression with operation
         """
         return codeGenerator.generateCode(self)
 
@@ -257,12 +281,18 @@ class ConditionalSymbolicExpression(SymbolicExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this conditional symbolic expression
+        Setup the MiniZinc code for the identifiers and sets used in this conditional symbolic expression
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this conditional symbolic expression
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this contitional symbolic expression
+        Generate the MiniZinc code for this contitional symbolic expression
         """
         return codeGenerator.generateCode(self)

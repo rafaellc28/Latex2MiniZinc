@@ -12,6 +12,7 @@ class ValueList(Expression):
         
         :param values : [Identifier|Number|SymbolicExpression]
         """
+        Expression.__init__(self)
         
         self.values = values
         self.i = -1
@@ -73,9 +74,15 @@ class ValueList(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers used in this expression
+        Setup the MiniZinc code for the declaration of identifiers used in this expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers used in this expression
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """

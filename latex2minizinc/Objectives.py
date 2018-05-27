@@ -50,13 +50,19 @@ class Objectives:
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this objective list
+        Setup the MiniZinc code for the identifiers and sets used in this objective list
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this objective list
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the code in MathProg for this objective list
+        Generate the code in MiniZinc for this objective list
         """
         return codeGenerator.generateCode(self)
 
@@ -80,6 +86,7 @@ class Objective:
         self.linearExpression = linearExpression
         self.type = type
         self.domain = domain
+        self.symbolTable = None
     
     def __str__(self):
         """
@@ -87,7 +94,13 @@ class Objective:
         """
         
         return "\nObj:\n" + str(self.type) + ": " + str(self.linearExpression) + "\n"
-    
+        
+    def getSymbolTable(self):
+        return self.symbolTable
+        
+    def setSymbolTable(self, symbolTable):
+        self.symbolTable = symbolTable
+        
     def setDomain(domain):
         """
         Set the domain
@@ -97,12 +110,18 @@ class Objective:
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in this objective function
+        Setup the MiniZinc code for the identifiers and sets used in this objective function
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this objective function
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the code in MathProg for this Objective
+        Generate the code in MiniZinc for this Objective
         """
         return codeGenerator.generateCode(self)

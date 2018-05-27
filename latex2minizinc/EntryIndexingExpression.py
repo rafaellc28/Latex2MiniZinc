@@ -7,6 +7,9 @@ class EntryIndexingExpression(Expression):
     Class representing an entry of indexing expression in the AST of the MLP
     """
 
+    def __init__(self):
+        Expression.__init__(self)
+
 class EntryIndexingExpressionWithSet(EntryIndexingExpression):
     """
     Class representing an entry with set of indexing expression in the AST of the MLP
@@ -23,6 +26,8 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         :param setExpression : SetExpression
         :param op            : (IN | NOTIN)
         """
+
+        EntryIndexingExpression.__init__(self)
 
         self.identifier    = identifier
         self.setExpression = setExpression
@@ -43,9 +48,9 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         """
 
         if isinstance(self.identifier, ValueList):
-            return "EIE_S: ValueList: [" + ", ".join(map(lambda var: str(var) + " " + self.op + " " + str(self.setExpression), self.identifier)) + "]"
+            return "EntryIndexingExpressionWithSet: ValueList: [" + ", ".join(map(lambda var: str(var) + " " + self.op + " " + str(self.setExpression), self.identifier)) + "]"
         else:
-            return "EIE_S: " + str(self.identifier) + " " + self.op + " " + str(self.setExpression)
+            return "EntryIndexingExpressionWithSet: " + str(self.identifier) + " " + self.op + " " + str(self.setExpression)
     
     def getDependencies(self, codeGenerator):
         return list(set(self.identifier.getDependencies(codeGenerator) + self.setExpression.getDependencies(codeGenerator)))
@@ -60,9 +65,15 @@ class EntryIndexingExpressionWithSet(EntryIndexingExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers and sets used in this entry for indexing expression
+        Setup the MiniZinc code for the declaration of identifiers and sets used in this entry for indexing expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers and sets used in this entry for indexing expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -91,6 +102,8 @@ class EntryIndexingExpressionCmp(EntryIndexingExpression):
         :param numericExpression : NumericExpression
         """
 
+        EntryIndexingExpression.__init__(self)
+
         self.op                = op
         self.identifier        = identifier
         self.numericExpression = numericExpression
@@ -107,9 +120,15 @@ class EntryIndexingExpressionCmp(EntryIndexingExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
+        Setup the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -136,6 +155,8 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
         :param supExpression : Expression
         """
 
+        EntryIndexingExpression.__init__(self)
+        
         self.op         = op
         self.identifier = identifier
         self.value      = value
@@ -177,9 +198,15 @@ class EntryIndexingExpressionEq(EntryIndexingExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
+        Setup the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets used in this entry for indexing expressions
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """

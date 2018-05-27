@@ -71,9 +71,15 @@ class Tuple(Expression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the declaration of identifiers used in this range expression
+        Setup the MiniZinc code for the declaration of identifiers used in this range expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the declaration of identifiers used in this range expression
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """

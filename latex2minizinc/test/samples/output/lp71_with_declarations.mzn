@@ -10,11 +10,11 @@ int: N;
 
 array[int, int] of float: Chol;
 
-float: utc;
+float: utc = product(i in 1..2)((gmtime() - 1000000000));
 
 float: seed = utc - 100000 * floor(utc / 100000);
 
-array[int, int] of float: z;
+array[INDEX_SET_z_1, INDEX_SET_z_2] of float: z = array2d(INDEX_SET_z_1, INDEX_SET_z_2, [Normal(0,1) | i in I, t in T]);
 
 array[INDEX_SET_x_1, INDEX_SET_x_2] of float: x = array2d(INDEX_SET_x_1, INDEX_SET_x_2, [Mu[i] + sum(j in I where i >= j)(Chol[i,j] * z[j,t]) | i in I, t in T]);
 
@@ -31,6 +31,10 @@ set of int: INDEX_SET_x_1;
 set of int: INDEX_SET_x_2;
 
 set of int: INDEX_SET_xbar_1;
+
+set of int: INDEX_SET_z_1;
+
+set of int: INDEX_SET_z_2;
 
 
 constraint forall(i,j in I where i >= j)(Chol[i,j] = if i = j then sqrt(Sigma[i,i] - (sum(k in I where k < i)((Chol[i,k] * Chol[i,k])))) else (Sigma[i,j] - sum(k in I where k < j)(Chol[i,k] * Chol[j,k])) / Chol[j,j] endif);

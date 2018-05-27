@@ -83,7 +83,6 @@ class CodeGenerator:
         self.stmtIndex = -1
 
         self.countNewIndices = 0
-        self.includeNewIndices = False
         self.replaceNewIndices = True
         self.getOriginalIndices = False
         self.newIndexExpression = ""
@@ -95,8 +94,6 @@ class CodeGenerator:
         self.checkSetExpressionWithIndexingExpression = False
         self.isSetExpressionWithIndexingExpression = False
         self.isSetExpressionWithIndices = False
-        self.to_enum = False
-        self.realtype = None
 
         self.listEnums = []
         self.listSetOfInts = []
@@ -112,10 +109,6 @@ class CodeGenerator:
         self.setsWitOperationsUsed = []
         self.setsWitOperationsInv = {}
 
-        self.FUNCTIONS_TO_REMOVE = ["str2time", "gmtime", "Uniform01", "Uniform", "Normal01", "Normal", "Irand224"]
-
-        self.lastIdentifier = None
-
         file = os.path.dirname(__file__) + os.sep + "libraries.json"
 
         self.LIBRARIES = json.load(open(file))
@@ -129,142 +122,6 @@ class CodeGenerator:
 
         if method:
             return method(node)
-
-    def init(self):
-        self.parameters = map(lambda el: el.getName(), self.genParameters.getAll())
-        self.sets = map(lambda el: el.getName(), self.genSets.getAll())
-        self.variables = map(lambda el: el.getName(), self.genVariables.getAll())
-
-        self.parameters_and_sets = self.parameters + self.sets
-
-        if len(self.genVariables) > 0:
-            for var in self.genVariables.getAll():
-                if not self.genParameters.has(var) and not self.genSets.has(var):
-                    domain, domains, domain_with_indices_list, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal = self._getSubIndicesDomains(var)
-                    self.identifiers[var.getName()] = {"types": _types,
-                                                       "dim": dim,
-                                                       "minVal": minVal,
-                                                       "maxVal": maxVal,
-                                                       "domain": domain, 
-                                                       "domains": domains, 
-                                                       "domains_with_indices_list": domain_with_indices_list, 
-                                                       "dependencies": dependencies, 
-                                                       "sub_indices": sub_indices, 
-                                                       "statement": stmtIndex}
-
-        if len(self.genParameters) > 0:
-            for var in self.genParameters.getAll():
-                domain, domains, domain_with_indices_list, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal = self._getSubIndicesDomains(var)
-                self.identifiers[var.getName()] = {"types": _types,
-                                                   "dim": dim,
-                                                   "minVal": minVal,
-                                                   "maxVal": maxVal,
-                                                   "domain": domain, 
-                                                   "domains": domains, 
-                                                   "domains_with_indices_list": domain_with_indices_list, 
-                                                   "dependencies": dependencies, 
-                                                   "sub_indices": sub_indices, 
-                                                   "statement": stmtIndex}
-
-        if len(self.genSets) > 0:
-            for var in self.genSets.getAll():
-                domain, domains, domain_with_indices_list, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal = self._getSubIndicesDomains(var)
-                self.identifiers[var.getName()] = {"types": _types,
-                                                   "dim": dim,
-                                                   "minVal": minVal,
-                                                   "maxVal": maxVal,
-                                                   "domain": domain, 
-                                                   "domains": domains, 
-                                                   "domains_with_indices_list": domain_with_indices_list, 
-                                                   "dependencies": dependencies, 
-                                                   "sub_indices": sub_indices, 
-                                                   "statement": stmtIndex}
-
-        self._getTuples()
-
-        '''
-        print("Symbol Tables")
-        self._printSymbolTables(self.symbolTables)
-        print("")
-        
-        print("Declarations")
-        declarations = self.symbolTables.getDeclarations()
-        self._printSymbolTables(declarations.iteritems())
-        print("")
-        
-        print("Leafs")
-        self._printLeafs()
-        print("")
-        '''
-
-    def _printTables(self, tables):
-        for dictStmt in tables:
-            print("SymbolTable Scope " + str(dictStmt["scope"]) + ". Level: " + str(dictStmt["level"]) + ". Leaf: " + str(dictStmt["table"].getIsLeaf()) + 
-                  ". Parent Scope: " + (str(None) if dictStmt["table"].getParent() == None else str(dictStmt["table"].getParent().getScope())))
-
-            print("\n".join([str(key) + ": type = " + str(value.getType()) + "; scope = " + str(value.getScope()) + 
-                   "; properties = [name: " + str(value.getProperties().getName()) + ", domains: " + 
-                   str(map(lambda el: "{" + str(el.getOp()) + " " + el.getName() + ", dependencies: " + str(el.getDependencies()) + "}", value.getProperties().getDomains())) + 
-                   ", minVal: " + str(value.getProperties().getMinVal()) + ", maxVal: " + str(value.getProperties().getMaxVal()) + 
-                   ", dimension: " + str(value.getProperties().getDimension()) + ", default: " + str(value.getProperties().getDefault()) + 
-                   ", attributes: " + str(value.getProperties().getAttributes()) + "]; inferred = " + str(value.getInferred()) + 
-                   "; sub_indices = " + str(value.getSubIndices()) + "; isDefined = " + str(value.getIsDefined()) + 
-                   "; isInLogicalExpression = " + str(value.getIsInLogicalExpression()) + ";"
-                   for key, value in dictStmt["table"]]))
-            print("")
-
-    def _printStatementSymbolTable(self, statement, tables):
-        print("SymbolTable Stmt " + str(statement) + ". Declaration: " + str(tables["isDeclaration"]))
-        self._printTables(tables["tables"])
-
-
-    def _printLeafs(self):
-        for stmt, tables in self.symbolTables:
-            print("SymbolTable Stmt " + str(stmt) + ". Declaration: " + str(tables["isDeclaration"]))
-            leafs = self.symbolTables.getLeafs(stmt)
-            self._printTables(leafs)
-
-    def _printSymbolTables(self, symbolTables):
-        for stmt, tables in symbolTables:
-            self._printStatementSymbolTable(stmt, tables)
-
-    def _printScopes(self):
-        print("Scopes")
-
-        for stmt, scopes in self.scopes.iteritems():
-            print("Statement: " + str(stmt))
-
-            for scope, value in scopes.iteritems():
-                print("Scope: " + str(scope))
-                print("Value: " + str(value))
-
-        print("")
-
-    def _getLogicalExpressionOfDeclaration(self, declaration, varName, dependencies, sub_indices, stmtIndex):
-        if declaration == None or declaration.getIndexingExpression() == None:
-            return None
-
-        indexingExpression = declaration.getIndexingExpression()
-        if not stmtIndex in indexingExpression:
-            return None
-
-        logicalExpression = indexingExpression[stmtIndex].logicalExpression
-
-        if not logicalExpression:
-            return None
-
-        logicalExpressionDependencies = set(logicalExpression.getDependencies(self))
-
-        if varName in logicalExpressionDependencies:
-            return logicalExpression.generateCode(self)
-
-        if sub_indices and len(logicalExpressionDependencies.intersection(sub_indices)) > 0:
-            return logicalExpression.generateCode(self)
-
-        if dependencies and len(logicalExpressionDependencies.intersection(dependencies)) > 0:
-            return logicalExpression.generateCode(self)
-
-        return None
 
     def _getDomainByIdentifier(self, ident):
         if ident in self.identifiers:
@@ -310,452 +167,6 @@ class CodeGenerator:
 
         return False
 
-    def _getKeyForIndex(self, index, table):
-        keys = []
-        t = table
-        order = 0
-        while t != None:
-            for key, value in t:
-
-                sub_indices_list = list(value.getSubIndices())
-                sub_indices_list.reverse()
-
-                for subInd in sub_indices_list:
-                    if index in subInd:
-                        pos = subInd.index(index)
-                        keys.append({"order":order, "identifier":key, "pos":pos})
-
-                        order += 1
-
-            t = t.getParent()
-
-        return keys
-
-    def _isIndexOf(self, index, table, stmt):
-        while table != None:
-            keys = self._getKeyForIndex(index, table)
-            if len(keys) > 0:
-                return keys
-
-            table = table.getParent()
-
-        leafs = self.symbolTables.getLeafs(stmt)
-        for table in sorted(leafs, key=lambda el: el["scope"], reverse=True):
-            table = table["table"]
-
-            while table != None:
-                keys = self._getKeyForIndex(index, table)
-
-                if len(keys) > 0:
-                    return keys
-
-                table = table.getParent()
-
-        return []
-
-    def _tupleContainIndex(self, index, pos, _tuple):
-        for el in _tuple:
-            if el["index"] == index and el["pos"] == pos:
-                return True
-
-        return False
-
-    def _addTuple(self, _tuple, stmt, dimen, setWithIndices, index, ident, order, pos = None, higherPriority = False):
-
-        if not _tuple in self.tuples:
-            self.tuples[_tuple] = {}
-        
-        if not stmt in self.tuples[_tuple]:
-            self.tuples[_tuple][stmt] = {"dimen":dimen, "setWithIndices": setWithIndices, "identifiers": {}}
-
-        elif higherPriority:
-            self.tuples[_tuple][stmt]["dimen"] = dimen
-            self.tuples[_tuple][stmt]["setWithIndices"] = setWithIndices
-            
-        if not ident in self.tuples[_tuple][stmt]["identifiers"]:
-            self.tuples[_tuple][stmt]["identifiers"][ident] = {}
-
-        if not order in self.tuples[_tuple][stmt]["identifiers"][ident]:
-            self.tuples[_tuple][stmt]["identifiers"][ident][order] = []
-
-        if not self._tupleContainIndex(index, pos, self.tuples[_tuple][stmt]["identifiers"][ident][order]):
-            self.tuples[_tuple][stmt]["identifiers"][ident][order].append({"index": index, "pos": pos})
-
-    def _checkIsSetOperation(self, key):
-        for op in self.SET_OPERATIONS:
-            op = " " + op + " "
-            if op in key:
-                return True
-
-        return False
-
-    def _checkIsValuesBetweenBraces(self, setExpression):
-        if not setExpression or not (setExpression[0] == BEGIN_SET and setExpression[len(setExpression)-1] == END_SET):
-            return False
-
-        setExpression = setExpression[1:-1]
-        values = self._splitDomain(setExpression)
-
-        for value in values:
-            if not re.search("^[_a-zA-Z][_a-zA-Z0-9]*$", value) and not re.search('"(?:[^\\\\]|\\\\.)*?(?:"|$)|\'(?:[^\\\\]|\\\\.)*?(?:\'|$)', value):
-                return False
-
-        return True
-
-    def _checkIsSetBetweenBraces(self, setExpression):
-        isAllIdentifiers = self._checkIsValuesBetweenBraces(setExpression)
-
-        if not isAllIdentifiers or not setExpression:
-            return False
-
-        return setExpression[0] == BEGIN_SET and setExpression[len(setExpression)-1] == END_SET and not FROM_TO in setExpression and not setExpression == BEGIN_SET + END_SET
-
-    def _checkIsSetExpressionWithTuple(self, setExpression):
-        return re.search("\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+"+IN+"\s+", setExpression)
-
-    def _cleanKeyWithSetOperation(self, key):
-        key = key.replace(FLOOR+BEGIN_ARGUMENT_LIST, EMPTY_STRING)
-        key = key.replace(BEGIN_SET, EMPTY_STRING)
-        key = key.replace(END_SET, EMPTY_STRING)
-        key = key.replace(BEGIN_ARGUMENT_LIST, EMPTY_STRING)
-        key = key.replace(END_ARGUMENT_LIST, EMPTY_STRING)
-        key = key.replace(BEGIN_ARRAY, EMPTY_STRING)
-        key = key.replace(END_ARRAY, EMPTY_STRING)
-        key = key.replace(SUCH_THAT, EMPTY_STRING)
-        key = key.replace(COMMA, UNDERLINE)
-        key = key.replace(SPACE, UNDERLINE)
-
-        return key
-
-    def _getIndicesFromSetOperation(self, setExpression):
-        m = re.findall("\[([a-zA-Z0-9][a-zA-Z0-9,]*)\]", setExpression)
-        if m and len(m) > 0:
-            indices = []
-            for ind in m:
-                inds = self._splitDomain(ind)
-
-                if inds and len(inds) > 0:
-                    for i in inds:
-                        if not i in indices:
-                            indices.append(i)
-
-            return indices
-
-        return None
-
-    def _getWords(self, expression):
-        if isinstance(expression, str):
-            return re.sub("[^\w]", " ", expression).split()
-
-        return []
-
-    def _getSets(self, setExpression):
-        sets = []
-        dimensions = []
-        words = self._getWords(setExpression)
-
-        for w in words:
-            _genSet = self.genSets.get(w)
-            if _genSet != None:
-                sets.append(w)
-                dimensions.append(_genSet.getDimension())
-
-        return sets, dimensions
-
-    def _getTuplesByTables(self, tables, stmt):
-        for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
-            scope = table["scope"]
-            table = table["table"]
-            
-            while table != None:
-
-                for key, value in table:
-                    
-                    if self._checkIsSetOperation(key) or self._checkIsSetBetweenBraces(key):
-                        indicesSetOp = self._getIndicesFromSetOperation(key)
-
-                        dnew = self._cleanKeyWithSetOperation(key)
-                        self.setsWitOperations[key] = dnew
-                        self.setsWitOperationsInv[dnew] = key
-
-                        if BEGIN_ARRAY in key and SUCH_THAT in key:
-                            dimen = 1
-                        else:
-
-                            sets, dimensions = self._getSets(key)
-                            if len(sets) > 0:
-                                dimen = max(dimensions)
-                            else:
-                                dimen = 1
-
-                        if indicesSetOp and len(indicesSetOp) > 0:
-                            self.setsWitOperationsIndices[key] = {"dimen": dimen, "indices": indicesSetOp}
-
-                        key = dnew
-
-                        self._addTuple(key, stmt, dimen, False, None, None, None, None)
-
-                    elif BEGIN_ARRAY in key and not COMMA in key:
-
-                        parts = key.split(BEGIN_ARRAY)
-                        domain = parts[0].strip()
-                        domain = self._cleanKeyWithSetOperation(domain)
-                        parts = parts[1].split(END_ARRAY)
-
-                        indices = self._splitDomain(parts[0])
-                        dimen = len(indices)
-
-                        for index in indices:
-                            keys = self._isIndexOf(index, table, stmt)
-
-                            if len(keys) > 0:
-                                for key in keys:
-                                    ident = key["identifier"]
-                                    pos   = key["pos"]
-                                    order = key["order"]
-
-                                    self._addTuple(domain, stmt, dimen, True, index, ident, order, pos)
-
-                    elif COMMA in key:
-
-                        domains = value.getProperties().getDomains()
-                        domains.reverse()
-                        
-                        if len(domains) > 0:
-                            indices = key.split(COMMA)
-                            dimen = len(indices)
-
-                            for domain in domains:
-                                d = domain.getName()
-
-                                if self._checkIsSetOperation(d) or self._checkIsSetBetweenBraces(d):
-
-                                    indicesSetOp = self._getIndicesFromSetOperation(key)
-                                    dnew = self._cleanKeyWithSetOperation(d)
-                                    self.setsWitOperations[d] = dnew
-                                    self.setsWitOperationsInv[dnew] = d
-
-                                    if indicesSetOp and len(indicesSetOp) > 0:
-                                        self.setsWitOperationsIndices[d] = {"dimen": dimen, "indices": indicesSetOp}
-
-                                    d = dnew
-                                
-                                d = self._cleanKeyWithSetOperation(d)
-                                for index in indices:
-                                    keys = self._isIndexOf(index, table, stmt)
-
-                                    if len(keys) > 0:
-                                        for key in keys:
-                                            ident = key["identifier"]
-                                            pos   = key["pos"]
-                                            order = key["order"]
-
-                                            self._addTuple(d, stmt, dimen, False, index, ident, order, pos, True)
-
-                                    else:
-                                        self._addTuple(d, stmt, dimen, False, index, None, None, None, True)
-
-                    if len(value.getSubIndices()) > 0:
-
-                        sub_indices_list = list(value.getSubIndices())
-                        sub_indices_list.reverse()
-
-                        for _subIndices in sub_indices_list:
-                            self._checkParameterIsIndexOf(_subIndices, key)
-
-                table = table.getParent()
-
-    def _getTuples(self):
-        statements = self.symbolTables.getStatements()
-        for stmt in sorted(statements, reverse=True):
-
-            scopes = self.symbolTables.getFirstScope(stmt)
-            self._getTuplesByTables(scopes, stmt)
-
-            leafs = self.symbolTables.getLeafs(stmt)
-            self._getTuplesByTables(leafs, stmt)
-
-        for name in self.tuples:
-            
-            index1 = None
-            _type = None
-            pos = {}
-            realtype = None
-            sizeTuple = None
-            isSetWithIndices = False
-
-            for stmt in sorted(self.tuples[name], reverse=True):
-
-                setWithIndices = self.tuples[name][stmt]["setWithIndices"]
-                isSetWithIndices = setWithIndices
-
-                if setWithIndices:
-                    realtype = SET_OF_INT
-
-                domainIdent = []
-                for ident in self.tuples[name][stmt]["identifiers"]:
-                    
-                    for order in sorted(self.tuples[name][stmt]["identifiers"][ident]):
-                        domain = self._getDomainByIdentifier(ident)
-                        sizeTuple = self.tuples[name][stmt]["dimen"]
-                        sizeTupleNotNull = sizeTuple
-
-                        if sizeTuple > 1:
-                            index2 = "1"+FROM_TO+str(sizeTuple)
-                        else:
-                            index2 = None
-
-                        if domain == None or domain.strip() == EMPTY_STRING:
-                            sizeTupleNotNull -= 1
-                        else:
-                            domainIdent.append(domain)
-
-                        if len(domainIdent) > 0:
-                            _tuple = self.tuples[name][stmt]["identifiers"][ident][order]
-                            domainIdents = list(domainIdent)
-                            
-                            if len(domainIdent) == 1:
-                                domain = self._splitDomain(domainIdent[0])
-                                domainIdents = domain
-
-                            if len(_tuple) >= sizeTuple:
-                                domainIdent = []
-
-                            domains = self._stripDomains(domainIdents)
-                            if not setWithIndices and all(map(lambda el: el == domains[0], domains)):
-                                _type = domains[0]
-
-                            else:
-                                size = len(domains)
-                                pos = []
-                                d = []
-
-                                for t in _tuple:
-                                    pos.append(t["pos"])
-
-                                for position in pos:
-                                    if position != None:
-                                        if position >= size:
-                                            index1 = None
-                                            _type = None
-                                            pos = {}
-                                            sizeTuple = None
-
-                                            continue
-
-                                        d.append(domains[position])
-
-                                if not setWithIndices and len(d) > 0 and all(map(lambda el: el == d[0], d)):
-                                    _type = d[0]
-
-                                else:
-                                    index1 = None
-                                    _type = None
-                                    pos = {}
-                                    sizeTuple = None
-
-                                    continue
-
-                        if _type == None or _type == name or _type == ident or _type in self.tuples or FROM_TO in _type:
-                            index1 = None
-                            _type = None
-                            pos = {}
-                            sizeTuple = None
-
-                            continue
-
-                        if _type != None and _type != INT:
-                            break
-
-                    if _type != None and _type != INT:
-                        break
-
-                if _type != None and _type != INT:
-                    break
-
-                index1 = None
-                _type = None
-                pos = {}
-                sizeTuple = None
-
-
-            if index1 == None and not FROM_TO in name:
-                index1 = INDEX_SET_+name
-                setint = SET_OF_INT + SEP_PARTS_DECLARATION + SPACE + index1 + END_STATEMENT + BREAKLINE + BREAKLINE
-
-                self.additionalParameters[index1] = setint
-
-            if _type == None:
-                _type = INT
-
-            if realtype != None and not isSetWithIndices:
-                aux = realtype
-                realtype = _type
-                _type = aux
-
-            if realtype == INT:
-                realtype = None
-
-            if name in self.setsWitOperationsInv:
-                if index2 != None:
-                    self.additionalParameters[name] = ARRAY + BEGIN_ARRAY + index1 + COMMA + index2 + END_ARRAY + SPACE + OF + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + name + END_STATEMENT + BREAKLINE + BREAKLINE
-                else:
-                    self.additionalParameters[name] = ARRAY + BEGIN_ARRAY + index1 + END_ARRAY + SPACE + OF + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + name + END_STATEMENT + BREAKLINE + BREAKLINE
-
-            self.tuplesDeclared[name] = {"index1": index1, "index2": index2, "type": _type, "realtype": realtype, "dimen": sizeTuple, "isSetWithIndices": isSetWithIndices}
-
-    def _isSetForTuple(self, setExpression):
-        if not setExpression in self.tuplesDeclared:
-            return False
-
-        return not self.tuplesDeclared[setExpression]["isSetWithIndices"]
-
-    def _getSetAttribute(self, attribute):
-        if isinstance(attribute, SetExpressionWithValue):
-            return attribute.value
-        else:
-            return attribute
-
-    def _isFromZeroToN(self, values):
-        i = 0
-        for idx in values:
-            if idx != i:
-                return False
-
-            i += 1
-
-        return True
-
-    def _hasEqualIndices(self, minVal, maxVal):
-        minValIndices = sorted(minVal.keys())
-        maxValIndices = sorted(maxVal.keys())
-
-        return minValIndices == maxValIndices
-
-    def _hasAllIndices(self, minVal, maxVal):
-        minValIndices = sorted(minVal.keys())
-        maxValIndices = sorted(maxVal.keys())
-
-        if minValIndices != maxValIndices:
-            return False
-
-        if not self._isFromZeroToN(minValIndices):
-            return False
-
-        if not self._isFromZeroToN(maxValIndices):
-            return False
-
-        return True
-
-    def _zipMinMaxVals(self, minVal, maxVal):
-        minMaxVals = {}
-
-        for idx in minVal:
-            if idx in maxVal:
-                minMaxVals[idx] = str(minVal[idx])+FROM_TO+str(maxVal[idx])
-
-        return minMaxVals
-
     def _getIdentifierNode(self, value):
         if isinstance(value, SetExpressionWithValue):
             value = value.value
@@ -797,496 +208,92 @@ class CodeGenerator:
     def _getModifiers(self, _types):
         return filter(lambda el: self._isModifierSet(el.getObj()), _types)
 
-    def _domainIdentifierType(self, domain):
-        obj = domain.getObj()
-        return self._isIdentifierType(obj)
+    def _getValueFromNumericExpression(self, expr):
+        if isinstance(expr, ValuedNumericExpression):
+            return expr.value
 
-    def _domainIsNumberSet(self, domain):
-        obj = domain.getObj()
-        return self._isTypeSet(obj)
+        return expr
 
-    def _domainIsModifierSet(self, domain):
-        obj = domain.getObj()
-        return self._isModifierSet(obj)
+    def _checkIsSetOperation(self, key):
+        for op in self.SET_OPERATIONS:
+            op = " " + op + " "
+            if op in key:
+                return True
 
-    def _domainIsInvalid(self, domain):
-        return self._domainIdentifierType(domain) or self._domainIsNumberSet(domain) or self._domainIsModifierSet(domain)
+        return False
 
-    def _getNumber(self, numericExpression):
-        if isinstance(numericExpression, Number):
-            return numericExpression
+    def _checkIsValuesBetweenBraces(self, setExpression):
+        if not setExpression or not (setExpression[0] == BEGIN_SET and setExpression[len(setExpression)-1] == END_SET):
+            return False
 
-        if not isinstance(numericExpression, ValuedNumericExpression):
-            return None
+        setExpression = setExpression[1:-1]
+        values = Utils._splitDomain(setExpression, COMMA)
 
-        value = numericExpression.getValue()
-        if isinstance(value, Number):
-            return value
+        for value in values:
+            if not re.search("^[_a-zA-Z][_a-zA-Z0-9]*$", value) and not re.search('"(?:[^\\\\]|\\\\.)*?(?:"|$)|\'(?:[^\\\\]|\\\\.)*?(?:\'|$)', value):
+                return False
+
+        return True
+
+    def _checkIsSetBetweenBraces(self, setExpression):
+        isAllIdentifiers = self._checkIsValuesBetweenBraces(setExpression)
+
+        if not isAllIdentifiers or not setExpression:
+            return False
+
+        return setExpression[0] == BEGIN_SET and setExpression[len(setExpression)-1] == END_SET and not FROM_TO in setExpression and not setExpression == BEGIN_SET + END_SET
+
+    def _checkIsSetExpressionWithTuple(self, setExpression):
+        return re.search("\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+"+IN+"\s+", setExpression)
+
+    def _cleanKeyWithSetOperation(self, key):
+        key = key.replace(FLOOR+BEGIN_ARGUMENT_LIST, EMPTY_STRING)
+        key = key.replace(BEGIN_SET, EMPTY_STRING)
+        key = key.replace(END_SET, EMPTY_STRING)
+        key = key.replace(BEGIN_ARGUMENT_LIST, EMPTY_STRING)
+        key = key.replace(END_ARGUMENT_LIST, EMPTY_STRING)
+        key = key.replace(BEGIN_ARRAY, EMPTY_STRING)
+        key = key.replace(END_ARRAY, EMPTY_STRING)
+        key = key.replace(SUCH_THAT, EMPTY_STRING)
+        key = key.replace(COMMA, UNDERLINE)
+        key = key.replace(SPACE, UNDERLINE)
+
+        return key
+
+    def _getIndicesFromSetOperation(self, setExpression):
+        m = re.findall("\[([a-zA-Z0-9][a-zA-Z0-9,]*)\]", setExpression)
+        if m and len(m) > 0:
+            indices = []
+            for ind in m:
+                inds = Utils._splitDomain(ind, COMMA)
+
+                if inds and len(inds) > 0:
+                    for i in inds:
+                        if not i in indices:
+                            indices.append(i)
+
+            return indices
 
         return None
 
-    def _mountValueByIndex(self, indicesPosition, value):
-        valueDict = {}
-
-        if isinstance(indicesPosition, list):
-            for idx in indicesPosition:
-                valueDict[idx] = value
-        else:
-            valueDict[indicesPosition] = value
-
-        return valueDict
-
-    def _isKeysInDictionary(self, keys, dictionary):
-        if isinstance(keys, list):
-            for idx in keys:
-                if not idx in dictionary:
-                    return False
-
-            return True
-
-        else:
-            return keys in dictionary
-
-    def _isRangeThatCanBeImproved(self, obj, indicesPosition, minVal, maxVal):
-        asc = True
-        rangeObj = {}
-
-        if not isinstance(obj, Range):
-            return False, asc, rangeObj, minVal, maxVal
-
-        rangeInit = obj.getRangeInit()
-        rangeEnd  = obj.getRangeEnd()
-
-        numberInit = self._getNumber(rangeInit)
-        numberEnd  = self._getNumber(rangeEnd)
-
-        if not isinstance(numberInit, Number) and not isinstance(numberEnd, Number):
-            return False, asc, rangeObj, minVal, maxVal
-
-        if isinstance(numberInit, Number) and isinstance(numberEnd, Number):
-            numberInit = int(numberInit.getNumber())
-            numberEnd  = int(numberEnd.getNumber())
-
-            minV = numberInit if numberInit < numberEnd  else numberEnd
-            maxV = numberEnd  if numberEnd  > numberInit else numberInit
-
-            minValAux = self._mountValueByIndex(indicesPosition, minV)
-            minVal = self._setMinVal(minVal, minValAux)
-
-            maxValAux = self._mountValueByIndex(indicesPosition, maxV)
-            maxVal = self._setMaxVal(maxVal, maxValAux)
-
-            return True, asc, rangeObj, minVal, maxVal
-
-        by = obj.getBy()
-
-        if by != None:
-            numberBy = self._getNumber(by)
-            if numberBy == None:
-                return False, asc, rangeObj, minVal, maxVal
-                
-            elif int(numberBy.getNumber()) < 0:
-                asc = False
-
-        if isinstance(numberInit, Number):
-            numberInit = int(numberInit.getNumber())
-
-            minValAux = self._mountValueByIndex(indicesPosition, numberInit)
-            minVal = self._setMinVal(minVal, minValAux)
-
-            maxValAux = self._mountValueByIndex(indicesPosition, numberInit)
-            maxVal = self._setMaxVal(maxVal, maxValAux)
-
-        else:
-
-            if not asc:
-                rangeObj[1] = obj.getRangeInit()
-            else:
-                rangeObj[0] = obj.getRangeInit()
-
-        if isinstance(numberEnd, Number):
-            numberEnd = int(numberEnd.getNumber())
-
-            minValAux = self._mountValueByIndex(indicesPosition, numberEnd)
-            minVal = self._setMinVal(minVal, minValAux)
-
-            maxValAux = self._mountValueByIndex(indicesPosition, numberEnd)
-            maxVal = self._setMaxVal(maxVal, maxValAux)
-
-        else:
-
-            if not asc:
-                rangeObj[0] = obj.getRangeEnd()
-            else:
-                rangeObj[1] = obj.getRangeEnd()
-
-        return True, asc, rangeObj, minVal, maxVal
-
-    def _getItemDomain(self, domains, totalIndices):
-        size = len(domains)
-        if size == 0:
-            return None, None, None, None
-
-        while size > 0:
-            size -= 1
-            domain = domains[size]
-
-            if self._domainIsInvalid(domain):
-                continue
-
-            dependencies = list(domain.getDependencies())
-
-            if domain.getName() in dependencies:
-                dependencies.remove(domain.getName())
-
-            if len(dependencies) > 0:
-                if not set(dependencies).issubset(set(totalIndices+self.parameters_and_sets)):
-                    break
-
-            deps = set(domain.getDependencies())
-            deps.discard(set(totalIndices))
-
-            return domain.getOp(), domain.getName(), domain.getObj(), list(deps)
-
-        return None, None, None, None
-
-    def _getItemDomain(self, domains, totalIndices):
-        size = len(domains)
-        if size == 0:
-            return None, None, None, None
-
-        while size > 0:
-            size -= 1
-            domain = domains[size]
-
-            if self._domainIsInvalid(domain):
-                continue
-
-            dependencies = list(domain.getDependencies())
-
-            if domain.getName() in dependencies:
-                dependencies.remove(domain.getName())
-
-            if len(dependencies) > 0:
-                if not set(dependencies).issubset(set(totalIndices+self.parameters_and_sets)):
-                    break
-
-            deps = set(domain.getDependencies())
-            deps.discard(set(totalIndices))
-
-            return domain.getOp(), domain.getName(), domain.getObj(), list(deps)
-
-        return None, None, None, None
-
-    def _getDomainSubIndices(self, table, selectedIndices, totalIndices, indicesPosition, minVal, maxVal, isDeclaration = False):
-        if not isinstance(selectedIndices, str):
-            selectedIndices = COMMA.join(selectedIndices)
-
-        rangeObjAux = {}
-        domainAux = None
-        opAux = None
-        depsAux = None
-
-        while table != None:
-            value = table.lookup(selectedIndices)
-
-            if value != None:
-                op, domain, domainObj, deps = self._getItemDomain(value.getProperties().getDomains(), totalIndices)
-                
-                if domain != None:
-
-                    if not isDeclaration:
-                        isRangeThatCanBeImproved, asc, rangeObj, minVal, maxVal = self._isRangeThatCanBeImproved(domainObj, indicesPosition, minVal, maxVal)
-                        
-                        if isRangeThatCanBeImproved:
-                            opAux = op
-                            depsAux = deps
-                            domainAux = domain
-                            
-                            if not rangeObjAux and rangeObj:
-                                rangeObjAux = rangeObj
-
-                            table = table.getParent()
-                            continue
-
-                        posBy = domain.find(BY) # if a range is inferred as the domain, the by clause is removed
-
-                        if posBy > 0:
-                            domain = domain[0:posBy].strip()
-
-                    return op, domain, domainObj, deps, minVal, maxVal
-
-            table = table.getParent()
-
-        if domainAux != None:
-            posIn = domainAux.find(SPACE+IN+SPACE)
-
-            if posIn > 0:
-                domain = domainAux[0:posIn+4]
-            else:
-                domain = EMPTY_STRING
-
-            domains = []
-
-            if rangeObjAux:
-                
-                if 0 in rangeObjAux:
-
-                    if not self._isKeysInDictionary(indicesPosition, maxVal):
-                        domains = []
-
-                    else:
-                        if isinstance(indicesPosition, list):
-                            for idx in indicesPosition:
-                                domains.append(rangeObjAux[0].generateCode(self) + FROM_TO + str(maxVal[idx]))
-
-                        else:
-                            domains.append(rangeObjAux[0].generateCode(self) + FROM_TO + str(maxVal[indicesPosition]))
-
-                elif 1 in rangeObjAux:
-
-                    if not self._isKeysInDictionary(indicesPosition, minVal):
-                        domains = []
-
-                    else:
-                        if isinstance(indicesPosition, list):
-                            for idx in indicesPosition:
-                                domains.append(str(minVal[idx]) + FROM_TO + rangeObjAux[1].generateCode(self))
-
-                        else:
-                            domains.append(str(minVal[indicesPosition]) + FROM_TO + rangeObjAux[1].generateCode(self))
-
-            else:
-
-                if not self._isKeysInDictionary(indicesPosition, minVal) or not self._isKeysInDictionary(indicesPosition, maxVal):
-                    domains = []
-
-                else:
-
-                    if isinstance(indicesPosition, list):
-                        for idx in indicesPosition:
-                            domains.append(str(minVal[idx]) + FROM_TO + str(maxVal[idx]))
-
-                    else:
-                        domains.append(str(minVal[indicesPosition]) + FROM_TO + str(maxVal[indicesPosition]))
-
-            if len(domains) > 1:
-                domain += BEGIN_SET+(COMMA+SPACE).join(domains)+END_SET
-
-            elif len(domains) > 0:
-                domain += domains[0]
-
-            if len(domains) > 0:
-                return opAux, domain, None, depsAux, minVal, maxVal
-
-        return None, None, None, None, minVal, maxVal
-
-    def _checkParameterIsIndexOf(self, indices, name):
-        for i in range(len(indices)):
-            ind = indices[i]
-
-            if ind in self.parameters and not ind in self.parameterIsIndexOf:
-                self.parameterIsIndexOf[ind] = {"indexOf":name, "pos":i}
-
-    def _getSubIndicesDomainsByTables(self, name, tables, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None, skip_outermost_scope = False):
-
-        domain = EMPTY_STRING
-        domain_with_indices = EMPTY_STRING
-        dependencies_ret = []
-        sub_indices_ret = []
-        domains_str = []
-        max_length_domain = 0
-
-        countAlreadyComputed = {}
-        dependenciesAlreadyComputed = {}
-        subIndicesAlreadyComputed = {}
-        
-
-        if not domainsAlreadyComputed:
-            domainsAlreadyComputed = {}
-            domainsWithIndicesAlreadyComputed = {}
-        else:
-            domainsWithIndicesAlreadyComputed = dict(domainsAlreadyComputed)
-
-        for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
-
-            table = table["table"]
-
-            while table != None:
-
-                if skip_outermost_scope and table.getParent() == None:
-                    break
-
-                t = table.lookup(name)
-                while t == None and table != None:
-                    table = table.getParent()
-
-                    if table != None:
-                        t = table.lookup(name)
-
-                if skip_outermost_scope and table != None and table.getParent() == None:
-                    break
-
-                if t == None:
-                    if table != None:
-                        table = table.getParent()
-                            
-                    continue
-
-                sub_indices_list = list(t.getSubIndices())
-                sub_indices_list.reverse()
-
-                domain = EMPTY_STRING
-                domains = {}
-                domains_with_indices = {}
-                dependencies = {}
-                domains_str = []
-                count = {}
-
-
-                for _subIndices in sub_indices_list:
-
-                    max_length_domain = max(max_length_domain, len(_subIndices))
-
-                    totalIndices = list(_subIndices)
-                    idx = 0
-                    totalSubIndices = len(_subIndices)
-                    indices = range(totalSubIndices)
-                    indicesBkp = list(indices)
-                    _subIndicesRemaining = list(_subIndices)
-
-                    while idx < totalSubIndices:
-                        _combIndices = _subIndices[idx:]
-                        _indicesPos = indicesBkp[idx:]
-                        
-                        if len(_combIndices) <= 1:
-                            idx += 1
-                            continue
-
-                        op, _tuple, _tupleObj, deps, minVal, maxVal = self._getDomainSubIndices(table, _combIndices, totalIndices, _indicesPos, minVal, maxVal, isDeclaration)
-                        while _tuple == None and len(_combIndices) > 0:
-                            _combIndices = _combIndices[:-1];
-                            _indicesPos = _indicesPos[:-1]
-                            
-                            if len(_combIndices) <= 1:
-                                break
-
-                            op, _tuple, _tupleObj, deps, minVal, maxVal = self._getDomainSubIndices(table, _combIndices, totalIndices, _indicesPos, minVal, maxVal, isDeclaration)
-                            
-                        if _tuple != None:
-                            domains[idx] = _tuple
-                            domains_with_indices[idx] = {"indices": _combIndices, "set": _tuple}
-                            dependencies[idx] = deps
-                            count[idx] = len(_combIndices)
-                            
-                            for i in range(idx, idx+len(_combIndices)):
-                                indices.remove(i)
-
-                            idx += len(_combIndices)
-
-                            for _comb in _combIndices:
-                                _subIndicesRemaining.remove(_comb)
-
-                        else:
-                            idx += 1
-                        
-                    if len(indices) > 0:
-                        indices = sorted(indices)
-
-                        subIdxDomains = [self._getDomainSubIndices(table, _subIndicesRemaining[i], totalIndices, indices[i], minVal, maxVal, isDeclaration) for i in range(len(_subIndicesRemaining))]
-                        subIdxDomainsRemaining = []
-                        
-                        varNameSubIndices = []
-
-                        for i in range(len(subIdxDomains)):
-                            ind = indices[i]
-                            minVal = subIdxDomains[i][4]
-                            maxVal = subIdxDomains[i][5]
-
-                            if subIdxDomains[i][1] != None:
-                                domains[ind] = subIdxDomains[i][1]
-                                domains_with_indices[ind] = _subIndicesRemaining[i] + SPACE + subIdxDomains[i][0] + SPACE + subIdxDomains[i][1]
-                                count[ind] = 1
-                                if not _subIndicesRemaining[i] in varNameSubIndices:
-                                    varNameSubIndices.append(_subIndicesRemaining[i])
-
-                                dependencies[ind] = subIdxDomains[i][3]
-
-                            else:
-                                subIdxDomainsRemaining.append(ind)
-                    
-                    for idx in domains:
-                        if not idx in domainsAlreadyComputed or FROM_TO in domainsAlreadyComputed[idx]:
-                            domainsAlreadyComputed[idx]      = domains[idx]
-                            dependenciesAlreadyComputed[idx] = dependencies[idx]
-
-                            self._setSubIndicesAlreadyComputed(idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices)
-
-                            countAlreadyComputed[idx]   = count[idx]
-                            domainsWithIndicesAlreadyComputed[idx] = domains_with_indices[idx]
-                        
-                        if not idx in domainsWithIndicesAlreadyComputed:
-                            domainsWithIndicesAlreadyComputed[idx] = domains_with_indices[idx]
-
-                        if not idx in subIndicesAlreadyComputed:
-                            self._setSubIndicesAlreadyComputed(idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices)
-                            
-                table = table.getParent()
-            
-        totalCountAlreadyComputed = 0
-        for idx in countAlreadyComputed:
-            totalCountAlreadyComputed += countAlreadyComputed[idx]
-
-        if totalCountAlreadyComputed == max_length_domain:
-            domains_str = []
-            domains_ret = []
-            dependencies_ret = []
-            sub_indices_ret = []
-
-            for key in sorted(domainsAlreadyComputed.iterkeys()):
-                if domainsAlreadyComputed[key] != None:
-                    domains_str.append(domainsAlreadyComputed[key])
-
-                    if key in domainsWithIndicesAlreadyComputed:
-                        domains_ret.append(domainsWithIndicesAlreadyComputed[key])
-
-                    if key in dependenciesAlreadyComputed:
-                        if isinstance(dependenciesAlreadyComputed[key], list):
-                            for dep in dependenciesAlreadyComputed[key]:
-                                dependencies_ret.append(dep)
-
-                        else:
-                            dependencies_ret.append(dependenciesAlreadyComputed[key])
-
-                    if key in subIndicesAlreadyComputed:
-                        if key in domains_with_indices and isinstance(domains_with_indices[key], dict):
-                            _indices = domains_with_indices[key]["indices"]
-                            for i in range(key, key+len(_indices)):
-                                sub_indices_ret.append(subIndicesAlreadyComputed[i])
-
-                        elif isinstance(subIndicesAlreadyComputed[key], list):
-                            for dep in subIndicesAlreadyComputed[key]:
-                                sub_indices_ret.append(dep)
-
-                        else:
-                            sub_indices_ret.append(subIndicesAlreadyComputed[key])
-
-            domain += (COMMA+SPACE).join(domains_str)
-            domain_with_indices = domains_ret
-
-        domain_with_indices = self._processDomainsWithIndices(domain_with_indices)
-        
-        return domain, domains_str, domain_with_indices, list(set(dependencies_ret)), sub_indices_ret, minVal, maxVal
-
-    def _setSubIndicesAlreadyComputed(self, idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices):
-        if idx in domains_with_indices and isinstance(domains_with_indices[idx], dict):
-            _indices = domains_with_indices[idx]["indices"]
-            c = 0
-            for i in range(idx, idx+len(_indices)):
-                subIndicesAlreadyComputed[i] = _indices[c]
-                c += 1
-        else:
-            subIndicesAlreadyComputed[idx]   = _subIndices[idx]
+    def _getSets(self, setExpression):
+        sets = []
+        dimensions = []
+        words = Utils._getWords(setExpression)
+
+        for w in words:
+            _genSet = self.genSets.get(w)
+            if _genSet != None:
+                sets.append(w)
+                dimensions.append(_genSet.getDimension())
+
+        return sets, dimensions
+
+    def _isSetForTuple(self, setExpression):
+        if not setExpression in self.tuplesDeclared:
+            return False
+
+        return not self.tuplesDeclared[setExpression]["isSetWithIndices"]
 
     def _processDomainsWithIndices(self, domain_with_indices):
 
@@ -1320,273 +327,12 @@ class CodeGenerator:
 
         return new_domain_with_indices
 
-    def _getSubIndicesDomainsByStatements(self, name, statements, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None):
-        domain = EMPTY_STRING
-        domains = []
-        domains_with_indices = []
-        dependencies = []
-        sub_indices = []
-        stmtIndex = None
-        currStmt = None
-        
-        for stmt in sorted(statements, reverse=True):
-
-            currStmt = stmt
-            
-            scopes = self.symbolTables.getFirstScopeByKey(name, stmt)
-            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, scopes, minVal, maxVal, isDeclaration, domainsAlreadyComputed)
-
-            if domain != EMPTY_STRING and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
-                stmtIndex = stmt
-                break
-            
-            leafs = self.symbolTables.getLeafs(stmt)
-            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, False, domainsAlreadyComputed, True)
-
-            if domain != EMPTY_STRING and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
-                stmtIndex = stmt
-                break
-
-        if not stmtIndex:
-            stmtIndex = currStmt
-
-        return domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal
-
-    def _getSubIndicesDomains(self, identifier):
-        
-        _types, dim, minVal, maxVal = self._getDomain(identifier)
-        
-        name = identifier.getName()
-        declarations = self.symbolTables.getDeclarationsWhereKeyIsDefined(name)
-
-        domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True)
-        
-        if domain == EMPTY_STRING:
-            statements = self.symbolTables.getStatementsByKey(name)
-            domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False)
-
-        if domain == EMPTY_STRING:
-            if minVal and maxVal and self._hasEqualIndices(minVal, maxVal):
-                minMaxVals = self._zipMinMaxVals(minVal, maxVal)
-                domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True, minMaxVals)
-
-                if domain == EMPTY_STRING or domains == minMaxVals.values():
-                    statements = self.symbolTables.getStatementsByKey(name)
-                    domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False, minMaxVals)
-                
-        return domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal
-
-    def _setMinVal(self, minVal, minValAux):
-        if minVal == None:
-            minVal = {}
-
-        if minValAux == None or len(minValAux) == 0:
-            return minVal
-            
-        for idx in minValAux:
-            if not idx in minVal or minValAux[idx] < minVal[idx]:
-                minVal[idx] = minValAux[idx]
-
-        return minVal
-
-    def _setMaxVal(self, maxVal, maxValAux):
-        if maxVal == None:
-            maxVal = {}
-            
-        if maxValAux == None or len(maxValAux) == 0:
-            return maxVal
-            
-        for idx in maxValAux:
-            if not idx in maxVal or maxValAux[idx] > maxVal[idx]:
-                maxVal[idx] = maxValAux[idx]
-
-        return maxVal
-        
-    def _getDomainsByTables(self, name, tables, _types, dim, minVal, maxVal, skip_outermost_scope = False):
-        
-        for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
-
-            table = table["table"]
-
-            while table != None:
-
-                if skip_outermost_scope and table.getParent() == None:
-                    break
-
-                t = table.lookup(name)
-                while t == None and table != None:
-                    table = table.getParent()
-
-                    if table != None:
-                        t = table.lookup(name)
-
-                if skip_outermost_scope and table != None and table.getParent() == None:
-                    break
-
-                if t == None:
-                    if table != None:
-                        table = table.getParent()
-
-                    continue
-
-                prop = t.getProperties()
-                domains = prop.getDomains()
-                domains.reverse()
-
-                for domain in domains:
-                    inserted = False
-                    for _type in _types:
-                        if domain.getName() == _type.getName():
-                            inserted = True # last occurrence prevails (it is scanning from bottom to top, right to left)
-                            break
-
-                    if not inserted:
-                        _types.append(domain)
-
-                if dim == None:
-                    
-                    if prop.getDimension() != None:
-                        dim = prop.getDimension()
-
-                    else:
-                        dim = 0
-
-                _sub_indices = t.getSubIndices()
-
-                if _sub_indices:
-                    for indices in _sub_indices:
-                        dimen = len(indices)
-
-                        if dimen > dim:
-                            dim = dimen
-
-                minVal = self._setMinVal(minVal, prop.getMinVal())
-                maxVal = self._setMaxVal(maxVal, prop.getMaxVal())
-
-                table = table.getParent()
-
-        return _types, dim, minVal, maxVal
-
-    def _getDomainsByStatements(self, name, statements, _types, dim, minVal, maxVal):
-        
-        for stmt in sorted(statements, reverse=True):
-            
-            scopes = self.symbolTables.getFirstScopeByKey(name, stmt)
-            _types, dim, minVal, maxVal = self._getDomainsByTables(name, scopes, _types, dim, minVal, maxVal, False)
-
-            leafs = self.symbolTables.getLeafs(stmt)
-            _types, dim, minVal, maxVal = self._getDomainsByTables(name, leafs, _types, dim, minVal, maxVal, True)
-
-        return _types, dim, minVal, maxVal
-
-    def _getDomain(self, identifier):
-        _types = []
-        dim = None
-        minVal = None
-        maxVal = None
-
-        name = identifier.getName()
-        declarations = self.symbolTables.getDeclarationsWhereKeyIsDefined(name)
-        _types, dim, minVal, maxVal = self._getDomainsByStatements(name, declarations, _types, dim, minVal, maxVal)
-
-        statements = self.symbolTables.getStatementsByKey(name)
-        _types, dim, minVal, maxVal = self._getDomainsByStatements(name, statements, _types, dim, minVal, maxVal)
-
-        return _types, dim, minVal, maxVal
-
-    def _addDependencies(self, value, stmtIndex, dependencies):
-        names = value.getDependencies(self)
-
-        if names != None and len(names) > 0:
-            for name in names:
-                if not self.genBelongsToList.has(GenBelongsTo(name, stmtIndex)):
-                    dependencies.append(name)
-
-    def _getDependencies(self, identifier):
-        dependencies = []
-
-        decl = self.genDeclarations.get(identifier.getName())
-        if decl != None:
-            value = decl.getValue()
-            if value != None:
-                self._addDependencies(value.attribute, decl.getStmtIndex(), dependencies)
-
-            value = decl.getDefault()
-            if value != None:
-                self._addDependencies(value.attribute, decl.getStmtIndex(), dependencies)
-
-            ins = decl.getIn()
-            if ins != None and len(ins) > 0:
-                for pSet in ins:
-                    self._addDependencies(pSet.attribute, decl.getStmtIndex(), dependencies)
-
-            withins = decl.getWithin()
-            if withins != None and len(withins) > 0:
-                for pSet in withins:
-                    self._addDependencies(pSet.attribute, decl.getStmtIndex(), dependencies)
-
-            relations = decl.getRelations()
-            if relations != None and len(relations) > 0:
-                for pRel in relations:
-                    self._addDependencies(pRel.attribute, decl.getStmtIndex(), dependencies)
-
-            idxsExpression = decl.getIndexingExpression()
-            _subIndices = decl.getSubIndices()
-            for stmtIndex in idxsExpression:
-                if idxsExpression[stmtIndex] and stmtIndex in _subIndices and _subIndices[stmtIndex]:
-                    idxExpression = idxsExpression[stmtIndex]
-
-                    self._addDependencies(idxExpression, decl.getStmtIndex(), dependencies)
-
-        return dependencies
-
-    def _checkAddDependence(self, graph, name, dep):
-        return dep != name and not dep in graph[name] and dep in self.parameters_and_sets
-
-    def _generateGraphAux(self, graph, genObj):
-        if len(genObj) > 0:
-            for identifier in genObj.getAll():
-                
-                name = identifier.getName()
-                if not name in graph:
-                    graph[name] = []
-                
-                dependencies = self._getDependencies(identifier)
-
-                if len(dependencies) > 0:
-                    for dep in dependencies:
-                        if self._checkAddDependence(graph, name, dep):
-                            graph[name].append(dep)
-
-                _domain, domains_vec, dependencies_vec, sub_indices = self._getSubIndicesDomainsAndDependencies(identifier.getName())
-
-                if len(dependencies_vec) > 0:
-                    for dep in dependencies_vec:
-                        if self._checkAddDependence(graph, name, dep):
-                            graph[name].append(dep)
-
-    # Auxiliary Methods
-    def _generateGraph(self):
-        
-        graph = {}
-
-        self._generateGraphAux(graph, self.genSets)
-        self._generateGraphAux(graph, self.genParameters)
-
-        return graph
-
-    def _getValueFromNumericExpression(self, expr):
-        if isinstance(expr, ValuedNumericExpression):
-            return expr.value
-
-        return expr
-
-    # Get the MathProg code for a given relational expression
+    # Get the MiniZinc code for a given relational expression
     def _getCodeValue(self, value):
         val = value.generateCode(self)
         return val
 
-    # Get the MathProg code for a given sub-indice
+    # Get the MiniZinc code for a given sub-indice
     def _getCodeID(self, id_):
         if isinstance(id_, ValuedNumericExpression):
             if isinstance(id_.value, Identifier):
@@ -1599,21 +345,21 @@ class CodeGenerator:
 
         return val
 
-    # Get the MathProg code for a given entry
+    # Get the MiniZinc code for a given entry
     def _getCodeEntry(self, entry): return entry.generateCode(self)
 
-    # Get the MathProg code for a given entry
+    # Get the MiniZinc code for a given entry
     def _getCodeEntryByKey(self, entry):
         for key in entry:
             conj = AND if key == "and" else OR
             return conj, entry[key].generateCode(self)
 
-    # Get the MathProg code for a given objective
+    # Get the MiniZinc code for a given objective
     def _getCodeObjective(self, objective):
         self.objectiveNumber += 1
         return objective.generateCode(self)
 
-    # Get the MathProg code for a given constraint
+    # Get the MiniZinc code for a given constraint
     def _getCodeConstraint(self, constraint):
         if isinstance(constraint, Constraint):
             self.constraintNumber += 1
@@ -1635,16 +381,10 @@ class CodeGenerator:
 
         return valid
 
-    def _stripDomains(self, domains):
-        return map(lambda el: el.strip(), domains)
-
-    def _splitDomain(self, domain):
-        return self._stripDomains(domain.split(COMMA))
-
     def formatNumber(self, number):
         return ("0" if number[0] == PERIOD else EMPTY_STRING) + number
 
-    def _getIndices(self, sub_indices, domains_with_indices):
+    def _getIndices(self, sub_indices, domains_with_indices, stmt, scope):
         indices_ins = []
 
         if sub_indices:
@@ -1691,7 +431,7 @@ class CodeGenerator:
                                 indices_ins[j] = repl
 
                             self.newIndexExpression = repl
-                            self._setNewIndex(i)
+                            self._setNewIndex(i, stmt, scope)
 
             else:
                 if SPACE+IN+SPACE in d:
@@ -1745,7 +485,7 @@ class CodeGenerator:
 
         return res
 
-    def _getRelationalConstraints(self, _type, varName, isArray, sub_indices, domains_with_indices):
+    def _getRelationalConstraints(self, _type, varName, isArray, sub_indices, domains_with_indices, stmt, scope):
         rest = _type
         rest = rest.strip()
 
@@ -1754,7 +494,7 @@ class CodeGenerator:
             const = EMPTY_STRING
 
             if isArray:
-                indices_ins = self._getIndices(sub_indices, domains_with_indices)
+                indices_ins = self._getIndices(sub_indices, domains_with_indices, stmt, scope)
                 var = varName + BEGIN_ARRAY + COMMA.join(indices_ins) + END_ARRAY
 
             else:
@@ -1799,17 +539,6 @@ class CodeGenerator:
                 return cnt
 
         return None
-
-    def _hasFunctionsToRemove(self, expression):
-        words = self._getWords(expression)
-        
-        for function in self.FUNCTIONS_TO_REMOVE:
-            function = function
-
-            if function in words:
-                return True
-
-        return False
 
     def _getIdentifier(self, var):
         if isinstance(var, str):
@@ -1884,7 +613,7 @@ class CodeGenerator:
 
     def _declareVars(self):
         """
-        Generate the MathProg code for the declaration of identifiers
+        Generate the MiniZinc code for the declaration of identifiers
         """
 
         varStr = EMPTY_STRING
@@ -1892,16 +621,6 @@ class CodeGenerator:
             
             for var in self.genVariables.getAll():
                 if not self.genParameters.has(var) and not self.genSets.has(var):
-
-                    self.scope = 0
-                    self.stmtIndex += 1
-
-                    if not self.stmtIndex in self.scopes:
-                        self.scopes[self.stmtIndex] = {}
-                        self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "_declareVars"}
-
-                    previousParentScope = self.parentScope
-                    self.parentScope = self.scope
 
                     value = EMPTY_STRING
                     domain = None
@@ -1936,7 +655,7 @@ class CodeGenerator:
                             
                         isArray = True
 
-                    elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and self._hasAllIndices(minVal, maxVal):
+                    elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
                         domainMinMax = []
                         for i in range(len(minVal)):
                             d = str(minVal[i])+FROM_TO+str(maxVal[i])
@@ -2014,12 +733,16 @@ class CodeGenerator:
                         
                         if len(_types) > 0:
                             _type = _types[0].getObj()
+
+                            stmtIndex = _type.getSymbolTable().getStatement()
+                            scope = _type.getSymbolTable().getScope()
                             
                             if isinstance(_type, BinarySet):
                                 _type = BOOL;
 
                             elif isinstance(_type, IntegerSet):
-                                const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
+
+                                const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope)
                                 
                                 if const:
                                     self.additionalConstraints.append(const)
@@ -2030,7 +753,7 @@ class CodeGenerator:
                                 _type = STRING;
 
                             else:
-                                const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices)
+                                const =  self._getRelationalConstraints(_type.generateCode(self), varName, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope)
                                 
                                 if const:
                                     self.additionalConstraints.append(const)
@@ -2080,6 +803,7 @@ class CodeGenerator:
                                 _type = BOOL
 
                             value = varDecl.getValue().attribute.generateCode(self)
+
                             if not isinstance(varDecl.getValue().attribute, Array):
 
                                 dependencies = varDecl.getValue().attribute.getDependencies(self)
@@ -2087,8 +811,11 @@ class CodeGenerator:
                                     
                                     cnt = None
                                     if isArray:
+                                        stmtIndex = varDecl.getValue().attribute.getSymbolTable().getStatement()
+                                        scope = varDecl.getValue().attribute.getSymbolTable().getScope()
+
                                         indices = map(lambda el: el.generateCode(self), _subIndices)
-                                        indices = self._getIndices(indices, domains_with_indices)
+                                        indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
                                         
                                         if indexingExpression:
                                             cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + varName + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT;
@@ -2102,87 +829,83 @@ class CodeGenerator:
                                     value = EMPTY_STRING
                                     
                                 else:
-                                    if self._hasFunctionsToRemove(value):
-                                        value = EMPTY_STRING
 
-                                    else:
-
-                                        self.getOriginalIndices = True
-                                        value2 = varDecl.getValue().attribute.generateCode(self)
-                                        self.getOriginalIndices = False
+                                    self.getOriginalIndices = True
+                                    value2 = varDecl.getValue().attribute.generateCode(self)
+                                    self.getOriginalIndices = False
+                                    
+                                    if value2 in self.setsWitOperations and self._checkIsValuesBetweenBraces(value2):
+                                        value = self.setsWitOperations[value2]
+                                        self.setsWitOperationsUsed.append(value)
                                         
-                                        if value2 in self.setsWitOperations and self._checkIsValuesBetweenBraces(value2):
-                                            value = self.setsWitOperations[value2]
-                                            self.setsWitOperationsUsed.append(value)
-                                            
-                                            if value2 in self.setsWitOperationsIndices:
-                                                v = self.setsWitOperationsIndices[value2]
+                                        if value2 in self.setsWitOperationsIndices:
+                                            v = self.setsWitOperationsIndices[value2]
 
-                                                if v["dimen"] > 0:
-                                                    value += "["
-                                                    inds = []
-                                                    for i in range(v["dimen"]):
-                                                        inds.append(v["indices"][i])
-                                                    value += COMMA.join(inds) + END_ARRAY
-                                            
-                                            if not self._isSetForTuple(varName):
-                                                _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                                            
-                                        self.newType = INT
-                                        self.turnStringsIntoInts = False
-                                        self.removeAdditionalParameter = False
-
-                                        rangeSet = self._getRange(varDecl.getValue().attribute)
-                                        if rangeSet != None:
-                                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                                            value = rangeSet.generateCode(self)
-
-                                        elif value.startswith(BEGIN_ARRAY):
+                                            if v["dimen"] > 0:
+                                                value += "["
+                                                inds = []
+                                                for i in range(v["dimen"]):
+                                                    inds.append(v["indices"][i])
+                                                value += COMMA.join(inds) + END_ARRAY
+                                        
+                                        if not self._isSetForTuple(varName):
                                             _type = SET_OF_INT + SEP_PARTS_DECLARATION
                                         
-                                        if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                                            self.isSetExpressionWithIndexingExpression = False
+                                    self.newType = INT
+                                    self.turnStringsIntoInts = False
+                                    self.removeAdditionalParameter = False
 
-                                        elif isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value:
-                                            
-                                            if not value.startswith(ARRAY):
+                                    rangeSet = self._getRange(varDecl.getValue().attribute)
+                                    if rangeSet != None:
+                                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                                        value = rangeSet.generateCode(self)
 
-                                                if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
-                                                    value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
+                                    elif value.startswith(BEGIN_ARRAY):
+                                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                                    
+                                    if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
+                                        self.isSetExpressionWithIndexingExpression = False
 
-                                                    if len(domains) > 0:
-                                                        length_domains = len(domains)
-                                                        indices = []
-                                                        array = ARRAY + BEGIN_ARRAY
+                                    elif isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value:
+                                        
+                                        if not value.startswith(ARRAY):
 
-                                                        for i in range(length_domains):
-                                                            d = domains[i]
-                                                            if d == INT:
-                                                                index = INDEX_SET_+varName+UNDERLINE+str(i+1)
-                                                                setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
+                                            if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
+                                                value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
 
-                                                                if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                                    setint += SPACE+ASSIGN+SPACE + domains_aux[i]
+                                                if len(domains) > 0:
+                                                    length_domains = len(domains)
+                                                    indices = []
+                                                    array = ARRAY + BEGIN_ARRAY
 
-                                                                    if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                                        pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
+                                                    for i in range(length_domains):
+                                                        d = domains[i]
+                                                        if d == INT:
+                                                            index = INDEX_SET_+varName+UNDERLINE+str(i+1)
+                                                            setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
 
-                                                                setint += END_STATEMENT+BREAKLINE+BREAKLINE
+                                                            if i < len(domains_aux) and FROM_TO in domains_aux[i]:
+                                                                setint += SPACE+ASSIGN+SPACE + domains_aux[i]
 
-                                                                self.additionalParameters[index] = setint
-                                                                indices.append(index)
+                                                                if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
+                                                                    pos = domains_with_indices[i].find(SPACE+IN+SPACE)
+                                                                    domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
 
-                                                            else:
-                                                                indices.append(d)
+                                                            setint += END_STATEMENT+BREAKLINE+BREAKLINE
 
-                                                        array += (COMMA+SPACE).join(indices) + END_ARRAY
-                                                        self._deleteIndexSet(array, varName)
-                                                        isArray = True
+                                                            self.additionalParameters[index] = setint
+                                                            indices.append(index)
 
-                                                        value = ARRAY +str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+                                                        else:
+                                                            indices.append(d)
 
-                                        self.genValueAssigned.add(GenObj(varName))
+                                                    array += (COMMA+SPACE).join(indices) + END_ARRAY
+                                                    self._deleteIndexSet(array, varName)
+                                                    isArray = True
+
+                                                    value = ARRAY +str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+
+                                    self.genValueAssigned.add(GenObj(varName))
                         else:
 
                             cnt = EMPTY_STRING
@@ -2192,16 +915,17 @@ class CodeGenerator:
                                 indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
                                 attribute = attr.attribute.generateCode(self)
 
-                                if not self._hasFunctionsToRemove(attribute):
+                                if isArray:
+                                    stmtIndex = attr.attribute.getSymbolTable().getStatement()
+                                    scope = attr.attribute.getSymbolTable().getScope()
 
-                                    if isArray:
-                                        domains = self._getDomainsWithIndices(domains_with_indices)
-                                        indices = self._getIndices(sub_indices_vec, domains_with_indices)
-                                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + varName + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE + attribute + END_ARGUMENT_LIST+END_STATEMENT
-                                    else:
-                                        cnt += CONSTRAINT+SPACE + varName + SPACE+EQUAL+SPACE + attribute + END_STATEMENT;
+                                    domains = self._getDomainsWithIndices(domains_with_indices)
+                                    indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
+                                    cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + varName + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE + attribute + END_ARGUMENT_LIST+END_STATEMENT
+                                else:
+                                    cnt += CONSTRAINT+SPACE + varName + SPACE+EQUAL+SPACE + attribute + END_STATEMENT;
 
-                                    self.additionalConstraints.append(cnt)
+                                self.additionalConstraints.append(cnt)
 
                             else:
 
@@ -2211,7 +935,10 @@ class CodeGenerator:
 
                                 if attr != None:
                                     if isArray:
-                                        indices = self._getIndices(sub_indices_vec, domains_with_indices)
+                                        stmtIndex = attr.attribute.getSymbolTable().getStatement()
+                                        scope = attr.attribute.getSymbolTable().getScope()
+
+                                        indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
                                         cntAux += varName + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+LE+SPACE + attr.attribute.generateCode(self)
                                     else:
                                         cntAux += varName + SPACE+LE+SPACE + attr.attribute.generateCode(self)
@@ -2222,7 +949,10 @@ class CodeGenerator:
                                         cntAux += SPACE+AND+SPACE
 
                                     if isArray:
-                                        indices = self._getIndices(sub_indices_vec, domains_with_indices)
+                                        stmtIndex = attr.attribute.getSymbolTable().getStatement()
+                                        scope = attr.attribute.getSymbolTable().getScope()
+
+                                        indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
                                         cntAux += varName + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+GE+SPACE + attr.attribute.generateCode(self)
                                     else:
                                         cntAux += varName + SPACE+GE+SPACE + attr.attribute.generateCode(self)
@@ -2242,22 +972,10 @@ class CodeGenerator:
                     varStr += SEP_PARTS_DECLARATION+SPACE + varName
                     varStr += END_STATEMENT+BREAKLINE+BREAKLINE
 
-                    self.parentScope = previousParentScope
-
         return varStr
 
     def _declareParam(self, _genParameter):
         
-        self.scope = 0
-        self.stmtIndex += 1
-
-        if not self.stmtIndex in self.scopes:
-            self.scopes[self.stmtIndex] = {}
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "_declareParam"}
-
-        previousParentScope = self.parentScope
-        self.parentScope = self.scope
-
         paramStr = EMPTY_STRING
         param = _genParameter.getName()
         
@@ -2281,7 +999,7 @@ class CodeGenerator:
             array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
             isArray = True
 
-        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and self._hasAllIndices(minVal, maxVal):
+        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
             domainMinMax = []
             for i in range(len(minVal)):
                 domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
@@ -2312,8 +1030,15 @@ class CodeGenerator:
             
             ins_vec = varDecl.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
+
             if ins_vec != None and len(ins_vec) > 0:
-                ins = ins_vec[-1].generateCode(self)
+
+                setExpression = ins_vec[-1]
+                ins = setExpression.generateCode(self)
+
+                if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
+                    if len(ins_vec) > 1:
+                        ins = ins_vec[-2].generateCode(self)
 
                 if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(param)):
                     includedType = True
@@ -2348,7 +1073,7 @@ class CodeGenerator:
 
             setExpression = self._getDomainByIdentifier(var)
 
-            _types = self._splitDomain(setExpression)
+            _types = Utils._splitDomain(setExpression, COMMA)
             if pos < len(_types):
                 _type_aux = _types[pos]
 
@@ -2410,8 +1135,11 @@ class CodeGenerator:
                         
                         cnt = None
                         if isArray:
+                            stmtIndex = varDecl.getValue().attribute.getSymbolTable().getStatement()
+                            scope = varDecl.getValue().attribute.getSymbolTable().getScope()
+
                             indices = map(lambda el: el.generateCode(self), _subIndices)
-                            indices = self._getIndices(indices, domains_with_indices)
+                            indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
                             
                             if indexingExpression:
                                 cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + param + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT
@@ -2425,87 +1153,83 @@ class CodeGenerator:
                         value = EMPTY_STRING
                         
                     else:
-                        if self._hasFunctionsToRemove(value):
-                            value = EMPTY_STRING
 
-                        else:
-
-                            self.getOriginalIndices = True
-                            value2 = varDecl.getValue().attribute.generateCode(self)
-                            self.getOriginalIndices = False
+                        self.getOriginalIndices = True
+                        value2 = varDecl.getValue().attribute.generateCode(self)
+                        self.getOriginalIndices = False
+                        
+                        if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
+                            value = self.setsWitOperations[value2]
+                            self.setsWitOperationsUsed.append(value)
                             
-                            if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
-                                value = self.setsWitOperations[value2]
-                                self.setsWitOperationsUsed.append(value)
-                                
-                                if value2 in self.setsWitOperationsIndices:
-                                    v = self.setsWitOperationsIndices[value2]
+                            if value2 in self.setsWitOperationsIndices:
+                                v = self.setsWitOperationsIndices[value2]
 
-                                    if v["dimen"] > 0:
-                                        value += "["
-                                        inds = []
-                                        for i in range(v["dimen"]):
-                                            inds.append(v["indices"][i])
-                                        value += COMMA.join(inds) + END_ARRAY
-                                
-                                if not self._isSetForTuple(param):
-                                    _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                                
-                            self.newType = INT
-                            self.turnStringsIntoInts = False
-                            self.removeAdditionalParameter = False
-
-                            rangeSet = self._getRange(varDecl.getValue().attribute)
-                            if rangeSet != None:
-                                _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                                value = rangeSet.generateCode(self)
-
-                            elif value.startswith(BEGIN_ARRAY):
+                                if v["dimen"] > 0:
+                                    value += "["
+                                    inds = []
+                                    for i in range(v["dimen"]):
+                                        inds.append(v["indices"][i])
+                                    value += COMMA.join(inds) + END_ARRAY
+                            
+                            if not self._isSetForTuple(param):
                                 _type = SET_OF_INT + SEP_PARTS_DECLARATION
                             
-                            if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                                self.isSetExpressionWithIndexingExpression = False
+                        self.newType = INT
+                        self.turnStringsIntoInts = False
+                        self.removeAdditionalParameter = False
 
-                            elif isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value:
-                                
-                                if not value.startswith(ARRAY):
+                        rangeSet = self._getRange(varDecl.getValue().attribute)
+                        if rangeSet != None:
+                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                            value = rangeSet.generateCode(self)
 
-                                    if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
-                                        value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
+                        elif value.startswith(BEGIN_ARRAY):
+                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        
+                        if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
+                            self.isSetExpressionWithIndexingExpression = False
 
-                                        if len(domains) > 0:
-                                            length_domains = len(domains)
-                                            indices = []
-                                            array = ARRAY + BEGIN_ARRAY
+                        elif isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value:
+                            
+                            if not value.startswith(ARRAY):
 
-                                            for i in range(length_domains):
-                                                d = domains[i]
-                                                if d == INT:
+                                if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
+                                    value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
 
-                                                    index = INDEX_SET_+param+UNDERLINE+str(i+1)
-                                                    setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
+                                    if len(domains) > 0:
+                                        length_domains = len(domains)
+                                        indices = []
+                                        array = ARRAY + BEGIN_ARRAY
 
-                                                    if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                        setint += SPACE+ASSIGN+SPACE + domains_aux[i]
+                                        for i in range(length_domains):
+                                            d = domains[i]
+                                            if d == INT:
 
-                                                        if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                            pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                            domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
+                                                index = INDEX_SET_+param+UNDERLINE+str(i+1)
+                                                setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
 
-                                                    setint += END_STATEMENT+BREAKLINE+BREAKLINE
+                                                if i < len(domains_aux) and FROM_TO in domains_aux[i]:
+                                                    setint += SPACE+ASSIGN+SPACE + domains_aux[i]
 
-                                                    self.additionalParameters[index] = setint
-                                                    indices.append(index)
+                                                    if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
+                                                        pos = domains_with_indices[i].find(SPACE+IN+SPACE)
+                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
 
-                                                else:
-                                                    indices.append(d)
+                                                setint += END_STATEMENT+BREAKLINE+BREAKLINE
 
-                                            array += (COMMA+SPACE).join(indices) + END_ARRAY
-                                            isArray = True
+                                                self.additionalParameters[index] = setint
+                                                indices.append(index)
 
-                                            value = ARRAY+str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+                                            else:
+                                                indices.append(d)
 
-                            self.genValueAssigned.add(GenObj(param))
+                                        array += (COMMA+SPACE).join(indices) + END_ARRAY
+                                        isArray = True
+
+                                        value = ARRAY+str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+
+                        self.genValueAssigned.add(GenObj(param))
 
         if not _type or _type.strip() == EMPTY_STRING:
             _type = FLOAT
@@ -2536,21 +1260,9 @@ class CodeGenerator:
 
         paramStr += END_STATEMENT+BREAKLINE+BREAKLINE
 
-        self.parentScope = previousParentScope
-
         return paramStr
 
     def _declareSet(self, _genSet):
-
-        self.scope = 0
-        self.stmtIndex += 1
-
-        if not self.stmtIndex in self.scopes:
-            self.scopes[self.stmtIndex] = {}
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "_declareSet"}
-
-        previousParentScope = self.parentScope
-        self.parentScope = self.scope
 
         name = _genSet.getName()
 
@@ -2577,7 +1289,7 @@ class CodeGenerator:
             array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
             isArray = True
             
-        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and self._hasAllIndices(minVal, maxVal):
+        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
             domainMinMax = []
             for i in range(len(minVal)):
                 domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
@@ -2668,7 +1380,7 @@ class CodeGenerator:
 
                 setExpression = self._getDomainByIdentifier(var)
 
-                _types = self._splitDomain(setExpression)
+                _types = Utils._splitDomain(setExpression, COMMA)
                 if pos < len(_types):
                     _type_aux = _types[pos]
 
@@ -2713,9 +1425,11 @@ class CodeGenerator:
                 if name in dependencies:
                     
                     if isArray:
+                        stmtIndex = varDecl.getValue().attribute.getSymbolTable().getStatement()
+                        scope = varDecl.getValue().attribute.getSymbolTable().getScope()
 
                         indices = map(lambda el: el.generateCode(self), _subIndices)
-                        indices = self._getIndices(indices, domains_with_indices)
+                        indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
 
                         cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT
 
@@ -2729,100 +1443,96 @@ class CodeGenerator:
                     
                 else:
 
-                    if self._hasFunctionsToRemove(value):
-                        value = EMPTY_STRING
+                    self.getOriginalIndices = True
+                    value2 = varDecl.getValue().attribute.generateCode(self)
+                    self.getOriginalIndices = False
+                    
+                    if value2 in self.setsWitOperations:
+                        if self._checkIsSetExpressionWithTuple(value2) or (isArray and not value2.startswith(ARRAY) and not value2.startswith("[")):
+                            value = self.setsWitOperations[value2]
+                            self.setsWitOperationsUsed.append(value)
 
-                    else:
+                            if value2 in self.setsWitOperationsIndices:
+                                v = self.setsWitOperationsIndices[value2]
+                                
+                                if v["dimen"] > 0:
+                                    value += BEGIN_ARRAY
+                                    inds = []
+
+                                    for i in range(v["dimen"]):
+                                        inds.append(v["indices"][i])
+
+                                    value += COMMA.join(inds) + END_ARRAY
                         
-                        self.getOriginalIndices = True
-                        value2 = varDecl.getValue().attribute.generateCode(self)
-                        self.getOriginalIndices = False
-                        
-                        if value2 in self.setsWitOperations:
-                            if self._checkIsSetExpressionWithTuple(value2) or (isArray and not value2.startswith(ARRAY) and not value2.startswith("[")):
-                                value = self.setsWitOperations[value2]
-                                self.setsWitOperationsUsed.append(value)
-
-                                if value2 in self.setsWitOperationsIndices:
-                                    v = self.setsWitOperationsIndices[value2]
-                                    
-                                    if v["dimen"] > 0:
-                                        value += BEGIN_ARRAY
-                                        inds = []
-
-                                        for i in range(v["dimen"]):
-                                            inds.append(v["indices"][i])
-
-                                        value += COMMA.join(inds) + END_ARRAY
-                            
-                            if not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name):
-                                _type = SET_OF_INT + SEP_PARTS_DECLARATION
-
-                        self.newType = INT
-                        self.turnStringsIntoInts = False
-                        self.removeAdditionalParameter = False
-
-                        rangeSet = self._getRange(varDecl.getValue().attribute)
-                        
-                        if rangeSet != None:
-                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                            value = rangeSet.generateCode(self)
-
-                        elif value.startswith(BEGIN_ARRAY):
+                        if not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name):
                             _type = SET_OF_INT + SEP_PARTS_DECLARATION
 
-                        if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                            self.isSetExpressionWithIndexingExpression = False
+                    self.newType = INT
+                    self.turnStringsIntoInts = False
+                    self.removeAdditionalParameter = False
 
-                        elif not value.startswith(ARRAY) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
+                    rangeSet = self._getRange(varDecl.getValue().attribute)
+                    
+                    if rangeSet != None:
+                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        value = rangeSet.generateCode(self)
 
-                            if not value.startswith(ARRAY):
+                    elif value.startswith(BEGIN_ARRAY):
+                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
 
-                                if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
-                                    value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
+                    if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
+                        self.isSetExpressionWithIndexingExpression = False
 
-                                    domain = self._getDomainByIdentifier(name)
-                                    if domain != None and domain.strip() != EMPTY_STRING:
-                                        domains = self._getDomainsByIdentifier(name)
-                                        domains_aux = domains
-                                        domains = self._getDomains(domains)
+                    elif not value.startswith(ARRAY) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
 
-                                        if len(domains) > 0:
-                                            length_domains = len(domains)
-                                            indices = []
-                                            array = ARRAY + BEGIN_ARRAY
+                        if not value.startswith(ARRAY):
 
-                                            for i in range(length_domains):
-                                                d = domains[i]
-                                                if d == INT:
-                                                    index = INDEX_SET_+name+UNDERLINE+str(i+1)
-                                                    setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
+                            if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
+                                value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
 
-                                                    if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                        setint += SPACE+ASSIGN+SPACE + domains_aux[i]
+                                domain = self._getDomainByIdentifier(name)
+                                if domain != None and domain.strip() != EMPTY_STRING:
+                                    domains = self._getDomainsByIdentifier(name)
+                                    domains_aux = domains
+                                    domains = self._getDomains(domains)
 
-                                                        if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                            pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                            domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
+                                    if len(domains) > 0:
+                                        length_domains = len(domains)
+                                        indices = []
+                                        array = ARRAY + BEGIN_ARRAY
 
-                                                    setint += END_STATEMENT+BREAKLINE+BREAKLINE
+                                        for i in range(length_domains):
+                                            d = domains[i]
+                                            if d == INT:
+                                                index = INDEX_SET_+name+UNDERLINE+str(i+1)
+                                                setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
 
-                                                    self.additionalParameters[index] = setint
-                                                    indices.append(index)
+                                                if i < len(domains_aux) and FROM_TO in domains_aux[i]:
+                                                    setint += SPACE+ASSIGN+SPACE + domains_aux[i]
 
-                                                else:
-                                                    indices.append(d)
+                                                    if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
+                                                        pos = domains_with_indices[i].find(SPACE+IN+SPACE)
+                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
 
-                                            if _type == ENUM:
-                                                _type = INT + SEP_PARTS_DECLARATION
+                                                setint += END_STATEMENT+BREAKLINE+BREAKLINE
 
-                                            arrayFromTuple = True
-                                            array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_type+SPACE + name
-                                            deleteTupleIndex = True
+                                                self.additionalParameters[index] = setint
+                                                indices.append(index)
 
-                                            value = ARRAY+str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+                                            else:
+                                                indices.append(d)
 
-                        self.genValueAssigned.add(GenObj(name))
+                                        if _type == ENUM:
+                                            _type = INT + SEP_PARTS_DECLARATION
+
+                                        arrayFromTuple = True
+                                        array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_type+SPACE + name
+                                        deleteTupleIndex = True
+
+                                        value = ARRAY+str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+
+                    self.genValueAssigned.add(GenObj(name))
+
 
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
@@ -2889,8 +1599,6 @@ class CodeGenerator:
             
         setStr += END_STATEMENT+BREAKLINE+BREAKLINE
         
-        self.parentScope = previousParentScope
-
         return setStr
 
     def _declareSetsAndParams(self):
@@ -2912,9 +1620,6 @@ class CodeGenerator:
 
     def _declareDataSetsAndParams(self):
         return EMPTY_STRING
-
-    def _initialize(self):
-        self.init()
 
     def _preModel(self):
         res = EMPTY_STRING
@@ -2949,7 +1654,7 @@ class CodeGenerator:
             res += BREAKLINE + (BREAKLINE+BREAKLINE).join(self.additionalConstraints) + BREAKLINE
 
         return res
-    
+        
     def _posModel(self):
         return EMPTY_STRING
 
@@ -2957,13 +1662,9 @@ class CodeGenerator:
         return node.problem.generateCode(self)
 
     def generateCode_LinearEquations(self, node):
-        self._initialize()
 
         constraints = filter(lambda el: isinstance(el, Constraint), node.constraints.getConstraints())
         objectives = filter(lambda el: isinstance(el, Objective), node.constraints.getConstraints())
-
-        node.constraints.generateCode(self)
-        map(lambda el: self._getCodeObjective(el), objectives)
 
         preModel = self._preModel()
         if preModel != EMPTY_STRING:
@@ -2987,10 +1688,6 @@ class CodeGenerator:
         return res
 
     def generateCode_LinearProgram(self, node):
-        self._initialize()
-
-        if node.constraints:
-            node.constraints.generateCode(self)
 
         res = EMPTY_STRING
 
@@ -3009,20 +1706,9 @@ class CodeGenerator:
 
     # Declarations
     def generateCode_Declarations(self, node):
-        self.scope = 0
-        self.stmtIndex += 1
-
-        if not self.stmtIndex in self.scopes:
-            self.scopes[self.stmtIndex] = {}
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_Objective"}
-
-        previousParentScope = self.parentScope
-        self.parentScope = self.scope
 
         declarations = map(lambda el: el.generateCode(self), node.declarations)
         res = (BREAKLINE+BREAKLINE).join(declarations) + BREAKLINE+BREAKLINE
-
-        self.parentScope = previousParentScope
 
         return res
 
@@ -3065,21 +1751,9 @@ class CodeGenerator:
     # Objective Function
     def generateCode_Objective(self, node):
         """
-        Generate the code in MathProg for this Objective
+        Generate the code in MiniZinc for this Objective
         """
-        self.scope = 0
-        self.stmtIndex += 1
-
-        if not self.stmtIndex in self.scopes:
-            self.scopes[self.stmtIndex] = {}
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_Objective"}
-
-        previousParentScope = self.parentScope
-        self.parentScope = self.scope
-
         res = self._getObjectiveCode(node)
-
-        self.parentScope = previousParentScope
 
         return res
 
@@ -3088,16 +1762,6 @@ class CodeGenerator:
         return (BREAKLINE+BREAKLINE).join(filter(lambda el: self.removeInvalidConstraint(el), map(self._getCodeConstraint, node.constraints)))
 
     def generateCode_Constraint(self, node):
-        self.scope = 0
-        self.stmtIndex += 1
-
-        if not self.stmtIndex in self.scopes:
-            self.scopes[self.stmtIndex] = {}
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_Constraint"}
-
-        previousParentScope = self.parentScope
-        self.parentScope = self.scope
-
         res = EMPTY_STRING
         hasForall = False
 
@@ -3113,8 +1777,6 @@ class CodeGenerator:
             res += EMPTY_STRING
 
         res += node.constraintExpression.generateCode(self) + (END_ARGUMENT_LIST if hasForall else EMPTY_STRING) + END_STATEMENT
-
-        self.parentScope = previousParentScope
 
         return res
 
@@ -3142,29 +1804,16 @@ class CodeGenerator:
         return res
 
     def generateCode_ConditionalConstraintExpression(self, node):
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_ConditionalConstraintExpression1"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
 
         res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.constraintExpression1.generateCode(self)
 
         if node.constraintExpression2:
-            if self.stmtIndex > -1:
-                self.scope += 1
-                self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope, "where": "generateCode_ConditionalConstraintExpression2"}
-
             res += SPACE+ELSE+SPACE + node.constraintExpression2.generateCode(self)
 
         else:
             res += SPACE+ELSE+SPACE+TRUE
 
         res += SPACE+ENDIF
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
 
         return res
 
@@ -3174,18 +1823,7 @@ class CodeGenerator:
         return node.value.generateCode(self)
 
     def generateCode_LinearExpressionBetweenParenthesis(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_LinearExpressionBetweenParenthesis"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         res = BEGIN_ARGUMENT_LIST + node.linearExpression.generateCode(self) + END_ARGUMENT_LIST
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
 
         return res
 
@@ -3196,13 +1834,6 @@ class CodeGenerator:
         return MINUS + node.linearExpression.generateCode(self)
 
     def generateCode_IteratedLinearExpression(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_IteratedLinearExpression"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
 
         indexingExpression = node.indexingExpression.generateCode(self)
         if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
@@ -3221,19 +1852,9 @@ class CodeGenerator:
 
         res += node.linearExpression.generateCode(self) + END_ARGUMENT_LIST
 
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     def generateCode_ConditionalLinearExpression(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_ConditionalLinearExpression"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
 
         res = IF+SPACE + node.logicalExpression.generateCode(self)
 
@@ -3241,15 +1862,9 @@ class CodeGenerator:
             res += SPACE+THEN+SPACE + node.linearExpression1.generateCode(self)
 
             if node.linearExpression2:
-                self.scope += 1
-                self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope}
-
                 res += SPACE+ELSE+SPACE + node.linearExpression2.generateCode(self)
 
             res += SPACE+ENDIF
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
 
         return res
 
@@ -3274,9 +1889,6 @@ class CodeGenerator:
             function = node.function
 
         function = self._getNumericFunction(function)
-
-        if function in self.LIBRARIES and not function in self.include:
-            self.include[function] = self.LIBRARIES[function]
 
         res = function + BEGIN_ARGUMENT_LIST
 
@@ -3330,18 +1942,7 @@ class CodeGenerator:
         return res
 
     def generateCode_NumericExpressionBetweenParenthesis(self, node):
-        
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_NumericExpressionBetweenParenthesis", "context": "(" + node.numericExpression.generateCode(self) + ")"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         res = BEGIN_ARGUMENT_LIST + node.numericExpression.generateCode(self) + END_ARGUMENT_LIST
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
 
         return res
 
@@ -3382,13 +1983,6 @@ class CodeGenerator:
 
     def generateCode_IteratedNumericExpression(self, node):
 
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_IteratedNumericExpression"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         indexingExpression = node.indexingExpression.generateCode(self)
         if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
             indexingExpression = FLOOR+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST
@@ -3406,19 +2000,9 @@ class CodeGenerator:
 
         res += node.numericExpression.generateCode(self) + END_ARGUMENT_LIST
 
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     def generateCode_ConditionalNumericExpression(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_ConditionalNumericExpression"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
 
         res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.numericExpression1.generateCode(self)
 
@@ -3430,9 +2014,6 @@ class CodeGenerator:
 
         res += SPACE+ENDIF
 
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     # Symbolic Expression
@@ -3441,19 +2022,7 @@ class CodeGenerator:
         return node.value.generateCode(self)
 
     def generateCode_SymbolicExpressionBetweenParenthesis(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_SymbolicExpressionBetweenParenthesis"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         res = BEGIN_ARGUMENT_LIST + node.symbolicExpression.generateCode(self) + END_ARGUMENT_LIST
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     def generateCode_SymbolicExpressionWithOperation(self, node):
@@ -3462,6 +2031,7 @@ class CodeGenerator:
 
     # Expression List
     def generateCode_ExpressionList(self, node):
+
         if self.checkSetExpressionWithIndexingExpression:
             self.isSetExpressionWithIndexingExpression = True
 
@@ -3474,22 +2044,28 @@ class CodeGenerator:
         if node.logicalExpression:
             res += SPACE+SUCH_THAT+SPACE + node.logicalExpression.generateCode(self)
 
-        if self.stmtIndex > -1:
-            if "newEntryLogicalExpression" in self.scopes[self.stmtIndex][self.scope] and len(self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"]) > 0:
-                if not node.logicalExpression:
-                    res += SPACE+WHERE+SPACE
-                else:
-                    res += SPACE+AND+SPACE
+        if node.getSymbolTable():
 
-                entries = (SPACE+AND+SPACE).join(self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"])
+            stmtIndex = node.getSymbolTable().getStatement()
+            scope = node.getSymbolTable().getScope()
 
-                res += entries
+            if stmtIndex in self.scopes and scope in self.scopes[stmtIndex]:
 
+                if "newEntryLogicalExpression" in self.scopes[stmtIndex][scope] and len(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"]) > 0:
+                    if not node.logicalExpression:
+                        res += SPACE+WHERE+SPACE
+                    else:
+                        res += SPACE+AND+SPACE
+
+                    entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"])
+
+                    res += entries
 
         return res
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):
+
         if self.checkSetExpressionWithIndexingExpression:
             self.isSetExpressionWithIndexingExpression = True
 
@@ -3502,53 +2078,27 @@ class CodeGenerator:
         if node.logicalExpression:
             res += SPACE+WHERE+SPACE + node.logicalExpression.generateCode(self)
 
-        if self.stmtIndex > -1:
-            if "newEntryLogicalExpression" in self.scopes[self.stmtIndex][self.scope] and len(self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"]) > 0:
-                if not node.logicalExpression:
-                    res += SPACE+WHERE+SPACE
-                else:
-                    res += SPACE+AND+SPACE
+            if node.logicalExpression.getSymbolTable():
+                stmtIndex = node.logicalExpression.getSymbolTable().getStatement()
+                scope = node.logicalExpression.getSymbolTable().getScope()
 
-                entries = (SPACE+AND+SPACE).join(self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"])
+        if node.getSymbolTable():
+            stmtIndex = node.getSymbolTable().getStatement()
+            scope = node.getSymbolTable().getScope()
 
-                res += entries
+            if stmtIndex in self.scopes and scope in self.scopes[stmtIndex]:
+                if "newEntryLogicalExpression" in self.scopes[stmtIndex][scope] and len(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"]) > 0:
+                    if not node.logicalExpression:
+                        res += SPACE+WHERE+SPACE
+                    else:
+                        res += SPACE+AND+SPACE
 
+                    entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"])
+
+                    res += entries
 
         return res
-    
-    def _checkRealType(self, setExpression, values):
-        if not isinstance(values, list):
-            values = [values]
-
-        if BEGIN_ARRAY in setExpression:
-            setExpression = setExpression.split(BEGIN_ARRAY)[0]
-
         
-        if setExpression in self.tuplesDeclared:
-            
-            realtype = self.tuplesDeclared[setExpression]["realtype"]
-            if realtype != None and realtype != SET_OF_INT:
-                self.includeNewIndices = True
-                self.to_enum = True
-                self.realtype = realtype
-                for v in values:
-                    v.generateCode(self)
-
-                self.includeNewIndices = False
-                self.to_enum = False
-                self.realtype = None
-
-        elif FROM_TO in setExpression:
-            self.includeNewIndices = True
-            self.to_enum = True
-            self.realtype = "'realtype'"
-            for v in values:
-                v.generateCode(self)
-
-            self.includeNewIndices = False
-            self.to_enum = False
-            self.realtype = None
-
     def _getSetExpression(self, node):
         setExpression = node.setExpression.generateCode(self)
 
@@ -3560,6 +2110,7 @@ class CodeGenerator:
 
     # Entry Indexing Expression
     def generateCode_EntryIndexingExpressionWithSet(self, node):
+
         if isinstance(node.identifier, ValueList):
             values = filter(self.notInTypesThatAreNotDeclarable, node.identifier.getValues())
 
@@ -3572,13 +2123,7 @@ class CodeGenerator:
                     entries.append(v)
                     self.replaceNewIndices = True
 
-                    # used to compute new entry logical expresson when set expression is of the type 1..N by D
-                    self.lastIdentifier = v
-                    setExpression = self._getSetExpression(node)
-                    self._checkRealType(setExpression, values)
-                    self.lastIdentifier = None
-
-
+                setExpression = self._getSetExpression(node)
                 varList = COMMA.join(entries)
                 res = NOT+BEGIN_ARGUMENT_LIST + varList + SPACE+IN+SPACE + setExpression + END_ARGUMENT_LIST if node.op == EntryIndexingExpressionWithSet.NOTIN else \
                                varList + SPACE + node.op + SPACE + setExpression
@@ -3596,46 +2141,16 @@ class CodeGenerator:
                 self.replaceNewIndices = False
                 idx = values[0].generateCode(self)
                 self.replaceNewIndices = True
-
-                if not "new_indices" in self.scopes[self.stmtIndex][self.scope]:
-                    self.scopes[self.stmtIndex][self.scope]["new_indices"] = {}
-
-                self.countNewIndices = 1
-                self.includeNewIndices = True
-
-                for v in values:
-                    self.newIndexExpression = setExpression+BEGIN_ARRAY+idx+COMMA+str(self.countNewIndices)+END_ARRAY
-                    v.generateCode(self)
-
-                self.countNewIndices = 0
-                self.includeNewIndices = False
-
-                # used to compute new entry logical expresson when set expression is of the type 1..N by D
-                self.lastIdentifier = idx
-                node.setExpression.generateCode(self)
-                self.lastIdentifier = None
                 
                 return idx + SPACE + node.op + SPACE + index1
 
             else:
                 ident = node.identifier.generateCode(self)
-
-                # used to compute new entry logical expresson when set expression is of the type 1..N by D
-                self.lastIdentifier = ident
-                node.setExpression.generateCode(self)
-                self.lastIdentifier = None
-
                 return ident + SPACE + node.op + SPACE + setExpression
 
         elif self.notInTypesThatAreNotDeclarable(node.identifier):
             ident = node.identifier.generateCode(self)
-
-            # used to compute new entry logical expresson when set expression is of the type 1..N by D
-            self.lastIdentifier = ident
             setExpression = self._getSetExpression(node)
-            self._checkRealType(setExpression, node.identifier)
-            self.lastIdentifier = None
-
             res = ident + SPACE + node.op + SPACE + setExpression
 
             return res
@@ -3710,7 +2225,6 @@ class CodeGenerator:
 
             if len(values) > 0:
 
-                
                 entries = []
                 for v in values:
                     self.replaceNewIndices = False
@@ -3718,11 +2232,7 @@ class CodeGenerator:
                     entries.append(v)
                     self.replaceNewIndices = True
 
-                    self.lastIdentifier = v
-                    setExpression = self._getSetExpression(node)
-                    self._checkRealType(setExpression, values)
-                    self.lastIdentifier = None
-
+                setExpression = self._getSetExpression(node)
                 res = (SPACE+AND+SPACE).join(map(lambda var: NOT+BEGIN_ARGUMENT_LIST + var + SPACE+IN+SPACE + setExpression + END_ARGUMENT_LIST if node.op == EntryLogicalExpressionWithSet.NOTIN else \
                                                 var + SPACE + node.op + SPACE + setExpression, entries))
 
@@ -3736,42 +2246,17 @@ class CodeGenerator:
                 values = node.identifier.getValues()
                 idx = values[0].generateCode(self)
 
-                if not "new_indices" in self.scopes[self.stmtIndex][self.scope]:
-                    self.scopes[self.stmtIndex][self.scope]["new_indices"] = {}
-
-                self.countNewIndices = 1
-
-                for v in values:
-                    self.newIndexExpression = setExpression+BEGIN_ARRAY+idx+COMMA+str(self.countNewIndices)+END_ARRAY
-                    v.generateCode(self)
-
-                self.countNewIndices = 0
-
-                self.lastIdentifier = idx
-                node.setExpression.generateCode(self)
-                self.lastIdentifier = None
-
                 return idx + SPACE + node.op + SPACE + index1
 
             else:
                 ident = node.identifier.generateCode(self)
-
-                self.lastIdentifier = ident
-                node.setExpression.generateCode(self)
-                self.lastIdentifier = None
-
                 return ident + SPACE + node.op + SPACE + setExpression
-
+                
         elif self.notInTypesThatAreNotDeclarable(node.identifier):
             ident = node.identifier.generateCode(self)
-            
-            self.lastIdentifier = ident
             setExpression = self._getSetExpression(node)
-            self._checkRealType(setExpression, node.identifier)
-            self.lastIdentifier = None
-
             res = ident + SPACE + node.op + SPACE + setExpression
-
+            
             return res
 
         return EMPTY_STRING
@@ -3780,35 +2265,11 @@ class CodeGenerator:
         return node.setExpression1.generateCode(self) + SPACE + node.op + SPACE + node.setExpression2.generateCode(self)
 
     def generateCode_EntryLogicalExpressionIterated(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_EntryLogicalExpressionIterated"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         res =  node.op + BEGIN_ARGUMENT_LIST + node.indexingExpression.generateCode(self) + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST +  node.logicalExpression.generateCode(self) + END_ARGUMENT_LIST
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     def generateCode_EntryLogicalExpressionBetweenParenthesis(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_EntryLogicalExpressionBetweenParenthesis"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         res = BEGIN_ARGUMENT_LIST + node.logicalExpression.generateCode(self) + END_ARGUMENT_LIST
-
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     def generateCode_EntryLogicalExpressionNot(self, node):
@@ -3880,16 +2341,6 @@ class CodeGenerator:
         return ENUM
 
     def generateCode_IteratedSetExpression(self, node):
-
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_IteratedSetExpression"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
-        
-
         if node.indexingExpression:
             integrand_str = EMPTY_STRING
             indexingExpression = node.indexingExpression.generateCode(self)
@@ -3934,20 +2385,9 @@ class CodeGenerator:
         return res
 
     def generateCode_ConditionalSetExpression(self, node):
-        if self.stmtIndex > -1:
-            self.scope += 1
-            self.scopes[self.stmtIndex][self.scope] = {"parent": self.parentScope, "where": "generateCode_ConditionalSetExpression1"}
-
-            previousParentScope = self.parentScope
-            self.parentScope = self.scope
-
         res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.setExpression1.generateCode(self)
 
         if node.setExpression2:
-            if self.stmtIndex > -1:
-                self.scope += 1
-                self.scopes[self.stmtIndex][self.scope] = {"parent": previousParentScope, "where": "generateCode_ConditionalSetExpression2"}
-
             res += SPACE+ELSE+SPACE + node.setExpression2.generateCode(self)
 
         else:
@@ -3955,26 +2395,13 @@ class CodeGenerator:
 
         res += SPACE+ENDIF
 
-        if self.stmtIndex > -1:
-            self.parentScope = previousParentScope
-
         return res
 
     # Range
     def generateCode_Range(self, node):
+
         initValue = node.rangeInit.generateCode(self)
         endValue = node.rangeEnd.generateCode(self)
-
-        if node.by != None:
-
-            if self.stmtIndex > -1:
-                if not "newEntryLogicalExpression" in self.scopes[self.stmtIndex][self.scope]:
-                    self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"] = []
-                    
-            if self.lastIdentifier != None:
-                newEntry = BEGIN_ARGUMENT_LIST+self.lastIdentifier+MINUS+initValue+END_ARGUMENT_LIST+SPACE+MOD+SPACE + node.by.generateCode(self) + SPACE+EQUAL+SPACE+"0"
-                if not newEntry in self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"]:
-                    self.scopes[self.stmtIndex][self.scope]["newEntryLogicalExpression"].append(newEntry)
 
         if isinstance(node.rangeInit, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.rangeInit):
             initValue = FLOOR+BEGIN_ARGUMENT_LIST+initValue+END_ARGUMENT_LIST
@@ -4022,19 +2449,16 @@ class CodeGenerator:
     def generateCode_Identifier(self, node):
         if isinstance(node.sub_indices, str):
             return EMPTY_STRING
-
+            
         length_sub_indices = len(node.sub_indices)
-
+        
         if length_sub_indices > 0:
-
+            
             ident = node.identifier.generateCode(self)
             if self.isSetExpressionWithIndices:
                 res = ident
                 
             else:
-
-                domains = self._getDomainByIdentifier(ident)
-                includedDomains = False
 
                 self.countIndicesProcessed += 1
                 identProcessing = ident+str(self.countIndicesProcessed)
@@ -4042,33 +2466,10 @@ class CodeGenerator:
                 self.parentIdentifier = ident
                 self.turnStringsIntoInts = True
 
-                if domains != None and domains.strip() != EMPTY_STRING:
-                    domains = self._splitDomain(domains)
-
-                    if len(domains) == length_sub_indices:
-
-                        includedDomains = True
-                        for i in range(length_sub_indices):
-                            ind = node.sub_indices[i]
-                            self.newType = domains[i]
-
-                            self.turnStringsIntoInts = True
-                            ind.generateCode(self)
-                            self.turnStringsIntoInts = False
-                        
-                if not includedDomains:
-
-                    self.newType = INT
-                    for i in range(length_sub_indices):
-                        ind = node.sub_indices[i]
-                        
-                        self.turnStringsIntoInts = True
-                        ind.generateCode(self)
-                        self.turnStringsIntoInts = False
-                        
                 if isinstance(node.sub_indices, list):
 
                     res = ident + BEGIN_ARRAY
+                    
                     self.posId[identProcessing] = 0
                     for ind in node.sub_indices:
                         if self.posId[identProcessing] > 0:
@@ -4087,7 +2488,6 @@ class CodeGenerator:
 
                 else:
 
-                    self.posId = 0
                     self.identProcessing = identProcessing
 
                     inds = []
@@ -4101,8 +2501,6 @@ class CodeGenerator:
 
                     res += COMMA.join(inds) + END_ARRAY
 
-                    self.posId = None
-                    
                 self.turnStringsIntoInts = False
                 self.parentIdentifier = None
                 self.identProcessing = None
@@ -4116,14 +2514,17 @@ class CodeGenerator:
     def generateCode_Number(self, node):
         return self.formatNumber(node.number)
 
-    def _getNewIndex(self, ident, stmt, scope):
-        if not stmt in self.scopes:
-            return None
-
-        if not scope in self.scopes[stmt]:
-            return None
+    def _getNewIndex(self, ident, symbolTable):
+        stmt  = symbolTable.getStatement()
+        scope = symbolTable.getScope()
 
         while scope >= 0:
+            if not stmt in self.scopes:
+                return None
+
+            if not scope in self.scopes[stmt]:
+                return None
+
             if "new_indices" in self.scopes[stmt][scope]:
                 if ident in self.scopes[stmt][scope]["new_indices"]:
                     new_index = self.scopes[stmt][scope]["new_indices"][ident]
@@ -4138,7 +2539,7 @@ class CodeGenerator:
                             
                             if domain != None and domain.strip() != "":
                                 domains = []
-                                domains_aux = self._splitDomain(domain)
+                                domains_aux = Utils._splitDomain(domain, COMMA)
                                 
                                 for domain in domains_aux:
                                     if domain in self.tuplesDeclared:
@@ -4165,43 +2566,47 @@ class CodeGenerator:
 
                     return new_index
 
-            if not "parent" in self.scopes[stmt][scope]:
+            if not symbolTable.getParent():
                 scope = -1
             else:
-                scope = self.scopes[stmt][scope]["parent"]
+                scope = symbolTable.getParent().getScope()
+                
+                if scope == None:
+                    scope = -1
+
+            symbolTable = symbolTable.getParent()
 
         return None 
 
-    def _setNewIndex(self, ident):
-        if self.stmtIndex > -1:
-            if not self.scope in self.scopes[self.stmtIndex]:
-                self.scopes[self.stmtIndex][self.scope] = {}
+    def _setNewIndex(self, ident, stmt, scope):
+        if not stmt in self.scopes:
+            self.scopes[stmt] = {}
 
-            if not "new_indices" in self.scopes[self.stmtIndex][self.scope]:
-                self.scopes[self.stmtIndex][self.scope]["new_indices"] = {}
+        if not scope in self.scopes[stmt]:
+            self.scopes[stmt][scope] = {}
 
-            if not ident in self.scopes[self.stmtIndex][self.scope]["new_indices"]:
-                self.scopes[self.stmtIndex][self.scope]["new_indices"][ident] = self.newIndexExpression
+        if not "new_indices" in self.scopes[stmt][scope]:
+            self.scopes[stmt][scope]["new_indices"] = {}
+
+        if not ident in self.scopes[stmt][scope]["new_indices"]:
+            self.scopes[stmt][scope]["new_indices"][ident] = self.newIndexExpression
+            self.countNewIndices += 1
+
+        else:
+            newIndex = self.scopes[stmt][scope]["new_indices"][ident]
+            if newIndex == INT and self.newIndexExpression != INT:
+                self.scopes[stmt][scope]["new_indices"][ident] = self.newIndexExpression
                 self.countNewIndices += 1
-
-            else:
-                newIndex = self.scopes[self.stmtIndex][self.scope]["new_indices"][ident]
-                if newIndex == INT and self.newIndexExpression != INT:
-                    self.scopes[self.stmtIndex][self.scope]["new_indices"][ident] = self.newIndexExpression
-                    self.countNewIndices += 1
 
     # ID
     def generateCode_ID(self, node):
         ident = node.value
-
-        if self.includeNewIndices:
-            if self.to_enum:
-                self.newIndexExpression = TO_ENUM + BEGIN_ARGUMENT_LIST+self.realtype+COMMA+ident+END_ARGUMENT_LIST
-
-            self._setNewIndex(ident)
+        
+        if not node.getSymbolTable():
+            return ident
 
         if self.replaceNewIndices and not self.getOriginalIndices:
-            new_ident = self._getNewIndex(ident, self.stmtIndex, self.scope)
+            new_ident = self._getNewIndex(ident, node.getSymbolTable())
 
             if new_ident != None:
                 return new_ident
@@ -4212,33 +2617,20 @@ class CodeGenerator:
     def generateCode_String(self, node):
         string = "\"" + node.string[1:-1] + "\""
 
+        if not node.getSymbolTable():
+            return string
+
         if self.turnStringsIntoInts:
             param = string[1:-1]
 
             if self.removeAdditionalParameter:
                 if param in self.additionalParameters:
                     del self.additionalParameters[param]
-            else:
-                if not param in self.additionalParameters:
-                    if not self.newType:
-                        self.newType = INT
-
-                    if not param in self.additionalParameters or self.newType != INT:
-                        self.additionalParameters[param] = self.newType+SEP_PARTS_DECLARATION+SPACE + param + END_STATEMENT+BREAKLINE+BREAKLINE
-
-            self.newIndexExpression = param
-            self._setNewIndex(string)
-
-            if self.genParameters.has(param):
-                self.genParameters.remove(param)
-
-            if self.genSets.has(param):
-                self.genSets.remove(param)
 
             return param
 
         if self.replaceNewIndices:
-            new_ident = self._getNewIndex(string, self.stmtIndex, self.scope)
+            new_ident = self._getNewIndex(string, node.getSymbolTable())
             if new_ident != None:
                 return new_ident
 

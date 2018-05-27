@@ -11,6 +11,8 @@ class Declarations:
         """
         
         self.declarations = declarations
+
+        self.symbolTable = None
     
     def __str__(self):
         """
@@ -18,16 +20,28 @@ class Declarations:
         """
         
         return "\nDecls:\n" + "\n".join(map(lambda i: str(i), self.declarations))
+ 
+    def getSymbolTable(self):
+        return self.symbolTable
+        
+    def setSymbolTable(self, symbolTable):
+        self.symbolTable = symbolTable
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for the identifiers and sets used in these declarations
+        Setup the MiniZinc code for the identifiers and sets used in these declarations
         """
         codeSetup.setupEnvironment(self)
 
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in these declarations
+        """
+        codePrepare.prepare(self)
+
     def generateCode(self, codeGenerator):
         """
-        Generate the code in MathProg for these Constraints
+        Generate the code in MiniZinc for these Constraints
         """
         return codeGenerator.generateCode(self)
     
@@ -36,7 +50,7 @@ class Declaration:
     Class representing a declaration node in the AST of a MLP
     """
     
-    # Get the MathProg code for a given IndexingExpression
+    # Get the MiniZinc code for a given IndexingExpression
     @staticmethod
     def _getCodeIndexingExpression(indexingExpression): return indexingExpression.generateCode()
     #def _getCodeIndexingExpression(indexingExpression): return SupportGenCode.emitIndexingExpression(indexingExpression.generateCode())
@@ -52,6 +66,7 @@ class Declaration:
         self.declarationExpression = declarationExpression
         self.indexingExpression   = indexingExpression
         self.stmtIndex = stmtIndex
+        self.symbolTable = None
     
     def __str__(self):
         """
@@ -64,6 +79,12 @@ class Declaration:
         
         return "Decl:" + res
     
+    def getSymbolTable(self):
+        return self.symbolTable
+        
+    def setSymbolTable(self, symbolTable):
+        self.symbolTable = symbolTable
+    
     def setStmtIndexing(self, stmtIndex):
         self.stmtIndex = stmtIndex
 
@@ -72,12 +93,18 @@ class Declaration:
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MathProg code for declaration of identifiers and sets in this declaration
+        Setup the MiniZinc code for declaration of identifiers and sets in this declaration
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets in this declaration
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
-        Generate the MathProg code for this constraint
+        Generate the MiniZinc code for this constraint
         """
         return codeGenerator.generateCode(self)

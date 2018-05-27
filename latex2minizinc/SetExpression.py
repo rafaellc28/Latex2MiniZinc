@@ -38,9 +38,9 @@ class SetExpressionWithValue(SetExpression):
         to string
         """
         if isinstance(self.value, ValueList):
-            return "SetExpression: {" + str(self.value) + "}"
+            return "SetExpressionWithValue: {" + str(self.value) + "}"
         else:
-            return "SetExpression: "+str(self.value)
+            return "SetExpressionWithValue: "+str(self.value)
 
     def setDimension(self, dimension):
         self.dimension = dimension
@@ -70,9 +70,15 @@ class SetExpressionWithValue(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
+        Setup the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets used in this set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -118,9 +124,15 @@ class SetExpressionWithIndices(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
+        Setup the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets used in this set expression
+        """
+        codePrepare.prepare(self)
     
     def generateCode(self, codeGenerator):
         """
@@ -162,9 +174,15 @@ class SetExpressionWithOperation(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for declaration of identifiers and sets used in this set expression
+        Setup the MiniZinc code for declaration of identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for declaration of identifiers and sets used in this set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -199,9 +217,15 @@ class SetExpressionBetweenParenthesis(SetExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this set expression
+        Setup the MiniZinc code for the identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -239,9 +263,15 @@ class SetExpressionBetweenBraces(SetExpression):
     
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this set expression
+        Setup the MiniZinc code for the identifiers and sets used in this set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -292,9 +322,15 @@ class IteratedSetExpression(SetExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this iterated set expression
+        Setup the MiniZinc code for the identifiers and sets used in this iterated set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this iterated set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -326,9 +362,15 @@ class EnumSetExpression(SetExpression):
         
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this iterated set expression
+        Setup the MiniZinc code for the identifiers and sets used in this iterated set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this iterated set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
@@ -379,9 +421,15 @@ class ConditionalSetExpression(SetExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this conditional set expression
+        Setup the MiniZinc code for the identifiers and sets used in this conditional set expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this conditional set expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """

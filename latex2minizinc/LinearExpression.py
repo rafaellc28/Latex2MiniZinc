@@ -5,6 +5,9 @@ class LinearExpression(Expression):
     Class representing a linear expression node in the AST of a MLP
     """
 
+    def __init__(self):
+        Expression.__init__(self)
+
 class ValuedLinearExpression(LinearExpression):
     """
     Class representing a valued linear expression node in the AST of a MLP
@@ -16,6 +19,8 @@ class ValuedLinearExpression(LinearExpression):
 
         :param value : Identifier | Number
         """
+
+        LinearExpression.__init__(self)
 
         self.value = value
 
@@ -50,6 +55,7 @@ class LinearExpressionBetweenParenthesis(LinearExpression):
 
         :param linearExpression : LinearExpression
         """
+        LinearExpression.__init__(self)
 
         self.linearExpression = linearExpression
 
@@ -91,7 +97,8 @@ class LinearExpressionWithArithmeticOperation(LinearExpression):
         :param expression1 : LinearExpression | NumericExpression
         :param expression2 : LinearExpression | NumericExpression
         """
-        
+        LinearExpression.__init__(self)
+
         self.op          = op
         self.expression1 = expression1
         self.expression2 = expression2
@@ -127,7 +134,8 @@ class MinusLinearExpression(LinearExpression):
         
         :param linearExpression: LinearExpression
         """
-        
+        LinearExpression.__init__(self)
+
         self.linearExpression = linearExpression
     
     def __str__(self):
@@ -164,6 +172,8 @@ class IteratedLinearExpression(LinearExpression):
         :param numericExpression  : NumericExpression
         """
         
+        LinearExpression.__init__(self)
+
         self.linearExpression   = linearExpression
         self.indexingExpression = indexingExpression
         self.numericExpression  = numericExpression
@@ -207,6 +217,7 @@ class ConditionalLinearExpression(LinearExpression):
         :param linearExpression1 : LinearExpression
         :param linearExpression2 : LinearExpression
         """
+        LinearExpression.__init__(self)
         
         self.logicalExpression = logicalExpression
         self.linearExpression1 = linearExpression1
@@ -233,9 +244,15 @@ class ConditionalLinearExpression(LinearExpression):
 
     def setupEnvironment(self, codeSetup):
         """
-        Generate the MiniZinc code for the identifiers and sets used in this conditional linear expression
+        Setup the MiniZinc code for the identifiers and sets used in this conditional linear expression
         """
         codeSetup.setupEnvironment(self)
+
+    def prepare(self, codePrepare):
+        """
+        Prepare the MiniZinc code for the identifiers and sets used in this conditional linear expression
+        """
+        codePrepare.prepare(self)
 
     def generateCode(self, codeGenerator):
         """
