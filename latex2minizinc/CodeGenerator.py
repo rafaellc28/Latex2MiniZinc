@@ -91,8 +91,6 @@ class CodeGenerator:
         self.array2dIndex1 = None
         self.array2dIndex2 = None
 
-        self.checkSetExpressionWithIndexingExpression = False
-        self.isSetExpressionWithIndexingExpression = False
         self.isSetExpressionWithIndices = False
 
         self.listEnums = []
@@ -611,6 +609,60 @@ class CodeGenerator:
             del self.additionalParameters[index]
 
 
+    def _processDomain(self, domain, domains, domains_with_indices, dim, minVal, maxVal, isVariable = False):
+
+        isArray = False
+        array = EMPTY_STRING
+        domains_aux = []
+
+        if domain != None and domain.strip() != EMPTY_STRING:
+
+            if isVariable:
+
+                domains0 = self._getDomains(domains)
+                
+                for d in domains0:
+                    if d in self.tuples:
+                        d = INT
+                        _tuple = self.tuples[d]
+                        dimen = _tuple["dimen"]
+
+                        if dimen != None:
+                            for i in range(dimen):
+                                domains_aux.append(d)
+                    else:
+                        domains_aux.append(d)
+            
+            else:                
+                domains_aux = domains
+                domains = self._getDomains(domains)
+                domain = (COMMA+SPACE).join(domains)
+                array = ARRAY + BEGIN_ARRAY + domain + END_ARRAY
+
+            isArray = True
+            
+        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
+            domainMinMax = []
+            for i in range(len(minVal)):
+                domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
+
+            domains_aux = self._getDomains(domainMinMax)
+            domains = domainMinMax
+            domain = (COMMA+SPACE).join(domains)
+            array = ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
+            domains_with_indices = self._processDomainsWithIndices(domainMinMax)
+            isArray = True
+
+        elif dim > 0:
+            domains_aux = [INT]*dim
+            domains = self._getDomains(domains_aux)
+            domain = (COMMA+SPACE).join(domains)
+            array = ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
+            domains_with_indices = self._processDomainsWithIndices(domains_aux)
+            isArray = True
+
+        return domain, domains, domains_with_indices, domains_aux, array, isArray
+
     def _declareVars(self):
         """
         Generate the MiniZinc code for the declaration of variables
@@ -638,6 +690,7 @@ class CodeGenerator:
             _type = None
             isArray = False
             includedVar = False
+            array = EMPTY_STRING
             
             varDecl = self.genDeclarations.get(varName)
 
@@ -646,44 +699,8 @@ class CodeGenerator:
 
             _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
 
-            domains_aux = []
-
-            if domain and domain.strip() != EMPTY_STRING:
-                domains0 = self._getDomains(domains)
-                
-                for d in domains0:
-                    if d in self.tuples:
-                        d = INT
-                        _tuple = self.tuples[d]
-                        dimen = _tuple["dimen"]
-
-                        if dimen != None:
-                            for i in range(dimen):
-                                domains_aux.append(d)
-                    else:
-                        domains_aux.append(d)
-                    
-                isArray = True
-
-            elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
-                domainMinMax = []
-                for i in range(len(minVal)):
-                    d = str(minVal[i])+FROM_TO+str(maxVal[i])
-                    domainMinMax.append(d)
-                    domains_aux.append(d)
-                
-                domains_aux = self._getDomains(domainMinMax)
-                domain = (COMMA+SPACE).join(domains_aux)
-                domains_with_indices = self._processDomainsWithIndices(domainMinMax)
-                domains = domainMinMax
-                isArray = True
-
-            elif dim > 0:
-                domains_aux = [INT]*dim
-                domain = (COMMA+SPACE).join(domains_aux)
-                domains_with_indices = self._processDomainsWithIndices(domains_aux)
-                domains = domains_aux
-                isArray = True
+            domain, domains, domains_with_indices, domains_aux, arrayVar, isArray = \
+                self._processDomain(domain, domains, domains_with_indices, dim, minVal, maxVal, True)
 
             if not domain and varDecl != None:
                 size = len(_subIndices)
@@ -786,11 +803,9 @@ class CodeGenerator:
             if varDecl != None:
 
                 if varDecl.getValue() != None:
-                    
-                    self.newType = varName
+
                     self.turnStringsIntoInts = True
                     self.removeAdditionalParameter = True
-                    self.isSetExpressionWithIndexingExpression = False
 
                     indexingExpression = None
                     indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
@@ -861,7 +876,6 @@ class CodeGenerator:
                                 if not self._isSetForTuple(varName):
                                     _type = SET_OF_INT + SEP_PARTS_DECLARATION
                                 
-                            self.newType = INT
                             self.turnStringsIntoInts = False
                             self.removeAdditionalParameter = False
 
@@ -873,10 +887,7 @@ class CodeGenerator:
                             elif value.startswith(BEGIN_ARRAY):
                                 _type = SET_OF_INT + SEP_PARTS_DECLARATION
                             
-                            if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                                self.isSetExpressionWithIndexingExpression = False
-
-                            elif isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value:
+                            if not (BEGIN_SET in value and isArray) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
                                 
                                 if not value.startswith(ARRAY):
 
@@ -1003,41 +1014,19 @@ class CodeGenerator:
 
         _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
 
-        if domain != None and domain.strip() != EMPTY_STRING:
-            domains_aux = domains
-            domains = self._getDomains(domains)
-            domain = (COMMA+SPACE).join(domains)
-            array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
-            isArray = True
-
-        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
-            domainMinMax = []
-            for i in range(len(minVal)):
-                domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
-
-            domains_aux = domainMinMax
-            domains = self._getDomains(domainMinMax)
-            array += ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
-            domains_with_indices = self._processDomainsWithIndices(domainMinMax)
-            isArray = True
-
-        elif dim > 0:
-            domains_aux = [INT]*dim
-            domains = self._getDomains(domains_aux)
-            array += ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
-            domains_with_indices = self._processDomainsWithIndices(domains_aux)
-            isArray = True
-
-        if not domain and varDecl != None:
-            indexingExpression = None
-            indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
-
-            if indexingExpression:
-                domain = indexingExpression
-                isArray = True
-                array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
+        domain, domains, domains_with_indices, domains_aux, arrayParam, isArray = self._processDomain(domain, domains, domains_with_indices, dim, minVal, maxVal)
+        array += arrayParam
 
         if varDecl != None:
+
+            if not domain:
+                indexingExpression = None
+                indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
+
+                if indexingExpression:
+                    domain = indexingExpression
+                    isArray = True
+                    array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
             
             ins_vec = varDecl.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
@@ -1112,10 +1101,8 @@ class CodeGenerator:
         if varDecl != None:
             if varDecl.getValue() != None:
                 
-                self.newType = param
                 self.turnStringsIntoInts = True
                 self.removeAdditionalParameter = True
-                self.isSetExpressionWithIndexingExpression = False
 
                 indexingExpression = None
                 indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
@@ -1186,7 +1173,6 @@ class CodeGenerator:
                             if not self._isSetForTuple(param):
                                 _type = SET_OF_INT + SEP_PARTS_DECLARATION
                             
-                        self.newType = INT
                         self.turnStringsIntoInts = False
                         self.removeAdditionalParameter = False
 
@@ -1198,10 +1184,7 @@ class CodeGenerator:
                         elif value.startswith(BEGIN_ARRAY):
                             _type = SET_OF_INT + SEP_PARTS_DECLARATION
                         
-                        if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                            self.isSetExpressionWithIndexingExpression = False
-
-                        elif isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value:
+                        if not (BEGIN_SET in value and isArray) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
                             
                             if not value.startswith(ARRAY):
 
@@ -1282,41 +1265,18 @@ class CodeGenerator:
         varDecl = self.genDeclarations.get(name)
         value = EMPTY_STRING
         isArray = False
+        includedType = False
         array = EMPTY_STRING
         deleteTupleIndex = False
         arrayFromTuple = False
-        domainOriginal = None
 
         domain, domains, domains_with_indices, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
         _types, dim, minVal, maxVal = self._getProperties(_genSet.getName())
         
         _subIndices = self._getIndicesFromDeclaration(varDecl, stmtIndex)
         
-        if domain != None and domain.strip() != EMPTY_STRING:
-            domains_aux = domains
-            domains = self._getDomains(domains)
-            domainOriginal = domain
-            domain = (COMMA+SPACE).join(domains)
-            array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
-            isArray = True
-            
-        elif minVal != None and len(minVal) > 0 and maxVal != None and len(maxVal) > 0 and Utils._hasAllIndices(minVal, maxVal):
-            domainMinMax = []
-            for i in range(len(minVal)):
-                domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
-
-            domains_aux = domainMinMax
-            domains = self._getDomains(domainMinMax)
-            array += ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
-            domains_with_indices = self._processDomainsWithIndices(domainMinMax)
-            isArray = True
-
-        elif dim > 0:
-            domains_aux = [INT]*dim
-            domains = self._getDomains(domains_aux)
-            array += ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
-            domains_with_indices = self._processDomainsWithIndices(domains_aux)
-            isArray = True
+        domain, domains, domains_with_indices, domains_aux, arraySet, isArray = self._processDomain(domain, domains, domains_with_indices, dim, minVal, maxVal)
+        array += arraySet
 
         if name in self.tuplesDeclared:
             isArray = True
@@ -1336,8 +1296,6 @@ class CodeGenerator:
 
         if varDecl != None:
             
-            includedType = False
-
             if not domain:
                 indexingExpression = None
                 indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
@@ -1410,10 +1368,8 @@ class CodeGenerator:
                         _subIndices = varDecl.getSubIndices()[key]
                         break
 
-                self.newType = name
                 self.turnStringsIntoInts = True
                 self.removeAdditionalParameter = True
-                self.isSetExpressionWithIndexingExpression = False
 
                 indexingExpression = None
                 if varDecl.getIndexingExpression():
@@ -1478,7 +1434,6 @@ class CodeGenerator:
                         if not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name):
                             _type = SET_OF_INT + SEP_PARTS_DECLARATION
 
-                    self.newType = INT
                     self.turnStringsIntoInts = False
                     self.removeAdditionalParameter = False
 
@@ -1491,10 +1446,7 @@ class CodeGenerator:
                     elif value.startswith(BEGIN_ARRAY):
                         _type = SET_OF_INT + SEP_PARTS_DECLARATION
 
-                    if BEGIN_SET in value and (self.isSetExpressionWithIndexingExpression or isArray):
-                        self.isSetExpressionWithIndexingExpression = False
-
-                    elif not value.startswith(ARRAY) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
+                    if not (BEGIN_SET in value and isArray) and (not value.startswith(ARRAY) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value)):
 
                         if not value.startswith(ARRAY):
 
@@ -2043,9 +1995,6 @@ class CodeGenerator:
     # Expression List
     def generateCode_ExpressionList(self, node):
 
-        if self.checkSetExpressionWithIndexingExpression:
-            self.isSetExpressionWithIndexingExpression = True
-
         indexing = filter(Utils._deleteEmpty, map(self._getCodeEntry, node.entriesIndexingExpression))
         res = (COMMA+SPACE).join(indexing)
 
@@ -2076,9 +2025,6 @@ class CodeGenerator:
 
     # Indexing Expression
     def generateCode_IndexingExpression(self, node):
-
-        if self.checkSetExpressionWithIndexingExpression:
-            self.isSetExpressionWithIndexingExpression = True
 
         indexing = filter(Utils._deleteEmpty, map(self._getCodeEntry, node.entriesIndexingExpression))
         res = (COMMA+SPACE).join(indexing)
@@ -2319,8 +2265,6 @@ class CodeGenerator:
         isRange = False
 
         if node.setExpression != None:
-            self.checkSetExpressionWithIndexingExpression = True
-            self.isSetExpressionWithIndexingExpression = False
             self.turnStringsIntoInts = True
 
             if isinstance(node.setExpression, SetExpressionWithValue):
@@ -2333,7 +2277,6 @@ class CodeGenerator:
 
             setExpression = setExpression.generateCode(self)
 
-            self.checkSetExpressionWithIndexingExpression = False
             self.turnStringsIntoInts = False
 
         else:

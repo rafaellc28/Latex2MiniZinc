@@ -1710,13 +1710,10 @@ class CodePrepare:
 
     def prepare_SetExpressionBetweenBraces(self, node):
         if node.setExpression != None:
-            self.codeGenerator.checkSetExpressionWithIndexingExpression = True
-            self.codeGenerator.isSetExpressionWithIndexingExpression = False
             self.codeGenerator.turnStringsIntoInts = True
 
             node.setExpression.prepare(self)
 
-            self.codeGenerator.checkSetExpressionWithIndexingExpression = False
             self.codeGenerator.turnStringsIntoInts = False
 
 
