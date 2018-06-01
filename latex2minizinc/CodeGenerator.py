@@ -663,6 +663,165 @@ class CodeGenerator:
 
         return domain, domains, domains_with_indices, domains_aux, array, isArray
 
+    def _processValueFromDeclaration(self, declaration, name, _type, value, array, isArray, _subIndices, 
+            domains, domains_aux, domains_with_indices, stmtIndex, isSet = False):
+
+        arrayFromTuple = False
+        deleteTupleIndex = False
+
+        if declaration.getValue() != None:
+
+            self.turnStringsIntoInts = True
+            self.removeAdditionalParameter = True
+
+            indexingExpression = None
+            indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(declaration, stmtIndex)
+
+            if not indexingExpression:
+                indexingExpression = self._getDomainsWithIndicesByIdentifier(name)
+                if indexingExpression != None and len(indexingExpression) > 0:
+                    indexingExpression = self._getDomainsWithIndices(indexingExpression)
+                    indexingExpression = (COMMA+SPACE).join(indexingExpression)
+
+                else:
+                    indexingExpression = None
+
+            if isinstance(declaration.getValue().attribute, SymbolicExpression) or isinstance(declaration.getValue().attribute, String):
+                self.turnStringsIntoInts = False
+                self.removeAdditionalParameter = False
+                _type = STRING
+
+            elif isinstance(declaration.getValue().attribute, TrueFalse):
+                _type = BOOL
+
+            value = declaration.getValue().attribute.generateCode(self)
+
+            if not isinstance(declaration.getValue().attribute, Array):
+
+                dependencies = declaration.getValue().attribute.getDependencies(self)
+                if name in dependencies:
+                    
+                    cnt = None
+                    if isArray:
+                        stmtIndex = declaration.getValue().attribute.getSymbolTable().getStatement()
+                        scope = declaration.getValue().attribute.getSymbolTable().getScope()
+
+                        indices = map(lambda el: el.generateCode(self), _subIndices)
+                        indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
+                        
+                        if indexingExpression:
+                            cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT;
+
+                    else:
+                        cnt = CONSTRAINT+SPACE + name + SPACE+EQUAL+SPACE + value + END_STATEMENT;
+
+                    if cnt:
+                        self.additionalConstraints.append(cnt)
+
+                    value = EMPTY_STRING
+                    
+                else:
+
+                    self.getOriginalIndices = True
+                    value2 = declaration.getValue().attribute.generateCode(self)
+                    self.getOriginalIndices = False
+                    
+                    if value2 in self.setsWitOperations:
+
+                        setValue = False
+                        if isSet:
+                            setValue = self._checkIsSetExpressionWithTuple(value2) or (isArray and not value2.startswith(ARRAY) and not value2.startswith(BEGIN_ARRAY))
+                        else:
+                            setValue = self._checkIsValuesBetweenBraces(value2)
+
+                        if setValue:
+                            value = self.setsWitOperations[value2]
+                            self.setsWitOperationsUsed.append(value)
+                            
+                            if value2 in self.setsWitOperationsIndices:
+                                v = self.setsWitOperationsIndices[value2]
+
+                                if v["dimen"] > 0:
+                                    value += BEGIN_ARRAY
+                                    inds = []
+                                    for i in range(v["dimen"]):
+                                        inds.append(v["indices"][i])
+                                    value += COMMA.join(inds) + END_ARRAY
+                        
+                        setType = False
+                        if isSet:
+                            setType = not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name)
+                        else:
+                            setType = not self._isSetForTuple(name)
+
+                        if setType:
+                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        
+                    self.turnStringsIntoInts = False
+                    self.removeAdditionalParameter = False
+
+                    rangeSet = self._getRange(declaration.getValue().attribute)
+                    if rangeSet != None:
+                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        value = rangeSet.generateCode(self)
+
+                    elif value.startswith(BEGIN_ARRAY):
+                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        
+                    if not (BEGIN_SET in value and isArray) and (not value.startswith(ARRAY) and \
+                        (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value)):
+                        
+                        if not value.startswith(ARRAY):
+
+                            if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
+                                value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
+
+                                if len(domains) > 0:
+                                    length_domains = len(domains)
+                                    indices = []
+                                    array = ARRAY + BEGIN_ARRAY
+
+                                    for i in range(length_domains):
+                                        d = domains[i]
+                                        if d == INT:
+                                            index = INDEX_SET_+name+UNDERLINE+str(i+1)
+                                            setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
+
+                                            if i < len(domains_aux) and FROM_TO in domains_aux[i]:
+                                                setint += SPACE+ASSIGN+SPACE + domains_aux[i]
+
+                                                if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
+                                                    pos = domains_with_indices[i].find(SPACE+IN+SPACE)
+                                                    domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
+
+                                            setint += END_STATEMENT+BREAKLINE+BREAKLINE
+
+                                            self.additionalParameters[index] = setint
+                                            indices.append(index)
+
+                                        else:
+                                            indices.append(d)
+                                    
+                                    self._deleteIndexSet(array, name)
+                                    isArray = True
+
+                                    if _type == ENUM:
+                                        _type = INT + SEP_PARTS_DECLARATION
+
+                                    arrayFromTuple = True
+                                    deleteTupleIndex = True
+
+                                    if isSet:
+                                        array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_type+SPACE + name
+                                    else:
+                                        array += (COMMA+SPACE).join(indices) + END_ARRAY
+
+                                    value = ARRAY +str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+
+                    self.genValueAssigned.add(GenObj(name))
+
+        return value, _type, array, isArray, arrayFromTuple, deleteTupleIndex
+
     def _declareVars(self):
         """
         Generate the MiniZinc code for the declaration of variables
@@ -684,13 +843,13 @@ class CodeGenerator:
 
         if not self.genParameters.has(var) and not self.genSets.has(var):
 
-            value = EMPTY_STRING
             domain = None
             varName = var.getName()
             _type = None
             isArray = False
             includedVar = False
             array = EMPTY_STRING
+            value = EMPTY_STRING
             
             varDecl = self.genDeclarations.get(varName)
 
@@ -803,130 +962,9 @@ class CodeGenerator:
             if varDecl != None:
 
                 if varDecl.getValue() != None:
+                    value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
+                        self._processValueFromDeclaration(varDecl, varName, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
 
-                    self.turnStringsIntoInts = True
-                    self.removeAdditionalParameter = True
-
-                    indexingExpression = None
-                    indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
-
-                    if not indexingExpression:
-                        indexingExpression = self._getDomainsWithIndicesByIdentifier(varName)
-                        if indexingExpression != None and len(indexingExpression) > 0:
-                            indexingExpression = self._getDomainsWithIndices(indexingExpression)
-                            indexingExpression = (COMMA+SPACE).join(indexingExpression)
-
-                        else:
-                            indexingExpression = None
-
-                    if isinstance(varDecl.getValue().attribute, SymbolicExpression) or isinstance(varDecl.getValue().attribute, String):
-                        self.turnStringsIntoInts = False
-                        self.removeAdditionalParameter = False
-                        _type = STRING
-
-                    elif isinstance(varDecl.getValue().attribute, TrueFalse):
-                        _type = BOOL
-
-                    value = varDecl.getValue().attribute.generateCode(self)
-
-                    if not isinstance(varDecl.getValue().attribute, Array):
-
-                        dependencies = varDecl.getValue().attribute.getDependencies(self)
-                        if varName in dependencies:
-                            
-                            cnt = None
-                            if isArray:
-                                stmtIndex = varDecl.getValue().attribute.getSymbolTable().getStatement()
-                                scope = varDecl.getValue().attribute.getSymbolTable().getScope()
-
-                                indices = map(lambda el: el.generateCode(self), _subIndices)
-                                indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
-                                
-                                if indexingExpression:
-                                    cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + varName + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT;
-
-                            else:
-                                cnt = CONSTRAINT+SPACE + varName + SPACE+EQUAL+SPACE + value + END_STATEMENT;
-
-                            if cnt:
-                                self.additionalConstraints.append(cnt)
-
-                            value = EMPTY_STRING
-                            
-                        else:
-
-                            self.getOriginalIndices = True
-                            value2 = varDecl.getValue().attribute.generateCode(self)
-                            self.getOriginalIndices = False
-                            
-                            if value2 in self.setsWitOperations and self._checkIsValuesBetweenBraces(value2):
-                                value = self.setsWitOperations[value2]
-                                self.setsWitOperationsUsed.append(value)
-                                
-                                if value2 in self.setsWitOperationsIndices:
-                                    v = self.setsWitOperationsIndices[value2]
-
-                                    if v["dimen"] > 0:
-                                        value += "["
-                                        inds = []
-                                        for i in range(v["dimen"]):
-                                            inds.append(v["indices"][i])
-                                        value += COMMA.join(inds) + END_ARRAY
-                                
-                                if not self._isSetForTuple(varName):
-                                    _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                                
-                            self.turnStringsIntoInts = False
-                            self.removeAdditionalParameter = False
-
-                            rangeSet = self._getRange(varDecl.getValue().attribute)
-                            if rangeSet != None:
-                                _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                                value = rangeSet.generateCode(self)
-
-                            elif value.startswith(BEGIN_ARRAY):
-                                _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                            
-                            if not (BEGIN_SET in value and isArray) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
-                                
-                                if not value.startswith(ARRAY):
-
-                                    if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
-                                        value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
-
-                                        if len(domains) > 0:
-                                            length_domains = len(domains)
-                                            indices = []
-                                            array = ARRAY + BEGIN_ARRAY
-
-                                            for i in range(length_domains):
-                                                d = domains[i]
-                                                if d == INT:
-                                                    index = INDEX_SET_+varName+UNDERLINE+str(i+1)
-                                                    setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
-
-                                                    if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                        setint += SPACE+ASSIGN+SPACE + domains_aux[i]
-
-                                                        if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                            pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                            domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
-
-                                                    setint += END_STATEMENT+BREAKLINE+BREAKLINE
-
-                                                    self.additionalParameters[index] = setint
-                                                    indices.append(index)
-
-                                                else:
-                                                    indices.append(d)
-
-                                            array += (COMMA+SPACE).join(indices) + END_ARRAY
-                                            self._deleteIndexSet(array, varName)
-                                            isArray = True
-
-                                            value = ARRAY +str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
-
-                            self.genValueAssigned.add(GenObj(varName))
                 else:
 
                     cnt = EMPTY_STRING
@@ -1006,6 +1044,7 @@ class CodeGenerator:
         isArray = False
         includedType = False
         array = EMPTY_STRING
+        value = EMPTY_STRING
         
         varDecl = self.genDeclarations.get(_genParameter.getName())
 
@@ -1067,9 +1106,9 @@ class CodeGenerator:
                     includedType = True
 
         if not includedType and param in self.parameterIsIndexOf:
-            value = self.parameterIsIndexOf[param]
-            var = value["indexOf"]
-            pos = value["pos"]
+            valueAux = self.parameterIsIndexOf[param]
+            var = valueAux["indexOf"]
+            pos = valueAux["pos"]
 
             setExpression = self._getDomainByIdentifier(var)
 
@@ -1097,133 +1136,9 @@ class CodeGenerator:
         if _type in self.listSetOfInts:
             _type = INT
 
-        value = EMPTY_STRING
+        
         if varDecl != None:
-            if varDecl.getValue() != None:
-                
-                self.turnStringsIntoInts = True
-                self.removeAdditionalParameter = True
-
-                indexingExpression = None
-                indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
-
-                if not indexingExpression:
-                    indexingExpression = self._getDomainsWithIndicesByIdentifier(param)
-                    if indexingExpression != None and len(indexingExpression) > 0:
-                        indexingExpression = self._getDomainsWithIndices(indexingExpression)
-                        indexingExpression = (COMMA+SPACE).join(indexingExpression)
-
-                    else:
-                        indexingExpression = None
-
-                if isinstance(varDecl.getValue().attribute, SymbolicExpression) or isinstance(varDecl.getValue().attribute, String):
-                    self.turnStringsIntoInts = False
-                    self.removeAdditionalParameter = False
-                    _type = STRING
-
-                elif isinstance(varDecl.getValue().attribute, TrueFalse):
-                    _type = BOOL
-
-                value = varDecl.getValue().attribute.generateCode(self)
-
-                if not isinstance(varDecl.getValue().attribute, Array):
-
-                    dependencies = varDecl.getValue().attribute.getDependencies(self)
-                    if param in dependencies:
-                        
-                        cnt = None
-                        if isArray:
-                            stmtIndex = varDecl.getValue().attribute.getSymbolTable().getStatement()
-                            scope = varDecl.getValue().attribute.getSymbolTable().getScope()
-
-                            indices = map(lambda el: el.generateCode(self), _subIndices)
-                            indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
-                            
-                            if indexingExpression:
-                                cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + param + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT
-
-                        else:
-                            cnt = CONSTRAINT+SPACE + param + SPACE+EQUAL+SPACE + value + END_STATEMENT
-
-                        if cnt:
-                            self.additionalConstraints.append(cnt)
-
-                        value = EMPTY_STRING
-                        
-                    else:
-
-                        self.getOriginalIndices = True
-                        value2 = varDecl.getValue().attribute.generateCode(self)
-                        self.getOriginalIndices = False
-                        
-                        if value2 in self.setsWitOperations and not self._checkIsValuesBetweenBraces(value2):
-                            value = self.setsWitOperations[value2]
-                            self.setsWitOperationsUsed.append(value)
-                            
-                            if value2 in self.setsWitOperationsIndices:
-                                v = self.setsWitOperationsIndices[value2]
-
-                                if v["dimen"] > 0:
-                                    value += "["
-                                    inds = []
-                                    for i in range(v["dimen"]):
-                                        inds.append(v["indices"][i])
-                                    value += COMMA.join(inds) + END_ARRAY
-                            
-                            if not self._isSetForTuple(param):
-                                _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                            
-                        self.turnStringsIntoInts = False
-                        self.removeAdditionalParameter = False
-
-                        rangeSet = self._getRange(varDecl.getValue().attribute)
-                        if rangeSet != None:
-                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                            value = rangeSet.generateCode(self)
-
-                        elif value.startswith(BEGIN_ARRAY):
-                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                        
-                        if not (BEGIN_SET in value and isArray) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value):
-                            
-                            if not value.startswith(ARRAY):
-
-                                if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
-                                    value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
-
-                                    if len(domains) > 0:
-                                        length_domains = len(domains)
-                                        indices = []
-                                        array = ARRAY + BEGIN_ARRAY
-
-                                        for i in range(length_domains):
-                                            d = domains[i]
-                                            if d == INT:
-
-                                                index = INDEX_SET_+param+UNDERLINE+str(i+1)
-                                                setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
-
-                                                if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                    setint += SPACE+ASSIGN+SPACE + domains_aux[i]
-
-                                                    if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                        pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
-
-                                                setint += END_STATEMENT+BREAKLINE+BREAKLINE
-
-                                                self.additionalParameters[index] = setint
-                                                indices.append(index)
-
-                                            else:
-                                                indices.append(d)
-
-                                        array += (COMMA+SPACE).join(indices) + END_ARRAY
-                                        isArray = True
-
-                                        value = ARRAY+str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
-
-                        self.genValueAssigned.add(GenObj(param))
+            value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = self._processValueFromDeclaration(varDecl, param, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
 
         if not _type or _type.strip() == EMPTY_STRING:
             _type = FLOAT
@@ -1343,9 +1258,9 @@ class CodeGenerator:
                         includedType = True
 
             if not includedType and name in self.parameterIsIndexOf:
-                value = self.parameterIsIndexOf[name]
-                var = value["indexOf"]
-                pos = value["pos"]
+                valueAux = self.parameterIsIndexOf[name]
+                var = valueAux["indexOf"]
+                pos = valueAux["pos"]
 
                 setExpression = self._getDomainByIdentifier(var)
 
@@ -1360,142 +1275,8 @@ class CodeGenerator:
             if _type in self.listSetOfInts:
                 _type = INT
 
-            if varDecl.getValue() != None:
-                
-                _subIndices = []
-                if varDecl.getSubIndices():
-                    for key in varDecl.getSubIndices():
-                        _subIndices = varDecl.getSubIndices()[key]
-                        break
-
-                self.turnStringsIntoInts = True
-                self.removeAdditionalParameter = True
-
-                indexingExpression = None
-                if varDecl.getIndexingExpression():
-                    for key in varDecl.getIndexingExpression():
-                        indexingExpression = varDecl.getIndexingExpression()[key].generateCode(self)
-                        break
-
-                else:
-
-                    indexingExpression = self._getDomainsWithIndicesByIdentifier(name)
-                    if indexingExpression != None and len(indexingExpression) > 0:
-                        indexingExpression = (COMMA+SPACE).join(indexingExpression)
-                    else:
-                        indexingExpression = None
-
-                value = varDecl.getValue().attribute.generateCode(self)
-
-                dependencies = varDecl.getValue().attribute.getDependencies(self)
-                
-                if name in dependencies:
-                    
-                    if isArray:
-                        stmtIndex = varDecl.getValue().attribute.getSymbolTable().getStatement()
-                        scope = varDecl.getValue().attribute.getSymbolTable().getScope()
-
-                        indices = map(lambda el: el.generateCode(self), _subIndices)
-                        indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
-
-                        cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT
-
-                    else:
-
-                        cnt = CONSTRAINT+SPACE + name + SPACE+EQUAL+SPACE + value + END_STATEMENT
-
-                    self.additionalConstraints.append(cnt)
-
-                    value = EMPTY_STRING
-                    
-                else:
-
-                    self.getOriginalIndices = True
-                    value2 = varDecl.getValue().attribute.generateCode(self)
-                    self.getOriginalIndices = False
-                    
-                    if value2 in self.setsWitOperations:
-                        if self._checkIsSetExpressionWithTuple(value2) or (isArray and not value2.startswith(ARRAY) and not value2.startswith("[")):
-                            value = self.setsWitOperations[value2]
-                            self.setsWitOperationsUsed.append(value)
-
-                            if value2 in self.setsWitOperationsIndices:
-                                v = self.setsWitOperationsIndices[value2]
-                                
-                                if v["dimen"] > 0:
-                                    value += BEGIN_ARRAY
-                                    inds = []
-
-                                    for i in range(v["dimen"]):
-                                        inds.append(v["indices"][i])
-
-                                    value += COMMA.join(inds) + END_ARRAY
-                        
-                        if not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name):
-                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
-
-                    self.turnStringsIntoInts = False
-                    self.removeAdditionalParameter = False
-
-                    rangeSet = self._getRange(varDecl.getValue().attribute)
-                    
-                    if rangeSet != None:
-                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
-                        value = rangeSet.generateCode(self)
-
-                    elif value.startswith(BEGIN_ARRAY):
-                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
-
-                    if not (BEGIN_SET in value and isArray) and (not value.startswith(ARRAY) and (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value)):
-
-                        if not value.startswith(ARRAY):
-
-                            if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
-                                value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
-
-                                domain = self._getDomainByIdentifier(name)
-                                if domain != None and domain.strip() != EMPTY_STRING:
-                                    domains = self._getDomainsByIdentifier(name)
-                                    domains_aux = domains
-                                    domains = self._getDomains(domains)
-
-                                    if len(domains) > 0:
-                                        length_domains = len(domains)
-                                        indices = []
-                                        array = ARRAY + BEGIN_ARRAY
-
-                                        for i in range(length_domains):
-                                            d = domains[i]
-                                            if d == INT:
-                                                index = INDEX_SET_+name+UNDERLINE+str(i+1)
-                                                setint = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
-
-                                                if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                    setint += SPACE+ASSIGN+SPACE + domains_aux[i]
-
-                                                    if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                        pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                        domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
-
-                                                setint += END_STATEMENT+BREAKLINE+BREAKLINE
-
-                                                self.additionalParameters[index] = setint
-                                                indices.append(index)
-
-                                            else:
-                                                indices.append(d)
-
-                                        if _type == ENUM:
-                                            _type = INT + SEP_PARTS_DECLARATION
-
-                                        arrayFromTuple = True
-                                        array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_type+SPACE + name
-                                        deleteTupleIndex = True
-
-                                        value = ARRAY+str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
-
-                    self.genValueAssigned.add(GenObj(name))
-
+            value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
+                        self._processValueFromDeclaration(varDecl, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex, True)
 
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
@@ -1546,7 +1327,6 @@ class CodeGenerator:
                 setStr += _type + SPACE + name
             else:
                 setStr += SPACE + OF + SPACE + _type + SPACE + name
-
 
         if value != EMPTY_STRING:
             setStr += SPACE+ASSIGN+SPACE + value
