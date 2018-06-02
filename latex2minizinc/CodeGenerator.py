@@ -822,6 +822,84 @@ class CodeGenerator:
 
         return value, _type, array, isArray, arrayFromTuple, deleteTupleIndex
 
+    def _processInDeclaration(self, name, declaration, isArray, isVariable = False):
+
+        _type = EMPTY_STRING
+
+        if declaration != None:
+            ins_vec = declaration.getIn()
+            ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
+
+            if ins_vec != None and len(ins_vec) > 0:
+                ins = ins_vec[-1].generateCode(self)
+
+                setExpression = ins_vec[-1]
+                ins = setExpression.generateCode(self)
+
+                if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
+                    if len(ins_vec) > 1:
+                        ins = ins_vec[-2].generateCode(self)
+                
+                if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(name)):
+
+                    if isVariable:
+                        if isArray:
+                            _type += SPACE + OF + SPACE+VAR+SPACE + ins
+
+                        else:
+                            _type += VAR + SPACE + ins
+
+                    else:
+                        _type += ins
+
+        return _type
+
+    def _processTypeDeclaration(self, name, _types):
+        _type = EMPTY_STRING
+
+        _types = self._removeTypesThatAreNotDeclarable(_types)
+        _types = self._getTypes(_types)
+        
+        if len(_types) > 0:
+            _type = _types[0].getObj()
+            
+            if isinstance(_type, BinarySet):
+                _type = BOOL;
+
+            elif isinstance(_type, IntegerSet):
+                _type = INT;
+
+            elif isinstance(_type, SymbolicSet):
+                _type = STRING;
+
+            elif isinstance(_type, RealSet):
+                _type = FLOAT;
+
+            if _type.strip() == EMPTY_STRING:
+                _type = EMPTY_STRING
+
+        return _type
+
+
+    def _inferTypeOfNameByItsIndexPositionInAnotherIdentifier(self, name):
+        _type = EMPTY_STRING
+
+        if name in self.parameterIsIndexOf:
+            valueAux = self.parameterIsIndexOf[name]
+            var = valueAux["indexOf"]
+            pos = valueAux["pos"]
+
+            setExpression = self._getDomainByIdentifier(var)
+
+            _types = Utils._splitDomain(setExpression, COMMA)
+            if pos < len(_types):
+                _type_aux = _types[pos]
+
+                if not FROM_TO in _type_aux:
+                    _type = _type_aux
+
+        return _type
+
     def _declareVars(self):
         """
         Generate the MiniZinc code for the declaration of variables
@@ -899,21 +977,13 @@ class CodeGenerator:
 
                 varStr += array
 
-            if varDecl != None:
-                ins_vec = varDecl.getIn()
-                ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
+            declrStr = self._processInDeclaration(varName, varDecl, isArray, True)
 
-                if ins_vec != None and len(ins_vec) > 0:
-                    ins = ins_vec[-1].generateCode(self)
-                    
-                    if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(varName)):
-                        includedVar = True
-                        if isArray:
-                            varStr += SPACE + OF + SPACE+VAR+SPACE + ins
-                        else:
-                            varStr += VAR + SPACE + ins
+            if declrStr != EMPTY_STRING:
+                varStr += declrStr
+                includedVar = True
 
-            if not includedVar:
+            else:
                 _types = self._removeTypesThatAreNotDeclarable(_types)
                 _types = self._getTypes(_types)
                 
@@ -1067,59 +1137,27 @@ class CodeGenerator:
                     isArray = True
                     array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
             
-            ins_vec = varDecl.getIn()
-            ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
+            _typeAux = self._processInDeclaration(param, varDecl, isArray)
 
-            if ins_vec != None and len(ins_vec) > 0:
+            if _typeAux != EMPTY_STRING:
+               includedType = True 
+               _type = _typeAux
 
-                setExpression = ins_vec[-1]
-                ins = setExpression.generateCode(self)
-
-                if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
-                    if len(ins_vec) > 1:
-                        ins = ins_vec[-2].generateCode(self)
-
-                if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(param)):
-                    includedType = True
-                    _type = ins
-                    
         if not includedType:
-            _types = self._removeTypesThatAreNotDeclarable(_types)
-            _types = self._getTypes(_types)
+
+            _typeAux = self._processTypeDeclaration(param, _types)
+
+            if _typeAux != EMPTY_STRING:
+               includedType = True 
+               _type = _typeAux
+
+        if not includedType:
+            _typeAux = self._inferTypeOfNameByItsIndexPositionInAnotherIdentifier(param)
+
+            if _typeAux != EMPTY_STRING:
+               includedType = True 
+               _type = _typeAux
             
-            if len(_types) > 0:
-                _type = _types[0].getObj()
-                
-                if isinstance(_type, BinarySet):
-                    _type = BOOL;
-
-                elif isinstance(_type, IntegerSet):
-                    _type = INT;
-
-                elif isinstance(_type, SymbolicSet):
-                    _type = STRING;
-
-                elif isinstance(_type, RealSet):
-                    _type = FLOAT;
-
-                if _type.strip() != EMPTY_STRING:
-                    includedType = True
-
-        if not includedType and param in self.parameterIsIndexOf:
-            valueAux = self.parameterIsIndexOf[param]
-            var = valueAux["indexOf"]
-            pos = valueAux["pos"]
-
-            setExpression = self._getDomainByIdentifier(var)
-
-            _types = Utils._splitDomain(setExpression, COMMA)
-            if pos < len(_types):
-                _type_aux = _types[pos]
-
-                if not FROM_TO in _type_aux:
-                    includedType = True
-                    _type = _type_aux
-
         if not includedType:
             if _genParameter.getIsInteger():
                 _type = INT
@@ -1220,57 +1258,26 @@ class CodeGenerator:
                     isArray = True
                     array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
 
-            ins_vec = varDecl.getIn()
-            ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
+            _typeAux = self._processInDeclaration(name, varDecl, isArray)
 
-            if ins_vec != None and len(ins_vec) > 0:
-                setExpression = ins_vec[-1]
-                ins = setExpression.generateCode(self)
-
-                if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
-                    if len(ins_vec) > 1:
-                        ins = ins_vec[-2].generateCode(self)
-
-                if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(name)):
-                    includedType = True
-                    _type = ins
+            if _typeAux != EMPTY_STRING:
+               includedType = True
+               _type = _typeAux
 
             if not includedType:
-                _types = self._removeTypesThatAreNotDeclarable(_types)
-                _types = self._getTypes(_types)
+
+                _typeAux = self._processTypeDeclaration(name, _types)
+
+                if _typeAux != EMPTY_STRING:
+                   includedType = True 
+                   _type = _typeAux
+
+            if not includedType:
+                _typeAux = self._inferTypeOfNameByItsIndexPositionInAnotherIdentifier(name)
                 
-                if len(_types) > 0:
-                    _type = _types[0].getObj()
-                    
-                    if isinstance(_type, BinarySet):
-                        _type = BOOL;
-
-                    elif isinstance(_type, IntegerSet):
-                        _type = INT;
-
-                    elif isinstance(_type, SymbolicSet):
-                        _type = STRING;
-
-                    elif isinstance(_type, RealSet):
-                        _type = FLOAT;
-
-                    if _type.strip() != EMPTY_STRING:
-                        includedType = True
-
-            if not includedType and name in self.parameterIsIndexOf:
-                valueAux = self.parameterIsIndexOf[name]
-                var = valueAux["indexOf"]
-                pos = valueAux["pos"]
-
-                setExpression = self._getDomainByIdentifier(var)
-
-                _types = Utils._splitDomain(setExpression, COMMA)
-                if pos < len(_types):
-                    _type_aux = _types[pos]
-
-                    if not FROM_TO in _type_aux:
-                        includedType = True
-                        _type = _type_aux
+                if _typeAux != EMPTY_STRING:
+                   includedType = True 
+                   _type = _typeAux
 
             if _type in self.listSetOfInts:
                 _type = INT
