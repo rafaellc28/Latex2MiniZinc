@@ -881,7 +881,7 @@ class CodeGenerator:
         return _type
 
 
-    def _inferTypeOfNameByItsIndexPositionInAnotherIdentifier(self, name):
+    def _inferTypeByIndexPositionInAnotherIdentifier(self, name):
         _type = EMPTY_STRING
 
         if name in self.parameterIsIndexOf:
@@ -897,6 +897,23 @@ class CodeGenerator:
 
                 if not FROM_TO in _type_aux:
                     _type = _type_aux
+
+        return _type
+
+    def _processTypeFromGenParameter(self, _genParameter):
+        _type = EMPTY_STRING
+
+        if _genParameter.getIsInteger():
+            _type = INT
+
+        elif _genParameter.getIsSymbolic():
+            _type = STRING
+
+        elif _genParameter.getIsLogical():
+            _type = BOOL
+
+        else:
+            _type = FLOAT
 
         return _type
 
@@ -1152,28 +1169,17 @@ class CodeGenerator:
                _type = _typeAux
 
         if not includedType:
-            _typeAux = self._inferTypeOfNameByItsIndexPositionInAnotherIdentifier(param)
+            _typeAux = self._inferTypeByIndexPositionInAnotherIdentifier(param)
 
             if _typeAux != EMPTY_STRING:
                includedType = True 
                _type = _typeAux
             
         if not includedType:
-            if _genParameter.getIsInteger():
-                _type = INT
-
-            elif _genParameter.getIsSymbolic():
-                _type = STRING
-
-            elif _genParameter.getIsLogical():
-                _type = BOOL
-
-            else:
-                _type = FLOAT
+            _type = self._processTypeFromGenParameter(_genParameter)
 
         if _type in self.listSetOfInts:
             _type = INT
-
         
         if varDecl != None:
             value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = self._processValueFromDeclaration(varDecl, param, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
@@ -1273,7 +1279,7 @@ class CodeGenerator:
                    _type = _typeAux
 
             if not includedType:
-                _typeAux = self._inferTypeOfNameByItsIndexPositionInAnotherIdentifier(name)
+                _typeAux = self._inferTypeByIndexPositionInAnotherIdentifier(name)
                 
                 if _typeAux != EMPTY_STRING:
                    includedType = True 
