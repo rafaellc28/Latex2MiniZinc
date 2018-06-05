@@ -755,18 +755,18 @@ class CodeGenerator:
                             setType = not self._isSetForTuple(name)
 
                         if setType:
-                            _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                            _type = SET_OF_INT
                         
                     self.turnStringsIntoInts = False
                     self.removeAdditionalParameter = False
 
                     rangeSet = self._getRange(declaration.getValue().attribute)
                     if rangeSet != None:
-                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        _type = SET_OF_INT
                         value = rangeSet.generateCode(self)
 
                     elif value.startswith(BEGIN_ARRAY):
-                        _type = SET_OF_INT + SEP_PARTS_DECLARATION
+                        _type = SET_OF_INT
                         
                     if not (BEGIN_SET in value and isArray) and (not value.startswith(ARRAY) and \
                         (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value)):
@@ -806,13 +806,20 @@ class CodeGenerator:
                                     isArray = True
 
                                     if _type == ENUM:
-                                        _type = INT + SEP_PARTS_DECLARATION
+                                        _type = INT
 
                                     arrayFromTuple = True
                                     deleteTupleIndex = True
 
                                     if isSet:
-                                        array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_type+SPACE + name
+                                        
+                                        if _type != ENUM:
+                                            _typeAux = _type + SEP_PARTS_DECLARATION
+                                        else:
+                                            _typeAux = _type
+
+                                        array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_typeAux+SPACE + name
+
                                     else:
                                         array += (COMMA+SPACE).join(indices) + END_ARRAY
 
@@ -997,7 +1004,7 @@ class CodeGenerator:
             declrStr = self._processInDeclaration(varName, varDecl, isArray, True)
 
             if declrStr != EMPTY_STRING:
-                varStr += declrStr
+                varStr += declrStr + SEP_PARTS_DECLARATION
                 includedVar = True
 
             else:
@@ -1035,6 +1042,10 @@ class CodeGenerator:
 
                     if _type.strip() != EMPTY_STRING:
                         includedVar = True
+
+                        if _type != ENUM:
+                            _type = _type + SEP_PARTS_DECLARATION
+
                         if isArray:
                             varStr += SPACE + OF + SPACE+VAR+SPACE + _type
                         else:
@@ -1042,9 +1053,9 @@ class CodeGenerator:
 
             if not includedVar:
                 if isArray:
-                    varStr += SPACE + OF + SPACE+VAR+SPACE + FLOAT
+                    varStr += SPACE + OF + SPACE+VAR+SPACE + FLOAT + SEP_PARTS_DECLARATION
                 else:
-                    varStr += VAR+SPACE + FLOAT
+                    varStr += VAR+SPACE + FLOAT + SEP_PARTS_DECLARATION
 
             if varDecl != None:
 
@@ -1115,7 +1126,7 @@ class CodeGenerator:
             if value != EMPTY_STRING and value.strip() != EMPTY_STRING:
                 varName += SPACE+ASSIGN+SPACE + value.strip()
 
-            varStr += SEP_PARTS_DECLARATION+SPACE + varName
+            varStr += SPACE + varName
             varStr += END_STATEMENT+BREAKLINE+BREAKLINE
             
         return varStr
@@ -1187,7 +1198,7 @@ class CodeGenerator:
         if not _type or _type.strip() == EMPTY_STRING:
             _type = FLOAT
 
-        if _type == SET_OF_INT + SEP_PARTS_DECLARATION:
+        if _type == SET_OF_INT:
             self.listSetOfInts.append(param)
 
         if array != EMPTY_STRING:
@@ -1198,7 +1209,7 @@ class CodeGenerator:
         if _type[0] == BEGIN_SET and _type[-1] == END_SET and FROM_TO in _type:
             _type = _type[1:-1]
 
-        if _type != ENUM and not _type.endswith(SEP_PARTS_DECLARATION):
+        if _type != ENUM:
             _type = _type+SEP_PARTS_DECLARATION
 
         if isArray:
@@ -1243,9 +1254,6 @@ class CodeGenerator:
             index1 = _tuple["index1"]
             index2 = _tuple["index2"]
             _type  = _tuple["type"]
-
-            if _type != ENUM and not _type.endswith(SEP_PARTS_DECLARATION):
-                _type = _type+SEP_PARTS_DECLARATION
 
             self.array2dIndex1 = index1
             self.array2dIndex2 = index2
@@ -1304,11 +1312,11 @@ class CodeGenerator:
                 if _tuple["realtype"]:
                     _type  = _tuple["realtype"]
 
-                if _type != ENUM and not _type.endswith(SEP_PARTS_DECLARATION):
-                    _type = _type+SEP_PARTS_DECLARATION
-
                 if _type == ENUM:
-                    _type = INT + SEP_PARTS_DECLARATION
+                    _type = INT
+                    _typeAux = INT + SEP_PARTS_DECLARATION
+                else:
+                    _typeAux = _type + SEP_PARTS_DECLARATION
                 
                 arrayFromTuple = True
                 array = ARRAY + BEGIN_ARRAY+index1
@@ -1316,41 +1324,40 @@ class CodeGenerator:
                 if index2 != None:
                     array += COMMA+SPACE+index2
 
-                array += END_ARRAY+SPACE + OF + SPACE+_type+SPACE + name
+                array += END_ARRAY+SPACE + OF + SPACE+_typeAux+SPACE + name
 
                 self.array2dIndex1 = index1
                 self.array2dIndex2 = index2
 
-        if (_type == SET_OF_INT or _type == SET_OF_INT + SEP_PARTS_DECLARATION) and self._isSetForTuple(name):
-            _type = INT + SEP_PARTS_DECLARATION
+        if _type == SET_OF_INT and self._isSetForTuple(name):
+            _type = INT
 
         if array != EMPTY_STRING:
             setStr += array
             
             self._deleteIndexSet(array, name)
 
-            if _type == ENUM:
-                _type = INT + SEP_PARTS_DECLARATION
-
         if not arrayFromTuple:
-            if _type != ENUM and not _type.endswith(SEP_PARTS_DECLARATION):
-                _type = _type+SEP_PARTS_DECLARATION
+            if _type != ENUM:
+                _typeAux = _type+SEP_PARTS_DECLARATION
+            else:
+                _typeAux = _type
 
             if setStr == EMPTY_STRING:
-                setStr += _type + SPACE + name
+                setStr += _typeAux + SPACE + name
             else:
-                setStr += SPACE + OF + SPACE + _type + SPACE + name
+                setStr += SPACE + OF + SPACE + _typeAux + SPACE + name
 
         if value != EMPTY_STRING:
             setStr += SPACE+ASSIGN+SPACE + value
 
         self.array2dIndex1 = None
         self.array2dIndex2 = None
-
+        
         if _type == ENUM:
             self.listEnums.append(name)
 
-        elif _type == SET_OF_INT + SEP_PARTS_DECLARATION:
+        elif _type == SET_OF_INT:
             self.listSetOfInts.append(name)
             
         setStr += END_STATEMENT+BREAKLINE+BREAKLINE

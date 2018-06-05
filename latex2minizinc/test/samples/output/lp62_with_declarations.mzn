@@ -1,6 +1,6 @@
 set of int: V = 1..n;
 
-array[INDEX_SET_E, 1..2] of V: E;
+array[INDEX_SET_E, 1..2] of int: E;
 
 int: n;
 

@@ -4,7 +4,7 @@ set of int: VOLS = 1..7;
 
 set of int: WEEKS = 1..T;
 
-array[INDEX_SET_PAIRS, 1..2] of VOLS: PAIRS = array2d(INDEX_SET_PAIRS, 1..2, [if idx2 = 1 then u else v endif | u in VOLS, v in VOLS, idx2 in 1..2 where u < v]);
+array[INDEX_SET_PAIRS, 1..2] of int: PAIRS = array2d(INDEX_SET_PAIRS, 1..2, [if idx2 = 1 then u else v endif | u in VOLS, v in VOLS, idx2 in 1..2 where u < v]);
 
 int: T = 7;
 

@@ -1,6 +1,6 @@
 set of int: TASKS;
 
-array[INDEX_SET_ARCS, 1..2] of TASKS: ARCS;
+array[INDEX_SET_ARCS, 1..2] of int: ARCS;
 
 array[int] of float: Dur;
 
