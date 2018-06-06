@@ -924,6 +924,16 @@ class CodeGenerator:
 
         return _type
 
+    def _getDomainFromIndexingExpressionInDeclaration(self, domain, isArray, array, declaration, stmtIndex):
+        indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(declaration, stmtIndex)
+
+        if indexingExpression:
+            domain = indexingExpression
+            isArray = True
+            array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
+
+        return domain, isArray, array
+
     def _declareVars(self):
         """
         Generate the MiniZinc code for the declaration of variables
@@ -1069,7 +1079,6 @@ class CodeGenerator:
                     attr = varDecl.getRelationEqualTo()
                     if attr != None:
 
-                        indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
                         attribute = attr.attribute.generateCode(self)
 
                         if isArray:
@@ -1157,13 +1166,7 @@ class CodeGenerator:
         if varDecl != None:
 
             if not domain:
-                indexingExpression = None
-                indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
-
-                if indexingExpression:
-                    domain = indexingExpression
-                    isArray = True
-                    array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
+                domain, isArray, array = self._getDomainFromIndexingExpressionInDeclaration(domain, isArray, array, varDecl, stmtIndex)
             
             _typeAux = self._processInDeclaration(param, varDecl, isArray)
 
@@ -1264,13 +1267,7 @@ class CodeGenerator:
         if varDecl != None:
             
             if not domain:
-                indexingExpression = None
-                indexingExpression, _subIndicesAux = self._getIndexingExpressionFromDeclaration(varDecl, stmtIndex)
-
-                if indexingExpression:
-                    domain = indexingExpression
-                    isArray = True
-                    array += ARRAY + BEGIN_ARRAY + domain + END_ARRAY
+                domain, isArray, array = self._getDomainFromIndexingExpressionInDeclaration(domain, isArray, array, varDecl, stmtIndex)
 
             _typeAux = self._processInDeclaration(name, varDecl, isArray)
 
