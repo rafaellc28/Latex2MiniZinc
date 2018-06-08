@@ -228,7 +228,7 @@ class CodePrepare:
                             
                         if _tuple != None:
                             domains[idx] = _tuple
-                            domains_with_indices[idx] = {"indices": _combIndices, "set": _tuple}
+                            domains_with_indices[idx] = {INDICES: _combIndices, SET: _tuple}
                             dependencies[idx] = deps
                             count[idx] = len(_combIndices)
                             
@@ -313,7 +313,7 @@ class CodePrepare:
 
                     if key in subIndicesAlreadyComputed:
                         if key in domains_with_indices and isinstance(domains_with_indices[key], dict):
-                            _indices = domains_with_indices[key]["indices"]
+                            _indices = domains_with_indices[key][INDICES]
                             for i in range(key, key+len(_indices)):
                                 sub_indices_ret.append(subIndicesAlreadyComputed[i])
 
@@ -333,7 +333,7 @@ class CodePrepare:
 
     def _setSubIndicesAlreadyComputed(self, idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices):
         if idx in domains_with_indices and isinstance(domains_with_indices[idx], dict):
-            _indices = domains_with_indices[idx]["indices"]
+            _indices = domains_with_indices[idx][INDICES]
             c = 0
             for i in range(idx, idx+len(_indices)):
                 subIndicesAlreadyComputed[i] = _indices[c]
@@ -603,7 +603,7 @@ class CodePrepare:
             ind = indices[i]
 
             if ind in self.codeGenerator.parameters and not ind in self.codeGenerator.parameterIsIndexOf:
-                self.codeGenerator.parameterIsIndexOf[ind] = {"indexOf":name, "pos":i}
+                self.codeGenerator.parameterIsIndexOf[ind] = {"indexOf":name, POS:i}
 
     def _mountValueByIndex(self, indicesPosition, value):
         valueDict = {}
@@ -846,7 +846,7 @@ class CodePrepare:
                 for subInd in sub_indices_list:
                     if index in subInd:
                         pos = subInd.index(index)
-                        keys.append({"order":order, "identifier":key, "pos":pos})
+                        keys.append({ORDER:order, IDENTIFIER:key, POS:pos})
 
                         order += 1
 
@@ -878,7 +878,7 @@ class CodePrepare:
 
     def _tupleContainIndex(self, index, pos, _tuple):
         for el in _tuple:
-            if el["index"] == index and el["pos"] == pos:
+            if el[INDEX] == index and el[POS] == pos:
                 return True
 
         return False
@@ -889,20 +889,20 @@ class CodePrepare:
             self.codeGenerator.tuples[_tuple] = {}
         
         if not stmt in self.codeGenerator.tuples[_tuple]:
-            self.codeGenerator.tuples[_tuple][stmt] = {"dimen":dimen, "setWithIndices": setWithIndices, "identifiers": {}}
+            self.codeGenerator.tuples[_tuple][stmt] = {DIMEN:dimen, SETWITHINDICES: setWithIndices, IDENTIFIERS: {}}
 
         elif higherPriority:
-            self.codeGenerator.tuples[_tuple][stmt]["dimen"] = dimen
-            self.codeGenerator.tuples[_tuple][stmt]["setWithIndices"] = setWithIndices
+            self.codeGenerator.tuples[_tuple][stmt][DIMEN] = dimen
+            self.codeGenerator.tuples[_tuple][stmt][SETWITHINDICES] = setWithIndices
             
-        if not ident in self.codeGenerator.tuples[_tuple][stmt]["identifiers"]:
-            self.codeGenerator.tuples[_tuple][stmt]["identifiers"][ident] = {}
+        if not ident in self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS]:
+            self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS][ident] = {}
 
-        if not order in self.codeGenerator.tuples[_tuple][stmt]["identifiers"][ident]:
-            self.codeGenerator.tuples[_tuple][stmt]["identifiers"][ident][order] = []
+        if not order in self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS][ident]:
+            self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS][ident][order] = []
 
-        if not self._tupleContainIndex(index, pos, self.codeGenerator.tuples[_tuple][stmt]["identifiers"][ident][order]):
-            self.codeGenerator.tuples[_tuple][stmt]["identifiers"][ident][order].append({"index": index, "pos": pos})
+        if not self._tupleContainIndex(index, pos, self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS][ident][order]):
+            self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS][ident][order].append({INDEX: index, POS: pos})
 
     def _getTuplesByTables(self, tables, stmt):
         for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
@@ -931,7 +931,7 @@ class CodePrepare:
                                 dimen = 1
 
                         if indicesSetOp and len(indicesSetOp) > 0:
-                            self.codeGenerator.setsWitOperationsIndices[key] = {"dimen": dimen, "indices": indicesSetOp}
+                            self.codeGenerator.setsWitOperationsIndices[key] = {DIMEN: dimen, INDICES: indicesSetOp}
 
                         key = dnew
 
@@ -952,9 +952,9 @@ class CodePrepare:
 
                             if len(keys) > 0:
                                 for key in keys:
-                                    ident = key["identifier"]
-                                    pos   = key["pos"]
-                                    order = key["order"]
+                                    ident = key[IDENTIFIER]
+                                    pos   = key[POS]
+                                    order = key[ORDER]
 
                                     self._addTuple(domain, stmt, dimen, True, index, ident, order, pos)
 
@@ -978,7 +978,7 @@ class CodePrepare:
                                     self.codeGenerator.setsWitOperationsInv[dnew] = d
 
                                     if indicesSetOp and len(indicesSetOp) > 0:
-                                        self.codeGenerator.setsWitOperationsIndices[d] = {"dimen": dimen, "indices": indicesSetOp}
+                                        self.codeGenerator.setsWitOperationsIndices[d] = {DIMEN: dimen, INDICES: indicesSetOp}
 
                                     d = dnew
                                 
@@ -988,9 +988,9 @@ class CodePrepare:
 
                                     if len(keys) > 0:
                                         for key in keys:
-                                            ident = key["identifier"]
-                                            pos   = key["pos"]
-                                            order = key["order"]
+                                            ident = key[IDENTIFIER]
+                                            pos   = key[POS]
+                                            order = key[ORDER]
 
                                             self._addTuple(d, stmt, dimen, False, index, ident, order, pos, True)
 
@@ -1028,18 +1028,18 @@ class CodePrepare:
 
             for stmt in sorted(self.codeGenerator.tuples[name], reverse=True):
 
-                setWithIndices = self.codeGenerator.tuples[name][stmt]["setWithIndices"]
+                setWithIndices = self.codeGenerator.tuples[name][stmt][SETWITHINDICES]
                 isSetWithIndices = setWithIndices
 
                 if setWithIndices:
                     realtype = SET_OF_INT
 
                 domainIdent = []
-                for ident in self.codeGenerator.tuples[name][stmt]["identifiers"]:
+                for ident in self.codeGenerator.tuples[name][stmt][IDENTIFIERS]:
                     
-                    for order in sorted(self.codeGenerator.tuples[name][stmt]["identifiers"][ident]):
+                    for order in sorted(self.codeGenerator.tuples[name][stmt][IDENTIFIERS][ident]):
                         domain = self.codeGenerator._getDomainByIdentifier(ident)
-                        sizeTuple = self.codeGenerator.tuples[name][stmt]["dimen"]
+                        sizeTuple = self.codeGenerator.tuples[name][stmt][DIMEN]
                         sizeTupleNotNull = sizeTuple
 
                         if sizeTuple > 1:
@@ -1053,7 +1053,7 @@ class CodePrepare:
                             domainIdent.append(domain)
 
                         if len(domainIdent) > 0:
-                            _tuple = self.codeGenerator.tuples[name][stmt]["identifiers"][ident][order]
+                            _tuple = self.codeGenerator.tuples[name][stmt][IDENTIFIERS][ident][order]
                             domainIdents = list(domainIdent)
                             
                             if len(domainIdent) == 1:
@@ -1073,7 +1073,7 @@ class CodePrepare:
                                 d = []
 
                                 for t in _tuple:
-                                    pos.append(t["pos"])
+                                    pos.append(t[POS])
 
                                 for position in pos:
                                     if position != None:
@@ -1144,7 +1144,7 @@ class CodePrepare:
                 else:
                     self.codeGenerator.additionalParameters[name] = ARRAY + BEGIN_ARRAY + index1 + END_ARRAY + SPACE + OF + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + name + END_STATEMENT + BREAKLINE + BREAKLINE
 
-            self.codeGenerator.tuplesDeclared[name] = {"index1": index1, "index2": index2, "type": _type, "realtype": realtype, "dimen": sizeTuple, "isSetWithIndices": isSetWithIndices}
+            self.codeGenerator.tuplesDeclared[name] = {INDEX1: index1, INDEX2: index2, TYPE: _type, REALTYPE: realtype, DIMEN: sizeTuple, ISSETWITHINDICES: isSetWithIndices}
 
     def _initialize(self):
         self.init()
@@ -1174,7 +1174,7 @@ class CodePrepare:
         
         if setExpression in self.codeGenerator.tuplesDeclared:
             
-            realtype = self.codeGenerator.tuplesDeclared[setExpression]["realtype"]
+            realtype = self.codeGenerator.tuplesDeclared[setExpression][REALTYPE]
             if realtype != None and realtype != SET_OF_INT:
                 self.includeNewIndices = True
                 self.to_enum = True
@@ -1223,7 +1223,7 @@ class CodePrepare:
 
         if not stmtIndex in self.codeGenerator.scopes:
             self.codeGenerator.scopes[stmtIndex] = {}
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_Declarations"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_Declarations"}
 
         self.isDeclaration = True
     	map(self._prepareDeclaration, node.declarations)
@@ -1259,7 +1259,7 @@ class CodePrepare:
 
         if not stmtIndex in self.codeGenerator.scopes:
             self.codeGenerator.scopes[stmtIndex] = {}
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_Objective"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_Objective"}
 
         node.linearExpression.prepare(self)
 
@@ -1274,7 +1274,7 @@ class CodePrepare:
         
         if not stmtIndex in self.codeGenerator.scopes:
             self.codeGenerator.scopes[stmtIndex] = {}
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_Constraint"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_Constraint"}
             
         if node.indexingExpression:
             node.indexingExpression.prepare(self)
@@ -1305,7 +1305,7 @@ class CodePrepare:
         stmtIndex = node.constraintExpression1.getSymbolTable().getStatement()
         scope = node.constraintExpression1.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalConstraintExpression1"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalConstraintExpression1"}
 
         node.constraintExpression1.prepare(self)
 
@@ -1313,7 +1313,7 @@ class CodePrepare:
             stmtIndex = node.constraintExpression2.getSymbolTable().getStatement()
             scope = node.constraintExpression2.getSymbolTable().getScope()
 
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalConstraintExpression2"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalConstraintExpression2"}
 
             node.constraintExpression2.prepare(self)
 
@@ -1325,7 +1325,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_LinearExpressionBetweenParenthesis"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_LinearExpressionBetweenParenthesis"}
 
         node.linearExpression.prepare(self)
 
@@ -1341,7 +1341,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_IteratedLinearExpression"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_IteratedLinearExpression"}
 
         node.indexingExpression.prepare(self)
         
@@ -1358,7 +1358,7 @@ class CodePrepare:
             stmtIndex = node.linearExpression1.getSymbolTable().getStatement()
             scope = node.linearExpression1.getSymbolTable().getScope()
 
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalLinearExpression1"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalLinearExpression1"}
 
             node.linearExpression1.prepare(self)
 
@@ -1368,7 +1368,7 @@ class CodePrepare:
                     stmtIndex = node.linearExpression2.getSymbolTable().getStatement()
                     scope = node.linearExpression2.getSymbolTable().getScope()
 
-                    self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalLinearExpression2"}
+                    self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalLinearExpression2"}
 
                 node.linearExpression2.prepare(self)
 
@@ -1409,7 +1409,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
         
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_NumericExpressionBetweenParenthesis", "context": "(" + node.numericExpression.generateCode(self.codeGenerator) + ")"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_NumericExpressionBetweenParenthesis", CONTEXT: "(" + node.numericExpression.generateCode(self.codeGenerator) + ")"}
         node.numericExpression.prepare(self)
 
     def prepare_NumericExpressionWithArithmeticOperation(self, node):
@@ -1425,7 +1425,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_IteratedNumericExpression"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_IteratedNumericExpression"}
 
         node.indexingExpression.prepare(self)
 
@@ -1441,7 +1441,7 @@ class CodePrepare:
         stmtIndex = node.numericExpression1.getSymbolTable().getStatement()
         scope = node.numericExpression1.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalNumericExpression1"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalNumericExpression1"}
 
         node.numericExpression1.prepare(self)
 
@@ -1449,7 +1449,7 @@ class CodePrepare:
             stmtIndex = node.numericExpression2.getSymbolTable().getStatement()
             scope = node.numericExpression2.getSymbolTable().getScope()
 
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalNumericExpression2"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalNumericExpression2"}
 
             node.numericExpression2.prepare(self)
 
@@ -1463,7 +1463,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_SymbolicExpressionBetweenParenthesis"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_SymbolicExpressionBetweenParenthesis"}
 
         node.symbolicExpression.prepare(self)
 
@@ -1510,7 +1510,7 @@ class CodePrepare:
             
             if not self.codeGenerator.getOriginalIndices and setExpression in self.codeGenerator.tuplesDeclared:
 
-                index1 = self.codeGenerator.tuplesDeclared[setExpression]["index1"]
+                index1 = self.codeGenerator.tuplesDeclared[setExpression][INDEX1]
                 values = node.identifier.getValues()
 
                 self.codeGenerator.replaceNewIndices = False
@@ -1521,8 +1521,8 @@ class CodePrepare:
                 stmtIndex = node.getSymbolTable().getStatement()
                 scope = node.getSymbolTable().getScope()
 
-                if not "new_indices" in self.codeGenerator.scopes[stmtIndex][scope]:
-                    self.codeGenerator.scopes[stmtIndex][scope]["new_indices"] = {}
+                if not NEW_INDICES in self.codeGenerator.scopes[stmtIndex][scope]:
+                    self.codeGenerator.scopes[stmtIndex][scope][NEW_INDICES] = {}
 
                 self.codeGenerator.countNewIndices = 1
                 self.includeNewIndices = True
@@ -1621,7 +1621,7 @@ class CodePrepare:
             setExpression = self._getSetExpression(node)
 
             if not self.codeGenerator.getOriginalIndices and setExpression in self.codeGenerator.tuplesDeclared:
-                index1 = self.codeGenerator.tuplesDeclared[setExpression]["index1"]
+                index1 = self.codeGenerator.tuplesDeclared[setExpression][INDEX1]
                 values = node.identifier.getValues()
                 values[0].prepare(self)
                 idx = values[0].generateCode(self.codeGenerator)
@@ -1629,8 +1629,8 @@ class CodePrepare:
                 stmtIndex = node.getSymbolTable().getStatement()
                 scope = node.getSymbolTable().getScope()
 
-                if not "new_indices" in self.codeGenerator.scopes[stmtIndex][scope]:
-                    self.codeGenerator.scopes[stmtIndex][scope]["new_indices"] = {}
+                if not NEW_INDICES in self.codeGenerator.scopes[stmtIndex][scope]:
+                    self.codeGenerator.scopes[stmtIndex][scope][NEW_INDICES] = {}
 
                 self.codeGenerator.countNewIndices = 1
 
@@ -1670,7 +1670,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_EntryLogicalExpressionIterated"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_EntryLogicalExpressionIterated"}
 
         node.indexingExpression.prepare(self)
         node.logicalExpression.prepare(self)
@@ -1681,7 +1681,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_EntryLogicalExpressionBetweenParenthesis"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_EntryLogicalExpressionBetweenParenthesis"}
 
         node.logicalExpression.prepare(self)
 
@@ -1728,7 +1728,7 @@ class CodePrepare:
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_IteratedSetExpression"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_IteratedSetExpression"}
 
         if node.indexingExpression:
             node.indexingExpression.prepare(self)
@@ -1752,14 +1752,14 @@ class CodePrepare:
         stmtIndex = node.setExpression1.getSymbolTable().getStatement()
         scope = node.setExpression1.getSymbolTable().getScope()
 
-        self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalSetExpression"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalSetExpression"}
 
         if node.setExpression2:
 
             stmtIndex = node.setExpression2.getSymbolTable().getStatement()
             scope = node.setExpression2.getSymbolTable().getScope()
 
-            self.codeGenerator.scopes[stmtIndex][scope] = {"where": "generateCode_ConditionalSetExpression"}
+            self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalSetExpression"}
 
             node.setExpression2.prepare(self)
 
@@ -1778,13 +1778,13 @@ class CodePrepare:
             stmtIndex = node.getSymbolTable().getStatement()
             scope = node.getSymbolTable().getScope()
 
-            if not "newEntryLogicalExpression" in self.codeGenerator.scopes[stmtIndex][scope]:
-                self.codeGenerator.scopes[stmtIndex][scope]["newEntryLogicalExpression"] = []
+            if not NEWENTRYLOGICALEXPRESSION in self.codeGenerator.scopes[stmtIndex][scope]:
+                self.codeGenerator.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION] = []
             
             if self.lastIdentifier != None:
                 newEntry = BEGIN_ARGUMENT_LIST+self.lastIdentifier+MINUS+initValue+END_ARGUMENT_LIST+SPACE+MOD+SPACE + node.by.generateCode(self.codeGenerator) + SPACE+EQUAL+SPACE+"0"
-                if not newEntry in self.codeGenerator.scopes[stmtIndex][scope]["newEntryLogicalExpression"]:
-                    self.codeGenerator.scopes[stmtIndex][scope]["newEntryLogicalExpression"].append(newEntry)
+                if not newEntry in self.codeGenerator.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION]:
+                    self.codeGenerator.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION].append(newEntry)
 
     # Value List
     def prepare_ValueList(self, node):

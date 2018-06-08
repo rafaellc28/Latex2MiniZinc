@@ -291,7 +291,7 @@ class CodeGenerator:
         if not setExpression in self.tuplesDeclared:
             return False
 
-        return not self.tuplesDeclared[setExpression]["isSetWithIndices"]
+        return not self.tuplesDeclared[setExpression][ISSETWITHINDICES]
 
     def _processDomainsWithIndices(self, domain_with_indices):
 
@@ -349,7 +349,7 @@ class CodeGenerator:
     # Get the MiniZinc code for a given entry
     def _getCodeEntryByKey(self, entry):
         for key in entry:
-            conj = AND if key == "and" else OR
+            conj = AND if key == ANDLITERAL else OR
             return conj, entry[key].generateCode(self)
 
     # Get the MiniZinc code for a given objective
@@ -380,7 +380,7 @@ class CodeGenerator:
         return valid
 
     def formatNumber(self, number):
-        return ("0" if number[0] == PERIOD else EMPTY_STRING) + number
+        return (ZERO if number[0] == PERIOD else EMPTY_STRING) + number
 
     def _getIndices(self, sub_indices, domains_with_indices, stmt, scope):
         indices_ins = []
@@ -409,11 +409,11 @@ class CodeGenerator:
             d = domains_with_indices[i]
 
             if not isinstance(d, str):
-                setName = d["set"]
+                setName = d[SET]
                 
                 if setName in self.tuplesDeclared:
-                    index1 = self.tuplesDeclared[setName]["index1"]
-                    indices = d["indices"]
+                    index1 = self.tuplesDeclared[setName][INDEX1]
+                    indices = d[INDICES]
                     index = indices[0]
 
                     c = 1
@@ -445,11 +445,11 @@ class CodeGenerator:
                 domains.append(d)
 
             else:
-                setName = d["set"]
+                setName = d[SET]
                 
                 if setName in self.tuplesDeclared:
-                    index1 = self.tuplesDeclared[setName]["index1"]
-                    indices = d["indices"]
+                    index1 = self.tuplesDeclared[setName][INDEX1]
+                    indices = d[INDICES]
                     index = indices[0]
                     domains.append(index + SPACE+IN+SPACE + index1)
 
@@ -464,8 +464,8 @@ class CodeGenerator:
         for d in domains:
             
             if d in self.tuplesDeclared:
-                _type = self.tuplesDeclared[d]["type"]
-                index2 = self.tuplesDeclared[d]["index2"]
+                _type = self.tuplesDeclared[d][TYPE]
+                index2 = self.tuplesDeclared[d][INDEX2]
                 size = int(index2[3:])
 
                 for i in range(size):
@@ -625,7 +625,7 @@ class CodeGenerator:
                     if d in self.tuples:
                         d = INT
                         _tuple = self.tuples[d]
-                        dimen = _tuple["dimen"]
+                        dimen = _tuple[DIMEN]
 
                         if dimen != None:
                             for i in range(dimen):
@@ -741,11 +741,11 @@ class CodeGenerator:
                             if value2 in self.setsWitOperationsIndices:
                                 v = self.setsWitOperationsIndices[value2]
 
-                                if v["dimen"] > 0:
+                                if v[DIMEN] > 0:
                                     value += BEGIN_ARRAY
                                     inds = []
-                                    for i in range(v["dimen"]):
-                                        inds.append(v["indices"][i])
+                                    for i in range(v[DIMEN]):
+                                        inds.append(v[INDICES][i])
                                     value += COMMA.join(inds) + END_ARRAY
                         
                         setType = False
@@ -893,8 +893,8 @@ class CodeGenerator:
 
         if name in self.parameterIsIndexOf:
             valueAux = self.parameterIsIndexOf[name]
-            var = valueAux["indexOf"]
-            pos = valueAux["pos"]
+            var = valueAux[INDEXOF]
+            pos = valueAux[POS]
 
             setExpression = self._getDomainByIdentifier(var)
 
@@ -1253,9 +1253,9 @@ class CodeGenerator:
         if name in self.tuplesDeclared:
             isArray = True
             _tuple = self.tuplesDeclared[name]
-            index1 = _tuple["index1"]
-            index2 = _tuple["index2"]
-            _type  = _tuple["type"]
+            index1 = _tuple[INDEX1]
+            index2 = _tuple[INDEX2]
+            _type  = _tuple[TYPE]
 
             self.array2dIndex1 = index1
             self.array2dIndex2 = index2
@@ -1297,16 +1297,16 @@ class CodeGenerator:
 
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
-            index1 = _tuple["index1"]
+            index1 = _tuple[INDEX1]
 
             if deleteTupleIndex:
                 del self.additionalParameters[index1]
 
             else:
-                index2 = _tuple["index2"]
+                index2 = _tuple[INDEX2]
 
-                if _tuple["realtype"]:
-                    _type  = _tuple["realtype"]
+                if _tuple[REALTYPE]:
+                    _type  = _tuple[REALTYPE]
 
                 if _type == ENUM:
                     _type = INT
@@ -1656,7 +1656,7 @@ class CodeGenerator:
             
             if function == NumericExpressionWithFunction.CARD and numericExpression1 in self.tuplesDeclared:
                 _tuple = self.tuplesDeclared[numericExpression1]
-                numericExpression1 = _tuple["index1"]
+                numericExpression1 = _tuple[INDEX1]
 
             res += numericExpression1
 
@@ -1769,7 +1769,7 @@ class CodeGenerator:
             res += SPACE+ELSE+SPACE + node.numericExpression2.generateCode(self)
 
         else:
-            res += SPACE+ELSE+SPACE+"0"
+            res += SPACE+ELSE+SPACE+ZERO
 
         res += SPACE+ENDIF
 
@@ -1807,13 +1807,13 @@ class CodeGenerator:
 
             if stmtIndex in self.scopes and scope in self.scopes[stmtIndex]:
 
-                if "newEntryLogicalExpression" in self.scopes[stmtIndex][scope] and len(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"]) > 0:
+                if NEWENTRYLOGICALEXPRESSION in self.scopes[stmtIndex][scope] and len(self.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION]) > 0:
                     if not node.logicalExpression:
                         res += SPACE+WHERE+SPACE
                     else:
                         res += SPACE+AND+SPACE
 
-                    entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"])
+                    entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION])
 
                     res += entries
 
@@ -1840,13 +1840,13 @@ class CodeGenerator:
             scope = node.getSymbolTable().getScope()
 
             if stmtIndex in self.scopes and scope in self.scopes[stmtIndex]:
-                if "newEntryLogicalExpression" in self.scopes[stmtIndex][scope] and len(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"]) > 0:
+                if NEWENTRYLOGICALEXPRESSION in self.scopes[stmtIndex][scope] and len(self.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION]) > 0:
                     if not node.logicalExpression:
                         res += SPACE+WHERE+SPACE
                     else:
                         res += SPACE+AND+SPACE
 
-                    entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope]["newEntryLogicalExpression"])
+                    entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION])
 
                     res += entries
 
@@ -1888,7 +1888,7 @@ class CodeGenerator:
 
             if not self.getOriginalIndices and setExpression in self.tuplesDeclared:
 
-                index1 = self.tuplesDeclared[setExpression]["index1"]
+                index1 = self.tuplesDeclared[setExpression][INDEX1]
                 values = node.identifier.getValues()
 
                 self.replaceNewIndices = False
@@ -1995,7 +1995,7 @@ class CodeGenerator:
             setExpression = self._getSetExpression(node)
 
             if not self.getOriginalIndices and setExpression in self.tuplesDeclared:
-                index1 = self.tuplesDeclared[setExpression]["index1"]
+                index1 = self.tuplesDeclared[setExpression][INDEX1]
                 values = node.identifier.getValues()
                 idx = values[0].generateCode(self)
 
@@ -2275,26 +2275,26 @@ class CodeGenerator:
             if not scope in self.scopes[stmt]:
                 return None
 
-            if "new_indices" in self.scopes[stmt][scope]:
-                if ident in self.scopes[stmt][scope]["new_indices"]:
-                    new_index = self.scopes[stmt][scope]["new_indices"][ident]
+            if NEW_INDICES in self.scopes[stmt][scope]:
+                if ident in self.scopes[stmt][scope][NEW_INDICES]:
+                    new_index = self.scopes[stmt][scope][NEW_INDICES][ident]
                     replaced = True
 
-                    if TO_ENUM + "('realtype'" in new_index:
+                    if TO_ENUM + "('"+REALTYPE+"'" in new_index:
                         replaced = False
 
                         if self.parentIdentifier != None and self.identProcessing != None and self.identProcessing in self.posId:
 
                             domain = self._getDomainByIdentifier(self.parentIdentifier)
                             
-                            if domain != None and domain.strip() != "":
+                            if domain != None and domain.strip() != EMPTY_STRING:
                                 domains = []
                                 domains_aux = Utils._splitDomain(domain, COMMA)
                                 
                                 for domain in domains_aux:
                                     if domain in self.tuplesDeclared:
-                                        dimen  = self.tuplesDeclared[domain]["dimen"]
-                                        domain = self.tuplesDeclared[domain]["type"]
+                                        dimen  = self.tuplesDeclared[domain][DIMEN]
+                                        domain = self.tuplesDeclared[domain][TYPE]
                                         
                                         for i in range(dimen):
                                             domains.append(domain)
@@ -2308,7 +2308,7 @@ class CodeGenerator:
                                         domain = domains[self.posId[self.identProcessing]]
 
                                         if domain != INT and domain in self.listEnums:
-                                            new_index = new_index.replace("'realtype'", domain)
+                                            new_index = new_index.replace("'"+REALTYPE+"'", domain)
                                             replaced = True
 
                     if not replaced:
@@ -2335,17 +2335,17 @@ class CodeGenerator:
         if not scope in self.scopes[stmt]:
             self.scopes[stmt][scope] = {}
 
-        if not "new_indices" in self.scopes[stmt][scope]:
-            self.scopes[stmt][scope]["new_indices"] = {}
+        if not NEW_INDICES in self.scopes[stmt][scope]:
+            self.scopes[stmt][scope][NEW_INDICES] = {}
 
-        if not ident in self.scopes[stmt][scope]["new_indices"]:
-            self.scopes[stmt][scope]["new_indices"][ident] = self.newIndexExpression
+        if not ident in self.scopes[stmt][scope][NEW_INDICES]:
+            self.scopes[stmt][scope][NEW_INDICES][ident] = self.newIndexExpression
             self.countNewIndices += 1
 
         else:
-            newIndex = self.scopes[stmt][scope]["new_indices"][ident]
+            newIndex = self.scopes[stmt][scope][NEW_INDICES][ident]
             if newIndex == INT and self.newIndexExpression != INT:
-                self.scopes[stmt][scope]["new_indices"][ident] = self.newIndexExpression
+                self.scopes[stmt][scope][NEW_INDICES][ident] = self.newIndexExpression
                 self.countNewIndices += 1
 
     # ID
