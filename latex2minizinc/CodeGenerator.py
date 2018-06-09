@@ -124,35 +124,35 @@ class CodeGenerator:
     def _getDomainByIdentifier(self, ident):
         if ident in self.identifiers:
             res = self.identifiers[ident]
-            return res["domain"]
+            return res[DOMAIN]
 
         return None
 
     def _getDomainsByIdentifier(self, ident):
         if ident in self.identifiers:
             res = self.identifiers[ident]
-            return res["domains"]
+            return res[DOMAINS]
 
         return None
 
     def _getDomainsWithIndicesByIdentifier(self, ident):
         if ident in self.identifiers:
             res = self.identifiers[ident]
-            return res["domains_with_indices_list"]
+            return res[DOMAINS_WITH_INDICES_LIST]
 
         return None
 
     def _getSubIndicesDomainsAndDependencies(self, var):
         if var in self.identifiers:
             res = self.identifiers[var]
-            return res["domain"], res["domains"], res["domains_with_indices_list"], res["dependencies"], res["sub_indices"], res["statement"]
+            return res[DOMAIN], res[DOMAINS], res[DOMAINS_WITH_INDICES_LIST], res[DEPENDENCIES], res[SUB_INDICES], res[STATEMENT]
 
         return None, [], [], [], None
 
     def _getProperties(self, var):
         if var in self.identifiers:
             res = self.identifiers[var]
-            return res["types"], res["dim"], res["minVal"], res["maxVal"]
+            return res[TYPES], res[DIM], res[MINVAL], res[MAXVAL]
 
         return None, [], [], []
 
@@ -228,7 +228,7 @@ class CodeGenerator:
         values = Utils._splitDomain(setExpression, COMMA)
 
         for value in values:
-            if not re.search("^[_a-zA-Z][_a-zA-Z0-9]*$", value) and not re.search('"(?:[^\\\\]|\\\\.)*?(?:"|$)|\'(?:[^\\\\]|\\\\.)*?(?:\'|$)', value):
+            if not re.search(REGEX_IDENTIFIER, value) and not re.search(REGEX_BETWEEN_QUOTES, value):
                 return False
 
         return True
@@ -242,7 +242,7 @@ class CodeGenerator:
         return setExpression[0] == BEGIN_SET and setExpression[len(setExpression)-1] == END_SET and not FROM_TO in setExpression and not setExpression == BEGIN_SET + END_SET
 
     def _checkIsSetExpressionWithTuple(self, setExpression):
-        return re.search("\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+"+IN+"\s+", setExpression)
+        return re.search(REGEX_ARGUMENT_LIST+IN+"\s+", setExpression)
 
     def _cleanKeyWithSetOperation(self, key):
         key = key.replace(FLOOR+BEGIN_ARGUMENT_LIST, EMPTY_STRING)
@@ -259,7 +259,7 @@ class CodeGenerator:
         return key
 
     def _getIndicesFromSetOperation(self, setExpression):
-        m = re.findall("\[([a-zA-Z0-9][a-zA-Z0-9,]*)\]", setExpression)
+        m = re.findall(REGEX_INDICES_SET_OPERATION, setExpression)
         if m and len(m) > 0:
             indices = []
             for ind in m:

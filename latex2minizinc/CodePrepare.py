@@ -40,44 +40,44 @@ class CodePrepare:
             for var in self.codeGenerator.genVariables.getAll():
                 if not self.codeGenerator.genParameters.has(var) and not self.codeGenerator.genSets.has(var):
                     domain, domains, domain_with_indices_list, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal = self._getSubIndicesDomains(var)
-                    self.codeGenerator.identifiers[var.getName()] = {"types": _types,
-                                                                     "dim": dim,
-                                                                     "minVal": minVal,
-                                                                     "maxVal": maxVal,
-                                                                     "domain": domain, 
-                                                                     "domains": domains, 
-                                                                     "domains_with_indices_list": domain_with_indices_list, 
-                                                                     "dependencies": dependencies, 
-                                                                     "sub_indices": sub_indices, 
-                                                                     "statement": stmtIndex}
+                    self.codeGenerator.identifiers[var.getName()] = {TYPES: _types,
+                                                                     DIM: dim,
+                                                                     MINVAL: minVal,
+                                                                     MAXVAL: maxVal,
+                                                                     DOMAIN: domain, 
+                                                                     DOMAINS: domains, 
+                                                                     DOMAINS_WITH_INDICES_LIST: domain_with_indices_list, 
+                                                                     DEPENDENCIES: dependencies, 
+                                                                     SUB_INDICES: sub_indices, 
+                                                                     STATEMENT: stmtIndex}
 
         if len(self.codeGenerator.genParameters) > 0:
             for var in self.codeGenerator.genParameters.getAll():
                 domain, domains, domain_with_indices_list, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal = self._getSubIndicesDomains(var)
-                self.codeGenerator.identifiers[var.getName()] = {"types": _types,
-                                                                 "dim": dim,
-                                                                 "minVal": minVal,
-                                                                 "maxVal": maxVal,
-                                                                 "domain": domain, 
-                                                                 "domains": domains, 
-                                                                 "domains_with_indices_list": domain_with_indices_list, 
-                                                                 "dependencies": dependencies, 
-                                                                 "sub_indices": sub_indices, 
-                                                                 "statement": stmtIndex}
+                self.codeGenerator.identifiers[var.getName()] = {TYPES: _types,
+                                                                 DIM: dim,
+                                                                 MINVAL: minVal,
+                                                                 MAXVAL: maxVal,
+                                                                 DOMAIN: domain, 
+                                                                 DOMAINS: domains, 
+                                                                 DOMAINS_WITH_INDICES_LIST: domain_with_indices_list, 
+                                                                 DEPENDENCIES: dependencies, 
+                                                                 SUB_INDICES: sub_indices, 
+                                                                 STATEMENT: stmtIndex}
 
         if len(self.codeGenerator.genSets) > 0:
             for var in self.codeGenerator.genSets.getAll():
                 domain, domains, domain_with_indices_list, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal = self._getSubIndicesDomains(var)
-                self.codeGenerator.identifiers[var.getName()] = {"types": _types,
-                                                                 "dim": dim,
-                                                                 "minVal": minVal,
-                                                                 "maxVal": maxVal,
-                                                                 "domain": domain, 
-                                                                 "domains": domains, 
-                                                                 "domains_with_indices_list": domain_with_indices_list, 
-                                                                 "dependencies": dependencies, 
-                                                                 "sub_indices": sub_indices, 
-                                                                 "statement": stmtIndex}
+                self.codeGenerator.identifiers[var.getName()] = {TYPES: _types,
+                                                                 DIM: dim,
+                                                                 MINVAL: minVal,
+                                                                 MAXVAL: maxVal,
+                                                                 DOMAIN: domain, 
+                                                                 DOMAINS: domains, 
+                                                                 DOMAINS_WITH_INDICES_LIST: domain_with_indices_list, 
+                                                                 DEPENDENCIES: dependencies, 
+                                                                 SUB_INDICES: sub_indices, 
+                                                                 STATEMENT: stmtIndex}
 
         self._getTuples()
 
@@ -102,8 +102,8 @@ class CodePrepare:
 
     def _printTables(self, tables):
         for dictStmt in tables:
-            print("SymbolTable Scope " + str(dictStmt["scope"]) + ". Level: " + str(dictStmt["level"]) + ". Leaf: " + str(dictStmt["table"].getIsLeaf()) + 
-                  ". Parent Scope: " + (str(None) if dictStmt["table"].getParent() == None else str(dictStmt["table"].getParent().getScope())))
+            print("SymbolTable Scope " + str(dictStmt[SCOPE]) + ". Level: " + str(dictStmt["level"]) + ". Leaf: " + str(dictStmt[TABLE].getIsLeaf()) + 
+                  ". Parent Scope: " + (str(None) if dictStmt[TABLE].getParent() == None else str(dictStmt[TABLE].getParent().getScope())))
 
             print("\n".join([str(key) + ": type = " + str(value.getType()) + "; scope = " + str(value.getScope()) + 
                    "; properties = [name: " + str(value.getProperties().getName()) + ", domains: " + 
@@ -113,7 +113,7 @@ class CodePrepare:
                    ", attributes: " + str(value.getProperties().getAttributes()) + "]; inferred = " + str(value.getInferred()) + 
                    "; sub_indices = " + str(value.getSubIndices()) + "; isDefined = " + str(value.getIsDefined()) + 
                    "; isInLogicalExpression = " + str(value.getIsInLogicalExpression()) + ";"
-                   for key, value in dictStmt["table"]]))
+                   for key, value in dictStmt[TABLE]]))
             print("")
 
     def _printStatementSymbolTable(self, statement, tables):
@@ -161,9 +161,9 @@ class CodePrepare:
         else:
             domainsWithIndicesAlreadyComputed = dict(domainsAlreadyComputed)
 
-        for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
+        for table in sorted(tables, key=lambda el: el[SCOPE], reverse=True):
 
-            table = table["table"]
+            table = table[TABLE]
 
             while table != None:
 
@@ -434,9 +434,9 @@ class CodePrepare:
         
     def _getDomainsByTables(self, name, tables, _types, dim, minVal, maxVal, skip_outermost_scope = False):
         
-        for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
+        for table in sorted(tables, key=lambda el: el[SCOPE], reverse=True):
 
-            table = table["table"]
+            table = table[TABLE]
 
             while table != None:
 
@@ -863,8 +863,8 @@ class CodePrepare:
             table = table.getParent()
 
         leafs = self.codeGenerator.symbolTables.getLeafs(stmt)
-        for table in sorted(leafs, key=lambda el: el["scope"], reverse=True):
-            table = table["table"]
+        for table in sorted(leafs, key=lambda el: el[SCOPE], reverse=True):
+            table = table[TABLE]
 
             while table != None:
                 keys = self._getKeyForIndex(index, table)
@@ -905,9 +905,9 @@ class CodePrepare:
             self.codeGenerator.tuples[_tuple][stmt][IDENTIFIERS][ident][order].append({INDEX: index, POS: pos})
 
     def _getTuplesByTables(self, tables, stmt):
-        for table in sorted(tables, key=lambda el: el["scope"], reverse=True):
-            scope = table["scope"]
-            table = table["table"]
+        for table in sorted(tables, key=lambda el: el[SCOPE], reverse=True):
+            scope = table[SCOPE]
+            table = table[TABLE]
             
             while table != None:
 
@@ -1189,7 +1189,7 @@ class CodePrepare:
         elif FROM_TO in setExpression:
             self.includeNewIndices = True
             self.to_enum = True
-            self.realtype = "'realtype'"
+            self.realtype = "'"+REALTYPE+"'"
             for v in values:
                 v.prepare(self)
 
