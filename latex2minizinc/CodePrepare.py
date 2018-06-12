@@ -102,7 +102,7 @@ class CodePrepare:
 
     def _printTables(self, tables):
         for dictStmt in tables:
-            print("SymbolTable Scope " + str(dictStmt[SCOPE]) + ". Level: " + str(dictStmt["level"]) + ". Leaf: " + str(dictStmt[TABLE].getIsLeaf()) + 
+            print("SymbolTable Scope " + str(dictStmt[SCOPE]) + ". Level: " + str(dictStmt[LEVEL]) + ". Leaf: " + str(dictStmt[TABLE].getIsLeaf()) + 
                   ". Parent Scope: " + (str(None) if dictStmt[TABLE].getParent() == None else str(dictStmt[TABLE].getParent().getScope())))
 
             print("\n".join([str(key) + ": type = " + str(value.getType()) + "; scope = " + str(value.getScope()) + 
@@ -117,13 +117,13 @@ class CodePrepare:
             print("")
 
     def _printStatementSymbolTable(self, statement, tables):
-        print("SymbolTable Stmt " + str(statement) + ". Declaration: " + str(tables["isDeclaration"]))
-        self._printTables(tables["tables"])
+        print("SymbolTable Stmt " + str(statement) + ". Declaration: " + str(tables[ISDECLARATION]))
+        self._printTables(tables[TABLES])
 
 
     def _printLeafs(self):
         for stmt, tables in self.codeGenerator.symbolTables:
-            print("SymbolTable Stmt " + str(stmt) + ". Declaration: " + str(tables["isDeclaration"]))
+            print("SymbolTable Stmt " + str(stmt) + ". Declaration: " + str(tables[ISDECLARATION]))
             leafs = self.codeGenerator.symbolTables.getLeafs(stmt)
             self._printTables(leafs)
 

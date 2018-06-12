@@ -20,15 +20,15 @@ class SymbolTables(object):
 
     def insert(self, statement, table, level = 0, isDeclaration = False):
         if not statement in self.tables:
-            self.tables[statement] = {"lastScope": 0, "isDeclaration": isDeclaration, "tables": [{"scope": 0, "level": level, "table": table}]}
+            self.tables[statement] = {LASTSCOPE: 0, ISDECLARATION: isDeclaration, TABLES: [{SCOPE: 0, LEVEL: level, TABLE: table}]}
         elif isDeclaration:
-            self.tables[statement]["lastScope"] = 0
-            table.setScope(self.tables[statement]["lastScope"])
-            self.tables[statement]["tables"].append({"scope": self.tables[statement]["lastScope"] , "level": level, "table": table})
+            self.tables[statement][LASTSCOPE] = 0
+            table.setScope(self.tables[statement][LASTSCOPE])
+            self.tables[statement][TABLES].append({SCOPE: self.tables[statement][LASTSCOPE] , LEVEL: level, TABLE: table})
         else:
-            self.tables[statement]["lastScope"] += 1
-            table.setScope(self.tables[statement]["lastScope"])
-            self.tables[statement]["tables"].append({"scope": self.tables[statement]["lastScope"] , "level": level, "table": table})
+            self.tables[statement][LASTSCOPE] += 1
+            table.setScope(self.tables[statement][LASTSCOPE])
+            self.tables[statement][TABLES].append({SCOPE: self.tables[statement][LASTSCOPE] , LEVEL: level, TABLE: table})
         
         return table
 
@@ -36,9 +36,9 @@ class SymbolTables(object):
         if not statement in self.tables:
             return None
 
-        for table in self.tables[statement]["tables"]:
-            if table["scope"] == scope:
-                return table["table"]
+        for table in self.tables[statement][TABLES]:
+            if table[SCOPE] == scope:
+                return table[TABLE]
 
         return None
 
@@ -47,8 +47,8 @@ class SymbolTables(object):
             return None
 
         levels = []
-        for table in self.tables[statement]["tables"]:
-            levels.append(table["level"])
+        for table in self.tables[statement][TABLES]:
+            levels.append(table[LEVEL])
 
         return max(levels)
 
@@ -58,10 +58,10 @@ class SymbolTables(object):
 
     def getStatementsByKey(self, key):
         statements = self.getStatements()
-        return {k:v for k,v in statements.iteritems() for k2 in [k1 for k1 in [t["table"].getTable() for t in v["tables"]]] if key in k2}
+        return {k:v for k,v in statements.iteritems() for k2 in [k1 for k1 in [t[TABLE].getTable() for t in v[TABLES]]] if key in k2}
 
     def getDeclarations(self):
-        declarations = {k: v for k, v in self.tables.iteritems() if v["isDeclaration"]}
+        declarations = {k: v for k, v in self.tables.iteritems() if v[ISDECLARATION]}
         return declarations
 
     def getDeclarationsByStatement(self, statement):
@@ -70,15 +70,15 @@ class SymbolTables(object):
     
     def getDeclarationsByKey(self, key):
         declarations = self.getDeclarations()
-        return {k:v for k,v in declarations.iteritems() for k2 in [k1 for k1 in [t["table"].getTable() for t in v["tables"]]] if key in k2}
+        return {k:v for k,v in declarations.iteritems() for k2 in [k1 for k1 in [t[TABLE].getTable() for t in v[TABLES]]] if key in k2}
 
     def getDeclarationsWhereKeyIsDefined(self, key):
         res = {}
         declarations = self.getDeclarations()
         for k, decl in declarations.iteritems():
             inserted = False
-            for t in decl["tables"]:
-                table = t["table"].getTable()
+            for t in decl[TABLES]:
+                table = t[TABLE].getTable()
                 for k1,v1 in table.iteritems():
                     if k1 == key and v1.getIsDefined():
                         res[k] = decl
@@ -95,8 +95,8 @@ class SymbolTables(object):
         declarations = self.getDeclarations()
         for k,decl in declarations.iteritems():
             inserted = False
-            for t in decl["tables"]:
-                table = t["table"].getTable()
+            for t in decl[TABLES]:
+                table = t[TABLE].getTable()
                 for k1,v1 in table.iteritems():
                     if k1 == key and not v1.getIsDefined():
                         res[k] = decl
@@ -109,7 +109,7 @@ class SymbolTables(object):
         return res
 
     def getConstraints(self):
-        constraints = {k: v for k, v in self.tables.iteritems() if not v["isDeclaration"]}
+        constraints = {k: v for k, v in self.tables.iteritems() if not v[ISDECLARATION]}
         return constraints
 
     def getConstraintsByStatement(self, statement):
@@ -118,16 +118,16 @@ class SymbolTables(object):
 
     def getConstraintsByKey(self, key):
         constraints = self.getConstraints()
-        return {k:v for k,v in constraints.iteritems() for k2 in [k1 for k1 in [t["table"].getTable() for t in v["tables"]]] if key in k2}
+        return {k:v for k,v in constraints.iteritems() for k2 in [k1 for k1 in [t[TABLE].getTable() for t in v[TABLES]]] if key in k2}
 
     def getLeafs(self, statement):
-        leafs = [table for table in self.tables[statement]["tables"] if table["table"].getIsLeaf()]
+        leafs = [table for table in self.tables[statement][TABLES] if table[TABLE].getIsLeaf()]
         return leafs
 
     def getScopesWhereKeyIsDefined(self, key, statement):
         scopes = []
-        for table in self.tables[statement]["tables"]:
-            for k1,v1 in table["table"].getTable().iteritems():
+        for table in self.tables[statement][TABLES]:
+            for k1,v1 in table[TABLE].getTable().iteritems():
                 if k1 == key and v1.getIsDefined():
                     scopes.append(table)
                     break
@@ -136,9 +136,9 @@ class SymbolTables(object):
 
     def getFirstScopeByKey(self, key, statement):
         scopes = []
-        for table in self.tables[statement]["tables"]:
-            for k1,v1 in table["table"].getTable().iteritems():
-                if k1 == key and table["scope"] == 0:
+        for table in self.tables[statement][TABLES]:
+            for k1,v1 in table[TABLE].getTable().iteritems():
+                if k1 == key and table[SCOPE] == 0:
                     scopes.append(table)
                     break
         
@@ -146,8 +146,8 @@ class SymbolTables(object):
 
     def getFirstScope(self, statement):
         scopes = []
-        for table in self.tables[statement]["tables"]:
-            if table["scope"] == 0:
+        for table in self.tables[statement][TABLES]:
+            if table[SCOPE] == 0:
                 scopes.append(table)
                 break
                 

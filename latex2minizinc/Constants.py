@@ -113,7 +113,12 @@ MAXVAL = "maxVal"
 
 STATEMENT = "statement"
 SCOPE = "scope"
+SCOPES = "scopes"
 TABLE = "table"
+TABLES = "tables"
+LEVEL = "level"
+LASTSCOPE = "lastScope"
+ISDECLARATION = "isDeclaration"
 
 REGEX_IDENTIFIER = "^[_a-zA-Z][_a-zA-Z0-9]*$"
 REGEX_ARGUMENT_LIST = "\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+"
