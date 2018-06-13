@@ -28,6 +28,7 @@ from GenDeclarations import *
 from GenBelongsToList import *
 from GenBelongsTo import *
 
+from EnumSet import *
 from IntegerSet import *
 from RealSet import *
 from SymbolicSet import *
@@ -177,8 +178,10 @@ class CodeGenerator:
 
     def _isTypeSet(self, obj):
         obj = self._getIdentifierNode(obj)
+        
         return isinstance(obj, BinarySet) or isinstance(obj, IntegerSet) or isinstance(obj, RealSet) or isinstance(obj, SymbolicSet) or \
-              (isinstance(obj, SetExpression) and obj.getSymbolName(self).replace(SPACE, EMPTY_STRING) == Constants.BINARY_0_1)
+               (isinstance(obj, SetExpression) and \
+               obj.getSymbolName(self).replace(SPACE, EMPTY_STRING) == Constants.BINARY_0_1)
 
     def _isModifierSet(self, obj):
         obj = self._getIdentifierNode(obj)
@@ -191,7 +194,7 @@ class CodeGenerator:
         value = value.getSymbol()
         
         return not value.isBinary and not value.isInteger and not value.isNatural and not value.isReal and not value.isSymbolic and not \
-        value.isLogical and not value.isDeclaredAsVar and not value.isDeclaredAsParam and not value.isDeclaredAsSet and not \
+        value.isLogical and not value.isEnum and not value.isDeclaredAsVar and not value.isDeclaredAsParam and not value.isDeclaredAsSet and not \
         isinstance(value, str)
 
     def _removeTypesThatAreNotDeclarable(self, _types):
@@ -836,7 +839,7 @@ class CodeGenerator:
         if declaration != None:
             ins_vec = declaration.getIn()
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
-
+            
             if ins_vec != None and len(ins_vec) > 0:
                 ins = ins_vec[-1].generateCode(self)
 
@@ -881,6 +884,9 @@ class CodeGenerator:
 
             elif isinstance(_type, RealSet):
                 _type = FLOAT;
+
+            elif isinstance(_type, EnumSet):
+                _type = ENUM;
 
             if _type.strip() == EMPTY_STRING:
                 _type = EMPTY_STRING
@@ -1269,7 +1275,7 @@ class CodeGenerator:
                 domain, isArray, array = self._getDomainFromIndexingExpressionInDeclaration(domain, isArray, array, declaration, stmtIndex)
 
             _typeAux = self._processInDeclaration(name, declaration, isArray)
-
+            
             if _typeAux != EMPTY_STRING:
                includedType = True
                _type = _typeAux
@@ -1291,10 +1297,10 @@ class CodeGenerator:
 
             if _type in self.listSetOfInts:
                 _type = INT
-
+            
             value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
                         self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex, True)
-
+            
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
             index1 = _tuple[INDEX1]
@@ -2087,9 +2093,6 @@ class CodeGenerator:
         res =  BEGIN_ARGUMENT_LIST + node.setExpression.generateCode(self) + END_ARGUMENT_LIST
         return res
 
-    def generateCode_EnumSetExpression(self, node):
-        return ENUM
-
     def generateCode_IteratedSetExpression(self, node):
         if node.indexingExpression:
             integrand_str = EMPTY_STRING
@@ -2455,6 +2458,10 @@ class CodeGenerator:
     # LogicalSet
     def generateCode_LogicalSet(self, node):
         return BOOL
+
+    # EnumSet
+    def generateCode_EnumSet(self, node):
+        return ENUM
 
     # ParameterSet
     def generateCode_ParameterSet(self, node):

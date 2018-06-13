@@ -19,6 +19,7 @@ from Constants import *
 from DeclarationExpression import *
 from Declarations import *
 
+from EnumSet import *
 from IntegerSet import *
 from RealSet import *
 from SymbolicSet import *
@@ -895,6 +896,24 @@ class CodeSetup:
 
             self._addType(identifier, setExpressionObj)
 
+        elif isinstance(setExpressionObj, EnumSet):
+            if isinstance(var, list):
+                for i in range(len(var)):
+                    self._setIsSet(var[i])
+                    var[i].isEnum = True
+
+                    self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
+                                            [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
+            else:
+                self._setIsSet(var)
+                var.isEnum = True
+
+                self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
+                                        [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
+
+            self._addType(identifier, setExpressionObj)
+
         elif isinstance(setExpressionObj, ParameterSet):
             if isinstance(var, list):
                 for i in range(len(var)):
@@ -1282,9 +1301,6 @@ class CodeSetup:
         if node.setExpression != None:
             node.setExpression.setupEnvironment(self)
 
-    def setupEnvironment_EnumSetExpression(self, node):
-        node.setSymbolTable(self.currentTable)
-
     def setupEnvironment_IteratedSetExpression(self, node):
         """
         Generate the MiniZinc code for the identifiers and sets used in this set expression
@@ -1479,7 +1495,7 @@ class CodeSetup:
             _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
 
-        if node.isDeclaredAsVar or ((node.isVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node)):
+        if node.isDeclaredAsVar or ((node.isVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node)) and not node.isEnum:
 
             _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
             if node.isDeclaredAsVar and _genVar != None:
@@ -1522,7 +1538,7 @@ class CodeSetup:
 
             self._checkSubIndices(node)
 
-        elif node.isDeclaredAsSet or (node.isSet and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node)):
+        elif node.isDeclaredAsSet or node.isEnum or (node.isSet and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node)):
             _genSet = self.codeGenerator.genSets.get(self.identifierKey)
             if node.isDeclaredAsSet and _genSet != None:
                 _genSet.setCertainty(True)
@@ -1551,7 +1567,7 @@ class CodeSetup:
 
             self._checkSubIndices(node)
 
-        elif node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)) and not self.codeGenerator.genSets.has(self.identifierKey) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)):
+        elif node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)) and not self.codeGenerator.genSets.has(self.identifierKey) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)) and not node.isEnum:
             _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
             if node.isDeclaredAsParam and _genParam != None:
                 _genParam.setCertainty(True)
@@ -1623,6 +1639,9 @@ class CodeSetup:
         node.setSymbolTable(self.currentTable)
 
     def setupEnvironment_String(self, node):
+        node.setSymbolTable(self.currentTable)
+
+    def setupEnvironment_EnumSet(self, node):
         node.setSymbolTable(self.currentTable)
 
     def setupEnvironment_IntegerSet(self, node):
@@ -1881,6 +1900,11 @@ class CodeSetup:
         elif isinstance(setExpressionObj, LogicalSet):
             self._setIsParam(identifier)
             identifier.isLogical = True
+            self._addType(identifier, setExpressionObj)
+
+        elif isinstance(setExpressionObj, EnumSet):
+            self._setIsSet(identifier)
+            identifier.isEnum = True
             self._addType(identifier, setExpressionObj)
 
         elif isinstance(setExpressionObj, ParameterSet):

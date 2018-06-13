@@ -4,6 +4,8 @@ set of int: POS = 1..n;
 
 enum HORSE;
 
+enum RIDER;
+
 array[int] of int: speed;
 
 array[int] of int: endur;
@@ -11,8 +13,6 @@ array[int] of int: endur;
 int: n;
 
 array[int] of int: strength;
-
-enum RIDER;
 
 
 array[INDEX_SET_h_1] of var HORSE: h;

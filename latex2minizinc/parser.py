@@ -1412,6 +1412,7 @@ def p_SetExpressionWithValue(t):
                      | BINARYSET
                      | SYMBOLIC
                      | LOGICAL
+                     | ENUM
 
                      | PARAMETERS
                      | SETS
@@ -1477,11 +1478,6 @@ def p_IteratedSetExpression(t):
         t[2] = SetExpressionWithValue(t.slice[2].value2)
 
       t[0] = IteratedSetExpression(None, t[2])
-
-def p_EnumSetExpression(t):
-    '''SetExpression : ENUM'''
-    
-    t[0] = EnumSetExpression()
 
 def p_ConditionalSetExpression(t):
     '''ConditionalSetExpression : IF ConstraintExpression THEN SetExpression ELSE SetExpression ENDIF

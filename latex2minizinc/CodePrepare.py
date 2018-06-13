@@ -1720,9 +1720,6 @@ class CodePrepare:
     def prepare_SetExpressionBetweenParenthesis(self, node):
         node.setExpression.prepare(self)
 
-    def prepare_EnumSetExpression(self, node):
-        pass
-
     def prepare_IteratedSetExpression(self, node):
 
         stmtIndex = node.getSymbolTable().getStatement()

@@ -339,45 +339,6 @@ class IteratedSetExpression(SetExpression):
         return codeGenerator.generateCode(self)
 
 
-class EnumSetExpression(SetExpression):
-    """
-    Class representing a iterated set expression node in the AST
-    """
-    
-    def __init__(self):
-        """
-        Set the enum set expression
-        """
-        SetExpression.__init__(self)
-
-        
-    def __str__(self):
-        """
-        to string
-        """
-        return "enum"
-
-    def getDependencies(self, codeGenerator):
-        return []
-        
-    def setupEnvironment(self, codeSetup):
-        """
-        Setup the MiniZinc code for the identifiers and sets used in this iterated set expression
-        """
-        codeSetup.setupEnvironment(self)
-
-    def prepare(self, codePrepare):
-        """
-        Prepare the MiniZinc code for the identifiers and sets used in this iterated set expression
-        """
-        codePrepare.prepare(self)
-
-    def generateCode(self, codeGenerator):
-        """
-        Generate the MiniZinc code for this contitional set expression
-        """
-        return codeGenerator.generateCode(self)
-
 class ConditionalSetExpression(SetExpression):
     """
     Class representing a conditional set expression node in the AST
