@@ -89,6 +89,7 @@ class CodeGenerator:
         self.newIndexExpression = ""
         self.newType = INT
         self.removeAdditionalParameter = False
+        self.removeParameterInSetExpressionBetweenBraces = False
         self.array2dIndex1 = None
         self.array2dIndex2 = None
 
@@ -672,6 +673,8 @@ class CodeGenerator:
         arrayFromTuple = False
         deleteTupleIndex = False
 
+        self.removeParameterInSetExpressionBetweenBraces = False
+
         if declaration.getValue() != None:
 
             self.turnStringsIntoInts = True
@@ -697,7 +700,11 @@ class CodeGenerator:
             elif isinstance(declaration.getValue().attribute, TrueFalse):
                 _type = BOOL
 
+            elif isinstance(declaration.getValue().attribute, SetExpressionBetweenBraces) and not isinstance(declaration.getValue().attribute.setExpression, Range):
+                self.removeParameterInSetExpressionBetweenBraces = True
+
             value = declaration.getValue().attribute.generateCode(self)
+            self.removeParameterInSetExpressionBetweenBraces = False
 
             if not isinstance(declaration.getValue().attribute, Array):
 
@@ -2354,7 +2361,15 @@ class CodeGenerator:
     # ID
     def generateCode_ID(self, node):
         ident = node.value
-        
+
+        if self.removeAdditionalParameter:
+            if ident in self.additionalParameters:
+                del self.additionalParameters[ident]
+
+        if self.removeParameterInSetExpressionBetweenBraces:
+            if self.genParameters.has(ident):
+                self.genParameters.remove(ident)
+                
         if not node.getSymbolTable():
             return ident
 

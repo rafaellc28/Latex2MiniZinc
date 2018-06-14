@@ -700,16 +700,16 @@ def p_EntryConstraintLogicalExpression(t):
           t[0] = EntryLogicalExpressionRelational(EntryLogicalExpressionRelational.NEQ, t[1], t[3])
 
       elif _type == "IN":
-        if not isinstance(t[3], SetExpression):
+        if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
         t[0] = EntryLogicalExpressionWithSet(EntryLogicalExpressionWithSet.IN, t[1], t[3])
 
       elif _type == "SUBSET":
-        if not isinstance(t[3], SetExpression):
+        if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
-        if t.slice[2].type == "SUBSET" and not isinstance(t[1], SetExpression):
+        if t.slice[2].type == "SUBSET" and not isinstance(t[1], SetExpression) and not isinstance(t[1], Range):
           t[1] = SetExpressionWithValue(t[1])
 
         t[0] = EntryLogicalExpressionWithSetOperation(EntryLogicalExpressionWithSetOperation.SUBSET, t[1], t[3])
@@ -1019,13 +1019,13 @@ def p_DeclarationExpression(t):
         attr = t[3]
 
       elif _type == "IN":
-        if not isinstance(t[3], SetExpression):
+        if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.IN)
 
       elif _type == "SUBSET":
-        if not isinstance(t[3], SetExpression):
+        if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
         attr = DeclarationAttribute(t[3], DeclarationAttribute.WT)
@@ -1037,9 +1037,6 @@ def p_DeclarationExpression(t):
         attr = DeclarationAttribute(t[3], DeclarationAttribute.DM)
 
       elif _type == "ASSIGN":
-        if isinstance(t[3], Range):
-          t[3] = SetExpressionWithValue(t[3])
-
         attr = DeclarationAttribute(t[3], DeclarationAttribute.ST)
 
       elif _type == "LT":
@@ -1117,13 +1114,13 @@ def p_DeclarationAttribute(t):
 
   _type = t.slice[1].type
   if _type == "IN":
-    if not isinstance(t[2], SetExpression):
+    if not isinstance(t[2], SetExpression) and not isinstance(t[2], Range):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.IN)
 
   elif _type == "SUBSET":
-    if not isinstance(t[2], SetExpression):
+    if not isinstance(t[2], SetExpression) and not isinstance(t[2], Range):
       t[2] = SetExpressionWithValue(t[2])    
 
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.WT)
@@ -1135,9 +1132,6 @@ def p_DeclarationAttribute(t):
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.DM)
 
   elif _type == "ASSIGN":
-    if isinstance(t[2], Range):
-      t[2] = SetExpressionWithValue(t[2])
-
     t[0] = DeclarationAttribute(t[2], DeclarationAttribute.ST)
 
   elif _type == "LT":
@@ -1174,7 +1168,7 @@ def p_ValueListInExpression(t):
 
     else:
 
-      if not isinstance(t[3], SetExpression):
+      if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
         t[3] = SetExpressionWithValue(t[3])
 
       t[0] = EntryLogicalExpressionWithSet(EntryLogicalExpressionWithSet.IN, t[1], t[3])
@@ -1279,10 +1273,10 @@ def p_EntryLogicalExpressionWithSet(t):
                               | SetExpression NOTSUBSET SetExpression
                               | SetExpression NOTSUBSET Identifier'''
 
-    if not isinstance(t[3], SetExpression):
+    if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
       t[3] = SetExpressionWithValue(t[3])
 
-    if (t.slice[2].type == "SUBSET" or t.slice[2].type == "NOTSUBSET") and not isinstance(t[1], SetExpression):
+    if (t.slice[2].type == "SUBSET" or t.slice[2].type == "NOTSUBSET") and not isinstance(t[1], SetExpression) and not isinstance(t[1], Range):
       t[1] = SetExpressionWithValue(t[1])
 
     if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
@@ -1374,10 +1368,10 @@ def p_SetExpressionWithOperation(t):
     elif _type == "CROSS":
         op = SetExpressionWithOperation.CROSS
 
-    if not isinstance(t[1], SetExpression):
+    if not isinstance(t[1], SetExpression) and not isinstance(t[1], Range):
       t[1] = SetExpressionWithValue(t[1])
 
-    if not isinstance(t[3], SetExpression):
+    if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
       t[3] = SetExpressionWithValue(t[3])
 
     t[0] = SetExpressionWithOperation(op, t[1], t[3])
@@ -1429,7 +1423,8 @@ def p_SetExpressionWithValue(t):
             if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
               t[2] = ValueList([t[2]])
 
-            if not isinstance(t[2], SetExpression):
+            #print("SetExpressionBetweenBraces", t[2], str(t[2]))
+            if not isinstance(t[2], SetExpression) and not isinstance(t[2], Range) and not isinstance(t[2], ValueList):
               t[2] = SetExpressionWithValue(t[2])
 
             t[0] = SetExpressionBetweenBraces(t[2])
@@ -1445,7 +1440,7 @@ def p_SetExpressionWithValue(t):
 
     else:
 
-        if t.slice[1].type == "ConditionalSetExpression":
+        if t.slice[1].type == "ConditionalSetExpression" or t.slice[1].type == "Range":
           t[0] = t[1]
 
         else:
@@ -1615,7 +1610,7 @@ def p_EntryIndexingExpressionWithSet(t):
                                | NumericSymbolicExpression IN SetExpression
                                | NumericSymbolicExpression IN Identifier'''
 
-    if not isinstance(t[3], SetExpression):
+    if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
       t[3] = SetExpressionWithValue(t[3])
 
     if isinstance(t[1], NumericExpression) or isinstance(t[1], SymbolicExpression) or isinstance(t[1], Identifier):
@@ -2060,13 +2055,13 @@ def p_FunctionNumericExpression(t):
     elif _type == "CARD":
         op = NumericExpressionWithFunction.CARD
 
-        if not isinstance(t[3], SetExpression):
+        if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
     elif _type == "LENGTH":
         op = NumericExpressionWithFunction.LENGTH
 
-        if not isinstance(t[3], SetExpression):
+        if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
           t[3] = SetExpressionWithValue(t[3])
 
     elif _type == "SQRT":

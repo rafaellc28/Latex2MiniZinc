@@ -8,6 +8,6 @@ point_{i, j} < point_{i+1, j}: i \in 1 \dots m-1, j \in 1 \dots c\\
 (s \in stage_{i}) \implies \exists\{j \in 1 \dots c\}point_{i, j} = s: i \in 1 \dots m, s \in SPOT\\
 point_{i,j} \in stage_{i}: i \in 1 \dots m, j \in 1 \dots c\\
 global\_cardinality\_low\_up([point_{i,j} : i \in 1 \dots m, j \in 1 \dots c], [ZHIYANG, ZHONGSHU], [0,0], [1,1])\\
-SPOT := \{"DAZHUI", "TAODAOO", "SHENZHU", "LINGTAI", "ZHIYANG", "ZHONGSHU", "JIZHONG", "XUANSHU", "YAOYANGGUAN", "YAOYU"\}\\
+SPOT := \{DAZHUI, TAODAOO, SHENZHU, LINGTAI, ZHIYANG, ZHONGSHU, JIZHONG, XUANSHU, YAOYANGGUAN, YAOYU\}\\
 point_{i,j} \in SPOT, \in \mathbb{V}: i \in 1 \dots m, j \in 1 \dots c\\
 stage_{i} \in \text{setof } SPOT, \in \mathbb{V}: i \in 1 \dots m\\

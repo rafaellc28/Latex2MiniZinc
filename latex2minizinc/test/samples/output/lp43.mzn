@@ -1,8 +1,8 @@
 array[INDEX_SET_B, 1..6] of int: B;
 
-enum rows;
+float: rows;
 
-enum cols;
+float: cols;
 
 
 array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5, INDEX_SET_x_6] of var bool: x;

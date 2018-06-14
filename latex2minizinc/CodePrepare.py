@@ -1711,12 +1711,12 @@ class CodePrepare:
     def prepare_SetExpressionBetweenBraces(self, node):
         if node.setExpression != None:
             self.codeGenerator.turnStringsIntoInts = True
-
+            
             node.setExpression.prepare(self)
-
+            
             self.codeGenerator.turnStringsIntoInts = False
-
-
+            
+            
     def prepare_SetExpressionBetweenParenthesis(self, node):
         node.setExpression.prepare(self)
 

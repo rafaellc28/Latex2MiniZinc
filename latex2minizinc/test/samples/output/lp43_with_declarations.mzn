@@ -2,9 +2,9 @@ array[INDEX_SET_B, 1..6] of int: B;
 
 set of int: rows = 1..ndim;
 
-set of int: cols = 1..ndim;
-
 set of int: rows1 = 1..(ndim + 1);
+
+set of int: cols = 1..ndim;
 
 set of int: cols1 = 1..(ndim + 1);
 

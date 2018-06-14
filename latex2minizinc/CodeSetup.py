@@ -1482,7 +1482,7 @@ class CodeSetup:
         
         self.identifier = node
         self.identifierKey = node.getSymbolName(self.codeGenerator)
-        
+
         _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
         if _symbolTableEntry == None:
             justInserted = True
@@ -1851,6 +1851,7 @@ class CodeSetup:
 
     def setupEnvironment_AttributeList(self, node, identifier):
         identifier1 = self._getIdentifier(node.attribute)
+        
         if (node.op == DeclarationAttribute.ST or node.op == DeclarationAttribute.DF) and identifier.isParam and isinstance(identifier1, Identifier):
 
             name = identifier1.getSymbolName(self.codeGenerator)
