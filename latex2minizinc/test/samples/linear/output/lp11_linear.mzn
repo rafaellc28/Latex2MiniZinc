@@ -11,7 +11,7 @@ array[int] of float: supply;
 array[int] of float: demand;
 
 
-array[INDEX_SET_Trans_1, INDEX_SET_Trans_2] of var float: Trans = array2d(ORIG, DEST, [0 | i in ORIG, j in DEST]);
+array[INDEX_SET_Trans_1, INDEX_SET_Trans_2] of var float: Trans = array2d(INDEX_SET_Trans_1, INDEX_SET_Trans_2, [0 | i in ORIG, j in DEST]);
 
 set of int: INDEX_SET_Trans_1;
 

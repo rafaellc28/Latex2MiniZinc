@@ -13,7 +13,7 @@ array[int] of float: lb;
 array[int] of float: x0;
 
 
-array[INDEX_SET_x_1] of var float: x = array1d(I, [x0[i] | i in I]);
+array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [x0[i] | i in I]);
 
 var float: G1;
 

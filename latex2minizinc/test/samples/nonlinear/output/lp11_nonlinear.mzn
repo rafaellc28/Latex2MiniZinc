@@ -3,7 +3,7 @@ set of int: I = 1..10;
 array[int] of float: c;
 
 
-array[INDEX_SET_x_1] of var float: x = array1d(I, [0.1 | k in I]);
+array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [0.1 | k in I]);
 
 set of int: INDEX_SET_x_1;
 

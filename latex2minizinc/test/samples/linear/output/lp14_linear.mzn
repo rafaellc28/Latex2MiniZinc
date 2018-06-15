@@ -5,9 +5,9 @@ int: Lsup = N / 2 - 1;
 int: N;
 
 
-array[INDEX_SET_x_1] of var float: x = array1d(I, [0.5 | i in I]);
+array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [0.5 | i in I]);
 
-array[INDEX_SET_y_1] of var float: y = array1d(I, [i / Lsup | i in I]);
+array[INDEX_SET_y_1] of var float: y = array1d(INDEX_SET_y_1, [i / Lsup | i in I]);
 
 set of int: INDEX_SET_x_1;
 

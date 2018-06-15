@@ -19,7 +19,7 @@ array[int] of float: f_min;
 array[int] of float: f_max;
 
 
-array[INDEX_SET_Buy_1] of var float: Buy = array1d(FOOD, [f_min[f] | f in FOOD]);
+array[INDEX_SET_Buy_1] of var float: Buy = array1d(INDEX_SET_Buy_1, [f_min[f] | f in FOOD]);
 
 set of int: INDEX_SET_Buy_1;
 

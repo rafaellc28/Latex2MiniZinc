@@ -705,7 +705,7 @@ class CodeGenerator:
 
             value = declaration.getValue().attribute.generateCode(self)
             self.removeParameterInSetExpressionBetweenBraces = False
-
+            
             if not isinstance(declaration.getValue().attribute, Array):
 
                 dependencies = declaration.getValue().attribute.getDependencies(self)
@@ -792,8 +792,12 @@ class CodeGenerator:
                                     array = ARRAY + BEGIN_ARRAY
 
                                     for i in range(length_domains):
-                                        d = domains[i]
-                                        if d == INT:
+                                        if i < len(domains_aux):
+                                            d = domains_aux[i]
+                                        else:
+                                            d = domains[i]
+
+                                        if domains[i] == INT or (i < len(domains_aux) and domains_aux[i] == INT):
                                             index = INDEX_SET_+name+UNDERLINE+str(i+1)
                                             setExpression = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
 
