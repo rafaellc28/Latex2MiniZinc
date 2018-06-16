@@ -777,67 +777,76 @@ class CodeGenerator:
 
                     elif value.startswith(BEGIN_ARRAY):
                         _type = SET_OF_INT
-                        
+                    
+                    #print("_processValueFromDeclaration", name, value, isArray)
                     if not (BEGIN_SET in value and isArray) and (not value.startswith(ARRAY) and \
                         (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value)):
                         
                         if not value.startswith(ARRAY):
-
+                            #print(indexingExpression)
                             if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
                                 value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
 
-                                if len(domains) > 0:
-                                    length_domains = len(domains)
-                                    indices = []
-                                    array = ARRAY + BEGIN_ARRAY
+                            if len(domains) > 0:
+                                length_domains = len(domains)
+                                indices = []
+                                array = ARRAY + BEGIN_ARRAY
 
-                                    for i in range(length_domains):
-                                        if i < len(domains_aux):
-                                            d = domains_aux[i]
-                                        else:
-                                            d = domains[i]
+                                for i in range(length_domains):
+                                    if i < len(domains_aux):
+                                        d = domains_aux[i]
+                                    else:
+                                        d = domains[i]
 
-                                        if domains[i] == INT or (i < len(domains_aux) and domains_aux[i] == INT):
-                                            index = INDEX_SET_+name+UNDERLINE+str(i+1)
-                                            setExpression = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
+                                    if domains[i] == INT or (i < len(domains_aux) and domains_aux[i] == INT):
+                                        index = INDEX_SET_+name+UNDERLINE+str(i+1)
+                                        setExpression = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
 
-                                            if i < len(domains_aux) and FROM_TO in domains_aux[i]:
-                                                setExpression += SPACE+ASSIGN+SPACE + domains_aux[i]
+                                        if i < len(domains_aux) and FROM_TO in domains_aux[i]:
+                                            setExpression += SPACE+ASSIGN+SPACE + domains_aux[i]
 
-                                                if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
-                                                    pos = domains_with_indices[i].find(SPACE+IN+SPACE)
-                                                    domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
+                                            if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:
+                                                pos = domains_with_indices[i].find(SPACE+IN+SPACE)
+                                                domains_with_indices[i] = domains_with_indices[i][:pos] + SPACE+IN+SPACE + index
 
-                                            setExpression += END_STATEMENT+BREAKLINE+BREAKLINE
+                                        setExpression += END_STATEMENT+BREAKLINE+BREAKLINE
 
-                                            self.additionalParameters[index] = setExpression
-                                            indices.append(index)
-
-                                        else:
-                                            indices.append(d)
-                                    
-                                    self._deleteIndexSet(array, name)
-                                    isArray = True
-
-                                    if _type == ENUM:
-                                        _type = INT
-
-                                    arrayFromTuple = True
-                                    deleteTupleIndex = True
-
-                                    if isSet:
-                                        
-                                        if _type != ENUM:
-                                            _typeAux = _type + SEP_PARTS_DECLARATION
-                                        else:
-                                            _typeAux = _type
-
-                                        array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_typeAux+SPACE + name
+                                        self.additionalParameters[index] = setExpression
+                                        indices.append(index)
 
                                     else:
-                                        array += (COMMA+SPACE).join(indices) + END_ARRAY
+                                        indices.append(d)
+                                
+                                self._deleteIndexSet(array, name)
+                                isArray = True
 
-                                    value = ARRAY +str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
+                                if _type == ENUM:
+                                    _type = INT
+
+                                arrayFromTuple = True
+                                deleteTupleIndex = True
+
+                                if isSet:
+                                    
+                                    if _type != ENUM:
+                                        _typeAux = _type + SEP_PARTS_DECLARATION
+                                    else:
+                                        _typeAux = _type
+
+                                    array += (COMMA+SPACE).join(indices) + END_ARRAY+SPACE + OF + SPACE+_typeAux+SPACE + name
+
+                                else:
+                                    array += (COMMA+SPACE).join(indices) + END_ARRAY
+
+                                if not value.startswith(BEGIN_ARRAY):
+                                    i = 0
+                                    value = BEGIN_ARRAY + value + SPACE+SUCH_THAT+SPACE
+                                    for idx in indices:
+                                        value += "i"+str(i)+SPACE+IN+SPACE+idx
+                                        i += 1
+                                    value += END_ARRAY
+
+                                value = ARRAY +str(length_domains)+"d"+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(indices)+COMMA+SPACE+value+END_ARGUMENT_LIST
 
                     self.genValueAssigned.add(GenObj(name))
 
