@@ -136,8 +136,8 @@ class EntryLogicalExpressionWithSetOperation(EntryLogicalExpression):
     Class representing an entry of logical expression with sets in the AST of the MLP
     """
 
-    SUBSET = "within"
-    NOTSUBSET = "not within"
+    SUBSET = "subset"
+    NOTSUBSET = "not subset"
 
     def __init__(self, op, setExpression1, setExpression2):
         """
