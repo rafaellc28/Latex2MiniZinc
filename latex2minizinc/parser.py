@@ -1423,7 +1423,6 @@ def p_SetExpressionWithValue(t):
             if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
               t[2] = ValueList([t[2]])
 
-            #print("SetExpressionBetweenBraces", t[2], str(t[2]))
             if not isinstance(t[2], SetExpression) and not isinstance(t[2], Range) and not isinstance(t[2], ValueList):
               t[2] = SetExpressionWithValue(t[2])
 

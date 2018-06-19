@@ -2,9 +2,9 @@ array[INDEX_SET_compatible] of set of int: compatible;
 
 set of int: POS = 1..n;
 
-enum HORSE;
-
 enum RIDER;
+
+enum HORSE;
 
 array[int] of int: speed;
 

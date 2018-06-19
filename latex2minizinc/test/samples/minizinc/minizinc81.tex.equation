@@ -8,5 +8,4 @@ r_{p} \in compatible_{h_{p}}: p \in POS\\
 POS := 1 \dots n\\
 compatible_{h} \in \text{setof } RIDER; speed_{h} \in \mathbb{Z}, \in \mathbb{P}: h \in HORSE\\
 endur_{r}, strength_{r} \in \mathbb{Z}, \in \mathbb{P}: r \in RIDER\\
-RIDER, \in \mathbb{Enum}\\
 h_{p} \in HORSE, \in \mathbb{V}; r_{p} \in RIDER, \in \mathbb{V}: p \in POS\\

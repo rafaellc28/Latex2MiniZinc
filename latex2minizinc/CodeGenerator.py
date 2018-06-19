@@ -778,12 +778,10 @@ class CodeGenerator:
                     elif value.startswith(BEGIN_ARRAY):
                         _type = SET_OF_INT
                     
-                    #print("_processValueFromDeclaration", name, value, isArray)
                     if not (BEGIN_SET in value and isArray) and (not value.startswith(ARRAY) and \
                         (isArray or len(_subIndices) > 0 or BEGIN_ARRAY in value)):
                         
                         if not value.startswith(ARRAY):
-                            #print(indexingExpression)
                             if indexingExpression != None and indexingExpression.strip() != EMPTY_STRING:
                                 value = BEGIN_ARRAY+value+SPACE+SUCH_THAT+SPACE+indexingExpression+END_ARRAY
 
@@ -1170,7 +1168,6 @@ class CodeGenerator:
         
         paramStr = EMPTY_STRING
         name = _genParameter.getName()
-        
         domain = None
         _type = None
         isArray = False
@@ -1258,7 +1255,6 @@ class CodeGenerator:
     def _declareSet(self, _genSet):
 
         name = _genSet.getName()
-
         setStr = EMPTY_STRING
         declaration = self.genDeclarations.get(name)
         value = EMPTY_STRING

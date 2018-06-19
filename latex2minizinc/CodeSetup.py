@@ -1316,6 +1316,9 @@ class CodeSetup:
 
         if node.indexingExpression:
             node.indexingExpression.setupEnvironment(self)
+            
+        elif isinstance(node.integrand, Identifier):
+            node.integrand.isSet = True
 
         node.integrand.setupEnvironment(self)
 
