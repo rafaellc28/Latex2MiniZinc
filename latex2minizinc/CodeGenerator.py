@@ -750,11 +750,11 @@ class CodeGenerator:
                             
                             if value2 in self.setsWitOperationsIndices:
                                 v = self.setsWitOperationsIndices[value2]
-
+                                
                                 if v[DIMEN] > 0:
                                     value += BEGIN_ARRAY
                                     inds = []
-                                    for i in range(v[DIMEN]):
+                                    for i in range(len(v[INDICES])):
                                         inds.append(v[INDICES][i])
                                     value += COMMA.join(inds) + END_ARRAY
                         
