@@ -2,9 +2,9 @@ set of int: ROW = 1..maxr;
 
 set of int: COL = 1..maxc;
 
-set of int: SOLDIER = 1..nsoldier;
-
 set of int: SOLDIER0 = 0..nsoldier;
+
+set of int: SOLDIER = 1..nsoldier;
 
 int: nsoldier;
 

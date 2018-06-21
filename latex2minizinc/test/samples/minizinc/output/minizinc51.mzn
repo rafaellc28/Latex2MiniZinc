@@ -2,9 +2,9 @@ set of int: BLOCK = 1..n;
 
 set of int: ROFF = 1..m;
 
-set of int: ROT = 1..4;
-
 array[int, int] of set of ROFF: shape;
+
+set of int: ROT = 1..4;
 
 array[int, int] of int: d;
 

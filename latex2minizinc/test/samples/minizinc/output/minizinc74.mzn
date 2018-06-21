@@ -1,8 +1,8 @@
 set of int: DAY = 1..nDays;
 
-enum SHIFT = {OFF,EVE,NIGHT};
-
 enum SOLDIER;
+
+enum SHIFT = {OFF,EVE,NIGHT};
 
 int: o;
 
