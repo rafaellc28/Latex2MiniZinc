@@ -1,0 +1,3 @@
+% Test that set type inference has precedence over parameter type inference
+a_{i} < b_{i}: i \in I\\
+c_{i} > d_{i}: i \in 1 \dots I\\
