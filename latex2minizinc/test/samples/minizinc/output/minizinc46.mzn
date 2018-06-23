@@ -31,7 +31,7 @@ array[INDEX_SET_weekday_1] of var TIME: weekday = [start[t] | t in PERSON where 
 
 var int: rank_violation;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = PERSON;
 
 set of int: INDEX_SET_weekday_1;
 

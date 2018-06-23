@@ -17,11 +17,11 @@ set of int: INDEX_SET_r_1;
 
 set of int: INDEX_SET_s_1;
 
-set of int: INDEX_SET_t_1;
+set of int: INDEX_SET_t_1 = I;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = I;
 
-set of int: INDEX_SET_y_2;
+set of int: INDEX_SET_y_2 = I;
 
 
 constraint forall(i in I, j in I where i != j)(a[i] <= a[j] + BigM * y[i,j]);

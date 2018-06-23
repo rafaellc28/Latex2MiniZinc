@@ -23,23 +23,23 @@ array[INDEX_SET_useoil_1, INDEX_SET_useoil_2] of var float: useoil;
 
 array[INDEX_SET_useoilb_1, INDEX_SET_useoilb_2] of var bool: useoilb;
 
-set of int: INDEX_SET_buys_1;
+set of int: INDEX_SET_buys_1 = month;
 
-set of int: INDEX_SET_buys_2;
+set of int: INDEX_SET_buys_2 = oils;
 
-set of int: INDEX_SET_production_1;
+set of int: INDEX_SET_production_1 = month;
 
-set of int: INDEX_SET_stock_1;
+set of int: INDEX_SET_stock_1 = month;
 
-set of int: INDEX_SET_stock_2;
+set of int: INDEX_SET_stock_2 = oils;
 
-set of int: INDEX_SET_useoil_1;
+set of int: INDEX_SET_useoil_1 = month;
 
-set of int: INDEX_SET_useoil_2;
+set of int: INDEX_SET_useoil_2 = oils;
 
-set of int: INDEX_SET_useoilb_1;
+set of int: INDEX_SET_useoilb_1 = month;
 
-set of int: INDEX_SET_useoilb_2;
+set of int: INDEX_SET_useoilb_2 = oils;
 
 oils: OIL1;
 
@@ -52,13 +52,13 @@ oils: VEG1;
 oils: VEG2;
 
 
-constraint forall(m in month)(production[m] >= 0);
+constraint forall(m in INDEX_SET_production_1)(production[m] >= 0);
 
-constraint forall(m1 in month, o in oils)(buys[m1,o] >= 0);
+constraint forall(m1 in INDEX_SET_buys_1, o in INDEX_SET_buys_2)(buys[m1,o] >= 0);
 
-constraint forall(m1 in month, o in oils)(stock[m1,o] >= 0);
+constraint forall(m1 in INDEX_SET_stock_1, o in INDEX_SET_stock_2)(stock[m1,o] >= 0);
 
-constraint forall(m in month, o in oils)(useoil[m,o] >= 0);
+constraint forall(m in INDEX_SET_useoil_1, o in INDEX_SET_useoil_2)(useoil[m,o] >= 0);
 
 constraint forall(o in oils)(stock[1,o] = 500);
 

@@ -8,10 +8,10 @@ z_{i,case} :=
 (\text{ if } case = 0 \text{ then } 
    (  
       \min_{c \in 1 \ldots z_{i,1}}
-      (\text{ if } \not\exists\{j \in V\mid j < i \wedge (i,j) \in EE\} z_{j,0} = c \text{ then } c \text{ else } z_{i,1} + 1)
+      (\text{ if } \not\exists\{j \in V\mid j < i \wedge (i,j) \in EE\} z_{j,0} = c \text{ then } c \text{ else } z_{i,1} + 1 \text{ endif })
    )
    \text{ else }
    (
-      \text{ if } \nexists\{j \in V\mid j < i\} (i,j) \in EE \text{ then } 1 \text{ else } \max_{j \in V\mid j < i \wedge (i,j) \in EE} z_{j,0}
+      \text{ if } \nexists\{j \in V\mid j < i\} (i,j) \in EE \text{ then } 1 \text{ else } \max_{j \in V\mid j < i \wedge (i,j) \in EE} z_{j,0} \text{ endif }
    )
-): i \in V, case \in 0 \ldots 1\\
+\text{ endif }): i \in V, case \in 0 \ldots 1\\

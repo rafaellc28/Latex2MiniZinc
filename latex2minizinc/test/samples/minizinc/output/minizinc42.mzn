@@ -27,9 +27,9 @@ array[INDEX_SET_what_1] of var STANZA: what;
 
 var int: obj = sum(p in 1..floor(n - 1))(if what[p] != other /\ what[p + 1] != other then abs(effect[what[p]] - effect[what[p + 1]]) else 0 endif);
 
-set of int: INDEX_SET_place_1;
+set of int: INDEX_SET_place_1 = ESSTANZA;
 
-set of int: INDEX_SET_what_1;
+set of int: INDEX_SET_what_1 = POSN;
 
 
 include "alldifferent.mzn";

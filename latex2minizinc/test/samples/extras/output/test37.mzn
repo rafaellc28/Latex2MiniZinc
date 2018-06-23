@@ -9,9 +9,9 @@ int: n;
 
 array[INDEX_SET_Assign_1, INDEX_SET_Assign_2] of var bool: Assign;
 
-set of int: INDEX_SET_Assign_1;
+set of int: INDEX_SET_Assign_1 = JOBS;
 
-set of int: INDEX_SET_Assign_2;
+set of int: INDEX_SET_Assign_2 = MACHINES;
 
 
 constraint forall(j in JOBS)(sum(k in MACHINES)(Assign[j,k]) = 1);

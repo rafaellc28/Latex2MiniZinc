@@ -11,11 +11,11 @@ array[INDEX_SET_t_1, INDEX_SET_t_2] of var bool: t;
 
 set of int: INDEX_SET_E;
 
-set of int: INDEX_SET_t_1;
+set of int: INDEX_SET_t_1 = E;
 
 set of int: INDEX_SET_t_2;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = V;
 
 
 constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]] <= 1 /\ x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]] >= 0);

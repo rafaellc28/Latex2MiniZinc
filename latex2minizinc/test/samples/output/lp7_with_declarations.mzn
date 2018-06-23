@@ -15,18 +15,18 @@ array[INDEX_SET_pastdue_1] of var float: pastdue;
 
 array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
 
-set of int: INDEX_SET_pastdue_1;
+set of int: INDEX_SET_pastdue_1 = JOBS;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = JOBS;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = JOBS;
 
-set of int: INDEX_SET_y_2;
+set of int: INDEX_SET_y_2 = JOBS;
 
 
-constraint forall(k in JOBS)(start[k] >= 0);
+constraint forall(k in INDEX_SET_start_1)(start[k] >= 0);
 
-constraint forall(k in JOBS)(pastdue[k] >= 0);
+constraint forall(k in INDEX_SET_pastdue_1)(pastdue[k] >= 0);
 
 constraint forall(k in JOBS)(start[k] >= rel[k]);
 

@@ -43,25 +43,25 @@ set of int: INDEX_SET_START;
 
 set of int: INDEX_SET_START_union_CUSTOMERS;
 
-set of int: INDEX_SET_routeDistance_1;
+set of int: INDEX_SET_routeDistance_1 = P;
 
-set of int: INDEX_SET_routeLegs_1;
+set of int: INDEX_SET_routeLegs_1 = P;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = P;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = N;
 
-set of int: INDEX_SET_x_3;
+set of int: INDEX_SET_x_3 = N;
 
 set of int: INDEX_SET_x_4;
 
 set of int: INDEX_SET_x_5;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = P;
 
-set of int: INDEX_SET_y_2;
+set of int: INDEX_SET_y_2 = N;
 
-set of int: INDEX_SET_y_3;
+set of int: INDEX_SET_y_3 = N;
 
 set of int: INDEX_SET_y_4;
 
@@ -70,11 +70,11 @@ set of int: INDEX_SET_y_5;
 array[INDEX_SET_START_union_CUSTOMERS,1..2] of int: START_union_CUSTOMERS;
 
 
-constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(y[p,N[a,1],N[a,2],N[b,1],N[b,2]] >= 0);
+constraint forall(p in INDEX_SET_y_1, a in INDEX_SET_N, b in INDEX_SET_N)(y[p,N[a,1],N[a,2],N[b,1],N[b,2]] >= 0);
 
-constraint forall(p in P)(routeDistance[p] >= 0);
+constraint forall(p in INDEX_SET_routeDistance_1)(routeDistance[p] >= 0);
 
-constraint forall(p in P)(routeLegs[p] >= 0);
+constraint forall(p in INDEX_SET_routeLegs_1)(routeLegs[p] >= 0);
 
 constraint maxDistance >= 0;
 

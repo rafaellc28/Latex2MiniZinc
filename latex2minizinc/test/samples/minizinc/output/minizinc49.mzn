@@ -23,9 +23,9 @@ array[INDEX_SET_y_1] of var 0..h: y;
 
 set of int: INDEX_SET_shape;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = BLOCK;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = BLOCK;
 
 
 constraint forall(i in BLOCK)(forall(r in ROFF)(r in shape[i] -> (x[i] + d[r,1] + d[r,3] <= l /\ y[i] + d[r,2] + d[r,4] <= h)));

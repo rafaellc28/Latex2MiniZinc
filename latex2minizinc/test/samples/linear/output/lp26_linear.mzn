@@ -23,24 +23,24 @@ array[INDEX_SET_Inv_1, INDEX_SET_Inv_2] of var float: Inv;
 
 array[INDEX_SET_Sell_1, INDEX_SET_Sell_2] of var float: Sell;
 
-set of int: INDEX_SET_Inv_1;
+set of int: INDEX_SET_Inv_1 = PROD;
 
 set of int: INDEX_SET_Inv_2 = 0..T;
 
-set of int: INDEX_SET_Make_1;
+set of int: INDEX_SET_Make_1 = PROD;
 
 set of int: INDEX_SET_Make_2 = 1..T;
 
-set of int: INDEX_SET_Sell_1;
+set of int: INDEX_SET_Sell_1 = PROD;
 
 set of int: INDEX_SET_Sell_2 = 1..T;
 
 
-constraint forall(p in PROD, t in INDEX_SET_Make_2)(Make[p,t] >= 0);
+constraint forall(p in INDEX_SET_Make_1, t in INDEX_SET_Make_2)(Make[p,t] >= 0);
 
-constraint forall(p in PROD, t0 in INDEX_SET_Inv_2)(Inv[p,t0] >= 0);
+constraint forall(p in INDEX_SET_Inv_1, t0 in INDEX_SET_Inv_2)(Inv[p,t0] >= 0);
 
-constraint forall(p in PROD, t in INDEX_SET_Sell_2)(Sell[p,t] <= market[p,t] /\ Sell[p,t] >= 0);
+constraint forall(p in INDEX_SET_Sell_1, t in INDEX_SET_Sell_2)(Sell[p,t] <= market[p,t] /\ Sell[p,t] >= 0);
 
 constraint forall(t in 1..T)(sum(p in PROD)((1/rate[p]) * Make[p,t]) <= avail[t]);
 

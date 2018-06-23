@@ -31,11 +31,11 @@ set of int: INDEX_SET_rt_1;
 
 set of int: INDEX_SET_rt_2;
 
-set of int: INDEX_SET_w_1;
+set of int: INDEX_SET_w_1 = S;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = T;
 
-set of int: INDEX_SET_z_1;
+set of int: INDEX_SET_z_1 = T;
 
 set of int: INDEX_SET_zn_1;
 
@@ -44,11 +44,11 @@ set of int: INDEX_SET_zn_2;
 
 constraint forall(i in S, j in S where i >= j)(c[i,j] = if i = j then sqrt(cov[i,i] - (sum(k in S where k < i)((c[i,k] * c[i,k])))) else (cov[i,j] - sum(k in S where k < j)(c[i,k] * c[j,k])) / c[j,j] endif);
 
-constraint forall(t in T)(y[t] >= 0);
+constraint forall(t in INDEX_SET_y_1)(y[t] >= 0);
 
-constraint forall(t in T)(z[t] >= 0);
+constraint forall(t in INDEX_SET_z_1)(z[t] >= 0);
 
-constraint forall(s in S)(w[s] >= 0);
+constraint forall(s in INDEX_SET_w_1)(w[s] >= 0);
 
 constraint sum(s in S)(w[s] * r[s]) >= rportfolio;
 

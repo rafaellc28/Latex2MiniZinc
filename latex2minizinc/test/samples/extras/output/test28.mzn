@@ -31,17 +31,17 @@ array[INDEX_SET_hiTargetTitle_1, INDEX_SET_hiTargetTitle_2] of var int: hiTarget
 
 set of int: INDEX_SET_ADJACENT;
 
-set of int: INDEX_SET_Assign2_1;
+set of int: INDEX_SET_Assign2_1 = ISO;
 
-set of int: INDEX_SET_Assign2_2;
+set of int: INDEX_SET_Assign2_2 = REST;
 
 set of int: INDEX_SET_Assign2_3;
 
 set of int: INDEX_SET_ISO;
 
-set of int: INDEX_SET_Lone_1;
+set of int: INDEX_SET_Lone_1 = ISO;
 
-set of int: INDEX_SET_Lone_2;
+set of int: INDEX_SET_Lone_2 = REST;
 
 set of int: INDEX_SET_Lone_3;
 
@@ -58,7 +58,7 @@ set of int: INDEX_SET_upperbnd_2;
 set of int: INDEX_SET_upperbnd_3;
 
 
-constraint forall(i1 in INDEX_SET_ISO, j in REST)(Assign2[ISO[i1,1],j,j] >= 0);
+constraint forall(i1 in INDEX_SET_ISO, j in INDEX_SET_Assign2_2)(Assign2[ISO[i1,1],j,j] >= 0);
 
 constraint forall(i0 in INDEX_SET_hiTargetTitle_1, i1 in INDEX_SET_hiTargetTitle_2)(hiTargetTitle[i0,i1] >= 0);
 

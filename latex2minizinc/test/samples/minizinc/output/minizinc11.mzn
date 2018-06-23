@@ -21,7 +21,7 @@ var int: makespan = max(t in TASK)(start[t] + duration[t]);
 
 array[INDEX_SET_start_1] of var 0..t: start;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = TASK;
 
 
 include "cumulative.mzn";

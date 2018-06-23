@@ -35,15 +35,15 @@ array[INDEX_SET_Use3_1] of var float: Use3;
 
 array[INDEX_SET_Sell_1, INDEX_SET_Sell_2] of var float: Sell;
 
-set of int: INDEX_SET_Inv_1;
+set of int: INDEX_SET_Inv_1 = PROD;
 
 set of int: INDEX_SET_Inv_2 = 0..T;
 
-set of int: INDEX_SET_Prod_1;
+set of int: INDEX_SET_Prod_1 = PROD;
 
 set of int: INDEX_SET_Prod_2 = 1..T;
 
-set of int: INDEX_SET_Sell_1;
+set of int: INDEX_SET_Sell_1 = PROD;
 
 set of int: INDEX_SET_Sell_2 = 1..T;
 
@@ -54,9 +54,9 @@ set of int: INDEX_SET_Use2_1 = 1..T;
 set of int: INDEX_SET_Use3_1 = 1..T;
 
 
-constraint forall(p in PROD, t in INDEX_SET_Prod_2)(Prod[p,t] >= 0);
+constraint forall(p in INDEX_SET_Prod_1, t in INDEX_SET_Prod_2)(Prod[p,t] >= 0);
 
-constraint forall(p in PROD, t0 in INDEX_SET_Inv_2)(Inv[p,t0] >= 0);
+constraint forall(p in INDEX_SET_Inv_1, t0 in INDEX_SET_Inv_2)(Inv[p,t0] >= 0);
 
 constraint forall(t in INDEX_SET_Use1_1)(Use1[t] <= avail_min[t] /\ Use1[t] >= 0);
 
@@ -64,7 +64,7 @@ constraint forall(t in INDEX_SET_Use2_1)(Use2[t] <= avail_max[t] - avail_min[t] 
 
 constraint forall(t in INDEX_SET_Use3_1)(Use3[t] >= 0);
 
-constraint forall(p in PROD, t in INDEX_SET_Sell_2)(Sell[p,t] <= market[p,t] /\ Sell[p,t] >= commit[p,t]);
+constraint forall(p in INDEX_SET_Sell_1, t in INDEX_SET_Sell_2)(Sell[p,t] <= market[p,t] /\ Sell[p,t] >= commit[p,t]);
 
 constraint forall(t in 1..T)(sum(p in PROD)((1/rate[p]) * Prod[p,t]) = Use1[t] + Use2[t] + Use3[t]);
 

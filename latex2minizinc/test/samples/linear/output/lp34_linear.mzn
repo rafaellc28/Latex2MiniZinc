@@ -21,18 +21,18 @@ array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
 
 array[INDEX_SET_s_1, INDEX_SET_s_2] of var float: s;
 
-set of int: INDEX_SET_s_1;
+set of int: INDEX_SET_s_1 = R;
 
 set of int: INDEX_SET_s_2 = 1..floor(T + 1);
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = P;
 
 set of int: INDEX_SET_x_2 = 1..T;
 
 
-constraint forall(p in P, t in INDEX_SET_x_2)(x[p,t] >= 0);
+constraint forall(p in INDEX_SET_x_1, t in INDEX_SET_x_2)(x[p,t] >= 0);
 
-constraint forall(r in R, t1 in INDEX_SET_s_2)(s[r,t1] >= 0);
+constraint forall(r in INDEX_SET_s_1, t1 in INDEX_SET_s_2)(s[r,t1] >= 0);
 
 constraint forall(t in 1..T)(sum(j in P)(x[j,t]) <= M);
 

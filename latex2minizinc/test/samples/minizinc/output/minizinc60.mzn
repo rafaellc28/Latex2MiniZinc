@@ -15,7 +15,7 @@ int: l = m * n;
 
 array[INDEX_SET_dc_1] of var DIGCOP: dc;
 
-set of int: INDEX_SET_dc_1;
+set of int: INDEX_SET_dc_1 = POS;
 
 
 include "alldifferent.mzn";

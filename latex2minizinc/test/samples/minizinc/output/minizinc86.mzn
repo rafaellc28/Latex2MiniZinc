@@ -25,9 +25,9 @@ var COL: ncol;
 
 array[INDEX_SET_x_1, INDEX_SET_x_2] of var SOLDIER0: x;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = ROW;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = COL;
 
 
 include "alldifferent_except_0.mzn";

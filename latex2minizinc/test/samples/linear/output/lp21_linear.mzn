@@ -19,20 +19,20 @@ array[INDEX_SET_Make_1, INDEX_SET_Make_2] of var float: Make;
 
 array[INDEX_SET_Trans_1, INDEX_SET_Trans_2, INDEX_SET_Trans_3] of var float: Trans;
 
-set of int: INDEX_SET_Make_1;
+set of int: INDEX_SET_Make_1 = ORIG;
 
-set of int: INDEX_SET_Make_2;
+set of int: INDEX_SET_Make_2 = PROD;
 
-set of int: INDEX_SET_Trans_1;
+set of int: INDEX_SET_Trans_1 = ORIG;
 
-set of int: INDEX_SET_Trans_2;
+set of int: INDEX_SET_Trans_2 = DEST;
 
-set of int: INDEX_SET_Trans_3;
+set of int: INDEX_SET_Trans_3 = PROD;
 
 
-constraint forall(o in ORIG, p in PROD)(Make[o,p] >= 0);
+constraint forall(o in INDEX_SET_Make_1, p in INDEX_SET_Make_2)(Make[o,p] >= 0);
 
-constraint forall(o in ORIG, d in DEST, p in PROD)(Trans[o,d,p] >= 0);
+constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);
 
 constraint forall(i in ORIG)(sum(p in PROD)((1/rate[i,p]) * Make[i,p]) <= avail[i]);
 

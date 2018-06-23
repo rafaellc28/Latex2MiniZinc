@@ -5,9 +5,9 @@ int: n;
 
 array[INDEX_SET_t_1, INDEX_SET_t_2] of var bool: t;
 
-set of int: INDEX_SET_t_1;
+set of int: INDEX_SET_t_1 = N;
 
-set of int: INDEX_SET_t_2;
+set of int: INDEX_SET_t_2 = N;
 
 
 constraint sum(i,j in N)(t[i,j]) = n;

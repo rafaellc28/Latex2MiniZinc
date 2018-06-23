@@ -25,13 +25,13 @@ array[INDEX_SET_position_1] of var PVERTEX: position;
 
 set of int: INDEX_SET_ncoins_1 = 1..floor(m - 1);
 
-set of int: INDEX_SET_ncoins_2;
+set of int: INDEX_SET_ncoins_2 = VERTEX;
 
 set of int: INDEX_SET_position_1 = 1..length(TRIBUTE);
 
-set of int: INDEX_SET_tribute_1;
+set of int: INDEX_SET_tribute_1 = POLYGON;
 
-set of int: INDEX_SET_tribute_2;
+set of int: INDEX_SET_tribute_2 = VERTEX;
 
 
 include "lex_lesseq.mzn";

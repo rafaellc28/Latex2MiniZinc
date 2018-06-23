@@ -13,20 +13,20 @@ array[INDEX_SET_b_1] of var float: b;
 
 array[INDEX_SET_c_1] of var float: c;
 
-set of int: INDEX_SET_a_1;
+set of int: INDEX_SET_a_1 = I;
 
-set of int: INDEX_SET_b_1;
+set of int: INDEX_SET_b_1 = I;
 
-set of int: INDEX_SET_c_1;
+set of int: INDEX_SET_c_1 = I;
 
 set of int: INDEX_SET_x_1 = 1..8;
 
 
-constraint forall(i in I)(a[i] = x[1] / x[6] * exp(-pow((y[i] - x[3]),2) / (2 * pow(x[6],2))));
+constraint forall(i in INDEX_SET_a_1)(a[i] = x[1] / x[6] * exp(-pow((y[i] - x[3]),2) / (2 * pow(x[6],2))));
 
-constraint forall(i in I)(b[i] = x[2] / x[7] * exp(-pow((y[i] - x[4]),2) / (2 * pow(x[7],2))));
+constraint forall(i in INDEX_SET_b_1)(b[i] = x[2] / x[7] * exp(-pow((y[i] - x[4]),2) / (2 * pow(x[7],2))));
 
-constraint forall(i in I)(c[i] = (1 - x[2] - x[1]) / x[8] * exp(-pow((y[i] - x[5]),2) / (2 * pow(x[8],2))));
+constraint forall(i in INDEX_SET_c_1)(c[i] = (1 - x[2] - x[1]) / x[8] * exp(-pow((y[i] - x[5]),2) / (2 * pow(x[8],2))));
 
 constraint 1 - x[1] - x[2] >= 0;
 

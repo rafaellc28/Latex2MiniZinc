@@ -97,35 +97,35 @@ var float: Psil;
 
 var float: Psii;
 
-set of int: INDEX_SET_U_1;
+set of int: INDEX_SET_U_1 = cc_pos;
 
 set of int: INDEX_SET_U_2;
 
-set of int: INDEX_SET_Vf_1;
+set of int: INDEX_SET_Vf_1 = c_final;
 
-set of int: INDEX_SET_Vf_2;
+set of int: INDEX_SET_Vf_2 = region;
 
-set of int: INDEX_SET_Vf_3;
+set of int: INDEX_SET_Vf_3 = port;
 
-set of int: INDEX_SET_Vr_1;
+set of int: INDEX_SET_Vr_1 = cc_pos;
 
 set of int: INDEX_SET_Vr_2;
 
-set of int: INDEX_SET_Xf_1;
+set of int: INDEX_SET_Xf_1 = cp_pos;
 
-set of int: INDEX_SET_Xf_2;
+set of int: INDEX_SET_Xf_2 = region;
 
 set of int: INDEX_SET_Xf_3;
 
-set of int: INDEX_SET_Xi_1;
+set of int: INDEX_SET_Xi_1 = cp_pos;
 
-set of int: INDEX_SET_Xi_2;
+set of int: INDEX_SET_Xi_2 = plant;
 
 set of int: INDEX_SET_Xi_3;
 
-set of int: INDEX_SET_Z_1;
+set of int: INDEX_SET_Z_1 = proc;
 
-set of int: INDEX_SET_Z_2;
+set of int: INDEX_SET_Z_2 = plant;
 
 set of int: INDEX_SET_cc_pos;
 
@@ -170,13 +170,13 @@ set of int: INDEX_SET_tran_raw_1;
 array[INDEX_SET_p_cap_diff_p_except] of int: p_cap_diff_p_except;
 
 
-constraint forall(pr in proc, pl in plant)(Z[pr,pl] >= 0);
+constraint forall(pr in INDEX_SET_Z_1, pl in INDEX_SET_Z_2)(Z[pr,pl] >= 0);
 
-constraint forall(c in INDEX_SET_cp_pos, r in region)(Xf[cp_pos[c,1],r,r] >= 0);
+constraint forall(c in INDEX_SET_cp_pos, r in INDEX_SET_Xf_2)(Xf[cp_pos[c,1],r,r] >= 0);
 
-constraint forall(c in INDEX_SET_cp_pos, p2 in plant)(Xi[cp_pos[c,1],p2,p2] >= 0);
+constraint forall(c in INDEX_SET_cp_pos, p2 in INDEX_SET_Xi_2)(Xi[cp_pos[c,1],p2,p2] >= 0);
 
-constraint forall(cf in c_final, r in region, p in port)(Vf[cf,r,p] >= 0);
+constraint forall(cf in INDEX_SET_Vf_1, r in INDEX_SET_Vf_2, p in INDEX_SET_Vf_3)(Vf[cf,r,p] >= 0);
 
 constraint forall(c in INDEX_SET_cc_pos)(Vr[cc_pos[c,1],cc_pos[c,2]] >= 0);
 

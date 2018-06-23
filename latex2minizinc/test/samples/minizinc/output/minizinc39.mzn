@@ -49,17 +49,17 @@ array[INDEX_SET_wid_1] of var 0..maxdim: wid = [[dim[t[p],2],dim[t[p],1],0][u[p]
 
 var int: cost = sum(t in TYPE)(used[t] * price[t]);
 
-set of int: INDEX_SET_len_1;
+set of int: INDEX_SET_len_1 = PLASTER;
 
-set of int: INDEX_SET_u_1;
+set of int: INDEX_SET_u_1 = PLASTER;
 
-set of int: INDEX_SET_used_1;
+set of int: INDEX_SET_used_1 = TYPE;
 
-set of int: INDEX_SET_wid_1;
+set of int: INDEX_SET_wid_1 = PLASTER;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = PLASTER;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = PLASTER;
 
 
 include "lex_lesseq.mzn";

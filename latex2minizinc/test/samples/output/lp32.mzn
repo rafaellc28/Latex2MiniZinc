@@ -23,13 +23,13 @@ array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
 
 array[INDEX_SET_u_1] of var float: u;
 
-set of int: INDEX_SET_u_1;
+set of int: INDEX_SET_u_1 = N;
 
-set of int: INDEX_SET_w_1;
+set of int: INDEX_SET_w_1 = N;
 
 set of int: INDEX_SET_x_1 = 1..Nper;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = EXPENSES;
 
 EXPENSES: TuitionA;
 
@@ -38,11 +38,11 @@ EXPENSES: TuitionB;
 EXPENSES: TuitionC;
 
 
-constraint forall(n in N)(w[n] >= 0);
+constraint forall(n in INDEX_SET_w_1)(w[n] >= 0);
 
-constraint forall(n in INDEX_SET_x_1, e in EXPENSES)(x[n,e] >= 0);
+constraint forall(n in INDEX_SET_x_1, e in INDEX_SET_x_2)(x[n,e] >= 0);
 
-constraint forall(n in N)(u[n] >= 0);
+constraint forall(n in INDEX_SET_u_1)(u[n] >= 0);
 
 constraint w[Nper] = 8 * Salary[Nper];
 

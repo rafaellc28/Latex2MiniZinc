@@ -23,7 +23,7 @@ var float: G5;
 
 var float: G6;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
 
 constraint G1 = 35.82 - 0.222 * x[10] - b * x[9];

@@ -19,12 +19,12 @@ set of int: INDEX_SET_c_1;
 
 set of int: INDEX_SET_c_2;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = J;
 
 
-constraint forall(i in I, j in J)(x[i,j] >= 0);
+constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) <= a[i]);
 

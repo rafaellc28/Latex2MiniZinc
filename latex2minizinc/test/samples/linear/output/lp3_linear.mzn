@@ -21,10 +21,10 @@ array[int] of float: f_max;
 
 array[INDEX_SET_Buy_1] of var float: Buy;
 
-set of int: INDEX_SET_Buy_1;
+set of int: INDEX_SET_Buy_1 = FOOD;
 
 
-constraint forall(f in FOOD)(Buy[f] <= f_max[f] /\ Buy[f] >= f_min[f]);
+constraint forall(f in INDEX_SET_Buy_1)(Buy[f] <= f_max[f] /\ Buy[f] >= f_min[f]);
 
 constraint forall(i in MINREQ)(sum(j in FOOD)(amt[i,j] * Buy[j]) >= n_min[i]);
 

@@ -11,10 +11,10 @@ var float: z;
 
 set of int: INDEX_SET_P;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = J;
 
 
-constraint forall(j in J)(x[j] >= 0);
+constraint forall(j in INDEX_SET_x_1)(x[j] >= 0);
 
 constraint forall(j in J, k in P[j])(x[j] >= x[k] + T[k]);
 

@@ -19,7 +19,7 @@ array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
 
 set of int: INDEX_SET_PAIRS;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = PAIRS;
 
 set of int: INDEX_SET_x_2;
 

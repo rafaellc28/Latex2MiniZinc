@@ -17,9 +17,9 @@ var int: tOnEve = sum(d in DAY)(sum(s in SOLDIER)(roster[s,d] = EVE));
 
 array[INDEX_SET_roster_1, INDEX_SET_roster_2] of var SHIFT: roster;
 
-set of int: INDEX_SET_roster_1;
+set of int: INDEX_SET_roster_1 = SOLDIER;
 
-set of int: INDEX_SET_roster_2;
+set of int: INDEX_SET_roster_2 = DAY;
 
 
 constraint forall(d in 1..(nDays - 2), s in SOLDIER)((roster[s,d] = NIGHT) /\ (roster[s,d + 1] = NIGHT) -> (roster[s,d + 2] != NIGHT));

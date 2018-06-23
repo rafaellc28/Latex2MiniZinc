@@ -35,11 +35,11 @@ array[INDEX_SET_end_1] of var TIME: end;
 
 array[INDEX_SET_next_1] of var SHIPE: next;
 
-set of int: INDEX_SET_end_1;
+set of int: INDEX_SET_end_1 = SHIP;
 
-set of int: INDEX_SET_next_1;
+set of int: INDEX_SET_next_1 = SHIP;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = SHIP;
 
 
 include "alldifferent.mzn";

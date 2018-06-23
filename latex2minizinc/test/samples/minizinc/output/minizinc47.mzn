@@ -35,9 +35,9 @@ var int: rank_violation;
 
 array[INDEX_SET_pp_1] of var PP: pp;
 
-set of int: INDEX_SET_pp_1;
+set of int: INDEX_SET_pp_1 = TIME;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = PERSON;
 
 set of int: INDEX_SET_weekday_1;
 

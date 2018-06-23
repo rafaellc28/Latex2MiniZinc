@@ -69,27 +69,27 @@ array[INDEX_SET_Inv_1, INDEX_SET_Inv_2, INDEX_SET_Inv_3] of var float: Inv;
 
 set of int: INDEX_SET_Crews_1 = floor(first - 1)..last;
 
-set of int: INDEX_SET_Hire_1;
+set of int: INDEX_SET_Hire_1 = time;
 
-set of int: INDEX_SET_Inv_1;
+set of int: INDEX_SET_Inv_1 = prod;
 
-set of int: INDEX_SET_Inv_2;
+set of int: INDEX_SET_Inv_2 = time;
 
 set of int: INDEX_SET_Inv_3 = 1..life;
 
-set of int: INDEX_SET_Layoff_1;
+set of int: INDEX_SET_Layoff_1 = time;
 
-set of int: INDEX_SET_Oprod_1;
+set of int: INDEX_SET_Oprod_1 = prod;
 
-set of int: INDEX_SET_Oprod_2;
+set of int: INDEX_SET_Oprod_2 = time;
 
-set of int: INDEX_SET_Rprod_1;
+set of int: INDEX_SET_Rprod_1 = prod;
 
-set of int: INDEX_SET_Rprod_2;
+set of int: INDEX_SET_Rprod_2 = time;
 
-set of int: INDEX_SET_Short_1;
+set of int: INDEX_SET_Short_1 = prod;
 
-set of int: INDEX_SET_Short_2;
+set of int: INDEX_SET_Short_2 = time;
 
 set of int: INDEX_SET_iil_1;
 
@@ -102,17 +102,17 @@ set of int: INDEX_SET_minv_2;
 
 constraint forall(i in INDEX_SET_Crews_1)(Crews[i] >= 0);
 
-constraint forall(t in time)(Hire[t] >= 0);
+constraint forall(t in INDEX_SET_Hire_1)(Hire[t] >= 0);
 
-constraint forall(t in time)(Layoff[t] >= 0);
+constraint forall(t in INDEX_SET_Layoff_1)(Layoff[t] >= 0);
 
-constraint forall(p in prod, t in time)(Rprod[p,t] >= 0);
+constraint forall(p in INDEX_SET_Rprod_1, t in INDEX_SET_Rprod_2)(Rprod[p,t] >= 0);
 
-constraint forall(p in prod, t in time)(Oprod[p,t] >= 0);
+constraint forall(p in INDEX_SET_Oprod_1, t in INDEX_SET_Oprod_2)(Oprod[p,t] >= 0);
 
-constraint forall(p in prod, t in time)(Short[p,t] >= 0);
+constraint forall(p in INDEX_SET_Short_1, t in INDEX_SET_Short_2)(Short[p,t] >= 0);
 
-constraint forall(p in prod, t in time, j in INDEX_SET_Inv_3)(Inv[p,t,j] >= 0);
+constraint forall(p in INDEX_SET_Inv_1, t in INDEX_SET_Inv_2, j in INDEX_SET_Inv_3)(Inv[p,t,j] >= 0);
 
 constraint forall(t in time)(sum(p in prod)(pt[p] * Rprod[p,t]) != 0 <- sl * dpp[t] * Crews[t] != 0);
 

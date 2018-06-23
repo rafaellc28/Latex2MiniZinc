@@ -21,9 +21,9 @@ array[INDEX_SET_r_1] of var RIDER: r;
 
 set of int: INDEX_SET_compatible;
 
-set of int: INDEX_SET_h_1;
+set of int: INDEX_SET_h_1 = POS;
 
-set of int: INDEX_SET_r_1;
+set of int: INDEX_SET_r_1 = POS;
 
 
 include "alldifferent.mzn";

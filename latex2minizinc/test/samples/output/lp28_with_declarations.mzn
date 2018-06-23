@@ -17,7 +17,7 @@ array[INDEX_SET_V_1] of var float: V;
 
 set of int: INDEX_SET_U_1;
 
-set of int: INDEX_SET_V_1;
+set of int: INDEX_SET_V_1 = X;
 
 
 constraint forall(x in 1..floor(N - 1), u in U[x])(V[x] >= a * (p * V[x + u] + q * V[x - u]));

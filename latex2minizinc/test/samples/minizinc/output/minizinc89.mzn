@@ -29,13 +29,13 @@ array[INDEX_SET_x_1, INDEX_SET_x_2] of var SOLDIER0: x;
 
 array[INDEX_SET_hd_1, INDEX_SET_hd_2] of var DIFF: hd;
 
-set of int: INDEX_SET_hd_1;
+set of int: INDEX_SET_hd_1 = ROW;
 
-set of int: INDEX_SET_hd_2;
+set of int: INDEX_SET_hd_2 = COL;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = ROW;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = COL;
 
 
 include "global_cardinality_low_up.mzn";

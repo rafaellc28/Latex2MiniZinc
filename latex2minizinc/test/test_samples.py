@@ -411,10 +411,8 @@ def test_lp51_with_declarations():
 def test_lp52():
 	check_test_num(52)
 
-'''
 def test_lp52_with_declarations():
 	check_test_num(52, True)
-'''
 
 def test_lp53():
 	check_test_num(53)

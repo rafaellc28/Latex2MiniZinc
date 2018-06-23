@@ -39,17 +39,17 @@ var 0..maxl: l;
 
 array[INDEX_SET_y_1] of var 0..h: y;
 
-set of int: INDEX_SET_coord_1;
+set of int: INDEX_SET_coord_1 = BLOCK;
 
 set of int: INDEX_SET_coord_2 = 1..2;
 
-set of int: INDEX_SET_kind_1;
+set of int: INDEX_SET_kind_1 = BLOCK;
 
 set of int: INDEX_SET_shapeind;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = BLOCK;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = BLOCK;
 
 
 include "geost.mzn";

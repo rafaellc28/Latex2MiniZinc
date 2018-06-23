@@ -19,9 +19,9 @@ array[INDEX_SET_order_1] of var POS: order;
 
 array[INDEX_SET_route_1] of var PIVOT: route;
 
-set of int: INDEX_SET_order_1;
+set of int: INDEX_SET_order_1 = PIVOT;
 
-set of int: INDEX_SET_route_1;
+set of int: INDEX_SET_route_1 = POS;
 
 
 include "alldifferent.mzn";

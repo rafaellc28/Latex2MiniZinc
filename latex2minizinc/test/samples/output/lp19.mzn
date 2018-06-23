@@ -11,9 +11,9 @@ array[int] of float: B;
 
 array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = J;
 
 
 constraint forall(j in J)(sum(i in I)(x[i,j]) = 1);

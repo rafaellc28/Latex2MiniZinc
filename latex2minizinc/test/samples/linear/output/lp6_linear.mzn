@@ -11,10 +11,10 @@ array[int] of float: demand;
 
 array[INDEX_SET_Level_1] of var float: Level;
 
-set of int: INDEX_SET_Level_1;
+set of int: INDEX_SET_Level_1 = ACT;
 
 
-constraint forall(j in ACT)(Level[j] >= 0);
+constraint forall(j in INDEX_SET_Level_1)(Level[j] >= 0);
 
 constraint forall(i in PROD)(sum(j in ACT)(io[i,j] * Level[j]) >= demand[i]);
 

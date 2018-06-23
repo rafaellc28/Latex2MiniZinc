@@ -49,38 +49,38 @@ set of int: INDEX_SET_gcdist_1;
 
 set of int: INDEX_SET_gcdist_2;
 
-set of int: INDEX_SET_tar_1;
+set of int: INDEX_SET_tar_1 = PLACES;
 
-set of int: INDEX_SET_tea_1;
+set of int: INDEX_SET_tea_1 = PLACES;
 
-set of int: INDEX_SET_ted_1;
+set of int: INDEX_SET_ted_1 = PLACES;
 
-set of int: INDEX_SET_tla_1;
+set of int: INDEX_SET_tla_1 = PLACES;
 
-set of int: INDEX_SET_tld_1;
+set of int: INDEX_SET_tld_1 = PLACES;
 
-set of int: INDEX_SET_tlv_1;
+set of int: INDEX_SET_tlv_1 = PLACES;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = PLACES;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = PLACES;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = PLACES;
 
-set of int: INDEX_SET_y_2;
+set of int: INDEX_SET_y_2 = PLACES;
 
 
-constraint forall(a in PLACES)(tea[a] >= 0);
+constraint forall(a in INDEX_SET_tea_1)(tea[a] >= 0);
 
-constraint forall(a in PLACES)(tla[a] >= 0);
+constraint forall(a in INDEX_SET_tla_1)(tla[a] >= 0);
 
-constraint forall(a in PLACES)(ted[a] >= 0);
+constraint forall(a in INDEX_SET_ted_1)(ted[a] >= 0);
 
-constraint forall(a in PLACES)(tld[a] >= 0);
+constraint forall(a in INDEX_SET_tld_1)(tld[a] >= 0);
 
 constraint Tmax >= 0;
 
-constraint forall(a in PLACES, b in PLACES)(y[a,b] >= 0);
+constraint forall(a in INDEX_SET_y_1, b in INDEX_SET_y_2)(y[a,b] >= 0);
 
 constraint forall(a in PLACES where a != finish)(sum(b in PLACES)(x[a,b]) = 1);
 

@@ -27,11 +27,11 @@ array[INDEX_SET_y_1] of var 0..maxl: y;
 
 array[INDEX_SET_size_1] of var SQUARE: size;
 
-set of int: INDEX_SET_size_1;
+set of int: INDEX_SET_size_1 = NSQ;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = NSQ;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = NSQ;
 
 
 include "global_cardinality.mzn";

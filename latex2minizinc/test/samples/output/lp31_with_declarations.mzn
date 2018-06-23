@@ -29,9 +29,9 @@ set of int: INDEX_SET_SPECIES_diff_RAWMATERIALS;
 
 set of int: INDEX_SET_mw_1;
 
-set of int: INDEX_SET_n_1;
+set of int: INDEX_SET_n_1 = SPECIES;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = REACTIONS;
 
 array[INDEX_SET_SPECIES_diff_RAWMATERIALS] of int: SPECIES_diff_RAWMATERIALS;
 

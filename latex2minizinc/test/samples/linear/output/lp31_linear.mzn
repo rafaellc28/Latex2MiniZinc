@@ -65,23 +65,23 @@ array[INDEX_SET_Ship_1, INDEX_SET_Ship_2, INDEX_SET_Ship_3] of var float: Ship;
 
 array[INDEX_SET_Trans_1, INDEX_SET_Trans_2] of var float: Trans;
 
-set of int: INDEX_SET_Oprod_1;
+set of int: INDEX_SET_Oprod_1 = prod;
 
-set of int: INDEX_SET_Oprod_2;
+set of int: INDEX_SET_Oprod_2 = fact;
 
-set of int: INDEX_SET_Rprod_1;
+set of int: INDEX_SET_Rprod_1 = prod;
 
-set of int: INDEX_SET_Rprod_2;
+set of int: INDEX_SET_Rprod_2 = fact;
 
-set of int: INDEX_SET_Ship_1;
+set of int: INDEX_SET_Ship_1 = prod;
 
-set of int: INDEX_SET_Ship_2;
+set of int: INDEX_SET_Ship_2 = rt;
 
 set of int: INDEX_SET_Ship_3;
 
-set of int: INDEX_SET_Trans_1;
+set of int: INDEX_SET_Trans_1 = prod;
 
-set of int: INDEX_SET_Trans_2;
+set of int: INDEX_SET_Trans_2 = dctr;
 
 set of int: INDEX_SET_dem_1;
 
@@ -92,13 +92,13 @@ set of int: INDEX_SET_dstot_1;
 set of int: INDEX_SET_rt;
 
 
-constraint forall(p in prod, f in fact)(Rprod[p,f] >= 0);
+constraint forall(p in INDEX_SET_Rprod_1, f in INDEX_SET_Rprod_2)(Rprod[p,f] >= 0);
 
-constraint forall(p in prod, f in fact)(Oprod[p,f] >= 0);
+constraint forall(p in INDEX_SET_Oprod_1, f in INDEX_SET_Oprod_2)(Oprod[p,f] >= 0);
 
-constraint forall(p in prod, v in INDEX_SET_rt)(Ship[p,rt[v,1],rt[v,2]] >= 0);
+constraint forall(p in INDEX_SET_Ship_1, v in INDEX_SET_rt)(Ship[p,rt[v,1],rt[v,2]] >= 0);
 
-constraint forall(p in prod, d in dctr)(Trans[p,d] >= 0);
+constraint forall(p in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2)(Trans[p,d] >= 0);
 
 constraint sum(p in prod, f in fact)((pt[p,f] * Rprod[p,f])/(dp[f] * hd[f])) <= rtmax /\ sum(p in prod, f in fact)((pt[p,f] * Rprod[p,f])/(dp[f] * hd[f])) >= rtmin;
 

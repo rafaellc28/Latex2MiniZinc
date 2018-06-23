@@ -17,7 +17,7 @@ set of int: INDEX_SET_TASKORDER;
 
 set of int: INDEX_SET_TASKS;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = TASKS;
 
 set of int: INDEX_SET_start_2;
 

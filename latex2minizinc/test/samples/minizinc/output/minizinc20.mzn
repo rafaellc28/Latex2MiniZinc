@@ -11,7 +11,7 @@ int: nMoves;
 
 array[INDEX_SET_occur_1] of var 0..1: occur;
 
-set of int: INDEX_SET_occur_1;
+set of int: INDEX_SET_occur_1 = MOVES;
 
 
 constraint (sum(i in MOVES)(duration[i] * occur[i])) <= timeBound;

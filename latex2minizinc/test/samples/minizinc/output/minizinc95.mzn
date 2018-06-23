@@ -11,7 +11,7 @@ array[int, int] of float: consumption;
 
 array[INDEX_SET_produce_1] of var int: produce;
 
-set of int: INDEX_SET_produce_1;
+set of int: INDEX_SET_produce_1 = PRODUCT;
 
 
 constraint forall(p in PRODUCT)(assert(profit[p] >= 0,"profit[\(p)] < 0!"));

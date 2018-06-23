@@ -11,7 +11,7 @@ set of int: INDEX_SET_x_1 = 1..C;
 
 set of int: INDEX_SET_x_2 = 1..C;
 
-set of int: INDEX_SET_x_3;
+set of int: INDEX_SET_x_3 = N;
 
 
 constraint forall(i in 1..C, j in 1..C)(sum(k in N)(x[i,j,k]) = 1);

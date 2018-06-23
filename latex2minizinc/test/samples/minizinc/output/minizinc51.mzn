@@ -29,11 +29,11 @@ array[INDEX_SET_y_1] of var 0..h: y;
 
 array[INDEX_SET_rot_1] of var ROT: rot;
 
-set of int: INDEX_SET_rot_1;
+set of int: INDEX_SET_rot_1 = BLOCK;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = BLOCK;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = BLOCK;
 
 
 constraint forall(i in BLOCK)(shape[i,rot[i]] != {});

@@ -19,28 +19,28 @@ array[INDEX_SET_Tsl_1] of var float: Tsl;
 
 set of int: INDEX_SET_ARCS;
 
-set of int: INDEX_SET_Tef_1;
+set of int: INDEX_SET_Tef_1 = TASKS;
 
-set of int: INDEX_SET_Tes_1;
+set of int: INDEX_SET_Tes_1 = TASKS;
 
-set of int: INDEX_SET_Tlf_1;
+set of int: INDEX_SET_Tlf_1 = TASKS;
 
-set of int: INDEX_SET_Tls_1;
+set of int: INDEX_SET_Tls_1 = TASKS;
 
-set of int: INDEX_SET_Tsl_1;
+set of int: INDEX_SET_Tsl_1 = TASKS;
 
 
-constraint forall(j in TASKS)(Tef[j] >= 0);
+constraint forall(j in INDEX_SET_Tef_1)(Tef[j] >= 0);
 
 constraint Tf >= 0;
 
-constraint forall(j in TASKS)(Tlf[j] >= 0);
+constraint forall(j in INDEX_SET_Tlf_1)(Tlf[j] >= 0);
 
-constraint forall(j in TASKS)(Tes[j] >= 0);
+constraint forall(j in INDEX_SET_Tes_1)(Tes[j] >= 0);
 
-constraint forall(j in TASKS)(Tls[j] >= 0);
+constraint forall(j in INDEX_SET_Tls_1)(Tls[j] >= 0);
 
-constraint forall(j in TASKS)(Tsl[j] >= 0);
+constraint forall(j in INDEX_SET_Tsl_1)(Tsl[j] >= 0);
 
 constraint forall(j in TASKS)(Tef[j] <= Tf);
 

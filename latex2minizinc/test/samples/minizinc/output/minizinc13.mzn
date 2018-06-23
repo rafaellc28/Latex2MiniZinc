@@ -39,13 +39,13 @@ array[INDEX_SET_next_1] of var SHIPE: next;
 
 array[INDEX_SET_channel_1] of var 1..nC: channel;
 
-set of int: INDEX_SET_channel_1;
+set of int: INDEX_SET_channel_1 = SHIP;
 
-set of int: INDEX_SET_end_1;
+set of int: INDEX_SET_end_1 = SHIP;
 
-set of int: INDEX_SET_next_1;
+set of int: INDEX_SET_next_1 = SHIP;
 
-set of int: INDEX_SET_start_1;
+set of int: INDEX_SET_start_1 = SHIP;
 
 
 include "alldifferent.mzn";

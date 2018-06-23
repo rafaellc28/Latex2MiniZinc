@@ -11,9 +11,9 @@ array[INDEX_SET_before_1, INDEX_SET_before_2] of var bool: before;
 
 set of int: INDEX_SET_PAIRS;
 
-set of int: INDEX_SET_before_1;
+set of int: INDEX_SET_before_1 = TASKS;
 
-set of int: INDEX_SET_before_2;
+set of int: INDEX_SET_before_2 = TASKS;
 
 
 constraint forall(a in TASKS, b in TASKS, c in TASKS where a < b /\ a < c /\ c < b)(before[a,b] - before[c,b] - before[a,c] <= 0);

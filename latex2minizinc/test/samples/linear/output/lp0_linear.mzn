@@ -17,10 +17,10 @@ array[int] of float: in_max;
 
 array[INDEX_SET_X_1] of var float: X;
 
-set of int: INDEX_SET_X_1;
+set of int: INDEX_SET_X_1 = INPUT;
 
 
-constraint forall(j in INPUT)(X[j] <= in_max[j] /\ X[j] >= in_min[j]);
+constraint forall(j in INDEX_SET_X_1)(X[j] <= in_max[j] /\ X[j] >= in_min[j]);
 
 constraint forall(i in OUTPUT)(sum(j in INPUT)(io[i,j] * X[j]) <= out_max[i] /\ sum(j in INPUT)(io[i,j] * X[j]) >= out_min[i]);
 

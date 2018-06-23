@@ -15,12 +15,12 @@ array[INDEX_SET_Assign_1, INDEX_SET_Assign_2] of var float: Assign;
 
 var float: M;
 
-set of int: INDEX_SET_Assign_1;
+set of int: INDEX_SET_Assign_1 = PEOPLE;
 
-set of int: INDEX_SET_Assign_2;
+set of int: INDEX_SET_Assign_2 = PROJECTS;
 
 
-constraint forall(i in PEOPLE, j in PROJECTS)(Assign[i,j] <= limit[i,j] /\ Assign[i,j] >= 0);
+constraint forall(i in INDEX_SET_Assign_1, j in INDEX_SET_Assign_2)(Assign[i,j] <= limit[i,j] /\ Assign[i,j] >= 0);
 
 constraint forall(i in PEOPLE)(M >= sum(j in PROJECTS)(cost[i,j] * Assign[i,j]));
 

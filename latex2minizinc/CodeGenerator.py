@@ -1012,9 +1012,9 @@ class CodeGenerator:
 
                         setExpression = SET_OF_INT + SEP_PARTS_DECLARATION+SPACE+index
                         
-                        if i < len(domains) and (FROM_TO in domains[i] or domains[i] == INT):
+                        if i < len(domains):# and (FROM_TO in domains[i] or domains[i] == INT):
 
-                            if domains[i] != INT:
+                            if domains[i] != INT and not BEGIN_ARRAY in domains[i]:
                                 setExpression += SPACE+ASSIGN+SPACE + domains[i]
 
                             if i < len(domains_with_indices) and SPACE+IN+SPACE in domains_with_indices[i]:

@@ -23,12 +23,12 @@ var float: x;
 
 array[INDEX_SET_y_1] of var float: y;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = SCENS;
 
 
 constraint x >= 0;
 
-constraint forall(k in SCENS)(y[k] >= 0);
+constraint forall(k in INDEX_SET_y_1)(y[k] >= 0);
 
 constraint ExProfit = -c * x + sum(k in SCENS)(Pr[k] * (r * y[k] + w * (x - y[k])));
 

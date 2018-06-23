@@ -99,33 +99,33 @@ var float: Psil;
 
 var float: Psii;
 
-set of int: INDEX_SET_U_1;
+set of int: INDEX_SET_U_1 = c_raw;
 
 set of int: INDEX_SET_U_2;
 
-set of int: INDEX_SET_Vf_1;
+set of int: INDEX_SET_Vf_1 = c_final;
 
-set of int: INDEX_SET_Vf_2;
+set of int: INDEX_SET_Vf_2 = region;
 
-set of int: INDEX_SET_Vf_3;
+set of int: INDEX_SET_Vf_3 = port;
 
-set of int: INDEX_SET_Vr_1;
+set of int: INDEX_SET_Vr_1 = c_raw;
 
 set of int: INDEX_SET_Vr_2;
 
-set of int: INDEX_SET_Xf_1;
+set of int: INDEX_SET_Xf_1 = c_final;
 
 set of int: INDEX_SET_Xf_2;
 
-set of int: INDEX_SET_Xf_3;
+set of int: INDEX_SET_Xf_3 = region;
 
-set of int: INDEX_SET_Xi_1;
+set of int: INDEX_SET_Xi_1 = c_ship;
 
 set of int: INDEX_SET_Xi_2;
 
 set of int: INDEX_SET_Xi_3;
 
-set of int: INDEX_SET_Z_1;
+set of int: INDEX_SET_Z_1 = plant;
 
 set of int: INDEX_SET_Z_2;
 
@@ -178,17 +178,17 @@ array[INDEX_SET_cp_posc_union_cc_posc] of int: cp_posc_union_cc_posc;
 array[INDEX_SET_p_capp_diff_p_exceptp] of int: p_capp_diff_p_exceptp;
 
 
-constraint forall(pl in plant, p in p_pos[pl])(Z[pl,p] >= 0);
+constraint forall(pl in INDEX_SET_Z_1, p in INDEX_SET_Z_2)(Z[pl,p] >= 0);
 
-constraint forall(c in c_final, cp in cp_pos[c], r in region)(Xf[c,cp,r] >= 0);
+constraint forall(c in INDEX_SET_Xf_1, cp in INDEX_SET_Xf_2, r in INDEX_SET_Xf_3)(Xf[c,cp,r] >= 0);
 
-constraint forall(c in c_ship, cp in cp_pos[c], cc in cc_pos[c])(Xi[c,cp,cc] >= 0);
+constraint forall(c in INDEX_SET_Xi_1, cp in INDEX_SET_Xi_2, cc in INDEX_SET_Xi_3)(Xi[c,cp,cc] >= 0);
 
-constraint forall(cf in c_final, r in region, p in port)(Vf[cf,r,p] >= 0);
+constraint forall(cf in INDEX_SET_Vf_1, r in INDEX_SET_Vf_2, p in INDEX_SET_Vf_3)(Vf[cf,r,p] >= 0);
 
-constraint forall(c in c_raw, cc in cc_pos[c])(Vr[c,cc] >= 0);
+constraint forall(c in INDEX_SET_Vr_1, cc in INDEX_SET_Vr_2)(Vr[c,cc] >= 0);
 
-constraint forall(c in c_raw, cc in cc_pos[c])(U[c,cc] >= 0);
+constraint forall(c in INDEX_SET_U_1, cc in INDEX_SET_U_2)(U[c,cc] >= 0);
 
 constraint forall(n in nutr, r in region)(sum(c in c_final)(fn[c,n] * (sum(po in port)(Vf[c,r,po] + sum(pl in cp_pos[c])(Xf[c,pl,r])))) >= cn75[r,n]);
 

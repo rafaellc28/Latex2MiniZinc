@@ -11,11 +11,11 @@ array[INDEX_SET_used_1] of var bool: used;
 
 array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
 
-set of int: INDEX_SET_used_1;
+set of int: INDEX_SET_used_1 = J;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = J;
 
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) = 1);

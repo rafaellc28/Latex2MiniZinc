@@ -23,20 +23,20 @@ array[INDEX_SET_eneg_1] of var float: eneg;
 
 array[INDEX_SET_x_1] of var float: x;
 
-set of int: INDEX_SET_eneg_1;
+set of int: INDEX_SET_eneg_1 = SENSORS;
 
-set of int: INDEX_SET_epos_1;
+set of int: INDEX_SET_epos_1 = SENSORS;
 
-set of int: INDEX_SET_gerr_1;
+set of int: INDEX_SET_gerr_1 = SENSORS;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = STREAMS;
 
 
-constraint forall(k in SENSORS)(epos[k] >= 0);
+constraint forall(k in INDEX_SET_epos_1)(epos[k] >= 0);
 
-constraint forall(k in SENSORS)(eneg[k] >= 0);
+constraint forall(k in INDEX_SET_eneg_1)(eneg[k] >= 0);
 
-constraint forall(j in STREAMS)(x[j] >= 0);
+constraint forall(j in INDEX_SET_x_1)(x[j] >= 0);
 
 constraint forall(i in UNITS)(sum(j in STREAMS)(A[i,j] * x[j]) = 0);
 

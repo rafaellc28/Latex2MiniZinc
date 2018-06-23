@@ -17,10 +17,10 @@ int: N = 13;
 
 array[INDEX_SET_x_1] of var float: x;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
 
-constraint forall(i in I)(x[i] >= 0);
+constraint forall(i in INDEX_SET_x_1)(x[i] >= 0);
 
 constraint x[3] - x[2] >= 0;
 

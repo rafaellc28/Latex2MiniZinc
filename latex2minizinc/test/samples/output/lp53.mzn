@@ -13,16 +13,16 @@ array[INDEX_SET_theta_1] of var float: theta;
 
 array[INDEX_SET_lambda_1, INDEX_SET_lambda_2] of var float: lambda;
 
-set of int: INDEX_SET_lambda_1;
+set of int: INDEX_SET_lambda_1 = dmus;
 
-set of int: INDEX_SET_lambda_2;
+set of int: INDEX_SET_lambda_2 = dmus;
 
-set of int: INDEX_SET_theta_1;
+set of int: INDEX_SET_theta_1 = dmus;
 
 
-constraint forall(td in dmus)(theta[td] >= 0);
+constraint forall(td in INDEX_SET_theta_1)(theta[td] >= 0);
 
-constraint forall(d in dmus, td in dmus)(lambda[d,td] >= 0);
+constraint forall(d in INDEX_SET_lambda_1, td in INDEX_SET_lambda_2)(lambda[d,td] >= 0);
 
 constraint forall(o in outputs, td in dmus)(sum(d in dmus)(lambda[d,td] * OutputData[d,o]) >= OutputData[td,o]);
 

@@ -21,11 +21,11 @@ array[INDEX_SET_ncoins_1, INDEX_SET_ncoins_2] of var 0..floor(n - 1): ncoins;
 
 set of int: INDEX_SET_ncoins_1 = 1..floor(m - 1);
 
-set of int: INDEX_SET_ncoins_2;
+set of int: INDEX_SET_ncoins_2 = VERTEX;
 
-set of int: INDEX_SET_tribute_1;
+set of int: INDEX_SET_tribute_1 = POLYGON;
 
-set of int: INDEX_SET_tribute_2;
+set of int: INDEX_SET_tribute_2 = VERTEX;
 
 
 include "all_different.mzn";

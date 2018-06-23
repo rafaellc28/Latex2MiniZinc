@@ -15,9 +15,9 @@ int: b;
 
 array[INDEX_SET_m_1, INDEX_SET_m_2] of var bool: m;
 
-set of int: INDEX_SET_m_1;
+set of int: INDEX_SET_m_1 = ROW;
 
-set of int: INDEX_SET_m_2;
+set of int: INDEX_SET_m_2 = COL;
 
 
 include "lex_lesseq.mzn";

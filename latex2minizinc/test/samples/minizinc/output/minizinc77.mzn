@@ -23,9 +23,9 @@ array[INDEX_SET_r_1] of var ROW: r;
 
 array[INDEX_SET_c_1] of var COL: c;
 
-set of int: INDEX_SET_c_1;
+set of int: INDEX_SET_c_1 = PRISONER;
 
-set of int: INDEX_SET_r_1;
+set of int: INDEX_SET_r_1 = PRISONER;
 
 
 include "alldifferent.mzn";

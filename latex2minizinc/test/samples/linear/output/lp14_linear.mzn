@@ -9,9 +9,9 @@ array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [0.5 | i in I]);
 
 array[INDEX_SET_y_1] of var float: y = array1d(INDEX_SET_y_1, [i / Lsup | i in I]);
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = I;
 
 
 constraint forall(i in ceil(Lsup / 2)..Lsup, j in max(1,Lsup - i)..min(Lsup + 1 - i,i))(pow((x[i] + x[j]),2) + pow((y[i] - y[j]),2) = 1);

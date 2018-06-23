@@ -13,9 +13,9 @@ array[INDEX_SET_Ex_1] of var float: Ex;
 
 array[INDEX_SET_Ey_1] of var float: Ey;
 
-set of int: INDEX_SET_Ex_1;
+set of int: INDEX_SET_Ex_1 = Sample;
 
-set of int: INDEX_SET_Ey_1;
+set of int: INDEX_SET_Ey_1 = Sample;
 
 
 constraint forall(z in Sample)(X + Ex[z] = Sx[z]);

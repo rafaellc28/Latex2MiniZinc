@@ -15,18 +15,18 @@ array[INDEX_SET_z_1] of var float: z;
 
 array[INDEX_SET_w_1] of var float: w;
 
-set of int: INDEX_SET_w_1;
+set of int: INDEX_SET_w_1 = S;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = T;
 
-set of int: INDEX_SET_z_1;
+set of int: INDEX_SET_z_1 = T;
 
 
-constraint forall(t in T)(y[t] >= 0);
+constraint forall(t in INDEX_SET_y_1)(y[t] >= 0);
 
-constraint forall(t in T)(z[t] >= 0);
+constraint forall(t in INDEX_SET_z_1)(z[t] >= 0);
 
-constraint forall(s in S)(w[s] >= 0);
+constraint forall(s in INDEX_SET_w_1)(w[s] >= 0);
 
 constraint sum(s in S)(w[s] * R[s]) >= Rportfolio;
 

@@ -7,14 +7,14 @@ array[INDEX_SET_A_1] of var int: A;
 
 array[INDEX_SET_B_1] of var int: B;
 
-set of int: INDEX_SET_A_1;
+set of int: INDEX_SET_A_1 = I;
 
-set of int: INDEX_SET_B_1;
+set of int: INDEX_SET_B_1 = I;
 
 
-constraint forall(i in I)(A[i] >= 0);
+constraint forall(i in INDEX_SET_A_1)(A[i] >= 0);
 
-constraint forall(i in I)(B[i] >= 0);
+constraint forall(i in INDEX_SET_B_1)(B[i] >= 0);
 
 
 

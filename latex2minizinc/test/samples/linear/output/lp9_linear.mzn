@@ -13,12 +13,12 @@ array[int] of float: demand;
 
 array[INDEX_SET_Trans_1, INDEX_SET_Trans_2] of var float: Trans;
 
-set of int: INDEX_SET_Trans_1;
+set of int: INDEX_SET_Trans_1 = ORIG;
 
-set of int: INDEX_SET_Trans_2;
+set of int: INDEX_SET_Trans_2 = DEST;
 
 
-constraint forall(i in ORIG, j in DEST)(Trans[i,j] >= 0);
+constraint forall(i in INDEX_SET_Trans_1, j in INDEX_SET_Trans_2)(Trans[i,j] >= 0);
 
 constraint forall(i in ORIG)(sum(j in DEST)(Trans[i,j]) = supply[i]);
 

@@ -19,10 +19,10 @@ set of int: INDEX_SET_U_1;
 
 set of int: INDEX_SET_V_1 = 0..T;
 
-set of int: INDEX_SET_V_2;
+set of int: INDEX_SET_V_2 = X;
 
 
-constraint forall(t in INDEX_SET_V_1, x in X)(V[t,x] >= 0);
+constraint forall(t in INDEX_SET_V_1, x in INDEX_SET_V_2)(V[t,x] >= 0);
 
 constraint forall(t in 0..floor(T - 1), x in 1..N, u in U[x])(V[t,x] >= p * V[t + 1,x + u] + q * V[t + 1,x - u]);
 

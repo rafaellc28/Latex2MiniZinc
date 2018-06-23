@@ -7,7 +7,7 @@ array[int, int] of int: joy;
 
 array[INDEX_SET_drink_1] of var WINE: drink;
 
-set of int: INDEX_SET_drink_1;
+set of int: INDEX_SET_drink_1 = FOOD;
 
 
 include "alldifferent.mzn";

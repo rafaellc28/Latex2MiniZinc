@@ -13,10 +13,10 @@ array[int] of float: market;
 
 array[INDEX_SET_Make_1] of var float: Make;
 
-set of int: INDEX_SET_Make_1;
+set of int: INDEX_SET_Make_1 = PROD;
 
 
-constraint forall(p in PROD)(Make[p] <= market[p] /\ Make[p] >= commit[p]);
+constraint forall(p in INDEX_SET_Make_1)(Make[p] <= market[p] /\ Make[p] >= commit[p]);
 
 constraint sum(p in PROD)((1/rate[p]) * Make[p]) <= avail;
 

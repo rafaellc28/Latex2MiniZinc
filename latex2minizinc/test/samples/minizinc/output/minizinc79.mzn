@@ -17,7 +17,7 @@ var float: obj = min(i,j in SPOT where i < j)(if shot[i] = shot[j] then maxdist 
 
 array[INDEX_SET_shot_1] of var CLUSTER: shot;
 
-set of int: INDEX_SET_shot_1;
+set of int: INDEX_SET_shot_1 = SPOT;
 
 
 include "global_cardinality_low_up_closed.mzn";

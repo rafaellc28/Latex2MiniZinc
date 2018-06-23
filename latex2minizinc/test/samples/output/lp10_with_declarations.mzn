@@ -17,19 +17,19 @@ var int: z;
 
 set of int: INDEX_SET_PAIRS;
 
-set of int: INDEX_SET_p_1;
+set of int: INDEX_SET_p_1 = PAIRS;
 
-set of int: INDEX_SET_p_2;
+set of int: INDEX_SET_p_2 = TASKS;
 
-set of int: INDEX_SET_p_3;
+set of int: INDEX_SET_p_3 = WEEKS;
 
 set of int: INDEX_SET_p_4;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = VOLS;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = TASKS;
 
-set of int: INDEX_SET_x_3;
+set of int: INDEX_SET_x_3 = WEEKS;
 
 
 constraint forall(v in VOLS, w in WEEKS)(sum(t in TASKS)(x[v,t,w]) = 1);

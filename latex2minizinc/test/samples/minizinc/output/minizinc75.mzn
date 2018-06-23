@@ -21,15 +21,15 @@ array[INDEX_SET_rosterShift_1, INDEX_SET_rosterShift_2] of var set of SOLDIER: r
 
 array[INDEX_SET_rosterSoldier_1, INDEX_SET_rosterSoldier_2] of var SHIFT: rosterSoldier;
 
-set of int: INDEX_SET_onEve_1;
+set of int: INDEX_SET_onEve_1 = DAY;
 
-set of int: INDEX_SET_rosterShift_1;
+set of int: INDEX_SET_rosterShift_1 = SHIFT;
 
-set of int: INDEX_SET_rosterShift_2;
+set of int: INDEX_SET_rosterShift_2 = DAY;
 
-set of int: INDEX_SET_rosterSoldier_1;
+set of int: INDEX_SET_rosterSoldier_1 = SOLDIER;
 
-set of int: INDEX_SET_rosterSoldier_2;
+set of int: INDEX_SET_rosterSoldier_2 = DAY;
 
 
 include "global_cardinality.mzn";

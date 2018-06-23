@@ -11,7 +11,7 @@ array[int] of float: u;
 
 array[INDEX_SET_X_1] of var float: X;
 
-set of int: INDEX_SET_X_1;
+set of int: INDEX_SET_X_1 = P;
 
 
 constraint sum(j in P)((1 / a[j]) * X[j]) <= b;

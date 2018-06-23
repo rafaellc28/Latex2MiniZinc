@@ -9,7 +9,7 @@ array[INDEX_SET_x_1] of var bool: x;
 
 set of int: INDEX_SET_E;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = V;
 
 
 constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] >= 1);

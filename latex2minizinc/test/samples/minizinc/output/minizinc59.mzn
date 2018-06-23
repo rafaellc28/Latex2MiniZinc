@@ -17,11 +17,11 @@ array[INDEX_SET_p_1, INDEX_SET_p_2] of var POS: p;
 
 array[INDEX_SET_dc_1] of var DIGCOP: dc;
 
-set of int: INDEX_SET_dc_1;
+set of int: INDEX_SET_dc_1 = POS;
 
-set of int: INDEX_SET_p_1;
+set of int: INDEX_SET_p_1 = DIG;
 
-set of int: INDEX_SET_p_2;
+set of int: INDEX_SET_p_2 = COPY;
 
 
 include "inverse.mzn";

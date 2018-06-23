@@ -13,10 +13,10 @@ array[int] of float: act_max;
 
 array[INDEX_SET_Run_1] of var float: Run;
 
-set of int: INDEX_SET_Run_1;
+set of int: INDEX_SET_Run_1 = ACT;
 
 
-constraint forall(j in ACT)(Run[j] <= act_max[j] /\ Run[j] >= act_min[j]);
+constraint forall(j in INDEX_SET_Run_1)(Run[j] <= act_max[j] /\ Run[j] >= act_min[j]);
 
 constraint forall(i in MAT)(sum(j in ACT)(io[i,j] * Run[j]) = 0);
 

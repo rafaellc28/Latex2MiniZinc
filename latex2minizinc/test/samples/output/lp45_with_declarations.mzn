@@ -21,25 +21,25 @@ array[INDEX_SET_smoke_1, INDEX_SET_smoke_2] of var bool: smoke;
 
 array[INDEX_SET_pet_1, INDEX_SET_pet_2] of var bool: pet;
 
-set of int: INDEX_SET_color_1;
+set of int: INDEX_SET_color_1 = HOUSE;
 
-set of int: INDEX_SET_color_2;
+set of int: INDEX_SET_color_2 = COLOR;
 
-set of int: INDEX_SET_drink_1;
+set of int: INDEX_SET_drink_1 = HOUSE;
 
-set of int: INDEX_SET_drink_2;
+set of int: INDEX_SET_drink_2 = DRINK;
 
-set of int: INDEX_SET_nationality_1;
+set of int: INDEX_SET_nationality_1 = HOUSE;
 
-set of int: INDEX_SET_nationality_2;
+set of int: INDEX_SET_nationality_2 = NATIONALITY;
 
-set of int: INDEX_SET_pet_1;
+set of int: INDEX_SET_pet_1 = HOUSE;
 
-set of int: INDEX_SET_pet_2;
+set of int: INDEX_SET_pet_2 = PET;
 
-set of int: INDEX_SET_smoke_1;
+set of int: INDEX_SET_smoke_1 = HOUSE;
 
-set of int: INDEX_SET_smoke_2;
+set of int: INDEX_SET_smoke_2 = SMOKE;
 
 
 constraint forall(h in HOUSE)(sum(c in COLOR)(color[h,c]) = 1);

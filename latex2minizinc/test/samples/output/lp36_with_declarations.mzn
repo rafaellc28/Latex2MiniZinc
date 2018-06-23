@@ -39,7 +39,7 @@ set of int: INDEX_SET_B_1;
 
 set of int: INDEX_SET_B_2;
 
-set of int: INDEX_SET_C_1;
+set of int: INDEX_SET_C_1 = PERIODS;
 
 set of int: INDEX_SET_C_2;
 
@@ -49,11 +49,11 @@ set of int: INDEX_SET_S_1;
 
 set of int: INDEX_SET_S_2;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = PERIODS;
 
 set of int: INDEX_SET_x_2;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = PERIODS;
 
 set of int: INDEX_SET_y_2;
 

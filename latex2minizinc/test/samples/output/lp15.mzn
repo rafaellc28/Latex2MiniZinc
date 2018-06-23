@@ -25,24 +25,24 @@ set of int: INDEX_SET_Q;
 
 set of int: INDEX_SET_S;
 
-set of int: INDEX_SET_u_1;
+set of int: INDEX_SET_u_1 = RAWMATERIALS;
 
 set of int: INDEX_SET_u_2;
 
-set of int: INDEX_SET_w_1;
+set of int: INDEX_SET_w_1 = RAWMATERIALS;
 
 set of int: INDEX_SET_w_2;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = PRODUCTS;
 
 set of int: INDEX_SET_y_2;
 
-set of int: INDEX_SET_y_3;
+set of int: INDEX_SET_y_3 = RAWMATERIALS;
 
 set of int: INDEX_SET_y_4;
 
 
-constraint forall(r in RAWMATERIALS, s in S[r])(w[r,s] >= 0);
+constraint forall(r in INDEX_SET_w_1, s in INDEX_SET_w_2)(w[r,s] >= 0);
 
 constraint forall(p in PRODUCTS, q in Q[p])(sum(r in RAWMATERIALS, s in S[r])(y[p,q,r,s]) = 1);
 

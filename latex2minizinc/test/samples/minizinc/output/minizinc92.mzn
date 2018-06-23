@@ -25,7 +25,7 @@ var STEP: step;
 
 array[INDEX_SET_path_1] of var NODE: path;
 
-set of int: INDEX_SET_path_1;
+set of int: INDEX_SET_path_1 = STEP;
 
 
 include "table.mzn";

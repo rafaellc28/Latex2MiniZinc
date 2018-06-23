@@ -21,9 +21,9 @@ array[INDEX_SET_choice_1] of var CHOICE: choice;
 
 var int: obj;
 
-set of int: INDEX_SET_choice_1;
+set of int: INDEX_SET_choice_1 = HOUR;
 
-set of int: INDEX_SET_temp_1;
+set of int: INDEX_SET_temp_1 = HOUR0;
 
 
 constraint temp[0] = start;

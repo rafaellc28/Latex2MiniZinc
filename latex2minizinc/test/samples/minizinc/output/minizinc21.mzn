@@ -11,7 +11,7 @@ int: nMoves;
 
 array[INDEX_SET_occur_1] of var int: occur;
 
-set of int: INDEX_SET_occur_1;
+set of int: INDEX_SET_occur_1 = MOVES;
 
 
 constraint forall(i in MOVES)(occur[i] >= 0);

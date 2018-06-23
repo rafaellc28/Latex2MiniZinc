@@ -9,10 +9,10 @@ array[int] of float: c;
 
 array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [j | j in J]);
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = J;
 
 
-constraint forall(j in J)(x[j] >= 0 /\ x[j] <= 10);
+constraint forall(j in INDEX_SET_x_1)(x[j] >= 0 /\ x[j] <= 10);
 
 
 

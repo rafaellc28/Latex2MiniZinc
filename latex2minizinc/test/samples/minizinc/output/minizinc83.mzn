@@ -13,9 +13,9 @@ array[INDEX_SET_pos1_1] of var SPOT: pos1;
 
 array[INDEX_SET_pos2_1] of var SPOT: pos2;
 
-set of int: INDEX_SET_pos1_1;
+set of int: INDEX_SET_pos1_1 = HERO;
 
-set of int: INDEX_SET_pos2_1;
+set of int: INDEX_SET_pos2_1 = HERO;
 
 
 include "alldifferent.mzn";

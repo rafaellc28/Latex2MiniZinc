@@ -13,9 +13,9 @@ array[INDEX_SET_order_1] of var NOTE: order;
 
 array[INDEX_SET_diffs_1] of var DIFF: diffs;
 
-set of int: INDEX_SET_diffs_1;
+set of int: INDEX_SET_diffs_1 = PDIFF;
 
-set of int: INDEX_SET_order_1;
+set of int: INDEX_SET_order_1 = POSN;
 
 
 include "alldifferent.mzn";

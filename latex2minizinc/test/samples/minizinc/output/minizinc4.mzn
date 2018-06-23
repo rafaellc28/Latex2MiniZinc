@@ -9,7 +9,7 @@ array[int] of int: satisf;
 
 array[INDEX_SET_amt_1] of var int: amt;
 
-set of int: INDEX_SET_amt_1;
+set of int: INDEX_SET_amt_1 = DISH;
 
 
 constraint forall(i in DISH)(amt[i] >= 0);

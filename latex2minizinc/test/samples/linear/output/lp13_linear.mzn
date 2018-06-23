@@ -9,9 +9,9 @@ array[INDEX_SET_rho_1] of var float: rho = array1d(INDEX_SET_rho_1, [4 * i * (N 
 
 array[INDEX_SET_the_1] of var float: the = array1d(INDEX_SET_the_1, [pi * i / N | i in I]);
 
-set of int: INDEX_SET_rho_1;
+set of int: INDEX_SET_rho_1 = I;
 
-set of int: INDEX_SET_the_1;
+set of int: INDEX_SET_the_1 = I;
 
 
 constraint forall(i in I, j in floor(i + 1)..N)(pow(rho[i],2) + pow(rho[j],2) - 2 * rho[i] * rho[j] * cos(the[j] - the[i]) <= 1);

@@ -15,7 +15,7 @@ array[INDEX_SET_r_1, INDEX_SET_r_2] of var float: r;
 
 set of int: INDEX_SET_P;
 
-set of int: INDEX_SET_r_1;
+set of int: INDEX_SET_r_1 = P;
 
 set of int: INDEX_SET_r_2;
 

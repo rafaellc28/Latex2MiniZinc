@@ -7,9 +7,9 @@ int: n;
 
 array[INDEX_SET_X_1, INDEX_SET_X_2] of var bool: X;
 
-set of int: INDEX_SET_X_1;
+set of int: INDEX_SET_X_1 = ROWS;
 
-set of int: INDEX_SET_X_2;
+set of int: INDEX_SET_X_2 = COLUMNS;
 
 
 constraint forall(j in COLUMNS)(sum(i in ROWS)(X[i,j]) = 1);

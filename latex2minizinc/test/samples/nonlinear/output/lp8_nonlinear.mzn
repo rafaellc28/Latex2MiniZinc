@@ -21,7 +21,7 @@ int: N = 8;
 
 array[INDEX_SET_x_1] of var float: x;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = I;
 
 
 constraint 1 - a * (x[4] + x[6]) >= 0;

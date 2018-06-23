@@ -19,7 +19,7 @@ set of int: INDEX_SET_B;
 
 set of int: INDEX_SET_rows_cols;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = B;
 
 set of int: INDEX_SET_x_2;
 

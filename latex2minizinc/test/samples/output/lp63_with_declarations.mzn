@@ -13,7 +13,7 @@ set of int: INDEX_SET_i_i_j_in_E_union_j_i_j_in_E;
 
 set of int: INDEX_SET_w_1;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = V;
 
 array[INDEX_SET_i_i_j_in_E_union_j_i_j_in_E] of int: i_i_j_in_E_union_j_i_j_in_E;
 

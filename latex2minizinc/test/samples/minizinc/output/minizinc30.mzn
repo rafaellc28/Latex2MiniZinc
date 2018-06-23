@@ -11,7 +11,7 @@ var int: scoop = sum(i in 1..floor(n - 1))(coop[road[i],road[i + 1]]);
 
 array[INDEX_SET_road_1] of var GEN: road;
 
-set of int: INDEX_SET_road_1;
+set of int: INDEX_SET_road_1 = ROAD;
 
 
 include "alldifferent.mzn";

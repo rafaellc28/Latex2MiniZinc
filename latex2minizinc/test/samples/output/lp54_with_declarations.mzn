@@ -99,33 +99,33 @@ array[INDEX_SET_Vr_1, INDEX_SET_Vr_2] of var float: Vr;
 
 array[INDEX_SET_U_1, INDEX_SET_U_2] of var float: U;
 
-set of int: INDEX_SET_U_1;
+set of int: INDEX_SET_U_1 = cRaw;
 
 set of int: INDEX_SET_U_2;
 
-set of int: INDEX_SET_Vf_1;
+set of int: INDEX_SET_Vf_1 = cFinal;
 
-set of int: INDEX_SET_Vf_2;
+set of int: INDEX_SET_Vf_2 = region;
 
-set of int: INDEX_SET_Vf_3;
+set of int: INDEX_SET_Vf_3 = port;
 
-set of int: INDEX_SET_Vr_1;
+set of int: INDEX_SET_Vr_1 = cRaw;
 
 set of int: INDEX_SET_Vr_2;
 
-set of int: INDEX_SET_Xf_1;
+set of int: INDEX_SET_Xf_1 = cFinal;
 
 set of int: INDEX_SET_Xf_2;
 
-set of int: INDEX_SET_Xf_3;
+set of int: INDEX_SET_Xf_3 = region;
 
-set of int: INDEX_SET_Xi_1;
+set of int: INDEX_SET_Xi_1 = cShip;
 
 set of int: INDEX_SET_Xi_2;
 
 set of int: INDEX_SET_Xi_3;
 
-set of int: INDEX_SET_Z_1;
+set of int: INDEX_SET_Z_1 = plant;
 
 set of int: INDEX_SET_Z_2;
 
@@ -174,17 +174,17 @@ array[INDEX_SET_cpPosc_union_ccPosc] of int: cpPosc_union_ccPosc;
 array[INDEX_SET_pCappl_diff_pExceptpl] of int: pCappl_diff_pExceptpl;
 
 
-constraint forall(c in cFinal, pl in cpPos[c], r in region)(Xf[c,pl,r] >= 0);
+constraint forall(c in INDEX_SET_Xf_1, pl in INDEX_SET_Xf_2, r in INDEX_SET_Xf_3)(Xf[c,pl,r] >= 0);
 
-constraint forall(c in cFinal, r in region, po in port)(Vf[c,r,po] >= 0);
+constraint forall(c in INDEX_SET_Vf_1, r in INDEX_SET_Vf_2, po in INDEX_SET_Vf_3)(Vf[c,r,po] >= 0);
 
-constraint forall(pl in plant, pr in pPos[pl])(Z[pl,pr] >= 0);
+constraint forall(pl in INDEX_SET_Z_1, pr in INDEX_SET_Z_2)(Z[pl,pr] >= 0);
 
-constraint forall(c in cShip, p1 in cpPos[c], p2 in ccPos[c])(Xi[c,p1,p2] >= 0);
+constraint forall(c in INDEX_SET_Xi_1, p1 in INDEX_SET_Xi_2, p2 in INDEX_SET_Xi_3)(Xi[c,p1,p2] >= 0);
 
-constraint forall(c in cRaw, pl in ccPos[c])(Vr[c,pl] >= 0);
+constraint forall(c in INDEX_SET_Vr_1, pl in INDEX_SET_Vr_2)(Vr[c,pl] >= 0);
 
-constraint forall(c in cRaw, pl in ccPos[c])(U[c,pl] >= 0);
+constraint forall(c in INDEX_SET_U_1, pl in INDEX_SET_U_2)(U[c,pl] >= 0);
 
 constraint forall(n in nutr, r in region)(sum(c in cFinal)(fn[c,n] * (sum(po in port)(Vf[c,r,po] + sum(pl in cpPos[c])(Xf[c,pl,r])))) >= cn75[r,n]);
 

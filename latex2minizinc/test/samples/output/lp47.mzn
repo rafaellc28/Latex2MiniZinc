@@ -9,11 +9,11 @@ array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
 
 array[INDEX_SET_t_1] of var float: t;
 
-set of int: INDEX_SET_t_1;
+set of int: INDEX_SET_t_1 = I;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = I;
 
-set of int: INDEX_SET_y_2;
+set of int: INDEX_SET_y_2 = I;
 
 
 constraint forall(i in I, j in I where i != j)(A[i] <= A[j] + BigM * y[i,j]);

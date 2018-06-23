@@ -19,18 +19,18 @@ array[INDEX_SET_Y_1, INDEX_SET_Y_2, INDEX_SET_Y_3] of var bool: Y;
 
 var float: z;
 
-set of int: INDEX_SET_Y_1;
+set of int: INDEX_SET_Y_1 = J;
 
-set of int: INDEX_SET_Y_2;
+set of int: INDEX_SET_Y_2 = J;
 
-set of int: INDEX_SET_Y_3;
+set of int: INDEX_SET_Y_3 = M;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = J;
 
-set of int: INDEX_SET_x_2;
+set of int: INDEX_SET_x_2 = M;
 
 
-constraint forall(j in J, a in M)(x[j,a] >= 0);
+constraint forall(j in INDEX_SET_x_1, a in INDEX_SET_x_2)(x[j,a] >= 0);
 
 constraint forall(j in J, t in 2..m)(x[j,sigma[j,t]] >= x[j,sigma[j,t - 1]] + p[j,sigma[j,t - 1]]);
 

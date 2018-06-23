@@ -11,7 +11,7 @@ array[int] of float: profit;
 
 array[INDEX_SET_produce_1] of var int: produce;
 
-set of int: INDEX_SET_produce_1;
+set of int: INDEX_SET_produce_1 = PRODUCT;
 
 
 constraint forall(p in PRODUCT)(produce[p] >= 0);

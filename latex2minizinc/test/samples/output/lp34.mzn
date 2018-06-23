@@ -17,17 +17,17 @@ array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
 
 array[INDEX_SET_y_1, INDEX_SET_y_2] of var float: y;
 
-set of int: INDEX_SET_C_1;
+set of int: INDEX_SET_C_1 = PERIODS;
 
 set of int: INDEX_SET_C_2;
 
 set of int: INDEX_SET_STATES;
 
-set of int: INDEX_SET_x_1;
+set of int: INDEX_SET_x_1 = PERIODS;
 
 set of int: INDEX_SET_x_2;
 
-set of int: INDEX_SET_y_1;
+set of int: INDEX_SET_y_1 = PERIODS;
 
 set of int: INDEX_SET_y_2;
 
