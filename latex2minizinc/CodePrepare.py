@@ -141,13 +141,14 @@ class CodePrepare:
 
         print("")
 
-    def _getSubIndicesDomainsByTables(self, name, tables, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None, skip_outermost_scope = False):
+    def _getSubIndicesDomainsByTables(self, name, dim, tables, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None, skip_outermost_scope = False):
 
         domain = EMPTY_STRING
         domain_with_indices = EMPTY_STRING
         dependencies_ret = []
         sub_indices_ret = []
         domains_str = []
+        idxTuplesAlreadyComputed = []
         max_length_domain = 0
 
         countAlreadyComputed = {}
@@ -193,9 +194,9 @@ class CodePrepare:
                 domains = {}
                 domains_with_indices = {}
                 dependencies = {}
-                domains_str = []
                 count = {}
-
+                domains_str = []
+                idxTuples = {}
 
                 for _subIndices in sub_indices_list:
 
@@ -232,7 +233,9 @@ class CodePrepare:
                             dependencies[idx] = deps
                             count[idx] = len(_combIndices)
                             
+                            idxTuples[idx] = []
                             for i in range(idx, idx+len(_combIndices)):
+                                idxTuples[idx].append(i)
                                 indices.remove(i)
 
                             idx += len(_combIndices)
@@ -273,6 +276,10 @@ class CodePrepare:
                             domainsAlreadyComputed[idx]      = domains[idx]
                             dependenciesAlreadyComputed[idx] = dependencies[idx]
 
+                            if idx in idxTuples:
+                                for i in idxTuples[idx]:
+                                    idxTuplesAlreadyComputed.append(i)
+
                             self._setSubIndicesAlreadyComputed(idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices)
 
                             countAlreadyComputed[idx]   = count[idx]
@@ -285,20 +292,26 @@ class CodePrepare:
                             self._setSubIndicesAlreadyComputed(idx, subIndicesAlreadyComputed, domains_with_indices, _subIndices)
                             
                 table = table.getParent()
-            
+        
+        if len(idxTuplesAlreadyComputed) > 0:
+            idxTuplesAlreadyComputed = list(set(idxTuplesAlreadyComputed))
+        
         totalCountAlreadyComputed = 0
         for idx in countAlreadyComputed:
             totalCountAlreadyComputed += countAlreadyComputed[idx]
 
         if totalCountAlreadyComputed == max_length_domain:
             domains_str = []
+            domains_aux = []
             domains_ret = []
             dependencies_ret = []
             sub_indices_ret = []
-
-            for key in sorted(domainsAlreadyComputed.iterkeys()):
-                if domainsAlreadyComputed[key] != None:
+            
+            #for key in sorted(domainsAlreadyComputed.iterkeys()):
+            for key in range(dim):
+                if key in domainsAlreadyComputed and domainsAlreadyComputed[key] != None:
                     domains_str.append(domainsAlreadyComputed[key])
+                    domains_aux.append(domainsAlreadyComputed[key])
 
                     if key in domainsWithIndicesAlreadyComputed:
                         domains_ret.append(domainsWithIndicesAlreadyComputed[key])
@@ -324,7 +337,11 @@ class CodePrepare:
                         else:
                             sub_indices_ret.append(subIndicesAlreadyComputed[key])
 
-            domain += (COMMA+SPACE).join(domains_str)
+                elif not key in idxTuplesAlreadyComputed:
+                    domains_str.append(INT)
+                    domains_ret.append(INT)
+
+            domain += (COMMA+SPACE).join(domains_aux)
             domain_with_indices = domains_ret
 
         domain_with_indices = self.codeGenerator._processDomainsWithIndices(domain_with_indices)
@@ -341,7 +358,7 @@ class CodePrepare:
         else:
             subIndicesAlreadyComputed[idx]   = _subIndices[idx]
 
-    def _getSubIndicesDomainsByStatements(self, name, statements, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None):
+    def _getSubIndicesDomainsByStatements(self, name, dim, statements, minVal, maxVal, isDeclaration = False, domainsAlreadyComputed = None):
         domain = EMPTY_STRING
         domains = []
         domains_with_indices = []
@@ -355,14 +372,14 @@ class CodePrepare:
             currStmt = stmt
             
             scopes = self.codeGenerator.symbolTables.getFirstScopeByKey(name, stmt)
-            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, scopes, minVal, maxVal, isDeclaration, domainsAlreadyComputed)
+            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, dim, scopes, minVal, maxVal, isDeclaration, domainsAlreadyComputed)
 
             if domain != EMPTY_STRING and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
                 break
             
             leafs = self.codeGenerator.symbolTables.getLeafs(stmt)
-            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, leafs, minVal, maxVal, False, domainsAlreadyComputed, True)
+            domain, domains, domains_with_indices, dependencies, sub_indices, minVal, maxVal = self._getSubIndicesDomainsByTables(name, dim, leafs, minVal, maxVal, False, domainsAlreadyComputed, True)
 
             if domain != EMPTY_STRING and (not domainsAlreadyComputed or domains != domainsAlreadyComputed.values()):
                 stmtIndex = stmt
@@ -380,20 +397,20 @@ class CodePrepare:
         name = identifier.getName()
         declarations = self.codeGenerator.symbolTables.getDeclarationsWhereKeyIsDefined(name)
 
-        domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True)
+        domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, dim, declarations, minVal, maxVal, True)
         
         if domain == EMPTY_STRING:
             statements = self.codeGenerator.symbolTables.getStatementsByKey(name)
-            domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False)
+            domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, dim, statements, minVal, maxVal, False)
 
         if domain == EMPTY_STRING:
             if minVal and maxVal and Utils._hasEqualIndices(minVal, maxVal):
                 minMaxVals = self._zipMinMaxVals(minVal, maxVal)
-                domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, declarations, minVal, maxVal, True, minMaxVals)
+                domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, dim, declarations, minVal, maxVal, True, minMaxVals)
 
                 if domain == EMPTY_STRING or domains == minMaxVals.values():
                     statements = self.codeGenerator.symbolTables.getStatementsByKey(name)
-                    domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, statements, minVal, maxVal, False, minMaxVals)
+                    domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, minVal, maxVal = self._getSubIndicesDomainsByStatements(name, dim, statements, minVal, maxVal, False, minMaxVals)
                 
         return domain, domains, domains_with_indices, dependencies, sub_indices, stmtIndex, _types, dim, minVal, maxVal
 

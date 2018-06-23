@@ -1,0 +1,2 @@
+% Test that the dimension of the array generated is corret despite not all domains are declared
+start_{pre_{i,1}} + duration_{pre_{i,1}} \leq start_{pre_{i,2}}\\
