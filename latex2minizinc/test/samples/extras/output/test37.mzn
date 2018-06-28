@@ -14,6 +14,10 @@ set of int: INDEX_SET_Assign_1 = JOBS;
 set of int: INDEX_SET_Assign_2 = MACHINES;
 
 
+constraint forall(k in MACHINES)(assert(cap[k] >= 0, "Assertion cap[k] >= 0 failed!"));
+
+constraint assert(n > 0, "Assertion n > 0 failed!");
+
 constraint forall(j in JOBS)(sum(k in MACHINES)(Assign[j,k]) = 1);
 
 constraint forall(k in MACHINES)(sum(j in JOBS)(Assign[j,k]) <= cap[k]);

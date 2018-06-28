@@ -124,3 +124,8 @@ REGEX_IDENTIFIER = "^[_a-zA-Z][_a-zA-Z0-9]*$"
 REGEX_ARGUMENT_LIST = "\([_a-zA-Z][_a-zA-Z0-9]*(,[_a-zA-Z][_a-zA-Z0-9]*)\)*\s+"
 REGEX_INDICES_SET_OPERATION = "\[([a-zA-Z0-9][a-zA-Z0-9,]*)\]"
 REGEX_BETWEEN_QUOTES = '"(?:[^\\\\]|\\\\.)*?(?:"|$)|\'(?:[^\\\\]|\\\\.)*?(?:\'|$)'
+
+ASSERT = "assert"
+QUOTE = "\""
+ASSERTION = "Assertion"
+FAILED = "failed!"

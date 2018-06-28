@@ -487,7 +487,7 @@ class CodeGenerator:
 
         return res
 
-    def _getRelationalConstraints(self, _type, name, isArray, sub_indices, domains_with_indices, stmt, scope):
+    def _getRelationalConstraints(self, _type, name, isArray, sub_indices, domains_with_indices, stmt, scope, isVariable = False):
         rest = _type
         rest = rest.strip()
 
@@ -531,12 +531,22 @@ class CodeGenerator:
 
             cnt = EMPTY_STRING
             if const:
-                if isArray:
-                    domains = self._getDomainsWithIndices(domains_with_indices)
-                    
-                    cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+const+END_ARGUMENT_LIST+END_STATEMENT
+
+                if isVariable:
+                    if isArray:
+                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        
+                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+const+END_ARGUMENT_LIST+END_STATEMENT
+                    else:
+                        cnt += CONSTRAINT+SPACE+const + END_STATEMENT
+
                 else:
-                    cnt += CONSTRAINT+SPACE+const + END_STATEMENT;
+                    if isArray:
+                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        
+                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+const+COMMA+SPACE+QUOTE+ASSERTION+SPACE+const+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
+                    else:
+                        cnt += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+const+COMMA+SPACE+QUOTE+ASSERTION+SPACE+const+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
 
                 return cnt
 
@@ -882,7 +892,7 @@ class CodeGenerator:
 
         return _type
 
-    def _processTypeDeclaration(self, name, _types):
+    def _processTypeDeclaration(self, name, _types, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
         _type = EMPTY_STRING
 
         _types = self._removeTypesThatAreNotDeclarable(_types)
@@ -890,17 +900,31 @@ class CodeGenerator:
         
         if len(_types) > 0:
             _type = _types[0].getObj()
+
+            stmtIndex = _type.getSymbolTable().getStatement()
+            scope = _type.getSymbolTable().getScope()
             
             if isinstance(_type, BinarySet):
                 _type = BOOL;
 
             elif isinstance(_type, IntegerSet):
+
+                const =  self._getRelationalConstraints(_type.generateCode(self), name, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope, isVariable)
+                
+                if const:
+                    self.additionalConstraints.append(const)
+
                 _type = INT;
 
             elif isinstance(_type, SymbolicSet):
                 _type = STRING;
 
             elif isinstance(_type, RealSet):
+                const =  self._getRelationalConstraints(_type.generateCode(self), name, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope, isVariable)
+                
+                if const:
+                    self.additionalConstraints.append(const)
+
                 _type = FLOAT;
 
             elif isinstance(_type, EnumSet):
@@ -1041,48 +1065,19 @@ class CodeGenerator:
                 includedVar = True
 
             else:
-                _types = self._removeTypesThatAreNotDeclarable(_types)
-                _types = self._getTypes(_types)
-                
-                if len(_types) > 0:
-                    _type = _types[0].getObj()
+                _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices, True)
 
-                    stmtIndex = _type.getSymbolTable().getStatement()
-                    scope = _type.getSymbolTable().getScope()
-                    
-                    if isinstance(_type, BinarySet):
-                        _type = BOOL;
+                if _typeAux != EMPTY_STRING:
+                    includedVar = True 
+                    _type = _typeAux
 
-                    elif isinstance(_type, IntegerSet):
+                    if _type != ENUM:
+                        _type = _type + SEP_PARTS_DECLARATION
 
-                        const =  self._getRelationalConstraints(_type.generateCode(self), name, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                        
-                        if const:
-                            self.additionalConstraints.append(const)
-
-                        _type = INT;
-
-                    elif isinstance(_type, SymbolicSet):
-                        _type = STRING;
-
+                    if isArray:
+                        varStr += SPACE + OF + SPACE+VAR+SPACE + _type
                     else:
-                        const =  self._getRelationalConstraints(_type.generateCode(self), name, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                        
-                        if const:
-                            self.additionalConstraints.append(const)
-
-                        _type = FLOAT;
-
-                    if _type.strip() != EMPTY_STRING:
-                        includedVar = True
-
-                        if _type != ENUM:
-                            _type = _type + SEP_PARTS_DECLARATION
-
-                        if isArray:
-                            varStr += SPACE + OF + SPACE+VAR+SPACE + _type
-                        else:
-                            varStr += VAR+SPACE + _type
+                        varStr += VAR+SPACE + _type
 
             if not includedVar:
                 if isArray:
@@ -1198,7 +1193,7 @@ class CodeGenerator:
 
         if not includedType:
 
-            _typeAux = self._processTypeDeclaration(name, _types)
+            _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices)
 
             if _typeAux != EMPTY_STRING:
                includedType = True 
@@ -1298,7 +1293,8 @@ class CodeGenerator:
 
             if not includedType:
 
-                _typeAux = self._processTypeDeclaration(name, _types)
+                #_typeAux = self._processTypeDeclaration(name, _types)
+                _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices)
 
                 if _typeAux != EMPTY_STRING:
                    includedType = True 
