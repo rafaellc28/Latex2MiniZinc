@@ -492,13 +492,20 @@ class CodeGenerator:
         rest = rest.strip()
 
         if rest != EMPTY_STRING:
+            
             var = EMPTY_STRING
+            var_assert = EMPTY_STRING
+            
             const = EMPTY_STRING
-
+            const_assert = EMPTY_STRING
+            
             if isArray:
                 indices_ins = self._getIndices(sub_indices, domains_with_indices, stmt, scope)
+                indices_ins_assert = map(lambda el: "\\("+el+")", indices_ins)
+                
                 var = name + BEGIN_ARRAY + COMMA.join(indices_ins) + END_ARRAY
-
+                var_assert = name + BEGIN_ARRAY + COMMA.join(indices_ins_assert) + END_ARRAY
+                
             else:
                 var = name
                 
@@ -508,48 +515,54 @@ class CodeGenerator:
                 groups = m.groups(0)
                 rel += SPACE + groups[0] + SPACE
                 rel += self.formatNumber(groups[1])
-
+                
                 if groups[2] != None and groups[2] != 0:
                     rel += groups[2]
-
+                    
                 const += var + rel
-
+                const_assert += var_assert + rel
+                
             m = re.search(r"("+LT+"|"+LE+")\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?", rest)
             if m:
                 rel = EMPTY_STRING
                 groups = m.groups(0)
                 rel += SPACE + groups[0] + SPACE
                 rel += self.formatNumber(groups[1])
-
+                
                 if groups[2] != None and groups[2] != 0:
                     rel += groups[2]
                 
                 if const != EMPTY_STRING:
                     const += SPACE+AND+SPACE
-
+                    const_assert += SPACE+AND+SPACE
+                    
                 const += var + rel
-
+                const_assert += var_assert + rel
+            
             cnt = EMPTY_STRING
             if const:
-
+                
                 if isVariable:
+                    
                     if isArray:
                         domains = self._getDomainsWithIndices(domains_with_indices)
-                        
                         cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+const+END_ARGUMENT_LIST+END_STATEMENT
+                        
                     else:
                         cnt += CONSTRAINT+SPACE+const + END_STATEMENT
-
-                else:
-                    if isArray:
-                        domains = self._getDomainsWithIndices(domains_with_indices)
                         
-                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+const+COMMA+SPACE+QUOTE+ASSERTION+SPACE+const+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
+                else:
+                    
+                    if isArray:
+                        
+                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+const+COMMA+SPACE+QUOTE+ASSERTION+SPACE+const_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
+                        
                     else:
                         cnt += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+const+COMMA+SPACE+QUOTE+ASSERTION+SPACE+const+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
-
+                        
                 return cnt
-
+                
         return None
 
     def _getIdentifier(self, var):

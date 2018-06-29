@@ -1,0 +1,10 @@
+% Test assert generation
+% specialization-examples/debugging/debug/prod-plan.mzn. From https://github.com/MiniZinc/specialization-examples
+produce[p] \geq 0: p \in PRODUCT\\
+\sum_{p \in PRODUCT}consumption_{p, r} * produce_{p} \leq capacity_{r}: r \in RESOURCE\\
+\text{maximize } \sum_{p \in PRODUCT}profit_{p}*produce_{p}\\
+profit_{p}, capacity_{r}, consumption_{p,r} \in \mathbb{R}, \in \mathbb{P}: p \in PRODUCT, r\in RESOURCE\\
+produce_{p} \in \mathbb{Z}: p \in PRODUCT\\
+profit_{p} \in \mathbb{R}^{\geq 0}, \in \mathbb{P}: p \in PRODUCT\\
+capacity_{r} \in \mathbb{R}^{\geq 0}, \in \mathbb{P}: r \in RESOURCE\\
+consumption_{p,r} \in \mathbb{R}^{\geq 0}, \in \mathbb{P}: p \in PRODUCT, r \in RESOURCE\\

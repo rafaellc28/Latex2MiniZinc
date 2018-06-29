@@ -14,7 +14,7 @@ set of int: INDEX_SET_Assign_1 = JOBS;
 set of int: INDEX_SET_Assign_2 = MACHINES;
 
 
-constraint forall(k in MACHINES)(assert(cap[k] >= 0, "Assertion cap[k] >= 0 failed!"));
+constraint forall(k in MACHINES)(assert(cap[k] >= 0, "Assertion cap[\(k)] >= 0 failed!"));
 
 constraint assert(n > 0, "Assertion n > 0 failed!");
 
