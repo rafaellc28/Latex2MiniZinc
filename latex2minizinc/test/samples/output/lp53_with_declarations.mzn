@@ -20,6 +20,10 @@ set of int: INDEX_SET_lambda_2 = dmus;
 set of int: INDEX_SET_theta_1 = dmus;
 
 
+constraint forall(td in dmus, o in outputs)(assert(outputdata[td,o] >= 0, "Assertion outputdata[\(td),\(o)] >= 0 failed!"));
+
+constraint forall(td in dmus, i in inputs)(assert(inputdata[td,i] >= 0, "Assertion inputdata[\(td),\(i)] >= 0 failed!"));
+
 constraint forall(td in INDEX_SET_theta_1)(theta[td] >= 0);
 
 constraint forall(d in INDEX_SET_lambda_1, td in INDEX_SET_lambda_2)(lambda[d,td] >= 0);

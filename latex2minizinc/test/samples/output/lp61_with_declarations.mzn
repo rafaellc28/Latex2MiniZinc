@@ -28,6 +28,10 @@ set of int: INDEX_SET_x_2;
 array[INDEX_SET_U_diff_D] of int: U_diff_D;
 
 
+constraint forall(j in N)(assert(a[j] >= 0, "Assertion a[\(j)] >= 0 failed!"));
+
+constraint assert(b >= 0, "Assertion b >= 0 failed!");
+
 constraint forall(j in INDEX_SET_alfa_1)(alfa[j] >= 0);
 
 constraint beta >= 0;

@@ -100,6 +100,26 @@ set of int: INDEX_SET_minv_1;
 set of int: INDEX_SET_minv_2;
 
 
+constraint forall(t in time)(assert(hc[t] >= 0, "Assertion hc[\(t)] >= 0 failed!"));
+
+constraint forall(t in time)(assert(lc[t] >= 0, "Assertion lc[\(t)] >= 0 failed!"));
+
+constraint forall(t in time)(assert(ol[t] >= 0, "Assertion ol[\(t)] >= 0 failed!"));
+
+constraint assert(iw >= 0, "Assertion iw >= 0 failed!");
+
+constraint forall(t in time)(assert(cmin[t] >= 0, "Assertion cmin[\(t)] >= 0 failed!"));
+
+constraint forall(t in time)(assert(cmax[t] >= cmin[t], "Assertion cmax[\(t)] >= cmin[t] failed!"));
+
+constraint forall(p in prod, i in first..floor(last + 1))(assert(dem[p,i] >= 0, "Assertion dem[\(p),\(i)] >= 0 failed!"));
+
+constraint forall(p in prod)(assert(iinv[p] >= 0, "Assertion iinv[\(p)] >= 0 failed!"));
+
+constraint assert(rir >= 0, "Assertion rir >= 0 failed!");
+
+constraint assert(pir >= 0, "Assertion pir >= 0 failed!");
+
 constraint forall(i in INDEX_SET_Crews_1)(Crews[i] >= 0);
 
 constraint forall(t in INDEX_SET_Hire_1)(Hire[t] >= 0);

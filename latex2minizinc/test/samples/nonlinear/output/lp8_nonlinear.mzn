@@ -24,6 +24,22 @@ array[INDEX_SET_x_1] of var float: x;
 set of int: INDEX_SET_x_1 = I;
 
 
+constraint assert(a >= 0, "Assertion a >= 0 failed!");
+
+constraint assert(b >= 0, "Assertion b >= 0 failed!");
+
+constraint assert(c >= 0, "Assertion c >= 0 failed!");
+
+constraint assert(d >= 0, "Assertion d >= 0 failed!");
+
+constraint assert(e >= 0, "Assertion e >= 0 failed!");
+
+constraint assert(f >= 0, "Assertion f >= 0 failed!");
+
+constraint assert(g >= 0, "Assertion g >= 0 failed!");
+
+constraint assert(h >= 0, "Assertion h >= 0 failed!");
+
 constraint 1 - a * (x[4] + x[6]) >= 0;
 
 constraint 1 - a * (x[5] + x[7] - x[4]) >= 0;

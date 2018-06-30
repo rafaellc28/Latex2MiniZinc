@@ -174,6 +174,28 @@ array[INDEX_SET_cpPosc_union_ccPosc] of int: cpPosc_union_ccPosc;
 array[INDEX_SET_pCappl_diff_pExceptpl] of int: pCappl_diff_pExceptpl;
 
 
+constraint forall(cf in cFinal, n in nutr)(assert(fn[cf,n] >= 0, "Assertion fn[\(cf),\(n)] >= 0 failed!"));
+
+constraint forall(r in region, cf in cFinal)(assert(cf75[r,cf] >= 0, "Assertion cf75[\(r),\(cf)] >= 0 failed!"));
+
+constraint forall(c in commod)(assert(pImp[c] >= 0, "Assertion pImp[\(c)] >= 0 failed!"));
+
+constraint forall(u in unit, p in proc)(assert(util[u,p] >= 0, "Assertion util[\(u),\(p)] >= 0 failed!"));
+
+constraint forall(r in region, c in center)(assert(road[r,c] >= 0, "Assertion road[\(r),\(c)] >= 0 failed!"));
+
+constraint forall(p1 in plant, p2 in plant)(assert(railHalf[p1,p2] >= 0, "Assertion railHalf[\(p1),\(p2)] >= 0 failed!"));
+
+constraint forall(p in plant)(assert(impdBarg[p] >= 0, "Assertion impdBarg[\(p)] >= 0 failed!"));
+
+constraint forall(p in plant)(assert(impdRoad[p] >= 0, "Assertion impdRoad[\(p)] >= 0 failed!"));
+
+constraint forall(cr in cRaw)(assert(pR[cr] >= 0, "Assertion pR[\(cr)] >= 0 failed!"));
+
+constraint forall(p in plant, cr in cRaw)(assert(pPr[p,cr] >= 0, "Assertion pPr[\(p),\(cr)] >= 0 failed!"));
+
+constraint forall(p in plant, u in unit)(assert(dcap[p,u] >= 0, "Assertion dcap[\(p),\(u)] >= 0 failed!"));
+
 constraint forall(c in INDEX_SET_Xf_1, pl in INDEX_SET_Xf_2, r in INDEX_SET_Xf_3)(Xf[c,pl,r] >= 0);
 
 constraint forall(c in INDEX_SET_Vf_1, r in INDEX_SET_Vf_2, po in INDEX_SET_Vf_3)(Vf[c,r,po] >= 0);

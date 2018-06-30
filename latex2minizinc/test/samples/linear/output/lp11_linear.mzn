@@ -18,6 +18,12 @@ set of int: INDEX_SET_Trans_1 = ORIG;
 set of int: INDEX_SET_Trans_2 = DEST;
 
 
+constraint forall(o in ORIG, d in DEST)(assert(rate[o,d] >= 0, "Assertion rate[\(o),\(d)] >= 0 failed!"));
+
+constraint forall(o in ORIG)(assert(supply[o] >= 0, "Assertion supply[\(o)] >= 0 failed!"));
+
+constraint forall(d in DEST)(assert(demand[d] >= 0, "Assertion demand[\(d)] >= 0 failed!"));
+
 constraint forall(i in ORIG)(sum(j in DEST)(Trans[i,j]) = supply[i]);
 
 constraint forall(j in DEST)(sum(i in ORIG)(Trans[i,j]) = demand[j]);

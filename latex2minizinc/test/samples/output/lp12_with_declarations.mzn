@@ -30,6 +30,8 @@ set of int: INDEX_SET_x_1 = J;
 set of int: INDEX_SET_x_2 = M;
 
 
+constraint forall(j in J, a in M)(assert(p[j,a] >= 0, "Assertion p[\(j),\(a)] >= 0 failed!"));
+
 constraint forall(j in INDEX_SET_x_1, a in INDEX_SET_x_2)(x[j,a] >= 0);
 
 constraint forall(j in J, t in 2..m)(x[j,sigma[j,t]] >= x[j,sigma[j,t - 1]] + p[j,sigma[j,t - 1]]);

@@ -30,6 +30,10 @@ set of int: INDEX_SET_x_1 = P;
 set of int: INDEX_SET_x_2 = 1..T;
 
 
+constraint forall(r in R)(assert(b[r] >= 0, "Assertion b[\(r)] >= 0 failed!"));
+
+constraint forall(r in R)(assert(a[r,r] >= 0, "Assertion a[\(r),\(r)] >= 0 failed!"));
+
 constraint forall(p in INDEX_SET_x_1, t in INDEX_SET_x_2)(x[p,t] >= 0);
 
 constraint forall(r in INDEX_SET_s_1, t1 in INDEX_SET_s_2)(s[r,t1] >= 0);

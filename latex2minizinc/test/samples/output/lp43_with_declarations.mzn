@@ -34,6 +34,8 @@ set of int: INDEX_SET_x_6;
 array[INDEX_SET_rows_cols,1..2] of int: rows_cols;
 
 
+constraint forall(r in rows, c in cols)(assert(givens[r,c] >= 0, "Assertion givens[\(r),\(c)] >= 0 failed!"));
+
 constraint forall(s in INDEX_SET_rows_cols)(sum(i in INDEX_SET_B where rows_cols[s,1] >= B[i,3] /\ rows_cols[s,1] < B[i,5] /\ rows_cols[s,2] >= B[i,4] /\ rows_cols[s,2] < B[i,6])(x[B[i,1],B[i,2],B[i,3],B[i,4],B[i,5],B[i,6]]) = 1);
 
 

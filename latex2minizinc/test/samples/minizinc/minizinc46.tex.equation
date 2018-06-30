@@ -12,7 +12,7 @@ starting\_day \in 0 \dots 6; TIME := 0 \dots total\\
 total, weekdur, weekend\_dur \in \mathbb{Z}, \in \mathbb{P}\\
 total := sum(duration) + 7*\sum_{p \in PERSON}(on\_weekend[p] = false)\\
 weekdur_{i} := [ duration_{t} : t \in PERSON \mid on\_weekend_{t} = false ]\\
-weekends_{i} = [ t : t \in TIME \mid (t + starting\_day) \bmod 7 = 5 ], \in TIME\\
+weekends_{i} := [ t : t \in TIME \mid (t + starting\_day) \bmod 7 = 5 ], \in TIME\\
 weekend\_dur_{i} := [ 2 : t \in TIME \mid (t + starting\_day) \bmod 7 = 5 ]\\
 start_{p}, end \in TIME, \in \mathbb{V}: p \in PERSON\\
 weekday_{i} := [ start_{t} : t \in PERSON \mid on\_weekend_{t} = false ], \in TIME, \in \mathbb{V}\\

@@ -92,6 +92,32 @@ set of int: INDEX_SET_dstot_1;
 set of int: INDEX_SET_rt;
 
 
+constraint forall(p in prod, f in fact)(assert(rpc[p,f] >= 0, "Assertion rpc[\(p),\(f)] >= 0 failed!"));
+
+constraint forall(p in prod, f in fact)(assert(opc[p,f] >= 0, "Assertion opc[\(p),\(f)] >= 0 failed!"));
+
+constraint forall(d in dctr, w in whse)(assert(sc[d,w] >= 0, "Assertion sc[\(d),\(w)] >= 0 failed!"));
+
+constraint forall(p in prod)(assert(tc[p] >= 0, "Assertion tc[\(p)] >= 0 failed!"));
+
+constraint assert(rtmin >= 0, "Assertion rtmin >= 0 failed!");
+
+constraint forall(p in prod, f in fact)(assert(pt[p,f] >= 0, "Assertion pt[\(p),\(f)] >= 0 failed!"));
+
+constraint forall(f in fact)(assert(hd[f] >= 0, "Assertion hd[\(f)] >= 0 failed!"));
+
+constraint assert(otmin >= 0, "Assertion otmin >= 0 failed!");
+
+constraint forall(f in fact)(assert(rmin[f] >= 0, "Assertion rmin[\(f)] >= 0 failed!"));
+
+constraint forall(f in fact)(assert(omin[f] >= 0, "Assertion omin[\(f)] >= 0 failed!"));
+
+constraint forall(d in dctr)(assert(dsr[d] >= 0, "Assertion dsr[\(d)] >= 0 failed!"));
+
+constraint forall(p in prod)(assert(dt[p] >= 0, "Assertion dt[\(p)] >= 0 failed!"));
+
+constraint forall(p in prod, w in whse)(assert(ds[p,w] >= 0, "Assertion ds[\(p),\(w)] >= 0 failed!"));
+
 constraint forall(p in INDEX_SET_Rprod_1, f in INDEX_SET_Rprod_2)(Rprod[p,f] >= 0);
 
 constraint forall(p in INDEX_SET_Oprod_1, f in INDEX_SET_Oprod_2)(Oprod[p,f] >= 0);

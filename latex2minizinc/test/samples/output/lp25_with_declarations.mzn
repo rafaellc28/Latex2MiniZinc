@@ -22,6 +22,8 @@ set of int: INDEX_SET_y_1 = E;
 set of int: INDEX_SET_y_2;
 
 
+constraint assert(n >= 3, "Assertion n >= 3 failed!");
+
 constraint forall(i in INDEX_SET_E)(y[E[i,1],E[i,2]] >= 0);
 
 constraint forall(i in V)(sum(i in INDEX_SET_E)(x[E[i,1],E[i,2]]) = 1);

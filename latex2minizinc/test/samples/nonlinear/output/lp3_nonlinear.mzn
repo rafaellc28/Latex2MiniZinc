@@ -24,6 +24,10 @@ set of int: INDEX_SET_x_1 = PAIRS;
 set of int: INDEX_SET_x_2;
 
 
+constraint forall(i in I)(assert(b[i] >= 0, "Assertion b[\(i)] >= 0 failed!"));
+
+constraint assert(xlb >= 0, "Assertion xlb >= 0 failed!");
+
 constraint forall(j in INDEX_SET_PAIRS)(x[PAIRS[j,1],PAIRS[j,2]] >= xlb);
 
 constraint forall(i in I)(sum(j in INDEX_SET_PAIRS)(E[PAIRS[j,1],PAIRS[j,2],i] * x[PAIRS[j,1],PAIRS[j,2]] - b[i]) = 0);

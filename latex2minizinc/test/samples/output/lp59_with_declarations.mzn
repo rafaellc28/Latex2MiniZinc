@@ -18,6 +18,8 @@ set of int: INDEX_SET_x_1 = E;
 set of int: INDEX_SET_x_2;
 
 
+constraint assert(n >= 0, "Assertion n >= 0 failed!");
+
 constraint forall(i in INDEX_SET_k_1)(k[i] >= 1);
 
 constraint forall(i in INDEX_SET_k_1)(k[i] <= card(V));

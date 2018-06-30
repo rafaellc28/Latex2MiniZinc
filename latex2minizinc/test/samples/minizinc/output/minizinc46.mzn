@@ -8,7 +8,7 @@ array[int, int] of PERSON: prec;
 
 array[int] of int: duration;
 
-array[int] of int: weekends;
+array[int] of int: weekends = [t | t in TIME where floor((t + starting_day)) mod 7 = 5];
 
 array[int] of int: weekdur = [duration[t] | t in PERSON where on_weekend[t] = false];
 

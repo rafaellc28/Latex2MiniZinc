@@ -446,7 +446,8 @@ class CodeGenerator:
         for d in domains_with_indices:
             
             if isinstance(d, str):
-                domains.append(d)
+                if not d in domains:
+                    domains.append(d)
 
             else:
                 setName = d[SET]
@@ -455,7 +456,10 @@ class CodeGenerator:
                     index1 = self.tuplesDeclared[setName][INDEX1]
                     indices = d[INDICES]
                     index = indices[0]
-                    domains.append(index + SPACE+IN+SPACE + index1)
+                    domain = index + SPACE+IN+SPACE + index1
+
+                    if not domain in domains:
+                        domains.append(domain)
 
                 else:
                     domains.append(EMPTY_STRING)
@@ -486,6 +490,100 @@ class CodeGenerator:
                 #res.append(d)
 
         return res
+
+    def _getRelationalConstraintsFromDeclaration(self, declaration, name, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
+        cnt = EMPTY_STRING
+        cnt_assert = EMPTY_STRING
+
+        attr = declaration.getRelationEqualTo()
+        if attr != None:
+
+            attribute = attr.attribute.generateCode(self)
+
+            if isArray:
+                stmtIndex = attr.attribute.getSymbolTable().getStatement()
+                scope = attr.attribute.getSymbolTable().getScope()
+
+                domains = self._getDomainsWithIndices(domains_with_indices)
+                indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
+                indices_assert = map(lambda el: "\\("+el+")", indices)
+
+                cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE + attribute + END_ARGUMENT_LIST+END_STATEMENT
+                cnt_assert += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+EQUAL+SPACE+attribute+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
+
+            else:
+                cnt += CONSTRAINT+SPACE+name+SPACE+EQUAL+SPACE+attribute+END_STATEMENT
+                cnt_assert += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+name+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+SPACE+EQUAL+SPACE+attribute+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
+
+            if isVariable:
+                self.additionalConstraints.append(cnt)
+            else:
+                self.additionalConstraints.append(cnt_assert)
+
+        else:
+
+            cnt = EMPTY_STRING
+            cntAux = EMPTY_STRING
+            cntAux_assert = EMPTY_STRING
+            attr = declaration.getRelationLessThanOrEqualTo()
+
+            if attr != None:
+
+                if isArray:
+                    stmtIndex = attr.attribute.getSymbolTable().getStatement()
+                    scope = attr.attribute.getSymbolTable().getScope()
+
+                    indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
+                    indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
+                    indices_assert = map(lambda el: "\\("+el+")", indices)
+
+                    cntAux += name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+LE+SPACE + attr.attribute.generateCode(self)
+                    cntAux_assert += name + BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+LE+SPACE + attr.attribute.generateCode(self)
+
+                else:
+                    cntAux += name + SPACE+LE+SPACE + attr.attribute.generateCode(self)
+
+            attr = declaration.getRelationGreaterThanOrEqualTo()
+            if attr != None:
+                if cntAux != EMPTY_STRING:
+                    cntAux += SPACE+AND+SPACE
+
+                if isArray:
+                    stmtIndex = attr.attribute.getSymbolTable().getStatement()
+                    scope = attr.attribute.getSymbolTable().getScope()
+
+                    indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
+                    indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
+                    indices_assert = map(lambda el: "\\("+el+")", indices)
+                    
+                    cntAux += name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+GE+SPACE + attr.attribute.generateCode(self)
+                    cntAux_assert += name + BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+GE+SPACE + attr.attribute.generateCode(self)
+                    
+                else:
+                    cntAux += name + SPACE+GE+SPACE + attr.attribute.generateCode(self)
+                    
+            if cntAux != EMPTY_STRING:
+
+                if isVariable:
+                    if isArray:
+                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + cntAux + END_ARGUMENT_LIST+END_STATEMENT
+
+                    else:
+                        cnt += CONSTRAINT+SPACE + cntAux + END_STATEMENT
+
+                    self.additionalConstraints.append(cnt)
+
+                else:
+
+                    if isArray:
+                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
+
+                    else:
+                        cnt += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
+
+                    self.additionalConstraints.append(cnt)
 
     def _getRelationalConstraints(self, _type, name, isArray, sub_indices, domains_with_indices, stmt, scope, isVariable = False):
         rest = _type
@@ -1105,63 +1203,7 @@ class CodeGenerator:
                         self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
 
                 else:
-
-                    cnt = EMPTY_STRING
-                    attr = declaration.getRelationEqualTo()
-                    if attr != None:
-
-                        attribute = attr.attribute.generateCode(self)
-
-                        if isArray:
-                            stmtIndex = attr.attribute.getSymbolTable().getStatement()
-                            scope = attr.attribute.getSymbolTable().getScope()
-
-                            domains = self._getDomainsWithIndices(domains_with_indices)
-                            indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                            cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE + attribute + END_ARGUMENT_LIST+END_STATEMENT
-                        else:
-                            cnt += CONSTRAINT+SPACE + name + SPACE+EQUAL+SPACE + attribute + END_STATEMENT;
-
-                        self.additionalConstraints.append(cnt)
-
-                    else:
-
-                        cnt = EMPTY_STRING
-                        cntAux = EMPTY_STRING
-                        attr = declaration.getRelationLessThanOrEqualTo()
-
-                        if attr != None:
-                            if isArray:
-                                stmtIndex = attr.attribute.getSymbolTable().getStatement()
-                                scope = attr.attribute.getSymbolTable().getScope()
-
-                                indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                                cntAux += name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+LE+SPACE + attr.attribute.generateCode(self)
-                            else:
-                                cntAux += name + SPACE+LE+SPACE + attr.attribute.generateCode(self)
-
-                        attr = declaration.getRelationGreaterThanOrEqualTo()
-                        if attr != None:
-                            if cntAux != EMPTY_STRING:
-                                cntAux += SPACE+AND+SPACE
-
-                            if isArray:
-                                stmtIndex = attr.attribute.getSymbolTable().getStatement()
-                                scope = attr.attribute.getSymbolTable().getScope()
-
-                                indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                                cntAux += name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+GE+SPACE + attr.attribute.generateCode(self)
-                            else:
-                                cntAux += name + SPACE+GE+SPACE + attr.attribute.generateCode(self)
-
-                        if cntAux != EMPTY_STRING:
-                            if isArray:
-                                domains = self._getDomainsWithIndices(domains_with_indices)
-                                cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + cntAux + END_ARGUMENT_LIST+END_STATEMENT
-                            else:
-                                cnt += CONSTRAINT+SPACE + cntAux + END_STATEMENT
-
-                            self.additionalConstraints.append(cnt)
+                    self._getRelationalConstraintsFromDeclaration(declaration, name, isArray, sub_indices_vec, domains_with_indices, True)
 
             if value != EMPTY_STRING and value.strip() != EMPTY_STRING:
                 name += SPACE+ASSIGN+SPACE + value.strip()
@@ -1170,7 +1212,6 @@ class CodeGenerator:
             varStr += END_STATEMENT+BREAKLINE+BREAKLINE
             
         return varStr
-
 
     def _declareParam(self, _genParameter):
         
@@ -1226,7 +1267,11 @@ class CodeGenerator:
             _type = INT
             
         if declaration != None:
-            value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
+
+            if declaration.getValue() != None:            
+                value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
+            else:
+                self._getRelationalConstraintsFromDeclaration(declaration, name, isArray, _subIndices, domains_with_indices)
 
         if not _type or _type.strip() == EMPTY_STRING:
             _type = FLOAT
@@ -1322,10 +1367,13 @@ class CodeGenerator:
 
             if _type in self.listSetOfInts:
                 _type = INT
-            
-            value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
-                        self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex, True)
-            
+
+            if declaration.getValue() != None:
+                value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
+                    self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex, True)
+            else:
+                self._getRelationalConstraintsFromDeclaration(declaration, name, isArray, _subIndices, domains_with_indices)
+                
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
             index1 = _tuple[INDEX1]

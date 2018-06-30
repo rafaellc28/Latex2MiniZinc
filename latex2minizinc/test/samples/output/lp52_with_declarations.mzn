@@ -26,6 +26,8 @@ set of int: INDEX_SET_x_1 = V;
 set of int: INDEX_SET_x_2 = 1..nc;
 
 
+constraint assert(n >= 2, "Assertion n >= 2 failed!");
+
 constraint forall(i in V, case in 0..1)(z[i,case] = (if case = 0 then (min(c in 1..z[i,1])((if not exists(j in V where j < i /\ i in INDEX_SET_EE)(z[j,0] = c) then c else z[i,1] + 1 endif))) else (if not exists(j in V where j < i)(i in INDEX_SET_EE) then 1 else max(j in V where j < i /\ i in INDEX_SET_EE)(z[j,0]) endif) endif));
 
 constraint forall(i in V)(sum(c in 1..nc)(x[i,c]) = 1);

@@ -24,6 +24,8 @@ set of int: INDEX_SET_Entry_1 = 0..numTanks;
 set of int: INDEX_SET_Removal_1 = 0..numTanks;
 
 
+constraint assert(perMax = sum(i in 1..numTanks)(maxTime[i]), "Assertion perMax = sum(i in 1..numTanks)(maxTime[i]) failed!");
+
 constraint forall(i in INDEX_SET_Entry_1)(Entry[i] <= numJobs * perMax /\ Entry[i] >= 0);
 
 constraint forall(i in INDEX_SET_Removal_1)(Removal[i] <= numJobs * perMax /\ Removal[i] >= 0);

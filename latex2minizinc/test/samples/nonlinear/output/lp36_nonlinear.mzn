@@ -24,6 +24,14 @@ set of int: INDEX_SET_x_1 = I;
 set of int: INDEX_SET_x_2 = J;
 
 
+constraint forall(j in J)(assert(u[j] >= 0, "Assertion u[\(j)] >= 0 failed!"));
+
+constraint forall(i in I, j in J)(assert(a[i,j] <= 1 /\ a[i,j] >= 0, "Assertion a[\(i),\(j)] <= 1a[\(i),\(j)] >= 0 failed!"));
+
+constraint forall(j in K)(assert(b[j] >= 0, "Assertion b[\(j)] >= 0 failed!"));
+
+constraint forall(i in I)(assert(c[i] <= 0, "Assertion c[\(i)] <= 0 failed!"));
+
 constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
 
 constraint forall(j in K)(sum(i in I)(x[i,j]) >= b[j]);

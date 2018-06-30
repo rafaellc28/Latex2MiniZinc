@@ -20,6 +20,14 @@ set of int: INDEX_SET_Assign_1 = PEOPLE;
 set of int: INDEX_SET_Assign_2 = PROJECTS;
 
 
+constraint forall(i in PEOPLE, j in PROJECTS)(assert(cost[i,j] >= 0, "Assertion cost[\(i),\(j)] >= 0 failed!"));
+
+constraint forall(p in PEOPLE)(assert(supply[p] >= 0, "Assertion supply[\(p)] >= 0 failed!"));
+
+constraint forall(p in PROJECTS)(assert(demand[p] >= 0, "Assertion demand[\(p)] >= 0 failed!"));
+
+constraint forall(i in PEOPLE, j in PROJECTS)(assert(limit[i,j] >= 0, "Assertion limit[\(i),\(j)] >= 0 failed!"));
+
 constraint forall(i in INDEX_SET_Assign_1, j in INDEX_SET_Assign_2)(Assign[i,j] <= limit[i,j] /\ Assign[i,j] >= 0);
 
 constraint forall(i in PEOPLE)(M >= sum(j in PROJECTS)(cost[i,j] * Assign[i,j]));

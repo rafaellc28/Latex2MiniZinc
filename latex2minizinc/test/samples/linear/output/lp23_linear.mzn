@@ -54,6 +54,22 @@ set of int: INDEX_SET_Use2_1 = 1..T;
 set of int: INDEX_SET_Use3_1 = 1..T;
 
 
+constraint forall(p in PROD, t in 1..T)(assert(revenue[p,t] >= 0, "Assertion revenue[\(p),\(t)] >= 0 failed!"));
+
+constraint forall(p in PROD)(assert(prodcost[p] >= 0, "Assertion prodcost[\(p)] >= 0 failed!"));
+
+constraint forall(p in PROD)(assert(invcost[p] >= 0, "Assertion invcost[\(p)] >= 0 failed!"));
+
+constraint forall(p in PROD)(assert(inv0[p] >= 0, "Assertion inv0[\(p)] >= 0 failed!"));
+
+constraint forall(p in PROD, t in 1..T)(assert(commit[p,t] >= 0, "Assertion commit[\(p),\(t)] >= 0 failed!"));
+
+constraint forall(p in PROD, t in 1..T)(assert(market[p,t] >= 0, "Assertion market[\(p),\(t)] >= 0 failed!"));
+
+constraint forall(t in 1..T)(assert(avail_min[t] >= 0, "Assertion avail_min[\(t)] >= 0 failed!"));
+
+constraint forall(t in 1..T)(assert(avail_max[t] >= avail_min[t], "Assertion avail_max[\(t)] >= avail_min[t] failed!"));
+
 constraint forall(p in INDEX_SET_Prod_1, t in INDEX_SET_Prod_2)(Prod[p,t] >= 0);
 
 constraint forall(p in INDEX_SET_Inv_1, t0 in INDEX_SET_Inv_2)(Inv[p,t0] >= 0);

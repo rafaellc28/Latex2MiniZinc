@@ -44,6 +44,10 @@ oils: VEG1;
 oils: VEG2;
 
 
+constraint assert(productprice >= 0, "Assertion productprice >= 0 failed!");
+
+constraint forall(o in oils)(assert(oilhardness[o] >= 0, "Assertion oilhardness[\(o)] >= 0 failed!"));
+
 constraint forall(m in INDEX_SET_production_1)(production[m] >= 0);
 
 constraint forall(m1 in INDEX_SET_buys_1, o in INDEX_SET_buys_2)(buys[m1,o] >= 0);

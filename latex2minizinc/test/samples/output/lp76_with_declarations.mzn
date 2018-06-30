@@ -11,6 +11,8 @@ array[INDEX_SET_loads_1] of float: loads = array1d(INDEX_SET_loads_1, [sum(c in 
 set of int: INDEX_SET_loads_1;
 
 
+constraint forall(c in COURSES)(assert(credits[c] >= 0, "Assertion credits[\(c)] >= 0 failed!"));
+
 
 
 solve satisfy;

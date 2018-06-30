@@ -62,6 +62,8 @@ set of int: INDEX_SET_low_4;
 set of int: INDEX_SET_schedule;
 
 
+constraint forall(l1 in INDEX_SET_links)(assert(disttable[links[l1,1],links[l1,2]] >= 0, "Assertion disttable[\(links[l1,1]),\(links[l1,2])] >= 0 failed!"));
+
 constraint forall(c in INDEX_SET_U_1, t in INDEX_SET_U_2)(U[c,t] >= 0);
 
 constraint forall(c1 in INDEX_SET_schedule)(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]] >= 0);

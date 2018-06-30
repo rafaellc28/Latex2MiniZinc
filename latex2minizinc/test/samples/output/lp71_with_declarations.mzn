@@ -37,6 +37,8 @@ set of int: INDEX_SET_z_1;
 set of int: INDEX_SET_z_2;
 
 
+constraint assert(N >= 1, "Assertion N >= 1 failed!");
+
 constraint forall(i,j in I where i >= j)(Chol[i,j] = if i = j then sqrt(Sigma[i,i] - (sum(k in I where k < i)((Chol[i,k] * Chol[i,k])))) else (Sigma[i,j] - sum(k in I where k < j)(Chol[i,k] * Chol[j,k])) / Chol[j,j] endif);
 
 

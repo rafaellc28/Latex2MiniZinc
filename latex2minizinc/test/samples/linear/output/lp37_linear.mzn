@@ -32,6 +32,18 @@ set of int: INDEX_SET_Use_1 = ORIG;
 set of int: INDEX_SET_Use_2 = DEST;
 
 
+constraint forall(o in ORIG, d in DEST, p in PROD)(assert(vcost[o,d,p] >= 0, "Assertion vcost[\(o),\(d),\(p)] >= 0 failed!"));
+
+constraint forall(o in ORIG, d in DEST)(assert(fcost[o,d] >= 0, "Assertion fcost[\(o),\(d)] >= 0 failed!"));
+
+constraint forall(o in ORIG, p in PROD)(assert(supply[o,p] >= 0, "Assertion supply[\(o),\(p)] >= 0 failed!"));
+
+constraint forall(d in DEST, p in PROD)(assert(demand[d,p] >= 0, "Assertion demand[\(d),\(p)] >= 0 failed!"));
+
+constraint forall(o in ORIG, d in DEST)(assert(limit[o,d] >= 0, "Assertion limit[\(o),\(d)] >= 0 failed!"));
+
+constraint assert(minload >= 0, "Assertion minload >= 0 failed!");
+
 constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);
 
 constraint forall(i in ORIG, p in PROD)(sum(j in DEST)(Trans[i,j,p]) = supply[i,p]);

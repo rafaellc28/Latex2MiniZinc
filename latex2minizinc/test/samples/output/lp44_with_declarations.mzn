@@ -10,6 +10,8 @@ set of int: INDEX_SET_x_2 = 1..9;
 set of int: INDEX_SET_x_3 = 1..9;
 
 
+constraint forall(i in 1..9, j in 1..9)(assert(givens[i,j] <= 9 /\ givens[i,j] >= 0, "Assertion givens[\(i),\(j)] <= 9givens[\(i),\(j)] >= 0 failed!"));
+
 constraint forall(i in 1..9, j in 1..9, k in 1..9 where givens[i,j] != 0)(x[i,j,k] = if givens[i,j] = k then 1 else 0 endif);
 
 constraint forall(i1 in 1..9, j1 in 1..9, k in 1..9 where (i1-1) mod 3 = 0 /\ (j1-1) mod 3 = 0)(sum(i in i1..floor(i1 + 2), j in j1..floor(j1 + 2))(x[i,j,k]) = 1);
