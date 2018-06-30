@@ -110,7 +110,7 @@ constraint assert(iw >= 0, "Assertion iw >= 0 failed!");
 
 constraint forall(t in time)(assert(cmin[t] >= 0, "Assertion cmin[\(t)] >= 0 failed!"));
 
-constraint forall(t in time)(assert(cmax[t] >= cmin[t], "Assertion cmax[\(t)] >= cmin[t] failed!"));
+constraint forall(t in time)(assert(cmax[t] >= cmin[t], "Assertion cmax[\(t)] >= cmin[\(t)] failed!"));
 
 constraint forall(p in prod, i in first..floor(last + 1))(assert(dem[p,i] >= 0, "Assertion dem[\(p),\(i)] >= 0 failed!"));
 

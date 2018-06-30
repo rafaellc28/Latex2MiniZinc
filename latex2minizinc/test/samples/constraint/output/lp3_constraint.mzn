@@ -10,7 +10,7 @@ array[int, int] of float: empty;
 
 int: numJobs;
 
-float: perMax;
+float: perMax = sum(i in 1..numTanks)(maxTime[i]);
 
 
 array[INDEX_SET_Entry_1] of var int: Entry;
@@ -23,8 +23,6 @@ set of int: INDEX_SET_Entry_1 = 0..numTanks;
 
 set of int: INDEX_SET_Removal_1 = 0..numTanks;
 
-
-constraint assert(perMax = sum(i in 1..numTanks)(maxTime[i]), "Assertion perMax = sum(i in 1..numTanks)(maxTime[i]) failed!");
 
 constraint forall(i in INDEX_SET_Entry_1)(Entry[i] <= numJobs * perMax /\ Entry[i] >= 0);
 

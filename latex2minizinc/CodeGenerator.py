@@ -75,6 +75,8 @@ class CodeGenerator:
         self.turnStringsIntoInts = False
         self.additionalParameters = {}
 
+        self.generateAssertExpression = False
+
         self.tuples = {}
         self.tuplesDeclared = {}
 
@@ -500,20 +502,29 @@ class CodeGenerator:
 
             attribute = attr.attribute.generateCode(self)
 
+            if not isVariable:
+                self.generateAssertExpression = True
+                attribute_assert = attr.attribute.generateCode(self)
+                self.generateAssertExpression = False
+
             if isArray:
                 stmtIndex = attr.attribute.getSymbolTable().getStatement()
                 scope = attr.attribute.getSymbolTable().getScope()
 
                 domains = self._getDomainsWithIndices(domains_with_indices)
                 indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                indices_assert = map(lambda el: "\\("+el+")", indices)
 
                 cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE + attribute + END_ARGUMENT_LIST+END_STATEMENT
-                cnt_assert += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+EQUAL+SPACE+attribute+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
+                
+                if not isVariable:
+                    indices_assert = map(lambda el: "\\("+el+")", indices)
+                    cnt_assert += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+EQUAL+SPACE+attribute_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
 
             else:
                 cnt += CONSTRAINT+SPACE+name+SPACE+EQUAL+SPACE+attribute+END_STATEMENT
-                cnt_assert += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+name+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+SPACE+EQUAL+SPACE+attribute+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
+
+                if not isVariable:
+                    cnt_assert += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+name+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+SPACE+EQUAL+SPACE+attribute_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
 
             if isVariable:
                 self.additionalConstraints.append(cnt)
@@ -529,22 +540,38 @@ class CodeGenerator:
 
             if attr != None:
 
+                attribute = attr.attribute.generateCode(self)
+
+                if not isVariable:
+                    self.generateAssertExpression = True
+                    attribute_assert = attr.attribute.generateCode(self)
+                    self.generateAssertExpression = False
+
                 if isArray:
                     stmtIndex = attr.attribute.getSymbolTable().getStatement()
                     scope = attr.attribute.getSymbolTable().getScope()
 
                     indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
                     indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
-                    indices_assert = map(lambda el: "\\("+el+")", indices)
 
-                    cntAux += name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+LE+SPACE + attr.attribute.generateCode(self)
-                    cntAux_assert += name + BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+LE+SPACE + attr.attribute.generateCode(self)
+                    cntAux += name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+LE+SPACE+attribute
+
+                    if not isVariable:
+                        indices_assert = map(lambda el: "\\("+el+")", indices)
+                        cntAux_assert += name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+LE+SPACE+attribute_assert
 
                 else:
                     cntAux += name + SPACE+LE+SPACE + attr.attribute.generateCode(self)
 
             attr = declaration.getRelationGreaterThanOrEqualTo()
             if attr != None:
+                attribute = attr.attribute.generateCode(self)
+                
+                if not isVariable:
+                    self.generateAssertExpression = True
+                    attribute_assert = attr.attribute.generateCode(self)
+                    self.generateAssertExpression = False
+
                 if cntAux != EMPTY_STRING:
                     cntAux += SPACE+AND+SPACE
 
@@ -554,10 +581,15 @@ class CodeGenerator:
 
                     indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
                     indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
-                    indices_assert = map(lambda el: "\\("+el+")", indices)
                     
-                    cntAux += name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+GE+SPACE + attr.attribute.generateCode(self)
-                    cntAux_assert += name + BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+GE+SPACE + attr.attribute.generateCode(self)
+                    cntAux += name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+GE+SPACE+attribute
+
+                    if not isVariable:
+                        if cntAux_assert != EMPTY_STRING:
+                            cntAux_assert += SPACE+AND+BACKSPACE+SPACE
+
+                        indices_assert = map(lambda el: "\\("+el+")", indices)
+                        cntAux_assert += name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+GE+SPACE+attribute_assert
                     
                 else:
                     cntAux += name + SPACE+GE+SPACE + attr.attribute.generateCode(self)
@@ -567,10 +599,10 @@ class CodeGenerator:
                 if isVariable:
                     if isArray:
                         domains = self._getDomainsWithIndices(domains_with_indices)
-                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + cntAux + END_ARGUMENT_LIST+END_STATEMENT
+                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+cntAux+END_ARGUMENT_LIST+END_STATEMENT
 
                     else:
-                        cnt += CONSTRAINT+SPACE + cntAux + END_STATEMENT
+                        cnt += CONSTRAINT+SPACE+cntAux+END_STATEMENT
 
                     self.additionalConstraints.append(cnt)
 
@@ -602,7 +634,9 @@ class CodeGenerator:
                 indices_ins_assert = map(lambda el: "\\("+el+")", indices_ins)
                 
                 var = name + BEGIN_ARRAY + COMMA.join(indices_ins) + END_ARRAY
-                var_assert = name + BEGIN_ARRAY + COMMA.join(indices_ins_assert) + END_ARRAY
+
+                if not isVariable:
+                    var_assert = name+BEGIN_ARRAY+COMMA.join(indices_ins_assert)+END_ARRAY
                 
             else:
                 var = name
@@ -618,7 +652,9 @@ class CodeGenerator:
                     rel += groups[2]
                     
                 const += var + rel
-                const_assert += var_assert + rel
+
+                if not isVariable:
+                    const_assert += var_assert + rel
                 
             m = re.search(r"("+LT+"|"+LE+")\s*([0-9]*\.?[0-9]+)([eE][-+]?[0-9]+)?", rest)
             if m:
@@ -632,11 +668,15 @@ class CodeGenerator:
                 
                 if const != EMPTY_STRING:
                     const += SPACE+AND+SPACE
-                    const_assert += SPACE+AND+SPACE
+
+                    if not isVariable:
+                        const_assert += SPACE+AND+SPACE
                     
                 const += var + rel
-                const_assert += var_assert + rel
-            
+
+                if not isVariable:
+                    const_assert += var_assert + rel
+                
             cnt = EMPTY_STRING
             if const:
                 
@@ -647,7 +687,7 @@ class CodeGenerator:
                         cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+const+END_ARGUMENT_LIST+END_STATEMENT
                         
                     else:
-                        cnt += CONSTRAINT+SPACE+const + END_STATEMENT
+                        cnt += CONSTRAINT+SPACE+const+END_STATEMENT
                         
                 else:
                     
@@ -2304,8 +2344,13 @@ class CodeGenerator:
                         self.identProcessing = identProcessing
 
                         self.turnStringsIntoInts = True
-                        res += ind.generateCode(self)
+                        ind = ind.generateCode(self)
                         self.turnStringsIntoInts = False
+
+                        if self.generateAssertExpression:
+                            ind = "\\("+ind+")"
+
+                        res += ind
 
                         self.posId[identProcessing] += 1
                         
@@ -2322,8 +2367,12 @@ class CodeGenerator:
                     for ind in node.sub_indices:
                         self.turnStringsIntoInts = True
                         ind = self._getCodeID(ind)
-                        inds.append(ind)
                         self.turnStringsIntoInts = False
+
+                        if self.generateAssertExpression:
+                            ind = "\\("+ind+")"
+
+                        inds.append(ind)
 
                     res += COMMA.join(inds) + END_ARRAY
 

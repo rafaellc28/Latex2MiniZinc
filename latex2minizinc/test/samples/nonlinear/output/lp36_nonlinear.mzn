@@ -26,7 +26,7 @@ set of int: INDEX_SET_x_2 = J;
 
 constraint forall(j in J)(assert(u[j] >= 0, "Assertion u[\(j)] >= 0 failed!"));
 
-constraint forall(i in I, j in J)(assert(a[i,j] <= 1 /\ a[i,j] >= 0, "Assertion a[\(i),\(j)] <= 1a[\(i),\(j)] >= 0 failed!"));
+constraint forall(i in I, j in J)(assert(a[i,j] <= 1 /\ a[i,j] >= 0, "Assertion a[\(i),\(j)] <= 1 /\\ a[\(i),\(j)] >= 0 failed!"));
 
 constraint forall(j in K)(assert(b[j] >= 0, "Assertion b[\(j)] >= 0 failed!"));
 

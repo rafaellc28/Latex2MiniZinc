@@ -18,7 +18,7 @@ set of int: INDEX_SET_Run_1 = ACT;
 
 constraint forall(j in ACT)(assert(act_min[j] >= 0, "Assertion act_min[\(j)] >= 0 failed!"));
 
-constraint forall(j in ACT)(assert(act_max[j] >= act_min[j], "Assertion act_max[\(j)] >= act_min[j] failed!"));
+constraint forall(j in ACT)(assert(act_max[j] >= act_min[j], "Assertion act_max[\(j)] >= act_min[\(j)] failed!"));
 
 constraint forall(j in INDEX_SET_Run_1)(Run[j] <= act_max[j] /\ Run[j] >= act_min[j]);
 

@@ -70,7 +70,7 @@ constraint forall(p in PROD, t in 1..T)(assert(market[p,t] >= 0, "Assertion mark
 
 constraint forall(t in 1..T)(assert(avail_min[t] >= 0, "Assertion avail_min[\(t)] >= 0 failed!"));
 
-constraint forall(t in 1..T)(assert(avail_max[t] >= avail_min[t], "Assertion avail_max[\(t)] >= avail_min[t] failed!"));
+constraint forall(t in 1..T)(assert(avail_max[t] >= avail_min[t], "Assertion avail_max[\(t)] >= avail_min[\(t)] failed!"));
 
 constraint forall(p in INDEX_SET_Make_1, t in INDEX_SET_Make_2)(Make[p,t] >= 0);
 

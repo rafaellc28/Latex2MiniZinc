@@ -24,11 +24,11 @@ constraint forall(o in OUTPUT)(assert(out_min[o] >= 0, "Assertion out_min[\(o)] 
 
 constraint forall(o in OUTPUT, i in INPUT)(assert(io[o,i] >= 0, "Assertion io[\(o),\(i)] >= 0 failed!"));
 
-constraint forall(o in OUTPUT)(assert(out_max[o] >= out_min[o], "Assertion out_max[\(o)] >= out_min[o] failed!"));
+constraint forall(o in OUTPUT)(assert(out_max[o] >= out_min[o], "Assertion out_max[\(o)] >= out_min[\(o)] failed!"));
 
 constraint forall(i in INPUT)(assert(in_min[i] >= 0, "Assertion in_min[\(i)] >= 0 failed!"));
 
-constraint forall(i in INPUT)(assert(in_max[i] >= in_min[i], "Assertion in_max[\(i)] >= in_min[i] failed!"));
+constraint forall(i in INPUT)(assert(in_max[i] >= in_min[i], "Assertion in_max[\(i)] >= in_min[\(i)] failed!"));
 
 constraint forall(j in INDEX_SET_X_1)(X[j] <= in_max[j] /\ X[j] >= in_min[j]);
 

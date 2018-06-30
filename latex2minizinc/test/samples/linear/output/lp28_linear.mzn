@@ -29,7 +29,7 @@ set of int: INDEX_SET_AREA;
 
 constraint forall(p in PROD, a in AREA[p], t in 1..T)(assert(revenue[p,a,t] >= 0, "Assertion revenue[\(p),\(a),\(t)] >= 0 failed!"));
 
-constraint forall(p in PROD, a in AREA[p], t in 1..T)(assert(Sell[p,a,t] <= market[p,a,t] /\ Sell[p,a,t] >= 0, "Assertion Sell[\(p),\(a),\(t)] <= market[p,a,t]Sell[\(p),\(a),\(t)] >= 0 failed!"));
+constraint forall(p in PROD, a in AREA[p], t in 1..T)(assert(Sell[p,a,t] <= market[p,a,t] /\ Sell[p,a,t] >= 0, "Assertion Sell[\(p),\(a),\(t)] <= market[\(p),\(a),\(t)] /\\ Sell[\(p),\(a),\(t)] >= 0 failed!"));
 
 constraint forall(p in PROD)(assert(prodcost[p] >= 0, "Assertion prodcost[\(p)] >= 0 failed!"));
 

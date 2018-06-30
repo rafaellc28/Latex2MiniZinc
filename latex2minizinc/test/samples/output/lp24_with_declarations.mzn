@@ -170,11 +170,11 @@ array[INDEX_SET_START_union_CUSTOMERS,1..2] of int: START_union_CUSTOMERS;
 
 constraint assert(minspeed <= maxspeed, "Assertion minspeed <= maxspeed failed!");
 
-constraint forall(name in INDEX_SET_CUSTOMERS)(assert(T2[CUSTOMERS[name,1],CUSTOMERS[name,2]] >= T1[CUSTOMERS[name,1],CUSTOMERS[name,2]], "Assertion T2[\(CUSTOMERS[name,1]),\(CUSTOMERS[name,2])] >= T1[CUSTOMERS[name,1],CUSTOMERS[name,2]] failed!"));
+constraint forall(name in INDEX_SET_CUSTOMERS)(assert(T2[CUSTOMERS[name,1],CUSTOMERS[name,2]] >= T1[CUSTOMERS[name,1],CUSTOMERS[name,2]], "Assertion T2[\(CUSTOMERS[name,1]),\(CUSTOMERS[name,2])] >= T1[\(CUSTOMERS[name,1]),\(CUSTOMERS[name,2])] failed!"));
 
-constraint forall(p in INDEX_SET_PLANES)(assert(S2[PLANES[p,1],PLANES[p,2],PLANES[p,3]] >= S1[PLANES[p,1],PLANES[p,2],PLANES[p,3]], "Assertion S2[\(PLANES[p,1]),\(PLANES[p,2]),\(PLANES[p,3])] >= S1[PLANES[p,1],PLANES[p,2],PLANES[p,3]] failed!"));
+constraint forall(p in INDEX_SET_PLANES)(assert(S2[PLANES[p,1],PLANES[p,2],PLANES[p,3]] >= S1[PLANES[p,1],PLANES[p,2],PLANES[p,3]], "Assertion S2[\(PLANES[p,1]),\(PLANES[p,2]),\(PLANES[p,3])] >= S1[\(PLANES[p,1]),\(PLANES[p,2]),\(PLANES[p,3])] failed!"));
 
-constraint forall(p in INDEX_SET_PLANES)(assert(F2[PLANES[p,1],PLANES[p,2],PLANES[p,3]] >= F1[PLANES[p,1],PLANES[p,2],PLANES[p,3]], "Assertion F2[\(PLANES[p,1]),\(PLANES[p,2]),\(PLANES[p,3])] >= F1[PLANES[p,1],PLANES[p,2],PLANES[p,3]] failed!"));
+constraint forall(p in INDEX_SET_PLANES)(assert(F2[PLANES[p,1],PLANES[p,2],PLANES[p,3]] >= F1[PLANES[p,1],PLANES[p,2],PLANES[p,3]], "Assertion F2[\(PLANES[p,1]),\(PLANES[p,2]),\(PLANES[p,3])] >= F1[\(PLANES[p,1]),\(PLANES[p,2]),\(PLANES[p,3])] failed!"));
 
 constraint timePenalty >= 0;
 

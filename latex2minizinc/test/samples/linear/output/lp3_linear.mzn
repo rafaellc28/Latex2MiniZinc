@@ -28,11 +28,11 @@ constraint forall(n in NUTR, f in FOOD)(assert(amt[n,f] >= 0, "Assertion amt[\(n
 
 constraint forall(i in MINREQ)(assert(n_min[i] >= 0, "Assertion n_min[\(i)] >= 0 failed!"));
 
-constraint forall(i in MAXREQ)(assert(n_max[i] >= n_min[i], "Assertion n_max[\(i)] >= n_min[i] failed!"));
+constraint forall(i in MAXREQ)(assert(n_max[i] >= n_min[i], "Assertion n_max[\(i)] >= n_min[\(i)] failed!"));
 
 constraint forall(f in FOOD)(assert(f_min[f] >= 0, "Assertion f_min[\(f)] >= 0 failed!"));
 
-constraint forall(f in FOOD)(assert(f_max[f] >= f_min[f], "Assertion f_max[\(f)] >= f_min[f] failed!"));
+constraint forall(f in FOOD)(assert(f_max[f] >= f_min[f], "Assertion f_max[\(f)] >= f_min[\(f)] failed!"));
 
 constraint forall(f in INDEX_SET_Buy_1)(Buy[f] <= f_max[f] /\ Buy[f] >= f_min[f]);
 

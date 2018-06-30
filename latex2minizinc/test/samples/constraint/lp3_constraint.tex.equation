@@ -8,7 +8,7 @@ Removal_{numTanks} + full_{numTanks} \leq numJobs * Period\\
 numTanks, numJobs \in \mathbb{Z}, > 0, \in \mathbb{P}\\
 empty_{i,i}, full_{i}: i \in 0 \dots numTanks\\
 minTime_{i}, maxTime_{i}: i \in 1 \dots numTanks;\\
-perMax = \sum_{i \in 1 \dots numTanks} maxTime_{i}\\
+perMax := \sum_{i \in 1 \dots numTanks} maxTime_{i}\\
 Entry_{i}, Removal_{i} \in \mathbb{Z}, \geq 0, \leq numJobs * perMax: i \in 0 \dots numTanks
 Period \geq 0, \leq perMax, \in \mathbb{Z}\\
 

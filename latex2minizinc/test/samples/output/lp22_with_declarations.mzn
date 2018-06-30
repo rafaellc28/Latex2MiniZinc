@@ -70,7 +70,7 @@ set of int: INDEX_SET_y_1 = PLACES;
 set of int: INDEX_SET_y_2 = PLACES;
 
 
-constraint forall(p in PLACES)(assert(S2[p] >= S1[p], "Assertion S2[\(p)] >= S1[p] failed!"));
+constraint forall(p in PLACES)(assert(S2[p] >= S1[p], "Assertion S2[\(p)] >= S1[\(p)] failed!"));
 
 constraint forall(a in INDEX_SET_tea_1)(tea[a] >= 0);
 

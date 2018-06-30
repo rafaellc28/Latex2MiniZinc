@@ -15,7 +15,7 @@ array[int] of float: level_min;
 array[int] of float: level_max;
 
 
-constraint forall(j in ACT)(assert(Level[j] <= level_max[j] /\ Level[j] >= level_min[j], "Assertion Level[\(j)] <= level_max[j]Level[\(j)] >= level_min[j] failed!"));
+constraint forall(j in ACT)(assert(Level[j] <= level_max[j] /\ Level[j] >= level_min[j], "Assertion Level[\(j)] <= level_max[\(j)] /\\ Level[\(j)] >= level_min[\(j)] failed!"));
 
 constraint forall(p in PROD, a in ACT)(assert(io[p,a] >= 0, "Assertion io[\(p),\(a)] >= 0 failed!"));
 
