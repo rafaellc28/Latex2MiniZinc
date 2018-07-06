@@ -10,6 +10,12 @@ InCr_{c} \leq purch\_max_{c}: c \in crude\\
 Revenue = \sum_{mf \in m\_final} price_{mf} * Out_{mf}\\
 PurchCost = \sum_{c \in crude} price_{c} * InCr_{c} + \sum_{mp \in m\_purch, c \in crude} price_{mp} * InInt_{mp,c}\\
 OperCost = \sum_{p \in proc} (cost_{p} * \sum_{c \in crude} LevPr_{p,c})\\
+cap_{u}, attr\_min_{mf,q}, attr\_max_{mf,q}, attr\_both_{mf,q}, attr\_crude_{mi,c,q} \geq 0: \\
+u \in unit, mf \in m\_final, q \in qual, mi \in m\_inter, c \in crude\\
+price_{cm}, cost_{p}, purch\_max_{c} > 0: \\
+cm \in crude \cup m\_purch \cup m\_final, p \in proc, c \in crude\\
+attr_{mi,c,q} := \text{if } attr\_crude_{mi,c,q} > 0 \text{ then } attr\_crude_{mi,c,q} \text{ else } attr\_both_{mi,q} \text{ endif}: \\
+mi \in m\_inter, c \in crude, q \in qual\\
 InCr_{c}, InInt_{mp,c}, LevPr_{p,c}, LevBl_{i,j,c}, Out_{mf} \in \mathbb{R}, \geq 0:\\
 c \in crude, mp \in m\_purch, p \in proc, (i,j) \in blend, mf \in m\_final\\
 Revenue, PurchCost, OperCost \in \mathbb{R}\\
