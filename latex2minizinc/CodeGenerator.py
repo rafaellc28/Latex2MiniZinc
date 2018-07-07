@@ -1383,11 +1383,14 @@ class CodeGenerator:
             if not domain:
                 domain, isArray, array = self._getDomainFromIndexingExpressionInDeclaration(domain, isArray, array, declaration, stmtIndex)
 
+            #print("1", name, domain, isArray, array)
             _typeAux = self._processInDeclaration(name, declaration, isArray)
             
             if _typeAux != EMPTY_STRING:
                includedType = True
                _type = _typeAux
+
+            #print("2", name, _typeAux, includedType)
 
             if not includedType:
 
@@ -1447,7 +1450,7 @@ class CodeGenerator:
         if _type == SET_OF_INT and self._isSetForTuple(name):
             _type = INT
 
-        if array != EMPTY_STRING:
+        if array != EMPTY_STRING and _type != ENUM:
             setStr += array
             
             self._deleteIndexSet(array, name)
