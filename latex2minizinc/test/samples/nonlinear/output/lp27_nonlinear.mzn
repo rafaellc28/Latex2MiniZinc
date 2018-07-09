@@ -18,6 +18,10 @@ set of int: INDEX_SET_t_1;
 set of int: INDEX_SET_x_1 = I;
 
 
+constraint assert(N > 0, "Assertion N > 0 failed!");
+
+constraint assert(M > 0, "Assertion M > 0 failed!");
+
 constraint forall(i in INDEX_SET_x_1)(x[i] <= 10);
 
 

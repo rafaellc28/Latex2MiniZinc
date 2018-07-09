@@ -20,6 +20,8 @@ set of int: INDEX_SET_Trans_2 = DEST;
 
 constraint forall(o in ORIG, d in DEST)(assert(rate[o,d] >= 0, "Assertion rate[\(o),\(d)] >= 0 failed!"));
 
+constraint forall(o in ORIG, d in DEST)(assert(limit[o,d] > 0, "Assertion limit[\(o),\(d)] > 0 failed!"));
+
 constraint forall(o in ORIG)(assert(supply[o] >= 0, "Assertion supply[\(o)] >= 0 failed!"));
 
 constraint forall(d in DEST)(assert(demand[d] >= 0, "Assertion demand[\(d)] >= 0 failed!"));

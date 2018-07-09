@@ -32,6 +32,10 @@ constraint forall(j in K)(assert(b[j] >= 0, "Assertion b[\(j)] >= 0 failed!"));
 
 constraint forall(i in I)(assert(c[i] <= 0, "Assertion c[\(i)] <= 0 failed!"));
 
+constraint assert(N > 0, "Assertion N > 0 failed!");
+
+constraint assert(M > 0, "Assertion M > 0 failed!");
+
 constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
 
 constraint forall(j in K)(sum(i in I)(x[i,j]) >= b[j]);

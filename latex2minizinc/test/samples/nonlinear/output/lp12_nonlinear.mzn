@@ -26,6 +26,8 @@ var float: G6;
 set of int: INDEX_SET_x_1 = I;
 
 
+constraint forall(i in I)(assert(ub[i] > lb[i], "Assertion ub[\(i)] > lb[\(i)] failed!"));
+
 constraint G1 = 35.82 - 0.222 * x[10] - b * x[9];
 
 constraint G2 = -133 + 3 * x[7] - a * x[10];

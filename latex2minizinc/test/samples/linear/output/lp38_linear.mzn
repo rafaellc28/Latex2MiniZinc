@@ -46,6 +46,8 @@ constraint forall(o in ORIG, d in DEST)(assert(limit[o,d] >= 0, "Assertion limit
 
 constraint assert(minload >= 0, "Assertion minload >= 0 failed!");
 
+constraint assert(maxserve > 0, "Assertion maxserve > 0 failed!");
+
 constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);
 
 constraint forall(i in ORIG, p in PROD)(sum(j in DEST)(Trans[i,j,p]) = supply[i,p]);

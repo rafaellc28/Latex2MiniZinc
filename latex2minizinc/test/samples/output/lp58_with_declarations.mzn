@@ -22,6 +22,8 @@ set of int: INDEX_SET_x_1 = E;
 set of int: INDEX_SET_x_2;
 
 
+constraint forall(i in INDEX_SET_E)(assert(a[E[i,1],E[i,2]] > 0, "Assertion a[\(E[i,1]),\(E[i,2])] > 0 failed!"));
+
 constraint assert(n >= 2, "Assertion n >= 2 failed!");
 
 constraint flow >= 0;

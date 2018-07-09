@@ -34,6 +34,8 @@ set of int: INDEX_SET_x_1 = STREAMS;
 
 constraint forall(k in SENSORS)(assert(y[k] >= 0, "Assertion y[\(k)] >= 0 failed!"));
 
+constraint forall(k in SENSORS)(assert(s[k] > 0, "Assertion s[\(k)] > 0 failed!"));
+
 constraint forall(k in SENSORS)(assert(emax[k] >= 0, "Assertion emax[\(k)] >= 0 failed!"));
 
 constraint forall(k in INDEX_SET_x_1)(x[k] >= 0);

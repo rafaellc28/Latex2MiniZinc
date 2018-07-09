@@ -24,6 +24,8 @@ array[INDEX_SET_Buy_1] of var float: Buy = array1d(INDEX_SET_Buy_1, [f_min[f] | 
 set of int: INDEX_SET_Buy_1 = FOOD;
 
 
+constraint forall(f in FOOD)(assert(cost[f] > 0, "Assertion cost[\(f)] > 0 failed!"));
+
 constraint forall(n in NUTR, f in FOOD)(assert(amt[n,f] >= 0, "Assertion amt[\(n),\(f)] >= 0 failed!"));
 
 constraint forall(i in MINREQ)(assert(n_min[i] >= 0, "Assertion n_min[\(i)] >= 0 failed!"));

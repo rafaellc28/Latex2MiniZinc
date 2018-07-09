@@ -18,6 +18,10 @@ set of int: INDEX_SET_Make_1 = PROD;
 set of int: INDEX_SET_Make_2 = 1..T;
 
 
+constraint assert(T > 0, "Assertion T > 0 failed!");
+
+constraint forall(p in PROD)(assert(rate[p] > 0, "Assertion rate[\(p)] > 0 failed!"));
+
 constraint forall(t in 1..T)(assert(avail[t] >= 0, "Assertion avail[\(t)] >= 0 failed!"));
 
 constraint forall(p in PROD, t in 1..T)(assert(market[p,t] >= 0, "Assertion market[\(p),\(t)] >= 0 failed!"));

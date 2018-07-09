@@ -30,6 +30,8 @@ set of int: INDEX_SET_Trans_2 = DEST;
 set of int: INDEX_SET_Trans_3 = PROD;
 
 
+constraint forall(o in ORIG, p in PROD)(assert(rate[o,p] > 0, "Assertion rate[\(o),\(p)] > 0 failed!"));
+
 constraint forall(o in INDEX_SET_Make_1, p in INDEX_SET_Make_2)(Make[o,p] >= 0);
 
 constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);

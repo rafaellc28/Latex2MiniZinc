@@ -88,6 +88,12 @@ constraint forall(mf in m_final, q in qual)(assert(attr_max[mf,q] >= 0, "Asserti
 
 constraint forall(u in unit)(assert(cap[u] >= 0, "Assertion cap[\(u)] >= 0 failed!"));
 
+constraint forall(c in crude)(assert(purch_max[c] > 0, "Assertion purch_max[\(c)] > 0 failed!"));
+
+constraint forall(cm in crude union m_purch union m_final)(assert(price[cm] > 0, "Assertion price[\(cm)] > 0 failed!"));
+
+constraint forall(p in proc)(assert(cost[p] > 0, "Assertion cost[\(p)] > 0 failed!"));
+
 constraint forall(mf in m_final, q in qual)(assert(attr_both[mf,q] >= 0, "Assertion attr_both[\(mf),\(q)] >= 0 failed!"));
 
 constraint forall(mi in m_inter, c in crude, q in qual)(assert(attr_crude[mi,c,q] >= 0, "Assertion attr_crude[\(mi),\(c),\(q)] >= 0 failed!"));

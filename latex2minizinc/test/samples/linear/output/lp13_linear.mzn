@@ -14,6 +14,8 @@ set of int: INDEX_SET_rho_1 = I;
 set of int: INDEX_SET_the_1 = I;
 
 
+constraint assert(N > 0, "Assertion N > 0 failed!");
+
 constraint forall(i in I, j in floor(i + 1)..N)(pow(rho[i],2) + pow(rho[j],2) - 2 * rho[i] * rho[j] * cos(the[j] - the[i]) <= 1);
 
 constraint forall(i in 2..N)(the[i] >= the[i - 1]);

@@ -16,6 +16,8 @@ set of int: INDEX_SET_a_1 = 1..n;
 set of int: INDEX_SET_x_1 = 1..n;
 
 
+constraint assert(n > 0, "Assertion n > 0 failed!");
+
 constraint sum(j in 1..n)(a[j] * x[j]) <= b;
 
 

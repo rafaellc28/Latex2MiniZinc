@@ -168,7 +168,9 @@ set of int: INDEX_SET_y_5;
 array[INDEX_SET_START_union_CUSTOMERS,1..2] of int: START_union_CUSTOMERS;
 
 
-constraint assert(minspeed <= maxspeed, "Assertion minspeed <= maxspeed failed!");
+constraint assert(maxspeed > 0, "Assertion maxspeed > 0 failed!");
+
+constraint assert(minspeed <= maxspeed /\ minspeed > 0, "Assertion minspeed <= maxspeed /\\ minspeed > 0 failed!");
 
 constraint forall(name in INDEX_SET_CUSTOMERS)(assert(T2[CUSTOMERS[name,1],CUSTOMERS[name,2]] >= T1[CUSTOMERS[name,1],CUSTOMERS[name,2]], "Assertion T2[\(CUSTOMERS[name,1]),\(CUSTOMERS[name,2])] >= T1[\(CUSTOMERS[name,1]),\(CUSTOMERS[name,2])] failed!"));
 

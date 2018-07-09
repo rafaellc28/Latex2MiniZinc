@@ -493,129 +493,97 @@ class CodeGenerator:
 
         return res
 
-    def _getRelationalConstraintsFromDeclaration(self, declaration, name, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
-        cnt = EMPTY_STRING
-        cnt_assert = EMPTY_STRING
+    def _getRelationalConstraintExpressions(self, attributes, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, isArray, isVariable):
+        if len(attributes) > 0:
+            for attr in attributes:
+                cntAux, cntAux_assert = self._getRelationalConstraintExpression(attr, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-        attr = declaration.getRelationEqualTo()
+        return cntAux, cntAux_assert
+
+    def _getRelationalConstraintExpression(self, attr, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, isArray, isVariable):
         if attr != None:
-
             attribute = attr.attribute.generateCode(self)
-
+            
             if not isVariable:
                 self.generateAssertExpression = True
                 attribute_assert = attr.attribute.generateCode(self)
                 self.generateAssertExpression = False
 
+            if cntAux != EMPTY_STRING:
+                cntAux += SPACE+AND+SPACE
+
+            if not isVariable and cntAux_assert != EMPTY_STRING:
+                cntAux_assert += SPACE+AND+BACKSPACE+SPACE # backspace must be used to form /\\ and avoid minizinc error
+
             if isArray:
                 stmtIndex = attr.attribute.getSymbolTable().getStatement()
                 scope = attr.attribute.getSymbolTable().getScope()
 
-                domains = self._getDomainsWithIndices(domains_with_indices)
                 indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-
-                cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE + attribute + END_ARGUMENT_LIST+END_STATEMENT
+                indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
                 
+                cntAux += name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+op+SPACE+attribute
+
                 if not isVariable:
                     indices_assert = map(lambda el: "\\("+el+")", indices)
-                    cnt_assert += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+EQUAL+SPACE+attribute_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
-
+                    cntAux_assert += name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+op+SPACE+attribute_assert
+                
             else:
-                cnt += CONSTRAINT+SPACE+name+SPACE+EQUAL+SPACE+attribute+END_STATEMENT
+                cntAux += name + SPACE+op+SPACE + attribute
 
                 if not isVariable:
-                    cnt_assert += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+name+SPACE+EQUAL+SPACE+attribute+COMMA+SPACE+QUOTE+ASSERTION+SPACE+name+SPACE+EQUAL+SPACE+attribute_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
+                    cntAux_assert += name + SPACE+op+SPACE + attribute_assert
 
-            if isVariable:
-                self.additionalConstraints.append(cnt)
-            else:
-                self.additionalConstraints.append(cnt_assert)
+        return cntAux, cntAux_assert
+
+    def _getRelationalConstraintsFromDeclaration(self, declaration, name, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
+        cnt = EMPTY_STRING
+        cntAux = EMPTY_STRING
+        cntAux_assert = EMPTY_STRING
+
+        attr = declaration.getRelationsEqualTo()
+        if attr != None and len(attr) > 0:
+            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, EQUAL, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
         else:
 
-            cnt = EMPTY_STRING
-            cntAux = EMPTY_STRING
-            cntAux_assert = EMPTY_STRING
-            attr = declaration.getRelationLessThanOrEqualTo()
+            attr = declaration.getRelationsDifferentFrom()
+            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, NEQ, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-            if attr != None:
+            attr = declaration.getRelationsLessThan()
+            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-                attribute = attr.attribute.generateCode(self)
+            attr = declaration.getRelationsLessThanOrEqualTo()
+            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-                if not isVariable:
-                    self.generateAssertExpression = True
-                    attribute_assert = attr.attribute.generateCode(self)
-                    self.generateAssertExpression = False
+            attr = declaration.getRelationsGreaterThan()
+            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+
+            attr = declaration.getRelationsGreaterThanOrEqualTo()
+            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+                    
+        if cntAux != EMPTY_STRING:
+
+            if isVariable:
+                if isArray:
+                    domains = self._getDomainsWithIndices(domains_with_indices)
+                    cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+cntAux+END_ARGUMENT_LIST+END_STATEMENT
+
+                else:
+                    cnt += CONSTRAINT+SPACE+cntAux+END_STATEMENT
+
+                self.additionalConstraints.append(cnt)
+
+            else:
 
                 if isArray:
-                    stmtIndex = attr.attribute.getSymbolTable().getStatement()
-                    scope = attr.attribute.getSymbolTable().getScope()
-
-                    indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                    indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
-
-                    cntAux += name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+LE+SPACE+attribute
-
-                    if not isVariable:
-                        indices_assert = map(lambda el: "\\("+el+")", indices)
-                        cntAux_assert += name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+LE+SPACE+attribute_assert
+                    domains = self._getDomainsWithIndices(domains_with_indices)
+                    cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
 
                 else:
-                    cntAux += name + SPACE+LE+SPACE + attr.attribute.generateCode(self)
+                    cnt += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
 
-            attr = declaration.getRelationGreaterThanOrEqualTo()
-            if attr != None:
-                attribute = attr.attribute.generateCode(self)
-                
-                if not isVariable:
-                    self.generateAssertExpression = True
-                    attribute_assert = attr.attribute.generateCode(self)
-                    self.generateAssertExpression = False
-
-                if cntAux != EMPTY_STRING:
-                    cntAux += SPACE+AND+SPACE
-
-                if isArray:
-                    stmtIndex = attr.attribute.getSymbolTable().getStatement()
-                    scope = attr.attribute.getSymbolTable().getScope()
-
-                    indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
-                    indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
-                    
-                    cntAux += name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+GE+SPACE+attribute
-
-                    if not isVariable:
-                        if cntAux_assert != EMPTY_STRING:
-                            cntAux_assert += SPACE+AND+BACKSPACE+SPACE
-
-                        indices_assert = map(lambda el: "\\("+el+")", indices)
-                        cntAux_assert += name+BEGIN_ARRAY+COMMA.join(indices_assert)+END_ARRAY+SPACE+GE+SPACE+attribute_assert
-                    
-                else:
-                    cntAux += name + SPACE+GE+SPACE + attr.attribute.generateCode(self)
-                    
-            if cntAux != EMPTY_STRING:
-
-                if isVariable:
-                    if isArray:
-                        domains = self._getDomainsWithIndices(domains_with_indices)
-                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+cntAux+END_ARGUMENT_LIST+END_STATEMENT
-
-                    else:
-                        cnt += CONSTRAINT+SPACE+cntAux+END_STATEMENT
-
-                    self.additionalConstraints.append(cnt)
-
-                else:
-
-                    if isArray:
-                        domains = self._getDomainsWithIndices(domains_with_indices)
-                        cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
-
-                    else:
-                        cnt += CONSTRAINT+SPACE+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_STATEMENT
-
-                    self.additionalConstraints.append(cnt)
+                self.additionalConstraints.append(cnt)
 
     def _getRelationalConstraints(self, _type, name, isArray, sub_indices, domains_with_indices, stmt, scope, isVariable = False):
         rest = _type
@@ -1383,18 +1351,14 @@ class CodeGenerator:
             if not domain:
                 domain, isArray, array = self._getDomainFromIndexingExpressionInDeclaration(domain, isArray, array, declaration, stmtIndex)
 
-            #print("1", name, domain, isArray, array)
             _typeAux = self._processInDeclaration(name, declaration, isArray)
             
             if _typeAux != EMPTY_STRING:
                includedType = True
                _type = _typeAux
 
-            #print("2", name, _typeAux, includedType)
-
             if not includedType:
 
-                #_typeAux = self._processTypeDeclaration(name, _types)
                 _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices)
 
                 if _typeAux != EMPTY_STRING:

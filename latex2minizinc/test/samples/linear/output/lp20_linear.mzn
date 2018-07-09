@@ -24,9 +24,15 @@ set of int: INDEX_SET_Make_1 = PROD;
 set of int: INDEX_SET_avail_1;
 
 
+constraint forall(p in PROD, s in STAGE)(assert(rate[p,s] > 0, "Assertion rate[\(p),\(s)] > 0 failed!"));
+
 constraint forall(p in PROD)(assert(commit[p] >= 0, "Assertion commit[\(p)] >= 0 failed!"));
 
 constraint forall(p in PROD)(assert(market[p] >= 0, "Assertion market[\(p)] >= 0 failed!"));
+
+constraint forall(s in STAGE)(assert(avail_mean[s] > 0, "Assertion avail_mean[\(s)] > 0 failed!"));
+
+constraint forall(s in STAGE)(assert(avail_variance[s] < avail_mean[s]/(2 * avail[s]) /\ avail_variance[s] > 0, "Assertion avail_variance[\(s)] < avail_mean[\(s)]/(2 * avail[\(s)]) /\\ avail_variance[\(s)] > 0 failed!"));
 
 constraint forall(p in INDEX_SET_Make_1)(Make[p] <= market[p] /\ Make[p] >= commit[p]);
 

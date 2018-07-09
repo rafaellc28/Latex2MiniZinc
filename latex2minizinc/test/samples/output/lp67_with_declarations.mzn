@@ -18,6 +18,8 @@ set of int: INDEX_SET_x_1 = E;
 set of int: INDEX_SET_x_2;
 
 
+constraint assert(n > 0, "Assertion n > 0 failed!");
+
 constraint forall(i in INDEX_SET_E)(x[E[i,1],E[i,2]] >= 0);
 
 constraint forall(i in 1..n)(sum(j in INDEX_SET_E)(x[E[j,1],E[j,2]] + (if E[j,2] = s then 1 else 0 endif)) = sum(i in INDEX_SET_E)(x[E[i,1],E[i,2]] + (if E[i,1] = t then 1 else 0 endif)));

@@ -30,7 +30,23 @@ array[INDEX_SET_x_1] of var float: x;
 set of int: INDEX_SET_x_1 = I;
 
 
+constraint forall(i in I)(assert(a[i] > 0, "Assertion a[\(i)] > 0 failed!"));
+
 constraint assert(neq > 0, "Assertion neq > 0 failed!");
+
+constraint forall(i in I)(assert(b[i] > 0, "Assertion b[\(i)] > 0 failed!"));
+
+constraint forall(i in I)(assert(c[i] > 0, "Assertion c[\(i)] > 0 failed!"));
+
+constraint forall(i in I)(assert(d[i] > 0, "Assertion d[\(i)] > 0 failed!"));
+
+constraint assert(f1 > 0, "Assertion f1 > 0 failed!");
+
+constraint assert(f2 > 0, "Assertion f2 > 0 failed!");
+
+constraint assert(f3 > 0, "Assertion f3 > 0 failed!");
+
+constraint assert(f4 > 0, "Assertion f4 > 0 failed!");
 
 constraint assert(ncomp > 0, "Assertion ncomp > 0 failed!");
 

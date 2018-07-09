@@ -24,6 +24,10 @@ set of int: INDEX_SET_Entry_1 = 0..numTanks;
 set of int: INDEX_SET_Removal_1 = 0..numTanks;
 
 
+constraint assert(numTanks > 0, "Assertion numTanks > 0 failed!");
+
+constraint assert(numJobs > 0, "Assertion numJobs > 0 failed!");
+
 constraint forall(i in INDEX_SET_Entry_1)(Entry[i] <= numJobs * perMax /\ Entry[i] >= 0);
 
 constraint forall(i in INDEX_SET_Removal_1)(Removal[i] <= numJobs * perMax /\ Removal[i] >= 0);

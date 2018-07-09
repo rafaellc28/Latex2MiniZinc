@@ -12,6 +12,8 @@ set of int: INDEX_SET_E;
 set of int: INDEX_SET_x_1 = V;
 
 
+constraint assert(n > 0, "Assertion n > 0 failed!");
+
 constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] <= 1);
 
 

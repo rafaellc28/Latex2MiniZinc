@@ -16,6 +16,12 @@ set of int: INDEX_SET_Start_1 = 1..nMach;
 set of int: INDEX_SET_Start_2 = 1..nJobs;
 
 
+constraint assert(nMach > 0, "Assertion nMach > 0 failed!");
+
+constraint assert(nJobs > 0, "Assertion nJobs > 0 failed!");
+
+constraint assert(endTime > 0, "Assertion endTime > 0 failed!");
+
 constraint Makespan >= 0;
 
 constraint Makespan <= endTime;

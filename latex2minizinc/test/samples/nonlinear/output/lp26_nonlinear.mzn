@@ -24,6 +24,10 @@ set of int: INDEX_SET_x_1;
 set of int: INDEX_SET_x_2;
 
 
+constraint assert(d > 0, "Assertion d > 0 failed!");
+
+constraint assert(N > 0, "Assertion N > 0 failed!");
+
 constraint forall(i in INDEX_SET_P)(r[P[i,1],P[i,2]] = sqrt(sum(k in D)(pow((x[P[i,1],k] - x[P[i,2],k]),2))));
 
 

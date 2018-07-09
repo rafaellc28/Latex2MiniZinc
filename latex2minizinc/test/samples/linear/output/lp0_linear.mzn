@@ -20,6 +20,8 @@ array[INDEX_SET_X_1] of var float: X;
 set of int: INDEX_SET_X_1 = INPUT;
 
 
+constraint forall(i in INPUT)(assert(cost[i] > 0, "Assertion cost[\(i)] > 0 failed!"));
+
 constraint forall(o in OUTPUT)(assert(out_min[o] >= 0, "Assertion out_min[\(o)] >= 0 failed!"));
 
 constraint forall(o in OUTPUT, i in INPUT)(assert(io[o,i] >= 0, "Assertion io[\(o),\(i)] >= 0 failed!"));

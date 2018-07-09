@@ -27,6 +27,8 @@ array[int, int, int] of float: market;
 set of int: INDEX_SET_AREA;
 
 
+constraint assert(T > 0, "Assertion T > 0 failed!");
+
 constraint forall(p in PROD, a in AREA[p], t in 1..T)(assert(revenue[p,a,t] >= 0, "Assertion revenue[\(p),\(a),\(t)] >= 0 failed!"));
 
 constraint forall(p in PROD, a in AREA[p], t in 1..T)(assert(Sell[p,a,t] <= market[p,a,t] /\ Sell[p,a,t] >= 0, "Assertion Sell[\(p),\(a),\(t)] <= market[\(p),\(a),\(t)] /\\ Sell[\(p),\(a),\(t)] >= 0 failed!"));
@@ -38,6 +40,8 @@ constraint forall(p in PROD, t in 1..T)(assert(Make[p,t] >= 0, "Assertion Make[\
 constraint forall(p in PROD)(assert(invcost[p] >= 0, "Assertion invcost[\(p)] >= 0 failed!"));
 
 constraint forall(p in PROD, t0 in 0..T)(assert(Inv[p,t0] >= 0, "Assertion Inv[\(p),\(t0)] >= 0 failed!"));
+
+constraint forall(p in PROD)(assert(rate[p] > 0, "Assertion rate[\(p)] > 0 failed!"));
 
 constraint forall(t in 1..T)(assert(avail[t] >= 0, "Assertion avail[\(t)] >= 0 failed!"));
 

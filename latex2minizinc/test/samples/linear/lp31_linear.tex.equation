@@ -10,7 +10,7 @@ sc_{d,w}, dsr_{d}, rtmin, otmin, \\
 rmin_{f}, omin_{f}, hd_{f},\\
 tc_{p}, dt_{p}, pt_{p,f}, rpc_{p,f}, opc_{p,f},\\
 ds_{p,w} \geq 0; 
-huge, dp_{f}, wt_{p}, cpp_{p} > 0: d \in dctr, w \in whse, f \in fact\\
+huge, dp_{f}, wt_{p}, cpp_{p} > 0: d \in dctr, w \in whse, f \in fact, p \in prod\\
 msr_{d,w}: d \in dctr, w \in whse\\
 dstot_{p} := \sum_{w \in whse} ds_{p,w}: p \in prod\\
 dem_{p,w} := dt_{p} * \frac{ds_{p,w}}{dstot_{p}}: p \in prod, w \in whse\\

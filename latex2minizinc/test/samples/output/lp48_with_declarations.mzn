@@ -24,6 +24,12 @@ set of int: INDEX_SET_x_1 = I;
 set of int: INDEX_SET_x_2 = J;
 
 
+constraint forall(i in 1..m)(assert(w[i] > 0, "Assertion w[\(i)] > 0 failed!"));
+
+constraint assert(c > 0, "Assertion c > 0 failed!");
+
+constraint assert(m > 0, "Assertion m > 0 failed!");
+
 constraint forall(i in I, j in 1..m)(z[i,j] = if i = 1 /\ j = 1 then 1 else if exists(jj in 1..floor(j - 1))(z[i,jj] = true) then 0 else if sum(ii in 1..floor(i - 1))(w[ii] * z[ii,j] + w[i]) > c then 0 else 1 endif endif endif);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) = 1);

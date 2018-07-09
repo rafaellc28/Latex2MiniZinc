@@ -36,6 +36,10 @@ constraint forall(i in I)(assert(supply[i] >= 0, "Assertion supply[\(i)] >= 0 fa
 
 constraint forall(j in J)(assert(demand[j] >= 0, "Assertion demand[\(j)] >= 0 failed!"));
 
+constraint assert(m > 0, "Assertion m > 0 failed!");
+
+constraint assert(n > 0, "Assertion n > 0 failed!");
+
 constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) = supply[i]);

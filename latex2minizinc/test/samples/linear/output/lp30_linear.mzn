@@ -100,11 +100,33 @@ set of int: INDEX_SET_minv_1;
 set of int: INDEX_SET_minv_2;
 
 
+constraint assert(rtr > 0, "Assertion rtr > 0 failed!");
+
+constraint assert(sl > 0, "Assertion sl > 0 failed!");
+
+constraint forall(t in time)(assert(dpp[t] > 0, "Assertion dpp[\(t)] > 0 failed!"));
+
+constraint assert(cs > 0, "Assertion cs > 0 failed!");
+
 constraint forall(t in time)(assert(hc[t] >= 0, "Assertion hc[\(t)] >= 0 failed!"));
 
 constraint forall(t in time)(assert(lc[t] >= 0, "Assertion lc[\(t)] >= 0 failed!"));
 
+constraint assert(otr > rtr, "Assertion otr > rtr failed!");
+
+constraint forall(p in prod)(assert(pt[p] > 0, "Assertion pt[\(p)] > 0 failed!"));
+
+constraint assert(life > 0, "Assertion life > 0 failed!");
+
+constraint forall(p in prod)(assert(cri[p] > 0, "Assertion cri[\(p)] > 0 failed!"));
+
+constraint forall(p in prod)(assert(pc[p] > 0, "Assertion pc[\(p)] > 0 failed!"));
+
+constraint forall(p in prod)(assert(crs[p] > 0, "Assertion crs[\(p)] > 0 failed!"));
+
 constraint forall(t in time)(assert(ol[t] >= 0, "Assertion ol[\(t)] >= 0 failed!"));
+
+constraint assert(first > 0, "Assertion first > 0 failed!");
 
 constraint assert(iw >= 0, "Assertion iw >= 0 failed!");
 
@@ -115,6 +137,8 @@ constraint forall(t in time)(assert(cmax[t] >= cmin[t], "Assertion cmax[\(t)] >=
 constraint forall(p in prod, i in first..floor(last + 1))(assert(dem[p,i] >= 0, "Assertion dem[\(p),\(i)] >= 0 failed!"));
 
 constraint forall(p in prod)(assert(iinv[p] >= 0, "Assertion iinv[\(p)] >= 0 failed!"));
+
+constraint assert(last > first, "Assertion last > first failed!");
 
 constraint assert(rir >= 0, "Assertion rir >= 0 failed!");
 

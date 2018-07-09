@@ -36,11 +36,15 @@ set of int: INDEX_SET_Sell_1 = PROD;
 set of int: INDEX_SET_Sell_2 = 1..T;
 
 
+constraint assert(T > 0, "Assertion T > 0 failed!");
+
 constraint forall(p in PROD, t in 1..T)(assert(revenue[p,t] >= 0, "Assertion revenue[\(p),\(t)] >= 0 failed!"));
 
 constraint forall(p in PROD)(assert(prodcost[p] >= 0, "Assertion prodcost[\(p)] >= 0 failed!"));
 
 constraint forall(p in PROD)(assert(invcost[p] >= 0, "Assertion invcost[\(p)] >= 0 failed!"));
+
+constraint forall(p in PROD)(assert(rate[p] > 0, "Assertion rate[\(p)] > 0 failed!"));
 
 constraint forall(t in 1..T)(assert(avail[t] >= 0, "Assertion avail[\(t)] >= 0 failed!"));
 

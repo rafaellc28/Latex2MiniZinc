@@ -18,6 +18,8 @@ array[INDEX_SET_Make_1] of var float: Make;
 set of int: INDEX_SET_Make_1 = PROD;
 
 
+constraint forall(p in PROD, s in STAGE)(assert(rate[p,s] > 0, "Assertion rate[\(p),\(s)] > 0 failed!"));
+
 constraint forall(s in STAGE)(assert(avail[s] >= 0, "Assertion avail[\(s)] >= 0 failed!"));
 
 constraint forall(p in PROD)(assert(commit[p] >= 0, "Assertion commit[\(p)] >= 0 failed!"));

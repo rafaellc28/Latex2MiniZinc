@@ -14,6 +14,8 @@ set of int: INDEX_SET_x_1 = I;
 set of int: INDEX_SET_y_1 = I;
 
 
+constraint assert(N > 1, "Assertion N > 1 failed!");
+
 constraint forall(i in ceil(Lsup / 2)..Lsup, j in max(1,Lsup - i)..min(Lsup + 1 - i,i))(pow((x[i] + x[j]),2) + pow((y[i] - y[j]),2) = 1);
 
 constraint pow(x[Lsup],2) + pow(y[Lsup],2) = 1;
