@@ -1155,9 +1155,18 @@ class CodePrepare:
             if realtype == INT:
                 realtype = None
 
+            if index2 != None and sizeTuple == None:
+                parts = index2.split("..")
+                sizeTuple = int(parts[1])
+
             if name in self.codeGenerator.setsWitOperationsInv:
                 if index2 != None:
                     self.codeGenerator.additionalParameters[name] = ARRAY + BEGIN_ARRAY + index1 + COMMA + index2 + END_ARRAY + SPACE + OF + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + name + END_STATEMENT + BREAKLINE + BREAKLINE
+
+                    if sizeTuple == None:
+                        parts = index2.split("..")
+                        sizeTuple = int(parts[1])
+
                 else:
                     self.codeGenerator.additionalParameters[name] = ARRAY + BEGIN_ARRAY + index1 + END_ARRAY + SPACE + OF + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + name + END_STATEMENT + BREAKLINE + BREAKLINE
 

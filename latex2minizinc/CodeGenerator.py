@@ -443,53 +443,76 @@ class CodeGenerator:
 
         return indices_ins
 
-    def _getDomainsWithIndices(self, domains_with_indices):
+    def _getDomainsWithIndices(self, domains_with_indices, dim):
+        
         domains = []
+        c = 0
         for d in domains_with_indices:
-            
-            if isinstance(d, str):
-                if not d in domains:
-                    domains.append(d)
-
-            else:
-                setName = d[SET]
+            if c < dim:
                 
-                if setName in self.tuplesDeclared:
-                    index1 = self.tuplesDeclared[setName][INDEX1]
-                    indices = d[INDICES]
-                    index = indices[0]
-                    domain = index + SPACE+IN+SPACE + index1
+                if isinstance(d, str):
+                    parts = d.split(" in ")
+                    index = parts[0].strip()
+                    setName = parts[1].strip()
+                    
+                    if setName in self.tuplesDeclared:
+                        index1 = self.tuplesDeclared[setName][INDEX1]
+                        domain = index + SPACE+IN+SPACE + index1
 
-                    if not domain in domains:
-                        domains.append(domain)
+                        if not domain in domains:
+                            domains.append(domain)
+                            c += self.tuplesDeclared[setName][DIMEN]
+
+                    else:
+                        if not d in domains:
+                            domains.append(d)
+                            c += 1
 
                 else:
-                    domains.append(EMPTY_STRING)
+                    setName = d[SET]
+                    
+                    if setName in self.tuplesDeclared:
+                        index1 = self.tuplesDeclared[setName][INDEX1]
+                        indices = d[INDICES]
+                        index = indices[0]
+                        domain = index + SPACE+IN+SPACE + index1
+
+                        if not domain in domains:
+                            domains.append(domain)
+                            c += self.tuplesDeclared[setName][DIMEN]
+
+                    else:
+                        domains.append(EMPTY_STRING)
+                        c += 1
 
         return domains
 
-    def _getDomains(self, domains):
+    def _getDomains(self, domains, dim):
         res = []
-        
+        c = 0
         for d in domains:
             
-            if d in self.tuplesDeclared:
-                _type = self.tuplesDeclared[d][TYPE]
-                index2 = self.tuplesDeclared[d][INDEX2]
-                size = int(index2[3:])
+            if c < dim:
+                if d in self.tuplesDeclared:
+                    _type = self.tuplesDeclared[d][TYPE]
+                    index2 = self.tuplesDeclared[d][INDEX2]
+                    size = int(index2[3:])
 
-                for i in range(size):
+                    for i in range(size):
+                        res.append(INT)
+                        c += 1
+
+                elif BEGIN_ARRAY in d:
                     res.append(INT)
+                    c += 1
 
-            elif BEGIN_ARRAY in d:
-                res.append(INT)
+                #elif not FROM_TO in d:
+                #    res.append(INT)
 
-            #elif not FROM_TO in d:
-            #    res.append(INT)
-
-            else:
-                res.append(INT)
-                #res.append(d)
+                else:
+                    res.append(INT)
+                    #res.append(d)
+                    c += 1
 
         return res
 
@@ -536,37 +559,34 @@ class CodeGenerator:
 
         return cntAux, cntAux_assert
 
-    def _getRelationalConstraintsFromDeclaration(self, declaration, name, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
+    def _getRelationalConstraintsFromDeclaration(self, declaration, name, dim, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
         cnt = EMPTY_STRING
         cntAux = EMPTY_STRING
         cntAux_assert = EMPTY_STRING
 
         attr = declaration.getRelationsEqualTo()
-        if attr != None and len(attr) > 0:
-            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, EQUAL, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, EQUAL, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-        else:
+        attr = declaration.getRelationsDifferentFrom()
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, NEQ, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-            attr = declaration.getRelationsDifferentFrom()
-            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, NEQ, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        attr = declaration.getRelationsLessThan()
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-            attr = declaration.getRelationsLessThan()
-            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        attr = declaration.getRelationsLessThanOrEqualTo()
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-            attr = declaration.getRelationsLessThanOrEqualTo()
-            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        attr = declaration.getRelationsGreaterThan()
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
 
-            attr = declaration.getRelationsGreaterThan()
-            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
-
-            attr = declaration.getRelationsGreaterThanOrEqualTo()
-            cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        attr = declaration.getRelationsGreaterThanOrEqualTo()
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
                     
         if cntAux != EMPTY_STRING:
 
             if isVariable:
                 if isArray:
-                    domains = self._getDomainsWithIndices(domains_with_indices)
+                    domains = self._getDomainsWithIndices(domains_with_indices, dim)
                     cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+cntAux+END_ARGUMENT_LIST+END_STATEMENT
 
                 else:
@@ -577,7 +597,7 @@ class CodeGenerator:
             else:
 
                 if isArray:
-                    domains = self._getDomainsWithIndices(domains_with_indices)
+                    domains = self._getDomainsWithIndices(domains_with_indices, dim)
                     cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+cntAux+COMMA+SPACE+QUOTE+ASSERTION+SPACE+cntAux_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
 
                 else:
@@ -585,7 +605,7 @@ class CodeGenerator:
 
                 self.additionalConstraints.append(cnt)
 
-    def _getRelationalConstraints(self, _type, name, isArray, sub_indices, domains_with_indices, stmt, scope, isVariable = False):
+    def _getRelationalConstraints(self, _type, name, dim, isArray, sub_indices, domains_with_indices, stmt, scope, isVariable = False):
         rest = _type
         rest = rest.strip()
 
@@ -651,7 +671,7 @@ class CodeGenerator:
                 if isVariable:
                     
                     if isArray:
-                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        domains = self._getDomainsWithIndices(domains_with_indices, dim)
                         cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+const+END_ARGUMENT_LIST+END_STATEMENT
                         
                     else:
@@ -661,7 +681,7 @@ class CodeGenerator:
                     
                     if isArray:
                         
-                        domains = self._getDomainsWithIndices(domains_with_indices)
+                        domains = self._getDomainsWithIndices(domains_with_indices, dim)
                         cnt += CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST+(COMMA+SPACE).join(domains)+END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST+ASSERT+BEGIN_ARGUMENT_LIST+const+COMMA+SPACE+QUOTE+ASSERTION+SPACE+const_assert+SPACE+FAILED+QUOTE+END_ARGUMENT_LIST+END_ARGUMENT_LIST+END_STATEMENT
                         
                     else:
@@ -752,8 +772,7 @@ class CodeGenerator:
 
             if isVariable:
 
-                domains0 = self._getDomains(domains)
-                
+                domains0 = self._getDomains(domains, dim)
                 for d in domains0:
                     if d in self.tuples:
                         d = INT
@@ -765,10 +784,10 @@ class CodeGenerator:
                                 domains_aux.append(d)
                     else:
                         domains_aux.append(d)
-            
-            else:                
+                
+            else:
                 domains_aux = domains
-                domains = self._getDomains(domains)
+                domains = self._getDomains(domains, dim)
                 domain = (COMMA+SPACE).join(domains)
                 array = ARRAY + BEGIN_ARRAY + domain + END_ARRAY
 
@@ -779,7 +798,7 @@ class CodeGenerator:
             for i in range(len(minVal)):
                 domainMinMax.append(str(minVal[i])+FROM_TO+str(maxVal[i]))
 
-            domains_aux = self._getDomains(domainMinMax)
+            domains_aux = self._getDomains(domainMinMax, dim)
             domains = domainMinMax
             domain = (COMMA+SPACE).join(domains)
             array = ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
@@ -788,7 +807,7 @@ class CodeGenerator:
 
         elif dim > 0:
             domains_aux = [INT]*dim
-            domains = self._getDomains(domains_aux)
+            domains = self._getDomains(domains_aux, dim)
             domain = (COMMA+SPACE).join(domains)
             array = ARRAY + BEGIN_ARRAY+(COMMA+SPACE).join(domains)+END_ARRAY
             domains_with_indices = self._processDomainsWithIndices(domains_aux)
@@ -796,7 +815,7 @@ class CodeGenerator:
 
         return domain, domains, domains_with_indices, domains_aux, array, isArray
 
-    def _processValueFromDeclaration(self, declaration, name, _type, value, array, isArray, _subIndices, 
+    def _processValueFromDeclaration(self, declaration, name, _type, value, dim, array, isArray, _subIndices, 
             domains, domains_aux, domains_with_indices, stmtIndex, isSet = False):
 
         arrayFromTuple = False
@@ -815,7 +834,7 @@ class CodeGenerator:
             if not indexingExpression:
                 indexingExpression = self._getDomainsWithIndicesByIdentifier(name)
                 if indexingExpression != None and len(indexingExpression) > 0:
-                    indexingExpression = self._getDomainsWithIndices(indexingExpression)
+                    indexingExpression = self._getDomainsWithIndices(indexingExpression, dim)
                     indexingExpression = (COMMA+SPACE).join(indexingExpression)
 
                 else:
@@ -1011,7 +1030,7 @@ class CodeGenerator:
 
         return _type
 
-    def _processTypeDeclaration(self, name, _types, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
+    def _processTypeDeclaration(self, name, _types, dim, isArray, sub_indices_vec, domains_with_indices, isVariable = False):
         _type = EMPTY_STRING
 
         _types = self._removeTypesThatAreNotDeclarable(_types)
@@ -1028,7 +1047,7 @@ class CodeGenerator:
 
             elif isinstance(_type, IntegerSet):
 
-                const =  self._getRelationalConstraints(_type.generateCode(self), name, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope, isVariable)
+                const =  self._getRelationalConstraints(_type.generateCode(self), name, dim, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope, isVariable)
                 
                 if const:
                     self.additionalConstraints.append(const)
@@ -1039,7 +1058,7 @@ class CodeGenerator:
                 _type = STRING;
 
             elif isinstance(_type, RealSet):
-                const =  self._getRelationalConstraints(_type.generateCode(self), name, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope, isVariable)
+                const =  self._getRelationalConstraints(_type.generateCode(self), name, dim, isArray, sub_indices_vec, domains_with_indices, stmtIndex, scope, isVariable)
                 
                 if const:
                     self.additionalConstraints.append(const)
@@ -1184,7 +1203,7 @@ class CodeGenerator:
                 includedVar = True
 
             else:
-                _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices, True)
+                _typeAux = self._processTypeDeclaration(name, _types, dim, isArray, sub_indices_vec, domains_with_indices, True)
 
                 if _typeAux != EMPTY_STRING:
                     includedVar = True 
@@ -1208,10 +1227,10 @@ class CodeGenerator:
 
                 if declaration.getValue() != None:
                     value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
-                        self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
+                        self._processValueFromDeclaration(declaration, name, _type, value, dim, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
 
                 else:
-                    self._getRelationalConstraintsFromDeclaration(declaration, name, isArray, sub_indices_vec, domains_with_indices, True)
+                    self._getRelationalConstraintsFromDeclaration(declaration, name, dim, isArray, sub_indices_vec, domains_with_indices, True)
 
             if value != EMPTY_STRING and value.strip() != EMPTY_STRING:
                 name += SPACE+ASSIGN+SPACE + value.strip()
@@ -1255,7 +1274,7 @@ class CodeGenerator:
 
         if not includedType:
 
-            _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices)
+            _typeAux = self._processTypeDeclaration(name, _types, dim, isArray, sub_indices_vec, domains_with_indices)
 
             if _typeAux != EMPTY_STRING:
                includedType = True 
@@ -1277,9 +1296,9 @@ class CodeGenerator:
         if declaration != None:
 
             if declaration.getValue() != None:            
-                value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
+                value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = self._processValueFromDeclaration(declaration, name, _type, value, dim, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex)
             else:
-                self._getRelationalConstraintsFromDeclaration(declaration, name, isArray, _subIndices, domains_with_indices)
+                self._getRelationalConstraintsFromDeclaration(declaration, name, dim, isArray, _subIndices, domains_with_indices)
 
         if not _type or _type.strip() == EMPTY_STRING:
             _type = FLOAT
@@ -1359,7 +1378,7 @@ class CodeGenerator:
 
             if not includedType:
 
-                _typeAux = self._processTypeDeclaration(name, _types, isArray, sub_indices_vec, domains_with_indices)
+                _typeAux = self._processTypeDeclaration(name, _types, dim, isArray, sub_indices_vec, domains_with_indices)
 
                 if _typeAux != EMPTY_STRING:
                    includedType = True 
@@ -1377,9 +1396,9 @@ class CodeGenerator:
 
             if declaration.getValue() != None:
                 value, _type, array, isArray, arrayFromTuple, deleteTupleIndex = \
-                    self._processValueFromDeclaration(declaration, name, _type, value, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex, True)
+                    self._processValueFromDeclaration(declaration, name, _type, value, dim, array, isArray, _subIndices, domains, domains_aux, domains_with_indices, stmtIndex, True)
             else:
-                self._getRelationalConstraintsFromDeclaration(declaration, name, isArray, _subIndices, domains_with_indices)
+                self._getRelationalConstraintsFromDeclaration(declaration, name, dim, isArray, _subIndices, domains_with_indices)
                 
         if name in self.tuplesDeclared:
             _tuple = self.tuplesDeclared[name]
