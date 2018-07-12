@@ -32,11 +32,11 @@ set of int: INDEX_SET_schedule;
 
 constraint assert(last > 0, "Assertion last > 0 failed!");
 
-constraint forall(c1 in INDEX_SET_schedule)(assert(demand[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]] > 0, "Assertion demand[\(schedule[c1,1]),\(schedule[c1,2]),\(schedule[c1,3]),\(schedule[c1,4])] > 0 failed!"));
+constraint forall(s in INDEX_SET_schedule)(assert(demand[schedule[s,1],schedule[s,2],schedule[s,3],schedule[s,4]] > 0, "Assertion demand[\(schedule[s,1]),\(schedule[s,2]),\(schedule[s,3]),\(schedule[s,4])] > 0 failed!"));
 
 constraint assert(section > 0, "Assertion section > 0 failed!");
 
-constraint forall(c1 in INDEX_SET_schedule)(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]] >= 0);
+constraint forall(s in INDEX_SET_X_1, i0 in INDEX_SET_X_2, i1 in INDEX_SET_X_3, i2 in INDEX_SET_X_4)(X[s,i0,i1,i2] >= 0);
 
 constraint forall(c in INDEX_SET_U_1, t in INDEX_SET_U_2)(U[c,t] >= 0);
 

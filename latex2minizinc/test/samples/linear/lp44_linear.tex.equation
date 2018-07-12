@@ -4,4 +4,4 @@ U_{c,t} = U_{c, \text{if } t > 1 \text{ then } t-1 \text{ else } last \text{ end
 demand_{c1,t1,c2,t2} \leq X_{c1,t1,c2,t2} \leq section * \left\lceil \frac{demand_{c1,t1,c2,t2}}{section} \right\rceil: (c1,t1,c2,t2) \in schedule\\
 last, section > 0, \in \mathbb{Z}, \in \mathbb{P}\\
 times := 1 \dots last\\
-X_{s}, U_{c,t} \in \mathbb{R}^{+}; demand_{c1,t1,c2,t2} > 0: (c1,t1,c2,t2) \in schedule, c \in cities, t \in times\\
+X_{s}, U_{c,t} \in \mathbb{R}^{+}; demand_{s} > 0: s \in schedule, c \in cities, t \in times\\

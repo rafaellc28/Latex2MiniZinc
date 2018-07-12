@@ -388,7 +388,7 @@ class CodeGenerator:
     def formatNumber(self, number):
         return (ZERO if number[0] == PERIOD else EMPTY_STRING) + number
 
-    def _getIndices(self, sub_indices, domains_with_indices, stmt, scope):
+    def _getIndices(self, sub_indices, domains_with_indices, dim, stmt, scope):
         indices_ins = []
 
         if sub_indices:
@@ -411,35 +411,67 @@ class CodeGenerator:
         if len(indices_ins) == 0:
             indices_ins = [EMPTY_STRING]*len(domains_with_indices)
 
+        count = 0
         for i in range(len(domains_with_indices)):
-            d = domains_with_indices[i]
 
-            if not isinstance(d, str):
-                setName = d[SET]
-                
-                if setName in self.tuplesDeclared:
-                    index1 = self.tuplesDeclared[setName][INDEX1]
-                    indices = d[INDICES]
-                    index = indices[0]
+            if count < dim:
+                d = domains_with_indices[i]
 
-                    c = 1
-                    cs = []
-                    for i in indices:
-                        if not c in cs:
-                            repl = setName + BEGIN_ARRAY+index+COMMA+str(c)+END_ARRAY
-                            cs.append(c)
-                            c += 1
+                if not isinstance(d, str):
+                    setName = d[SET]
+                    
+                    if setName in self.tuplesDeclared:
+                        indices = d[INDICES]
+                        index = indices[0]
 
-                            ind = [j for j, v in enumerate(indices_ins) if v == i]
-                            for j in ind:
-                                indices_ins[j] = repl
+                        c = 1
+                        cs = []
+                        for i in indices:
+                            if not c in cs:
+                                repl = setName + BEGIN_ARRAY+index+COMMA+str(c)+END_ARRAY
+                                cs.append(c)
+                                c += 1
 
-                            self.newIndexExpression = repl
-                            self._setNewIndex(i, stmt, scope)
+                                ind = [j for j, v in enumerate(indices_ins) if v == i]
+                                for j in ind:
+                                    indices_ins[j] = repl
+                                    count += 1
 
-            else:
-                if SPACE+IN+SPACE in d:
-                    indices_ins[i] = d.split(SPACE+IN+SPACE)[0].strip()
+                                self.newIndexExpression = repl
+                                self._setNewIndex(i, stmt, scope)
+
+                else:
+                    parts = d.split(" in ")
+                    index = parts[0].strip()
+                    setName = parts[1].strip()
+
+                    if setName in self.tuplesDeclared:
+
+                        c = 0
+                        cs = []
+                        
+                        dimen = self.tuplesDeclared[setName][DIMEN]
+                        indices = range(dimen)
+                        
+                        for i in indices_ins:
+                            if not c in cs:
+                                repl = setName + BEGIN_ARRAY+index+COMMA+str(c+1)+END_ARRAY
+                                cs.append(c)
+                                
+                                ind = [j for j, v in enumerate(indices_ins) if v == i]
+                                
+                                for j in ind:
+                                    indices_ins[j] = repl
+                                    count += 1
+
+                                self.newIndexExpression = repl
+                                self._setNewIndex(i, stmt, scope)
+
+                                c += 1
+
+                    else:
+                        if SPACE+IN+SPACE in d:
+                            indices_ins[i] = d.split(SPACE+IN+SPACE)[0].strip()
 
         return indices_ins
 
@@ -516,14 +548,15 @@ class CodeGenerator:
 
         return res
 
-    def _getRelationalConstraintExpressions(self, attributes, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, isArray, isVariable):
+    def _getRelationalConstraintExpressions(self, attributes, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable):
         if len(attributes) > 0:
             for attr in attributes:
-                cntAux, cntAux_assert = self._getRelationalConstraintExpression(attr, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+                cntAux, cntAux_assert = self._getRelationalConstraintExpression(attr, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
 
         return cntAux, cntAux_assert
 
-    def _getRelationalConstraintExpression(self, attr, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, isArray, isVariable):
+    def _getRelationalConstraintExpression(self, attr, cntAux, cntAux_assert, op, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable):
+
         if attr != None:
             attribute = attr.attribute.generateCode(self)
             
@@ -542,7 +575,7 @@ class CodeGenerator:
                 stmtIndex = attr.attribute.getSymbolTable().getStatement()
                 scope = attr.attribute.getSymbolTable().getScope()
 
-                indices = self._getIndices(sub_indices_vec, domains_with_indices, stmtIndex, scope)
+                indices = self._getIndices(sub_indices_vec, domains_with_indices, dim, stmtIndex, scope)
                 indices = map(lambda el: el if isinstance(el, str) else el.generateCode(self), indices)
                 
                 cntAux += name+BEGIN_ARRAY+COMMA.join(indices)+END_ARRAY+SPACE+op+SPACE+attribute
@@ -565,22 +598,22 @@ class CodeGenerator:
         cntAux_assert = EMPTY_STRING
 
         attr = declaration.getRelationsEqualTo()
-        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, EQUAL, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, EQUAL, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
 
         attr = declaration.getRelationsDifferentFrom()
-        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, NEQ, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, NEQ, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
 
         attr = declaration.getRelationsLessThan()
-        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LT, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
 
         attr = declaration.getRelationsLessThanOrEqualTo()
-        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, LE, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
 
         attr = declaration.getRelationsGreaterThan()
-        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GT, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GT, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
 
         attr = declaration.getRelationsGreaterThanOrEqualTo()
-        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GE, name, sub_indices_vec, domains_with_indices, isArray, isVariable)
+        cntAux, cntAux_assert = self._getRelationalConstraintExpressions(attr, cntAux, cntAux_assert, GE, name, sub_indices_vec, domains_with_indices, dim, isArray, isVariable)
                     
         if cntAux != EMPTY_STRING:
 
@@ -618,7 +651,7 @@ class CodeGenerator:
             const_assert = EMPTY_STRING
             
             if isArray:
-                indices_ins = self._getIndices(sub_indices, domains_with_indices, stmt, scope)
+                indices_ins = self._getIndices(sub_indices, domains_with_indices, dim, stmt, scope)
                 indices_ins_assert = map(lambda el: "\\("+el+")", indices_ins)
                 
                 var = name + BEGIN_ARRAY + COMMA.join(indices_ins) + END_ARRAY
@@ -865,7 +898,7 @@ class CodeGenerator:
                         scope = declaration.getValue().attribute.getSymbolTable().getScope()
 
                         indices = map(lambda el: el.generateCode(self), _subIndices)
-                        indices = self._getIndices(indices, domains_with_indices, stmtIndex, scope)
+                        indices = self._getIndices(indices, domains_with_indices, dim, stmtIndex, scope)
                         
                         if indexingExpression:
                             cnt = CONSTRAINT+SPACE+FORALL+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST + name + BEGIN_ARRAY + COMMA.join(indices) + END_ARRAY+SPACE+EQUAL+SPACE + value + END_ARGUMENT_LIST+END_STATEMENT;
