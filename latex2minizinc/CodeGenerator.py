@@ -411,6 +411,8 @@ class CodeGenerator:
         if len(indices_ins) == 0:
             indices_ins = [EMPTY_STRING]*len(domains_with_indices)
 
+        indices_ins_res = list(indices_ins)
+
         count = 0
         for i in range(len(domains_with_indices)):
 
@@ -434,13 +436,14 @@ class CodeGenerator:
 
                                 ind = [j for j, v in enumerate(indices_ins) if v == i]
                                 for j in ind:
-                                    indices_ins[j] = repl
+                                    indices_ins_res[j] = repl
                                     count += 1
 
                                 self.newIndexExpression = repl
                                 self._setNewIndex(i, stmt, scope)
 
                 else:
+
                     parts = d.split(" in ")
                     index = parts[0].strip()
                     setName = parts[1].strip()
@@ -453,27 +456,44 @@ class CodeGenerator:
                         dimen = self.tuplesDeclared[setName][DIMEN]
                         indices = range(dimen)
                         
-                        for i in indices_ins:
-                            if not c in cs:
-                                repl = setName + BEGIN_ARRAY+index+COMMA+str(c+1)+END_ARRAY
-                                cs.append(c)
-                                
-                                ind = [j for j, v in enumerate(indices_ins) if v == i]
-                                
-                                for j in ind:
-                                    indices_ins[j] = repl
-                                    count += 1
+                        size = len(indices_ins)
+                        if size < dimen:
 
+                            i = size
+                            while i < dimen:
+                                indices_ins_res.append(str(i))
+
+                                i += 1
+
+                        repls = []
+                        for i in indices_ins:
+                            if count < dim:
+                                for k in indices:
+                                    if not c in cs:
+                                        repl = setName + BEGIN_ARRAY+index+COMMA+str(c+1)+END_ARRAY
+                                        cs.append(c)
+                                        
+                                        c += 1
+                                        count += 1
+                                        repls.append(repl)
+
+
+                                repl = ", ".join(repls)
+                                ind = [j for j, v in enumerate(indices_ins) if v == i]
+                                for j in ind:
+                                    c2 = 0
+                                    for c1 in range(j, len(repls)):
+                                        indices_ins_res[c1] = repls[c2]
+                                        c2 += 1
+                                    
                                 self.newIndexExpression = repl
                                 self._setNewIndex(i, stmt, scope)
 
-                                c += 1
-
                     else:
                         if SPACE+IN+SPACE in d:
-                            indices_ins[i] = d.split(SPACE+IN+SPACE)[0].strip()
+                            indices_ins_res[i] = d.split(SPACE+IN+SPACE)[0].strip()
 
-        return indices_ins
+        return indices_ins_res
 
     def _getDomainsWithIndices(self, domains_with_indices, dim):
         
