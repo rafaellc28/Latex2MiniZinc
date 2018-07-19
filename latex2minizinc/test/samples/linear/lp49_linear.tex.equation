@@ -3,5 +3,5 @@
 \sum_{j \in PATTERNS} nbr_{i,j} * Cut_{j} \geq orders_{i}: i \in WIDTHS\\
 \sum_{i \in WIDTHS} i * Use_{i} \leq roll\_width\\
 lambda := 0.85; roll\_width > 0; PATTERNS := 1 \dots nPAT\\
-nPAT, nbr_{w,p}, Cut_{p} \in \mathbb{Z}, \geq 0: w \in WIDTHS, p \in PATTERNS\\
-nPAT, nbr \in \mathbb{P}\\
+nPAT, nbr_{w,p}, Cut_{p}, Use_{w} \in \mathbb{Z}, \geq 0: w \in WIDTHS, p \in PATTERNS\\
+nPAT, nbr, price_{w} \in \mathbb{P}: w \in WIDTHS\\
