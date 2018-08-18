@@ -1629,17 +1629,7 @@ def p_ExpressionList(t):
                       | ConstraintExpression COLON Identifier
                       | ConstraintExpression FOR NumericSymbolicExpression
                       | ConstraintExpression WHERE NumericSymbolicExpression
-                      | ConstraintExpression COLON NumericSymbolicExpression
-
-                      | TrueFalse FOR IndexingExpression
-                      | TrueFalse WHERE IndexingExpression
-                      | TrueFalse COLON IndexingExpression
-                      | TrueFalse FOR Identifier
-                      | TrueFalse WHERE Identifier
-                      | TrueFalse COLON Identifier
-                      | TrueFalse FOR NumericSymbolicExpression
-                      | TrueFalse WHERE NumericSymbolicExpression
-                      | TrueFalse COLON NumericSymbolicExpression'''
+                      | ConstraintExpression COLON NumericSymbolicExpression'''
 
     t[1] = ExpressionList([t[1]])
 
@@ -1835,35 +1825,7 @@ def p_NumericExpression_binop(t):
                          | LPAREN ConstraintExpression RPAREN QUOTIENT TrueFalse
                          | LPAREN ConstraintExpression RPAREN CARET LBRACE Identifier RBRACE
                          | LPAREN ConstraintExpression RPAREN CARET LBRACE NumericSymbolicExpression RBRACE
-                         | LPAREN ConstraintExpression RPAREN CARET LBRACE ConstraintExpression RBRACE
-
-                         | TrueFalse PLUS Identifier
-                         | TrueFalse PLUS NumericSymbolicExpression
-                         | TrueFalse PLUS LPAREN ConstraintExpression RPAREN
-                         | TrueFalse PLUS TrueFalse
-                         | TrueFalse MINUS Identifier
-                         | TrueFalse MINUS NumericSymbolicExpression
-                         | TrueFalse MINUS LPAREN ConstraintExpression RPAREN
-                         | TrueFalse MINUS TrueFalse
-                         | TrueFalse TIMES Identifier
-                         | TrueFalse TIMES NumericSymbolicExpression
-                         | TrueFalse TIMES LPAREN ConstraintExpression RPAREN
-                         | TrueFalse TIMES TrueFalse
-                         | TrueFalse DIVIDE Identifier
-                         | TrueFalse DIVIDE NumericSymbolicExpression
-                         | TrueFalse DIVIDE LPAREN ConstraintExpression RPAREN
-                         | TrueFalse DIVIDE TrueFalse
-                         | TrueFalse MOD Identifier
-                         | TrueFalse MOD NumericSymbolicExpression
-                         | TrueFalse MOD LPAREN ConstraintExpression RPAREN
-                         | TrueFalse MOD TrueFalse
-                         | TrueFalse QUOTIENT Identifier
-                         | TrueFalse QUOTIENT NumericSymbolicExpression
-                         | TrueFalse QUOTIENT LPAREN ConstraintExpression RPAREN
-                         | TrueFalse QUOTIENT TrueFalse
-                         | TrueFalse CARET LBRACE Identifier RBRACE
-                         | TrueFalse CARET LBRACE NumericSymbolicExpression RBRACE
-                         | TrueFalse CARET LBRACE ConstraintExpression RBRACE'''
+                         | LPAREN ConstraintExpression RPAREN CARET LBRACE ConstraintExpression RBRACE'''
 
     if t.slice[1].type == "LPAREN":
 
@@ -2456,13 +2418,16 @@ def p_Array(t):
     t[0] = Array(t[2])
 
 def p_ArrayChoose(t):
-  '''ArrayChoose : Array Array
+  '''ArrayChoose : Array LBRACKET ValueList RBRACKET
+                 | Array LBRACKET IdentifierList RBRACKET
+                 | Array LBRACKET Identifier RBRACKET
+                 | Array LBRACKET NumericSymbolicExpression RBRACKET
                  | Array UNDERLINE LBRACE ValueList RBRACE
                  | Array UNDERLINE LBRACE IdentifierList RBRACE
                  | Array UNDERLINE LBRACE Identifier RBRACE
                  | Array UNDERLINE LBRACE NumericSymbolicExpression RBRACE'''
 
-  if len(t) > 3:
+  if len(t) > 5:
     
     if not isinstance(t[4], ValueList):
       t[4] = ValueList([t[4]])
@@ -2470,7 +2435,12 @@ def p_ArrayChoose(t):
     t[0] = ArrayChoose(t[1].value, t[4])
 
   else:
-    t[0] = ArrayChoose(t[1].value, t[2].value)
+    if not isinstance(t[3], ValueList) and not isinstance(t[3], TupleList):
+        t[3] = ValueList([t[3]])
+
+    t[3] = Array(t[3])
+
+    t[0] = ArrayChoose(t[1].value, t[3].value)
 
 def p_TrueFalse(t):
   '''TrueFalse : TRUE 
