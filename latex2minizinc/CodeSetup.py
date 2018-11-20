@@ -97,6 +97,10 @@ class CodeSetup:
     def _checkIsModifierSet(self, _type):
         return isinstance(_type, SymbolicSet) or isinstance(_type, LogicalSet)
 
+    def _checkIsTypeSet(self, _type):
+        return isinstance(_type, ParameterSet) or isinstance(_type, VariableSet) or isinstance(_type, SetSet)
+
+
     def _getSetExpressionObj(self, value):
         setExpressionObj = value
         if isinstance(value, SetExpressionWithValue):
@@ -864,6 +868,7 @@ class CodeSetup:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isSymbolic = True
+                    var[i].isDeclaredAsParam = True
                     self._setIsParam(var[i])
 
                     self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
@@ -872,6 +877,7 @@ class CodeSetup:
             else:
                 self._setIsParam(var)
                 var.isSymbolic = True
+                var.isDeclaredAsParam = True
 
                 self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
                                         [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
@@ -882,6 +888,7 @@ class CodeSetup:
             if isinstance(var, list):
                 for i in range(len(var)):
                     var[i].isLogical = True
+                    var[i].isDeclaredAsParam = True
                     self._setIsParam(var[i])
 
                     self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
@@ -889,6 +896,7 @@ class CodeSetup:
 
             else:
                 var.isLogical = True
+                var.isDeclaredAsParam = True
                 self._setIsParam(var)
 
                 self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
@@ -901,6 +909,7 @@ class CodeSetup:
                 for i in range(len(var)):
                     self._setIsSet(var[i])
                     var[i].isEnum = True
+                    var[i].isDeclaredAsSet = True
 
                     self._addGenDeclaration(var[i].getSymbolName(self.codeGenerator), var[i].sub_indices, 
                                             [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
@@ -908,6 +917,7 @@ class CodeSetup:
             else:
                 self._setIsSet(var)
                 var.isEnum = True
+                var.isDeclaredAsSet = True
 
                 self._addGenDeclaration(var.getSymbolName(self.codeGenerator), var.sub_indices, 
                                         [DeclarationAttribute(setExpressionObj, DeclarationAttribute.IN)], self.indexingExpression)
@@ -999,12 +1009,16 @@ class CodeSetup:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
-                    var.isInt = True 
+
+                    if not self._checkIsTypeSet(setExpressionObj):
+                        var.isInt = True 
 
                     self._addBelongsTo(var, node.setExpression, node.op)
             else:
                 var = self._getIdentifier(node.identifier)
-                var.isInt = True 
+
+                if not self._checkIsTypeSet(setExpressionObj):
+                    var.isInt = True 
 
                 self._addBelongsTo(var, node.setExpression, node.op)
 
@@ -1012,12 +1026,16 @@ class CodeSetup:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
-                    var.isInt = True 
+
+                    if not self._checkIsTypeSet(setExpressionObj):
+                        var.isInt = True 
 
                     self._addDomainExpression(var, node.setExpression, node.op)
             else:
                 var = self._getIdentifier(node.identifier)
-                var.isInt = True
+
+                if not self._checkIsTypeSet(setExpressionObj):
+                    var.isInt = True
 
                 self._addBelongsTo(var, node.setExpression, node.op)
 
@@ -1115,24 +1133,33 @@ class CodeSetup:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
-                    var.isInt = True
+
+                    if not self._checkIsTypeSet(setExpressionObj):
+                        var.isInt = True
 
                     self._addBelongsTo(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
-                var.isInt = True
+
+                if not self._checkIsTypeSet(setExpressionObj):
+                    var.isInt = True
+
                 self._addBelongsTo(var, node.setExpression, node.op, None, True)
 
         else:
             if isinstance(node.identifier, ValueList):
                 for var in node.identifier.getValues():
                     var = self._getIdentifier(var)
-                    var.isInt = True
+
+                    if not self._checkIsTypeSet(setExpressionObj):
+                        var.isInt = True
 
                     self._addDomainExpression(var, node.setExpression, node.op, None, True)
             else:
                 var = self._getIdentifier(node.identifier)
-                var.isInt = True
+
+                if not self._checkIsTypeSet(setExpressionObj):
+                    var.isInt = True
                 
                 self._addDomainExpression(var, node.setExpression, node.op, None, True)
 
@@ -1597,7 +1624,8 @@ class CodeSetup:
 
                 self.codeGenerator.genParameters.add(_genParam)
 
-            elif node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
+            if node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
+                #print(self.identifierKey, node.isSymbolic, node.isLogical, node.isBinary, node.isInt, node.isInteger)
                 _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
                 if _genParam != None:
                     if node.isSymbolic:
@@ -1899,16 +1927,19 @@ class CodeSetup:
         elif isinstance(setExpressionObj, SymbolicSet):
             self._setIsParam(identifier)
             identifier.isSymbolic = True
+            identifier.isDeclaredAsParam = True
             self._addType(identifier, setExpressionObj)
             
         elif isinstance(setExpressionObj, LogicalSet):
             self._setIsParam(identifier)
             identifier.isLogical = True
+            identifier.isDeclaredAsParam = True
             self._addType(identifier, setExpressionObj)
 
         elif isinstance(setExpressionObj, EnumSet):
             self._setIsSet(identifier)
             identifier.isEnum = True
+            identifier.isDeclaredAsSet = True
             self._addType(identifier, setExpressionObj)
 
         elif isinstance(setExpressionObj, ParameterSet):
