@@ -137,7 +137,9 @@ tokens = [
    'ISIMPLIEDBY',
    'IFANDONLYIF',
    'TRUE',
-   'FALSE'
+   'FALSE',
+   'LET',
+   'PREDICATE'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -162,6 +164,14 @@ def t_newline(t):
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t\r'
+
+def t_LET(t):
+   r'\\text\{\s*let\s*\}|\s*let(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_PREDICATE(t):
+   r'\\text\{\s*predicate\s*\}|\s*predicate(?!\\_|[a-zA-Z0-9])'
+   return t
 
 def t_CARD(t):
    r'\\text\{\s*card\s*\}|\s*card(?!\\_|[a-zA-Z0-9])'

@@ -1625,7 +1625,6 @@ class CodeSetup:
                 self.codeGenerator.genParameters.add(_genParam)
 
             if node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
-                #print(self.identifierKey, node.isSymbolic, node.isLogical, node.isBinary, node.isInt, node.isInteger)
                 _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
                 if _genParam != None:
                     if node.isSymbolic:
