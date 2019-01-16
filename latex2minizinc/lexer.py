@@ -139,7 +139,9 @@ tokens = [
    'TRUE',
    'FALSE',
    'LET',
-   'PREDICATE'
+   'PREDICATE',
+   'TEST',
+   'FUNCTION'
 ] + list(reserved.values())
 
 def _getBound(num, exp):
@@ -171,6 +173,14 @@ def t_LET(t):
 
 def t_PREDICATE(t):
    r'\\text\{\s*predicate\s*\}|\s*predicate(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_TEST(t):
+   r'\\text\{\s*test\s*\}|\s*test(?!\\_|[a-zA-Z0-9])'
+   return t
+
+def t_FUNCTION(t):
+   r'\\text\{\s*function\s*\}|\s*function(?!\\_|[a-zA-Z0-9])'
    return t
 
 def t_CARD(t):

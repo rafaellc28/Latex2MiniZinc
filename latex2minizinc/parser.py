@@ -42,7 +42,7 @@ precedence = (
     ('right', 'DEFAULT', 'DIMEN', 'ASSIGN'),
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
-    ('left', 'MAXIMIZE', 'MINIMIZE', 'PREDICATE'),
+    ('left', 'MAXIMIZE', 'MINIMIZE', 'PREDICATE', 'TEST', 'FUNCTION'),
     ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
     ('right', 'IF', 'THEN', 'ELSE', 'ENDIF'),
     ('left', 'OR'),
@@ -120,18 +120,30 @@ def p_ConstraintList(t):
     '''ConstraintList : ConstraintList Objective SLASHES
                       | ConstraintList Constraint SLASHES
                       | ConstraintList Declarations SLASHES
+                      | ConstraintList PredicateExpression SLASHES
+                      | ConstraintList TestExpression SLASHES
+                      | ConstraintList FunctionExpression SLASHES
                       
                       | ConstraintList Objective
                       | ConstraintList Constraint
                       | ConstraintList Declarations
+                      | ConstraintList PredicateExpression
+                      | ConstraintList TestExpression
+                      | ConstraintList FunctionExpression
                       
                       | Objective SLASHES
                       | Constraint SLASHES
                       | Declarations SLASHES
+                      | PredicateExpression SLASHES
+                      | TestExpression SLASHES
+                      | FunctionExpression SLASHES
                       
                       | Objective
                       | Constraint
-                      | Declarations'''
+                      | Declarations
+                      | PredicateExpression
+                      | TestExpression
+                      | FunctionExpression'''
 
     if len(t) > 2 and not isinstance(t[2], str):
         t[0] = t[1] + [t[2]]
@@ -794,6 +806,24 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
     declarationExpression.addAttribute(attr)
 
     return declarationExpression
+
+def p_FunctionExpression(t):
+  '''FunctionExpression : FUNCTION ID LPAREN Declarations RPAREN IN SetExpression LBRACE NumericSymbolicExpression RBRACE'''
+  t[0] = t[3]
+
+def p_TestExpression(t):
+  '''TestExpression : TEST ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
+  t[0] = t[3]
+
+
+def p_PredicateExpression(t):
+  '''PredicateExpression : PREDICATE ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
+  t[0] = t[3]
+
+
+def p_LetExpression(t):
+  '''LetExpression : LET LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
+  t[0] = t[3]
 
 
 def p_Declarations(t):
@@ -1716,6 +1746,7 @@ def p_NumericSymbolicExpression(t):
     '''NumericSymbolicExpression : NumericExpression
                                  | SymbolicExpression
                                  | ArrayChoose
+                                 | LetExpression
                                  | LPAREN NumericSymbolicExpression RPAREN'''
 
     if len(t) > 2:
