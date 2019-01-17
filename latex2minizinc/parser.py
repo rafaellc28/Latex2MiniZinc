@@ -808,7 +808,10 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
     return declarationExpression
 
 def p_FunctionExpression(t):
-  '''FunctionExpression : FUNCTION ID LPAREN Declarations RPAREN IN SetExpression LBRACE NumericSymbolicExpression RBRACE'''
+  '''FunctionExpression : FUNCTION ID LPAREN Declarations RPAREN IN ID LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET LBRACE NumericSymbolicExpression RBRACE'''
   t[0] = t[3]
 
 def p_TestExpression(t):
