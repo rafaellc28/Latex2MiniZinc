@@ -26,6 +26,10 @@ class Declarations:
         
     def setSymbolTable(self, symbolTable):
         self.symbolTable = symbolTable
+
+    def getDependencies(self, codeGenerator):
+        dep = Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.declarations))
+        return list(set(dep))
     
     def setupEnvironment(self, codeSetup):
         """
@@ -90,6 +94,14 @@ class Declaration:
 
     def setIndexingExpression(self, indexingExpression):
         self.indexingExpression = indexingExpression
+
+    def getDependencies(self, codeGenerator):
+        dep = self.declarationExpression.getDependencies(codeGenerator)
+
+        if self.indexingExpression != None:
+            dep += self.indexingExpression.getDependencies(codeGenerator)
+
+        return list(set(dep))
     
     def setupEnvironment(self, codeSetup):
         """

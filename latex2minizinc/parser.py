@@ -30,6 +30,11 @@ from SyntaxException import *
 from Declarations import *
 from DeclarationExpression import *
 
+from LetExpression import *
+from PredicateExpression import *
+from TestExpression import *
+from FunctionExpression import *
+
 import objects as obj
 
 precedence = (
@@ -812,21 +817,21 @@ def p_FunctionExpression(t):
                         | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET LBRACE NumericSymbolicExpression RBRACE
                         | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET LBRACE NumericSymbolicExpression RBRACE
                         | FUNCTION ID LPAREN Declarations RPAREN IN REALSET LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = t[3]
+  t[0] = FunctionExpression(Identifier(ID(t[2])), t[4], t[9], t[7])
 
 def p_TestExpression(t):
   '''TestExpression : TEST ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = t[3]
+  t[0] = TestExpression(Identifier(ID(t[2])), t[4], t[7])
 
 
 def p_PredicateExpression(t):
   '''PredicateExpression : PREDICATE ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = t[3]
+  t[0] = PredicateExpression(Identifier(ID(t[2])), t[4], t[7])
 
 
 def p_LetExpression(t):
   '''LetExpression : LET LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = t[3]
+  t[0] = LetExpression(t[3], t[6])
 
 
 def p_Declarations(t):
