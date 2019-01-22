@@ -573,6 +573,29 @@ class CodeSetup:
         """
         node.setSymbolTable(self.currentTable)
 
+    # LetExpression
+    def setupEnvironment_LetExpression(self, node):
+        node.arguments.setupEnvironment(self)
+        node.expression.setupEnvironment(self)
+
+    # PredicateExpression
+    def setupEnvironment_PredicateExpression(self, node):
+        node.name.setupEnvironment(self)
+        node.arguments.setupEnvironment(self)
+        node.expression.setupEnvironment(self)
+
+    # TestExpression
+    def setupEnvironment_TestExpression(self, node):
+        node.name.setupEnvironment(self)
+        node.arguments.setupEnvironment(self)
+        node.expression.setupEnvironment(self)
+
+    # FunctionExpression
+    def setupEnvironment_FunctionExpression(self, node):
+        node.name.setupEnvironment(self)
+        node.arguments.setupEnvironment(self)
+        node.type.setupEnvironment(self)
+
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """

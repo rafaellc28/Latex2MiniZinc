@@ -1985,3 +1985,19 @@ class CodePrepare:
     # SetSet
     def prepare_SetSet(self, node):
         pass
+
+    # LetExpression
+    def prepare_LetExpression(self, node):
+        pass
+
+    # PredicateExpression
+    def prepare_PredicateExpression(self, node):
+        pass
+
+    # TestExpression
+    def prepare_TestExpression(self, node):
+        pass
+
+    # FunctionExpression
+    def prepare_FunctionExpression(self, node):
+        pass
