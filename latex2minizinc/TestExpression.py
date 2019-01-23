@@ -5,7 +5,7 @@ class TestExpression(Expression):
     Class representing a test expression node in the AST
     """
 
-    def __init__(self, name, arguments, expression):
+    def __init__(self, name, arguments, expression = None):
         """
         :param name       : Identifier
         :param arguments  : Declarations
@@ -22,10 +22,20 @@ class TestExpression(Expression):
         """
         to string
         """
-        return "TestExpression: test "+str(self.name)+"("+str(self.arguments)+") { " + str(self.expression) + " }"
+        res = "TestExpression: test "+str(self.name)+"("+str(self.arguments)+")"
+
+        if self.expression:
+            res += " { " + str(self.expression) + " }"
+
+        return res
 
     def getDependencies(self, codeGenerator):
-        dep = self.name.getDependencies(codeGenerator) + self.arguments.getDependencies(codeGenerator) + self.expression.getDependencies(codeGenerator)
+        dep = self.name.getDependencies(codeGenerator) + self.arguments.getDependencies(codeGenerator)
+
+
+        if self.expression:
+            deps += self.expression.getDependencies(codeGenerator)
+            
         return list(set(dep))
 
     def setupEnvironment(self, codeSetup):

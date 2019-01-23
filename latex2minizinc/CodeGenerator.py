@@ -1798,6 +1798,39 @@ class CodeGenerator:
     def generateCode_TrueFalse(self, node):
         return node.value
 
+    # LetExpression
+    def generateCode_LetExpression(self, node):
+        return LET + SPACE + BEGIN_SET + node.arguments.generateCode(self) + END_SET + SPACE + IN + \
+                BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+
+    # PredicateExpression
+    def generateCode_PredicateExpression(self, node):
+        res = PREDICATE + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+
+        if node.expression:
+            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+
+        return res
+
+    # TestExpression
+    def generateCode_TestExpression(self, node):
+        res = TEST + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+        
+        if node.expression:
+            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+
+        return res
+
+    # FunctionExpression
+    def generateCode_FunctionExpression(self, node):
+        _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
+        res = FUNCTION + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+        
+        if node.expression:
+            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+
+        return res
+
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):
         if not isinstance(node.function, str):

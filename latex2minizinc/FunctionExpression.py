@@ -5,7 +5,7 @@ class FunctionExpression(Expression):
     Class representing a function expression node in the AST
     """
 
-    def __init__(self, name, arguments, expression, _type):
+    def __init__(self, _type, name, arguments, expression = None):
         """
         :param name       : Identifier
         :param arguments  : Declarations
@@ -15,19 +15,28 @@ class FunctionExpression(Expression):
 
         Expression.__init__(self)
 
+        self.type = _type
         self.name = name
         self.arguments = arguments
         self.expression = expression
-        self.type = _type
-
+        
     def __str__(self):
         """
         to string
         """
-        return "FunctionExpression: function "+str(self.type)+": "+str(self.name)+"("+str(self.arguments)+") { " + str(self.expression) + " }"
+        res = "FunctionExpression: function "+str(self.type)+": "+str(self.name)+"("+str(self.arguments)+")"
+
+        if self.expression:
+            res += " { " + str(self.expression) + " }"
+
+        return res
 
     def getDependencies(self, codeGenerator):
-        dep = self.name.getDependencies(codeGenerator) + self.arguments.getDependencies(codeGenerator) + self.expression.getDependencies(codeGenerator)
+        dep = self.name.getDependencies(codeGenerator) + self.arguments.getDependencies(codeGenerator)
+
+        if self.expression:
+            deps += self.expression.getDependencies(codeGenerator)
+
         return list(set(dep))
 
     def setupEnvironment(self, codeSetup):

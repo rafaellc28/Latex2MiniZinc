@@ -816,18 +816,44 @@ def p_FunctionExpression(t):
   '''FunctionExpression : FUNCTION ID LPAREN Declarations RPAREN IN ID LBRACE NumericSymbolicExpression RBRACE
                         | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET LBRACE NumericSymbolicExpression RBRACE
                         | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = FunctionExpression(Identifier(ID(t[2])), t[4], t[9], t[7])
+                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Declarations RPAREN IN BINARYSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Declarations RPAREN IN SYMBOLIC LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Declarations RPAREN IN LOGICAL LBRACE NumericSymbolicExpression RBRACE
+
+                        | FUNCTION ID LPAREN Declarations RPAREN IN ID
+                        | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET
+                        | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET
+                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET
+                        | FUNCTION ID LPAREN Declarations RPAREN IN BINARYSET
+                        | FUNCTION ID LPAREN Declarations RPAREN IN SYMBOLIC
+                        | FUNCTION ID LPAREN Declarations RPAREN IN LOGICAL'''
+
+  if len(t) > 8:
+    t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], t[9])
+
+  else:
+    t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4])
 
 def p_TestExpression(t):
-  '''TestExpression : TEST ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = TestExpression(Identifier(ID(t[2])), t[4], t[7])
+  '''TestExpression : TEST ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE
+                    | TEST ID LPAREN Declarations RPAREN'''
 
+  if len(t) > 6:
+    t[0] = TestExpression(Identifier(ID(t[2])), t[4], t[7])
+
+  else:
+    t[0] = TestExpression(Identifier(ID(t[2])), t[4])
 
 def p_PredicateExpression(t):
-  '''PredicateExpression : PREDICATE ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
-  t[0] = PredicateExpression(Identifier(ID(t[2])), t[4], t[7])
+  '''PredicateExpression : PREDICATE ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE
+                         | PREDICATE ID LPAREN Declarations RPAREN'''
 
+  if len(t) > 6:
+    t[0] = PredicateExpression(Identifier(ID(t[2])), t[4], t[7])
+
+  else:
+    t[0] = PredicateExpression(Identifier(ID(t[2])), t[4])
 
 def p_LetExpression(t):
   '''LetExpression : LET LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
