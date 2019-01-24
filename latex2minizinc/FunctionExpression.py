@@ -5,12 +5,13 @@ class FunctionExpression(Expression):
     Class representing a function expression node in the AST
     """
 
-    def __init__(self, _type, name, arguments, expression = None):
+    def __init__(self, _type, name, arguments, expression = None, typeIsVariable = False):
         """
-        :param name       : Identifier
-        :param arguments  : Declarations
-        :param expression : NumericExpression | SymbolicExpression | LetExpression
-        :param _type      : ID | NaturalSet | IntegerSet | RealSet
+        :param _type          : ID | NaturalSet | IntegerSet | RealSet
+        :param name           : Identifier
+        :param arguments      : Declarations
+        :param expression     : NumericExpression | SymbolicExpression | LetExpression
+        :param typeIsVariable : Boolean
         """
 
         Expression.__init__(self)
@@ -19,12 +20,16 @@ class FunctionExpression(Expression):
         self.name = name
         self.arguments = arguments
         self.expression = expression
+        self.typeIsVariable = typeIsVariable
         
     def __str__(self):
         """
         to string
         """
-        res = "FunctionExpression: function "+str(self.type)+": "+str(self.name)+"("+str(self.arguments)+")"
+
+        var = "var " if self.typeIsVariable else ""
+
+        res = "FunctionExpression: function "+var+str(self.type)+": "+str(self.name)+"("+str(self.arguments)+")"
 
         if self.expression:
             res += " { " + str(self.expression) + " }"

@@ -1823,8 +1823,9 @@ class CodeGenerator:
 
     # FunctionExpression
     def generateCode_FunctionExpression(self, node):
+        var = VAR + SPACE if node.typeIsVariable else EMPTY_STRING
         _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
-        res = FUNCTION + SPACE + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+        res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
