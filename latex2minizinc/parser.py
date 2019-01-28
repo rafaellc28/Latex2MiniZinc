@@ -812,38 +812,68 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
 
     return declarationExpression
 
+def p_ArgumentType(t):
+  '''ArgumentType : IN Identifier
+                  | IN NATURALSET
+                  | IN INTEGERSET
+                  | IN REALSET
+                  | IN BINARYSET
+                  | IN SYMBOLIC
+                  | IN LOGICAL
+                  
+                  | IN Identifier COMMA IN VARIABLES
+                  | IN NATURALSET COMMA IN VARIABLES
+                  | IN INTEGERSET COMMA IN VARIABLES
+                  | IN REALSET COMMA IN VARIABLES
+                  | IN BINARYSET COMMA IN VARIABLES
+                  | IN SYMBOLIC COMMA IN VARIABLES
+                  | IN LOGICAL COMMA IN VARIABLES'''
+  t[0] = t[2]
+
+def p_Argument(t):
+  '''Argument : ArgumentType
+              | ArgumentType FOR IndexingExpression
+              | ArgumentType WHERE IndexingExpression
+              | ArgumentType COLON IndexingExpression'''
+  t[0] = t[1]
+
+def p_Arguments(t):
+  '''Arguments : Argument
+               | Arguments SEMICOLON Argument'''
+  t[0] = t[1]
+
 def p_FunctionExpression(t):
-  '''FunctionExpression : FUNCTION ID LPAREN Declarations RPAREN IN ID LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN BINARYSET LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN SYMBOLIC LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN LOGICAL LBRACE NumericSymbolicExpression RBRACE
+  '''FunctionExpression : FUNCTION ID LPAREN Arguments RPAREN IN ID LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL LBRACE NumericSymbolicExpression RBRACE
 
-                        | FUNCTION ID LPAREN Declarations RPAREN IN ID COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN BINARYSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN SYMBOLIC COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
-                        | FUNCTION ID LPAREN Declarations RPAREN IN LOGICAL COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN VARIABLES LBRACE NumericSymbolicExpression RBRACE
 
-                        | FUNCTION ID LPAREN Declarations RPAREN IN ID
-                        | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET
-                        | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET
-                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET
-                        | FUNCTION ID LPAREN Declarations RPAREN IN BINARYSET
-                        | FUNCTION ID LPAREN Declarations RPAREN IN SYMBOLIC
-                        | FUNCTION ID LPAREN Declarations RPAREN IN LOGICAL
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL
 
-                        | FUNCTION ID LPAREN Declarations RPAREN IN ID COMMA IN VARIABLES
-                        | FUNCTION ID LPAREN Declarations RPAREN IN NATURALSET COMMA IN VARIABLES
-                        | FUNCTION ID LPAREN Declarations RPAREN IN INTEGERSET COMMA IN VARIABLES
-                        | FUNCTION ID LPAREN Declarations RPAREN IN REALSET COMMA IN VARIABLES
-                        | FUNCTION ID LPAREN Declarations RPAREN IN BINARYSET COMMA IN VARIABLES
-                        | FUNCTION ID LPAREN Declarations RPAREN IN SYMBOLIC COMMA IN VARIABLES
-                        | FUNCTION ID LPAREN Declarations RPAREN IN LOGICAL COMMA IN VARIABLES'''
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN VARIABLES'''
 
   if len(t) > 11:
     t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], t[12], True)
@@ -860,8 +890,8 @@ def p_FunctionExpression(t):
     t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4])
 
 def p_TestExpression(t):
-  '''TestExpression : TEST ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE
-                    | TEST ID LPAREN Declarations RPAREN'''
+  '''TestExpression : TEST ID LPAREN Arguments RPAREN LBRACE NumericSymbolicExpression RBRACE
+                    | TEST ID LPAREN Arguments RPAREN'''
 
   if len(t) > 6:
     t[0] = TestExpression(Identifier(ID(t[2])), t[4], t[7])
@@ -870,8 +900,8 @@ def p_TestExpression(t):
     t[0] = TestExpression(Identifier(ID(t[2])), t[4])
 
 def p_PredicateExpression(t):
-  '''PredicateExpression : PREDICATE ID LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE
-                         | PREDICATE ID LPAREN Declarations RPAREN'''
+  '''PredicateExpression : PREDICATE ID LPAREN Arguments RPAREN LBRACE NumericSymbolicExpression RBRACE
+                         | PREDICATE ID LPAREN Arguments RPAREN'''
 
   if len(t) > 6:
     t[0] = PredicateExpression(Identifier(ID(t[2])), t[4], t[7])
@@ -879,8 +909,12 @@ def p_PredicateExpression(t):
   else:
     t[0] = PredicateExpression(Identifier(ID(t[2])), t[4])
 
+def p_LetArguments(t):
+  '''LetArguments : Arguments SEMICOLON ConstraintExpression
+                  | ConstraintExpression SEMICOLON Arguments'''
+
 def p_LetExpression(t):
-  '''LetExpression : LET LPAREN Declarations RPAREN LBRACE NumericSymbolicExpression RBRACE'''
+  '''LetExpression : LET LPAREN LetArguments RPAREN LBRACE NumericSymbolicExpression RBRACE'''
   t[0] = LetExpression(t[3], t[6])
 
 
