@@ -914,7 +914,8 @@ def p_LetArguments(t):
                   | ConstraintExpression SEMICOLON Arguments'''
 
 def p_LetExpression(t):
-  '''LetExpression : LET LPAREN LetArguments RPAREN LBRACE NumericSymbolicExpression RBRACE'''
+  '''LetExpression : LET LPAREN LetArguments RPAREN LBRACE NumericSymbolicExpression RBRACE
+                   | LET LPAREN Arguments RPAREN LBRACE NumericSymbolicExpression RBRACE'''
   t[0] = LetExpression(t[3], t[6])
 
 
