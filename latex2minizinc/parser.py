@@ -834,7 +834,11 @@ def p_Argument(t):
   '''Argument : ArgumentType
               | ArgumentType FOR IndexingExpression
               | ArgumentType WHERE IndexingExpression
-              | ArgumentType COLON IndexingExpression'''
+              | ArgumentType COLON IndexingExpression
+              | ArgumentType EQ NumericSymbolicExpression
+              | ArgumentType FOR IndexingExpression EQ NumericSymbolicExpression
+              | ArgumentType WHERE IndexingExpression EQ NumericSymbolicExpression
+              | ArgumentType COLON IndexingExpression EQ NumericSymbolicExpression'''
   t[0] = t[1]
 
 def p_Arguments(t):
