@@ -45,7 +45,7 @@ class Declarations:
 
     def generateCode(self, codeGenerator):
         """
-        Generate the code in MiniZinc for these Constraints
+        Generate the code in MiniZinc for these declarations
         """
         return codeGenerator.generateCode(self)
     
@@ -54,11 +54,6 @@ class Declaration:
     Class representing a declaration node in the AST of a MLP
     """
     
-    # Get the MiniZinc code for a given IndexingExpression
-    @staticmethod
-    def _getCodeIndexingExpression(indexingExpression): return indexingExpression.generateCode()
-    #def _getCodeIndexingExpression(indexingExpression): return SupportGenCode.emitIndexingExpression(indexingExpression.generateCode())
-
     def __init__(self, declarationExpression, indexingExpression = None, stmtIndex = False):
         """
         Set the declaration expression and the indexing expression of an declaration

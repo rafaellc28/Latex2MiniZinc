@@ -29,6 +29,7 @@ from ID import *
 from SyntaxException import *
 from Declarations import *
 from DeclarationExpression import *
+from Arguments import *
 
 from LetExpression import *
 from PredicateExpression import *
@@ -828,7 +829,11 @@ def p_ArgumentType(t):
                   | IN BINARYSET COMMA IN VARIABLES
                   | IN SYMBOLIC COMMA IN VARIABLES
                   | IN LOGICAL COMMA IN VARIABLES'''
-  t[0] = t[2]
+
+  if len(t) > 3:
+    t[0] = ArgumentType(t[2], True)
+  else:
+    t[0] = ArgumentType(t[2])
 
 def p_Argument(t):
   '''Argument : ArgumentType
@@ -839,12 +844,48 @@ def p_Argument(t):
               | ArgumentType FOR IndexingExpression EQ NumericSymbolicExpression
               | ArgumentType WHERE IndexingExpression EQ NumericSymbolicExpression
               | ArgumentType COLON IndexingExpression EQ NumericSymbolicExpression'''
-  t[0] = t[1]
+
+  if len(t) > 4:
+    t[0] = Argument(t[1], t[3], t[5])
+
+  elif len(t) > 2:
+
+    if t.slice[2].type == "EQ":
+      t[0] = Argument(t[1], None, t[3])
+
+    else:
+      t[0] = Argument(t[1], t[3])
+
+  else:
+    t[0] = Argument(t[1])
 
 def p_Arguments(t):
-  '''Arguments : Argument
-               | Arguments SEMICOLON Argument'''
-  t[0] = t[1]
+  '''Arguments : ArgumentList'''
+
+  i = 1
+  length = len(t[1])
+  lastArgument = t[1][length-i]
+  while (not lastArgument or lastArgument.indexingExpression == None) and i < length:
+    i += 1
+    lastArgument = t[1][length-i]
+  
+  if lastArgument and lastArgument.indexingExpression != None:
+    for i in range(length-i):
+      argument = t[1][i]
+      if argument.indexingExpression == None:
+        argument.setIndexingExpression(lastArgument.indexingExpression)
+
+  t[0] = Arguments(t[1])
+
+def p_ArgumentList(t):
+  '''ArgumentList : Argument
+                  | Arguments SEMICOLON Argument'''
+
+  if len(t) > 2:
+    t[0] = t[1] + [t[3]]
+
+  else:
+    t[0] = [t[1]]
 
 def p_FunctionExpression(t):
   '''FunctionExpression : FUNCTION ID LPAREN Arguments RPAREN IN ID LBRACE NumericSymbolicExpression RBRACE
@@ -916,6 +957,14 @@ def p_PredicateExpression(t):
 def p_LetArguments(t):
   '''LetArguments : Arguments SEMICOLON ConstraintExpression
                   | ConstraintExpression SEMICOLON Arguments'''
+
+  if t.slice[1].type == "Arguments":
+    t[1].addArgument(t[3])
+    t[0] = t[1]
+
+  else:
+    t[3].addArgument(t[1])
+    t[0] = t[3]
 
 def p_LetExpression(t):
   '''LetExpression : LET LPAREN LetArguments RPAREN LBRACE NumericSymbolicExpression RBRACE
