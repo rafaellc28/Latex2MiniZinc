@@ -879,7 +879,7 @@ def p_Arguments(t):
 
 def p_ArgumentList(t):
   '''ArgumentList : Argument
-                  | Arguments SEMICOLON Argument'''
+                  | ArgumentList SEMICOLON Argument'''
 
   if len(t) > 2:
     t[0] = t[1] + [t[3]]
@@ -955,16 +955,40 @@ def p_PredicateExpression(t):
     t[0] = PredicateExpression(Identifier(ID(t[2])), t[4])
 
 def p_LetArguments(t):
-  '''LetArguments : Arguments SEMICOLON ConstraintExpression
-                  | ConstraintExpression SEMICOLON Arguments'''
+  '''LetArguments : LetArgumentList'''
 
-  if t.slice[1].type == "Arguments":
+  i = 1
+  length = len(t[1])
+  lastArgument = t[1][length-i]
+  while (not lastArgument or lastArgument.indexingExpression == None) and i < length:
+    i += 1
+    lastArgument = t[1][length-i]
+  
+  if lastArgument and lastArgument.indexingExpression != None:
+    for i in range(length-i):
+      argument = t[1][i]
+      if argument.indexingExpression == None:
+        argument.setIndexingExpression(lastArgument.indexingExpression)
+
+  t[0] = Arguments(t[1])
+
+def p_LetArgumentList(t):
+  '''LetArgumentList : Arguments SEMICOLON ConstraintExpression
+                     | ConstraintExpression SEMICOLON Argument
+                     | ConstraintExpression SEMICOLON ConstraintExpression
+                     | LetArgumentList SEMICOLON Argument
+                     | LetArgumentList SEMICOLON ConstraintExpression'''
+
+  if t.slice[1].type == "LetArgumentList":
+    t[0] = t[1] + [t[3]]
+
+  elif t.slice[1].type == "Arguments":
     t[1].addArgument(t[3])
-    t[0] = t[1]
+    t[0] = t[1].arguments
 
   else:
-    t[3].addArgument(t[1])
-    t[0] = t[3]
+    t[0] = [t[1], t[3]]
+
 
 def p_LetExpression(t):
   '''LetExpression : LET LPAREN LetArguments RPAREN LBRACE NumericSymbolicExpression RBRACE
