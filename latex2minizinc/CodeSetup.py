@@ -575,33 +575,104 @@ class CodeSetup:
 
     # LetExpression
     def setupEnvironment_LetExpression(self, node):
+        node.setSymbolTable(self.currentTable)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.arguments.setupEnvironment(self)
         node.expression.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
     # PredicateExpression
     def setupEnvironment_PredicateExpression(self, node):
+        node.setSymbolTable(self.currentTable)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
 
         if node.expression:
             node.expression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
 
     # TestExpression
     def setupEnvironment_TestExpression(self, node):
+        node.setSymbolTable(self.currentTable)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
 
         if node.expression:
             node.expression.setupEnvironment(self)
 
+        self.level = previousLevel
+        self.currentTable = previousTable
+
     # FunctionExpression
     def setupEnvironment_FunctionExpression(self, node):
+        node.setSymbolTable(self.currentTable)
+
+        previousLevel = self.level
+        previousTable = self.currentTable
+
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
         node.type.setupEnvironment(self)
         node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
         
         if node.expression:
             node.expression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+    # Arguments
+    def setupEnvironment_Arguments(self, node):
+        node.setSymbolTable(self.currentTable)
+        map(lambda el: el.setupEnvironment(self), node.arguments)
+
+    # Argument
+    def setupEnvironment_Argument(self, node):
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), 0, True)
+        node.setSymbolTable(self.currentTable)
+
+        node.argumentType.setupEnvironment(self)
+
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
+
+        if node.expression:
+            node.expression.setupEnvironment(self)
+
+    # ArgumentType
+    def setupEnvironment_ArgumentType(self, node):
+        node.setSymbolTable(self.currentTable)
+        node.type.setupEnvironment(self)
 
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
@@ -1820,7 +1891,6 @@ class CodeSetup:
         Generate the MiniZinc code for the identifiers and sets in this declaration
         """
         node.setSymbolTable(self.currentTable)
-
         node.attribute.setupEnvironment(self)
 
     def setupEnvironment_AttributeListPre(self, node, identifier):

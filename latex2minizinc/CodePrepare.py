@@ -2001,3 +2001,15 @@ class CodePrepare:
     # FunctionExpression
     def prepare_FunctionExpression(self, node):
         pass
+
+    # Arguments
+    def prepare_Arguments(self, node):
+        pass
+
+    # Argument
+    def prepare_Argument(self, node):
+        pass
+
+    # ArgumentType
+    def prepare_ArgumentType(self, node):
+        pass
