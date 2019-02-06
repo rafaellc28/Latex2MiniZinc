@@ -33,7 +33,7 @@ from Arguments import *
 
 from LetExpression import *
 from PredicateExpression import *
-from TestExpression import *
+from TestOperationExpression import *
 from FunctionExpression import *
 
 import objects as obj
@@ -127,28 +127,28 @@ def p_ConstraintList(t):
                       | ConstraintList Constraint SLASHES
                       | ConstraintList Declarations SLASHES
                       | ConstraintList PredicateExpression SLASHES
-                      | ConstraintList TestExpression SLASHES
+                      | ConstraintList TestOperationExpression SLASHES
                       | ConstraintList FunctionExpression SLASHES
                       
                       | ConstraintList Objective
                       | ConstraintList Constraint
                       | ConstraintList Declarations
                       | ConstraintList PredicateExpression
-                      | ConstraintList TestExpression
+                      | ConstraintList TestOperationExpression
                       | ConstraintList FunctionExpression
                       
                       | Objective SLASHES
                       | Constraint SLASHES
                       | Declarations SLASHES
                       | PredicateExpression SLASHES
-                      | TestExpression SLASHES
+                      | TestOperationExpression SLASHES
                       | FunctionExpression SLASHES
                       
                       | Objective
                       | Constraint
                       | Declarations
                       | PredicateExpression
-                      | TestExpression
+                      | TestOperationExpression
                       | FunctionExpression'''
 
     if len(t) > 2 and not isinstance(t[2], str):
@@ -814,21 +814,8 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
     return declarationExpression
 
 def p_ArgumentType(t):
-  '''ArgumentType : IN Identifier
-                  | IN NATURALSET
-                  | IN INTEGERSET
-                  | IN REALSET
-                  | IN BINARYSET
-                  | IN SYMBOLIC
-                  | IN LOGICAL
-                  
-                  | IN Identifier COMMA IN VARIABLES
-                  | IN NATURALSET COMMA IN VARIABLES
-                  | IN INTEGERSET COMMA IN VARIABLES
-                  | IN REALSET COMMA IN VARIABLES
-                  | IN BINARYSET COMMA IN VARIABLES
-                  | IN SYMBOLIC COMMA IN VARIABLES
-                  | IN LOGICAL COMMA IN VARIABLES'''
+  '''ArgumentType : IN SetExpression
+                  | IN SetExpression COMMA IN VARIABLES'''
 
   if len(t) > 3:
     t[0] = ArgumentType(t[2], True)
@@ -836,28 +823,31 @@ def p_ArgumentType(t):
     t[0] = ArgumentType(t[2])
 
 def p_Argument(t):
-  '''Argument : ArgumentType
-              | ArgumentType FOR IndexingExpression
-              | ArgumentType WHERE IndexingExpression
-              | ArgumentType COLON IndexingExpression
-              | ArgumentType EQ NumericSymbolicExpression
-              | ArgumentType FOR IndexingExpression EQ NumericSymbolicExpression
-              | ArgumentType WHERE IndexingExpression EQ NumericSymbolicExpression
-              | ArgumentType COLON IndexingExpression EQ NumericSymbolicExpression'''
+  '''Argument : ID ArgumentType
+              | Identifier ArgumentType FOR IndexingExpression
+              | Identifier ArgumentType WHERE IndexingExpression
+              | Identifier ArgumentType COLON IndexingExpression
+              | ID ArgumentType EQ NumericSymbolicExpression
+              | Identifier ArgumentType EQ NumericSymbolicExpression FOR IndexingExpression
+              | Identifier ArgumentType EQ NumericSymbolicExpression WHERE IndexingExpression
+              | Identifier ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression'''
 
-  if len(t) > 4:
-    t[0] = Argument(t[1], t[3], t[5])
+  if t.slice[1].type == "ID":
+    t[1] = Identifier(ID(t[1]))
 
-  elif len(t) > 2:
+  if len(t) > 5:
+    t[0] = Argument(t[1], t[2], t[4], t[6])
 
-    if t.slice[2].type == "EQ":
-      t[0] = Argument(t[1], None, t[3])
+  elif len(t) > 3:
+
+    if t.slice[3].type == "EQ":
+      t[0] = Argument(t[1], t[2], t[4])
 
     else:
-      t[0] = Argument(t[1], t[3])
+      t[0] = Argument(t[1], t[2], None, t[4])
 
   else:
-    t[0] = Argument(t[1])
+    t[0] = Argument(t[1], t[2])
 
 def p_Arguments(t):
   '''Arguments : ArgumentList'''
@@ -934,15 +924,15 @@ def p_FunctionExpression(t):
   else:
     t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4])
 
-def p_TestExpression(t):
-  '''TestExpression : TEST ID LPAREN Arguments RPAREN LBRACE NumericSymbolicExpression RBRACE
-                    | TEST ID LPAREN Arguments RPAREN'''
+def p_TestOperationExpression(t):
+  '''TestOperationExpression : TEST ID LPAREN Arguments RPAREN LBRACE NumericSymbolicExpression RBRACE
+                             | TEST ID LPAREN Arguments RPAREN'''
 
   if len(t) > 6:
-    t[0] = TestExpression(Identifier(ID(t[2])), t[4], t[7])
+    t[0] = TestOperationExpression(Identifier(ID(t[2])), t[4], t[7])
 
   else:
-    t[0] = TestExpression(Identifier(ID(t[2])), t[4])
+    t[0] = TestOperationExpression(Identifier(ID(t[2])), t[4])
 
 def p_PredicateExpression(t):
   '''PredicateExpression : PREDICATE ID LPAREN Arguments RPAREN LBRACE NumericSymbolicExpression RBRACE

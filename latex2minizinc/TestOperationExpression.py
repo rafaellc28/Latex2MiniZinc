@@ -1,6 +1,6 @@
 from Expression import *
 
-class TestExpression(Expression):
+class TestOperationExpression(Expression):
     """
     Class representing a test expression node in the AST
     """
@@ -22,7 +22,7 @@ class TestExpression(Expression):
         """
         to string
         """
-        res = "TestExpression: test "+str(self.name)+"("+str(self.arguments)+")"
+        res = "TestOperationExpression: test "+str(self.name)+"("+str(self.arguments)+")"
 
         if self.expression:
             res += " { " + str(self.expression) + " }"

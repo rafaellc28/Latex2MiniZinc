@@ -601,6 +601,8 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
+        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
+
         node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
 
@@ -610,8 +612,8 @@ class CodeSetup:
         self.level = previousLevel
         self.currentTable = previousTable
 
-    # TestExpression
-    def setupEnvironment_TestExpression(self, node):
+    # TestOperationExpression
+    def setupEnvironment_TestOperationExpression(self, node):
         node.setSymbolTable(self.currentTable)
 
         previousLevel = self.level
@@ -620,6 +622,8 @@ class CodeSetup:
         self.level += 1
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
 
         node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
@@ -641,6 +645,8 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
+        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
+
         node.type.setupEnvironment(self)
         node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
@@ -661,13 +667,16 @@ class CodeSetup:
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), 0, True)
         node.setSymbolTable(self.currentTable)
 
-        node.argumentType.setupEnvironment(self)
+        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
 
-        if node.indexingExpression:
-            node.indexingExpression.setupEnvironment(self)
+        node.name.setupEnvironment(self)
+        node.argumentType.setupEnvironment(self)
 
         if node.expression:
             node.expression.setupEnvironment(self)
+
+        if node.indexingExpression:
+            node.indexingExpression.setupEnvironment(self)
 
     # ArgumentType
     def setupEnvironment_ArgumentType(self, node):

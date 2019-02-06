@@ -1994,8 +1994,8 @@ class CodePrepare:
     def prepare_PredicateExpression(self, node):
         pass
 
-    # TestExpression
-    def prepare_TestExpression(self, node):
+    # TestOperationExpression
+    def prepare_TestOperationExpression(self, node):
         pass
 
     # FunctionExpression

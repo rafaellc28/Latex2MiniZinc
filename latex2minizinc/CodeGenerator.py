@@ -39,6 +39,11 @@ from VariableSet import *
 from SetSet import *
 from String import *
 
+from LetExpression import *
+from PredicateExpression import *
+from TestOperationExpression import *
+from FunctionExpression import *
+
 import re
 
 class CodeGenerator:
@@ -116,6 +121,8 @@ class CodeGenerator:
         self.LIBRARIES = json.load(open(file))
 
         self.include = {}
+
+        self.arguments = GenList()
 
     def generateCode(self, node):
         cls = node.__class__
@@ -368,6 +375,11 @@ class CodeGenerator:
         if isinstance(constraint, Constraint):
             self.constraintNumber += 1
             return CONSTRAINT+SPACE + constraint.generateCode(self)
+
+        elif isinstance(constraint, TestOperationExpression) or isinstance(constraint, PredicateExpression) or \
+             isinstance(constraint, LetExpression) or isinstance(constraint, FunctionExpression):
+
+             return constraint.generateCode(self)
 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
@@ -1295,8 +1307,12 @@ class CodeGenerator:
 
     def _declareParam(self, _genParameter):
         
-        paramStr = EMPTY_STRING
         name = _genParameter.getName()
+
+        if self.arguments.has(name):
+            return EMPTY_STRING
+
+        paramStr = EMPTY_STRING
         domain = None
         _type = None
         isArray = False
@@ -1580,7 +1596,9 @@ class CodeGenerator:
 
     def generateCode_LinearEquations(self, node):
 
-        constraints = filter(lambda el: isinstance(el, Constraint), node.constraints.getConstraints())
+        constraints = filter(lambda el: isinstance(el, Constraint) or isinstance(el, TestOperationExpression) or \
+                                isinstance(el, PredicateExpression) or isinstance(el, LetExpression) or \
+                                isinstance(el, FunctionExpression), node.constraints.getConstraints())
         objectives = filter(lambda el: isinstance(el, Objective), node.constraints.getConstraints())
 
         preModel = self._preModel()
@@ -1812,8 +1830,8 @@ class CodeGenerator:
 
         return res
 
-    # TestExpression
-    def generateCode_TestExpression(self, node):
+    # TestOperationExpression
+    def generateCode_TestOperationExpression(self, node):
         res = TEST + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
@@ -1825,12 +1843,38 @@ class CodeGenerator:
     def generateCode_FunctionExpression(self, node):
         var = VAR + SPACE if node.typeIsVariable else EMPTY_STRING
         _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
+
         res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
 
         return res
+
+    # Arguments
+    def generateCode_Arguments(self, node):
+        return (END_STATEMENT+SPACE).join(map(lambda el: el.generateCode(self), node.arguments))
+
+    # Argument
+    def generateCode_Argument(self, node):
+        res = node.argumentType.generateCode(self)
+        res += SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self)
+
+        if node.expression:
+            res += SPACE + EQ + SPACE + node.expression.generateCode(self)
+
+        #if node.indexingExpression:
+        #    node.indexingExpression.generateCode(self)
+
+        return res
+
+    # ArgumentType
+    def generateCode_ArgumentType(self, node):
+        var = VAR + SPACE if node.isVariable else EMPTY_STRING
+        _type = FLOAT if isinstance(node.type, SetExpressionWithValue) and \
+                         isinstance(node.type.value, RealSet) else node.type.generateCode(self)
+
+        return var + _type
 
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):

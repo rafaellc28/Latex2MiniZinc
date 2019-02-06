@@ -56,32 +56,35 @@ class Argument:
     Class representing a argument node in the AST of a MLP
     """
     
-    def __init__(self, argumentType, indexingExpression = None, expression = None):
+    def __init__(self, name, argumentType, expression = None, indexingExpression = None):
         """
         Set the argument type and the indexing expression of an argument
         
+        :param name                : Identifier
         :param argumentType        : ArgumentType
-        :param indexingExpressions : IndexingExpression
         :param expression          : NumericSymbolicExpression
+        :param indexingExpressions : IndexingExpression
         """
         
+        self.name = name
         self.argumentType = argumentType
-        self.indexingExpression = indexingExpression
         self.expression = expression
+        self.indexingExpression = indexingExpression
         self.symbolTable = None
     
     def __str__(self):
         """
         to string
         """
-        res = str(self.argumentType)
-        
-        if self.indexingExpression:
-            res += ",\nfor " + str(self.indexingExpression)
+        res = str(self.argumentType) + ": "
+        res += str(self.name)
 
         if self.expression:
             res += " = " + str(self.expression)
-        
+
+        if self.indexingExpression:
+            res += ",\nfor " + str(self.indexingExpression)
+
         return "Argument:" + res
     
     def getSymbolTable(self):
@@ -94,14 +97,14 @@ class Argument:
         self.indexingExpression = indexingExpression
 
     def getDependencies(self, codeGenerator):
-        dep = self.declarationExpression.getDependencies(codeGenerator)
-
-        if self.indexingExpression != None:
-            dep += self.indexingExpression.getDependencies(codeGenerator)
-
+        dep = self.name.getDependencies(codeGenerator) + self.argumentType.getDependencies(codeGenerator)
+        
         if self.expression != None:
             dep += self.expression.getDependencies(codeGenerator)
-
+            
+        if self.indexingExpression != None:
+            dep += self.indexingExpression.getDependencies(codeGenerator)
+            
         return list(set(dep))
     
     def setupEnvironment(self, codeSetup):
@@ -121,8 +124,8 @@ class Argument:
         Generate the MiniZinc code for this argument
         """
         return codeGenerator.generateCode(self)
-
-
+        
+        
 class ArgumentType:
     """
     Class representing a argument type node in the AST of a MLP
