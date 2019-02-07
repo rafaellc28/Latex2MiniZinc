@@ -814,26 +814,25 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
     return declarationExpression
 
 def p_ArgumentType(t):
-  '''ArgumentType : IN SetExpression
-                  | IN SetExpression COMMA IN VARIABLES'''
+  '''ArgumentType : IN SetExpression COMMA IN VARIABLES
+                  | IN Identifier COMMA IN VARIABLES
+                  | IN SetExpression COMMA IN PARAMETERS
+                  | IN Identifier COMMA IN PARAMETERS'''
 
-  if len(t) > 3:
+  if t.slice[5].type == "VARIABLES":
     t[0] = ArgumentType(t[2], True)
   else:
     t[0] = ArgumentType(t[2])
 
 def p_Argument(t):
-  '''Argument : ID ArgumentType
+  '''Argument : Identifier ArgumentType
               | Identifier ArgumentType FOR IndexingExpression
               | Identifier ArgumentType WHERE IndexingExpression
               | Identifier ArgumentType COLON IndexingExpression
-              | ID ArgumentType EQ NumericSymbolicExpression
+              | Identifier ArgumentType EQ NumericSymbolicExpression
               | Identifier ArgumentType EQ NumericSymbolicExpression FOR IndexingExpression
               | Identifier ArgumentType EQ NumericSymbolicExpression WHERE IndexingExpression
               | Identifier ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression'''
-
-  if t.slice[1].type == "ID":
-    t[1] = Identifier(ID(t[1]))
 
   if len(t) > 5:
     t[0] = Argument(t[1], t[2], t[4], t[6])
@@ -963,12 +962,12 @@ def p_LetArguments(t):
   t[0] = Arguments(t[1])
 
 def p_LetArgumentList(t):
-  '''LetArgumentList : Arguments SEMICOLON ConstraintExpression
-                     | ConstraintExpression SEMICOLON Argument
-                     | ConstraintExpression SEMICOLON ConstraintExpression
+  '''LetArgumentList : Arguments SEMICOLON Constraint
+                     | Constraint SEMICOLON Argument
+                     | Constraint SEMICOLON Constraint
                      | LetArgumentList SEMICOLON Argument
-                     | LetArgumentList SEMICOLON ConstraintExpression'''
-
+                     | LetArgumentList SEMICOLON Constraint'''
+ 
   if t.slice[1].type == "LetArgumentList":
     t[0] = t[1] + [t[3]]
 
