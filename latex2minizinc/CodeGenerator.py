@@ -1826,7 +1826,9 @@ class CodeGenerator:
         res = PREDICATE + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
 
         if node.expression:
-            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)
+
+        res += END_STATEMENT
 
         return res
 
@@ -1835,7 +1837,9 @@ class CodeGenerator:
         res = TEST + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
-            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)
+
+        res += END_STATEMENT
 
         return res
 
@@ -1847,7 +1851,9 @@ class CodeGenerator:
         res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
-            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+            res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)
+
+        res += END_STATEMENT
 
         return res
 

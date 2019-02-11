@@ -1,0 +1,3 @@
+% Test predicate expression
+\text{predicate } alldifferent(xs \in \mathbb{Z}, \in \mathbb{V})\\
+
