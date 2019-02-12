@@ -43,6 +43,7 @@ class CodeSetup:
         self.level = 0
         self.currentTable = None
         self.indexingExpression = None
+        self.isGlobal = True
 
     def _setIsParam(self, identifier):
         identifier.setIsParam(True)
@@ -601,9 +602,10 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
-        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
-
+        self.isGlobal = False
         node.name.setupEnvironment(self)
+        self.isGlobal = True
+
         node.arguments.setupEnvironment(self)
 
         if node.expression:
@@ -623,9 +625,10 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
-        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
-
+        self.isGlobal = False
         node.name.setupEnvironment(self)
+        self.isGlobal = True
+
         node.arguments.setupEnvironment(self)
 
         if node.expression:
@@ -645,10 +648,12 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
-        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
-
         node.type.setupEnvironment(self)
+
+        self.isGlobal = False
         node.name.setupEnvironment(self)
+        self.isGlobal = True
+
         node.arguments.setupEnvironment(self)
         
         if node.expression:
@@ -667,9 +672,10 @@ class CodeSetup:
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), 0, True)
         node.setSymbolTable(self.currentTable)
 
-        self.codeGenerator.arguments.add(GenObj(node.name.getSymbolName(self.codeGenerator)))
+        self.isGlobal = False
+        map(lambda el: el.setupEnvironment(self), node.names.values)
+        self.isGlobal = True
 
-        node.name.setupEnvironment(self)
         node.argumentType.setupEnvironment(self)
 
         if node.expression:
@@ -1634,123 +1640,125 @@ class CodeSetup:
         elif node.sub_indices != None:
             _symbolTableEntry.addSubIndices(map(lambda el: el.getSymbolName(self.codeGenerator), node.sub_indices))
 
+        if self.isGlobal:
+            if node.isDeclaredAsVar or ((node.isVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node)) and not node.isEnum:
 
-        if node.isDeclaredAsVar or ((node.isVar or self.codeGenerator.genVariables.has(self.identifierKey)) and not self.isDeclaredAsParam(node) and not self.isDeclaredAsSet(node)) and not node.isEnum:
-
-            _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
-            if node.isDeclaredAsVar and _genVar != None:
-                _genVar.setCertainty(True)
-                _genVar.setIsDeclaredAsVar(True)
-
-            elif node.isDeclaredAsVar or (not _genVar and not self.isDeclaredAsSet(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
-
-                self.codeGenerator.genParameters.remove(self.identifierKey)
-                self.codeGenerator.genSets.remove(self.identifierKey)
-
-                _genVar = GenVariable(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger, node.isBinary or node.isLogical, None)
-                if (node.isVar != None and not node.isVar) or (node.isDeclaredAsVar != None and not node.isDeclaredAsVar):
-                    _genVar.setCertainty(False)
-
-                if node.isDeclaredAsVar:
+                _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
+                if node.isDeclaredAsVar and _genVar != None:
                     _genVar.setCertainty(True)
                     _genVar.setIsDeclaredAsVar(True)
 
-                _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
-                if _symbolTableEntry.getInferred() or node.isDeclaredAsVar:
-                    _symbolTableEntry.setType(Constants.VARIABLES)
+                elif node.isDeclaredAsVar or (not _genVar and not self.isDeclaredAsSet(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
 
-                if node.isDeclaredAsVar:
-                    _symbolTableEntry.setInferred(False)
-                
-                self.codeGenerator.genVariables.add(_genVar)
+                    self.codeGenerator.genParameters.remove(self.identifierKey)
+                    self.codeGenerator.genSets.remove(self.identifierKey)
 
-            elif node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
-                _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
-                if _genVar != None:
-                    if node.isSymbolic:
-                        _genVar.setIsSymbolic(True)
+                    _genVar = GenVariable(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger, node.isBinary or node.isLogical, None)
+                    if (node.isVar != None and not node.isVar) or (node.isDeclaredAsVar != None and not node.isDeclaredAsVar):
+                        _genVar.setCertainty(False)
 
-                    if node.isInt or node.isInteger:
-                        _genVar.setIsInteger(True)
+                    if node.isDeclaredAsVar:
+                        _genVar.setCertainty(True)
+                        _genVar.setIsDeclaredAsVar(True)
 
-                    if node.isBinary or node.isLogical:
-                        _genVar.setIsLogical(True)
+                    _symbolTableEntry = self.currentTable.lookup(self.identifierKey)
+                    if _symbolTableEntry.getInferred() or node.isDeclaredAsVar:
+                        _symbolTableEntry.setType(Constants.VARIABLES)
 
-            self._checkSubIndices(node)
+                    if node.isDeclaredAsVar:
+                        _symbolTableEntry.setInferred(False)
+                    
+                    self.codeGenerator.genVariables.add(_genVar)
 
-        elif node.isDeclaredAsSet or node.isEnum or (node.isSet and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node)):
-            _genSet = self.codeGenerator.genSets.get(self.identifierKey)
-            if node.isDeclaredAsSet and _genSet != None:
-                _genSet.setCertainty(True)
-                _genSet.setIsDeclaredAsSet(True)
-            
-            elif node.isDeclaredAsSet or (not _genSet and not self.isDeclaredAsVar(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
+                elif node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
+                    _genVar = self.codeGenerator.genVariables.get(self.identifierKey)
+                    if _genVar != None:
+                        if node.isSymbolic:
+                            _genVar.setIsSymbolic(True)
 
-                self.codeGenerator.genParameters.remove(self.identifierKey)
-                self.codeGenerator.genVariables.remove(self.identifierKey)
+                        if node.isInt or node.isInteger:
+                            _genVar.setIsInteger(True)
 
-                _genSet = GenSet(self.identifierKey, node.dimenSet)
-                if (node.isSet != None and not node.isSet) or (node.isDeclaredAsSet != None and not node.isDeclaredAsSet):
-                    _genSet.setCertainty(False)
+                        if node.isBinary or node.isLogical:
+                            _genVar.setIsLogical(True)
 
-                if node.isDeclaredAsSet:
+                self._checkSubIndices(node)
+
+            elif node.isDeclaredAsSet or node.isEnum or (node.isSet and not self.isDeclaredAsParam(node) and not self.isDeclaredAsVar(node)):
+                _genSet = self.codeGenerator.genSets.get(self.identifierKey)
+                if node.isDeclaredAsSet and _genSet != None:
                     _genSet.setCertainty(True)
                     _genSet.setIsDeclaredAsSet(True)
+                
+                elif node.isDeclaredAsSet or (not _genSet and not self.isDeclaredAsVar(node) and not self.isDeclaredAsParam(node)): # check if this identifier was not seen yet
 
-                if _symbolTableEntry.getInferred() or node.isDeclaredAsSet:
-                    _symbolTableEntry.setType(Constants.SETS)
+                    self.codeGenerator.genParameters.remove(self.identifierKey)
+                    self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                if node.isDeclaredAsSet:
-                    _symbolTableEntry.setInferred(False)
+                    _genSet = GenSet(self.identifierKey, node.dimenSet)
+                    if (node.isSet != None and not node.isSet) or (node.isDeclaredAsSet != None and not node.isDeclaredAsSet):
+                        _genSet.setCertainty(False)
 
-                self.codeGenerator.genSets.add(_genSet)
+                    if node.isDeclaredAsSet:
+                        _genSet.setCertainty(True)
+                        _genSet.setIsDeclaredAsSet(True)
 
-            self._checkSubIndices(node)
+                    if _symbolTableEntry.getInferred() or node.isDeclaredAsSet:
+                        _symbolTableEntry.setType(Constants.SETS)
 
-        elif node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)) and not self.codeGenerator.genSets.has(self.identifierKey) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)) and not node.isEnum:
-            _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
-            if node.isDeclaredAsParam and _genParam != None:
-                _genParam.setCertainty(True)
-                _genParam.setIsDeclaredAsParam(True)
-            
-            elif node.isDeclaredAsParam or (not _genParam and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)): # check if this param was not seen yet
+                    if node.isDeclaredAsSet:
+                        _symbolTableEntry.setInferred(False)
 
-                self.codeGenerator.genSets.remove(self.identifierKey)
-                self.codeGenerator.genVariables.remove(self.identifierKey)
+                    self.codeGenerator.genSets.add(_genSet)
 
-                _genParam = GenParameter(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger, node.isBinary or node.isLogical, str(self.stmtIndex))
-                if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
-                    _genParam.setCertainty(False)
+                self._checkSubIndices(node)
 
-                if node.isDeclaredAsParam:
+            elif node.isDeclaredAsParam or (not node.isInSet and not self.codeGenerator.genBelongsToList.has(GenBelongsTo(self.identifierKey, self.stmtIndex)) and not self.codeGenerator.genSets.has(self.identifierKey) and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)) and not node.isEnum:
+                _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
+                if node.isDeclaredAsParam and _genParam != None:
                     _genParam.setCertainty(True)
                     _genParam.setIsDeclaredAsParam(True)
+                
+                elif node.isDeclaredAsParam or (not _genParam and not self.isDeclaredAsVar(node) and not self.isDeclaredAsSet(node)): # check if this param was not seen yet
 
-                if _symbolTableEntry.getInferred() or node.isDeclaredAsParam:
-                    _symbolTableEntry.setType(Constants.PARAMETERS)
+                    self.codeGenerator.genSets.remove(self.identifierKey)
+                    self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                if node.isDeclaredAsParam:
-                    _symbolTableEntry.setInferred(False)
+                    _genParam = GenParameter(self.identifierKey, node.isSymbolic, node.isInt or node.isInteger, node.isBinary or node.isLogical, str(self.stmtIndex))
+                    if (node.isParam != None and not node.isParam) or (node.isDeclaredAsParam != None and not node.isDeclaredAsParam):
+                        _genParam.setCertainty(False)
 
-                self.codeGenerator.genParameters.add(_genParam)
+                    if node.isDeclaredAsParam:
+                        _genParam.setCertainty(True)
+                        _genParam.setIsDeclaredAsParam(True)
 
-            if node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
-                _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
-                if _genParam != None:
-                    if node.isSymbolic:
-                        _genParam.setIsSymbolic(True)
+                    if _symbolTableEntry.getInferred() or node.isDeclaredAsParam:
+                        _symbolTableEntry.setType(Constants.PARAMETERS)
 
-                    if node.isInt or node.isInteger:
-                        _genParam.setIsInteger(True)
+                    if node.isDeclaredAsParam:
+                        _symbolTableEntry.setInferred(False)
 
-                    if node.isBinary or node.isLogical:
-                        _genParam.setIsLogical(True)
+                    self.codeGenerator.genParameters.add(_genParam)
 
-            self._checkSubIndices(node)
+                if node.isSymbolic or node.isLogical or node.isBinary or node.isInt or node.isInteger:
+                    _genParam = self.codeGenerator.genParameters.get(self.identifierKey)
+                    if _genParam != None:
+                        if node.isSymbolic:
+                            _genParam.setIsSymbolic(True)
+
+                        if node.isInt or node.isInteger:
+                            _genParam.setIsInteger(True)
+
+                        if node.isBinary or node.isLogical:
+                            _genParam.setIsLogical(True)
+
+                self._checkSubIndices(node)
+
+            else:
+                self._checkSubIndices(node)
 
         else:
             self._checkSubIndices(node)
-
 
         self.identifier = None
         self.identifierKey = None

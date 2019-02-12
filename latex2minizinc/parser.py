@@ -832,7 +832,19 @@ def p_Argument(t):
               | Identifier ArgumentType EQ NumericSymbolicExpression
               | Identifier ArgumentType EQ NumericSymbolicExpression FOR IndexingExpression
               | Identifier ArgumentType EQ NumericSymbolicExpression WHERE IndexingExpression
-              | Identifier ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression'''
+              | Identifier ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression
+
+              | IdentifierList ArgumentType
+              | IdentifierList ArgumentType FOR IndexingExpression
+              | IdentifierList ArgumentType WHERE IndexingExpression
+              | IdentifierList ArgumentType COLON IndexingExpression
+              | IdentifierList ArgumentType EQ NumericSymbolicExpression
+              | IdentifierList ArgumentType EQ NumericSymbolicExpression FOR IndexingExpression
+              | IdentifierList ArgumentType EQ NumericSymbolicExpression WHERE IndexingExpression
+              | IdentifierList ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression'''
+
+  if t.slice[1].type == "Identifier":
+    t[1] = ValueList([t[1]])
 
   if len(t) > 5:
     t[0] = Argument(t[1], t[2], t[4], t[6])

@@ -56,17 +56,17 @@ class Argument:
     Class representing a argument node in the AST of a MLP
     """
     
-    def __init__(self, name, argumentType, expression = None, indexingExpression = None):
+    def __init__(self, names, argumentType, expression = None, indexingExpression = None):
         """
         Set the argument type and the indexing expression of an argument
         
-        :param name                : Identifier
+        :param names               : ValueList[Identifier]
         :param argumentType        : ArgumentType
         :param expression          : NumericSymbolicExpression
         :param indexingExpressions : IndexingExpression
         """
         
-        self.name = name
+        self.names = names
         self.argumentType = argumentType
         self.expression = expression
         self.indexingExpression = indexingExpression
@@ -77,7 +77,7 @@ class Argument:
         to string
         """
         res = str(self.argumentType) + ": "
-        res += str(self.name)
+        res += str(self.names)
 
         if self.expression:
             res += " = " + str(self.expression)
@@ -97,7 +97,7 @@ class Argument:
         self.indexingExpression = indexingExpression
 
     def getDependencies(self, codeGenerator):
-        dep = self.name.getDependencies(codeGenerator) + self.argumentType.getDependencies(codeGenerator)
+        dep = self.names.getDependencies(codeGenerator) + self.argumentType.getDependencies(codeGenerator)
         
         if self.expression != None:
             dep += self.expression.getDependencies(codeGenerator)

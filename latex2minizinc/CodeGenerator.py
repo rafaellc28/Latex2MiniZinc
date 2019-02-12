@@ -122,7 +122,7 @@ class CodeGenerator:
 
         self.include = {}
 
-        self.arguments = GenList()
+        self.isLetExpression = False
 
     def generateCode(self, node):
         cls = node.__class__
@@ -1309,9 +1309,6 @@ class CodeGenerator:
         
         name = _genParameter.getName()
 
-        if self.arguments.has(name):
-            return EMPTY_STRING
-
         paramStr = EMPTY_STRING
         domain = None
         _type = None
@@ -1320,10 +1317,10 @@ class CodeGenerator:
         array = EMPTY_STRING
         value = EMPTY_STRING
         
-        declaration = self.genDeclarations.get(_genParameter.getName())
+        declaration = self.genDeclarations.get(name)
 
         domain, domains, domains_with_indices, dependencies_vec, sub_indices_vec, stmtIndex = self._getSubIndicesDomainsAndDependencies(name)
-        _types, dim, minVal, maxVal = self._getProperties(_genParameter.getName())
+        _types, dim, minVal, maxVal = self._getProperties(name)
 
         _subIndices = self._getIndicesFromDeclaration(declaration, stmtIndex)
 
@@ -1811,15 +1808,20 @@ class CodeGenerator:
 
         return function
 
-
     # True or False Expression
     def generateCode_TrueFalse(self, node):
         return node.value
 
     # LetExpression
     def generateCode_LetExpression(self, node):
-        return LET + SPACE + BEGIN_SET + node.arguments.generateCode(self) + END_SET + SPACE + IN + \
+        self.isLetExpression = True
+
+        res = LET + SPACE + BEGIN_SET + node.arguments.generateCode(self) + END_SET + SPACE + IN + \
                 BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+
+        self.isLetExpression = False
+
+        return res
 
     # PredicateExpression
     def generateCode_PredicateExpression(self, node):
@@ -1859,12 +1861,16 @@ class CodeGenerator:
 
     # Arguments
     def generateCode_Arguments(self, node):
-        return (END_STATEMENT+SPACE).join(map(lambda el: el.generateCode(self), node.arguments))
+        if self.isLetExpression:
+            sep = END_STATEMENT
+        else:
+            sep = COMMA
 
-    # Argument
-    def generateCode_Argument(self, node):
+        return (sep+SPACE).join(map(lambda el: el.generateCode(self), node.arguments))
+
+    def _getArgument(self, node, name):
         res = node.argumentType.generateCode(self)
-        res += SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self)
+        res += SEP_PARTS_DECLARATION + SPACE + name.generateCode(self)
 
         if node.expression:
             res += SPACE + EQ + SPACE + node.expression.generateCode(self)
@@ -1873,6 +1879,15 @@ class CodeGenerator:
         #    node.indexingExpression.generateCode(self)
 
         return res
+
+    # Argument
+    def generateCode_Argument(self, node):
+        if self.isLetExpression:
+            sep = END_STATEMENT
+        else:
+            sep = COMMA
+
+        return (sep+SPACE).join(map(lambda name: self._getArgument(node, name), node.names.values))
 
     # ArgumentType
     def generateCode_ArgumentType(self, node):
