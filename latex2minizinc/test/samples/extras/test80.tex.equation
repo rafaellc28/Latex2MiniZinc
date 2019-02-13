@@ -1,0 +1,2 @@
+% Test argument in name list
+\text{predicate } alldifferent(xs, ys \in \mathbb{Z}, \in \mathbb{V})\\
