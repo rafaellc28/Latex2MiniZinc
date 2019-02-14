@@ -374,7 +374,14 @@ class CodeGenerator:
     def _getCodeConstraint(self, constraint):
         if isinstance(constraint, Constraint):
             self.constraintNumber += 1
-            return CONSTRAINT+SPACE + constraint.generateCode(self)
+
+            res = EMPTY_STRING
+            if not self.isLetExpression and not isinstance(constraint.constraintExpression, LetExpression):
+                res += CONSTRAINT+SPACE
+
+            res += constraint.generateCode(self)
+
+            return res
 
         elif isinstance(constraint, TestOperationExpression) or isinstance(constraint, PredicateExpression) or \
              isinstance(constraint, LetExpression) or isinstance(constraint, FunctionExpression):
@@ -1695,6 +1702,10 @@ class CodeGenerator:
 
     def generateCode_Constraint(self, node):
         res = EMPTY_STRING
+
+        if self.isLetExpression:
+            res += CONSTRAINT + SPACE
+
         hasForall = False
 
         if node.indexingExpression:
@@ -1703,12 +1714,11 @@ class CodeGenerator:
             if idxExpression.strip() != EMPTY_STRING:
                 res += FORALL+BEGIN_ARGUMENT_LIST + idxExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST
                 hasForall = True
-            else:
-                res += EMPTY_STRING
-        else:
-            res += EMPTY_STRING
 
-        res += node.constraintExpression.generateCode(self) + (END_ARGUMENT_LIST if hasForall else EMPTY_STRING) + END_STATEMENT
+        res += node.constraintExpression.generateCode(self) + (END_ARGUMENT_LIST if hasForall else EMPTY_STRING)
+
+        if not self.isLetExpression and not isinstance(node.constraintExpression, LetExpression):
+            res += END_STATEMENT
 
         return res
 
@@ -1815,11 +1825,13 @@ class CodeGenerator:
     # LetExpression
     def generateCode_LetExpression(self, node):
         self.isLetExpression = True
+        arguments = node.arguments.generateCode(self)
+        self.isLetExpression = False
 
-        res = LET + SPACE + BEGIN_SET + node.arguments.generateCode(self) + END_SET + SPACE + IN + \
+        res = LET + SPACE + BEGIN_SET + arguments + END_SET + SPACE + IN + \
                 BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
 
-        self.isLetExpression = False
+        
 
         return res
 

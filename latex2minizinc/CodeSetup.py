@@ -585,8 +585,12 @@ class CodeSetup:
         self.currentTable.setIsLeaf(False)
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
+        self.isGlobal = False
+
         node.arguments.setupEnvironment(self)
         node.expression.setupEnvironment(self)
+
+        self.isGlobal = True
 
         self.level = previousLevel
         self.currentTable = previousTable
@@ -603,13 +607,14 @@ class CodeSetup:
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
         self.isGlobal = False
-        node.name.setupEnvironment(self)
-        self.isGlobal = True
 
+        node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
 
         if node.expression:
             node.expression.setupEnvironment(self)
+
+        self.isGlobal = True
 
         self.level = previousLevel
         self.currentTable = previousTable
@@ -626,13 +631,14 @@ class CodeSetup:
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
 
         self.isGlobal = False
-        node.name.setupEnvironment(self)
-        self.isGlobal = True
 
+        node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
 
         if node.expression:
             node.expression.setupEnvironment(self)
+
+        self.isGlobal = True
 
         self.level = previousLevel
         self.currentTable = previousTable
@@ -651,13 +657,14 @@ class CodeSetup:
         node.type.setupEnvironment(self)
 
         self.isGlobal = False
-        node.name.setupEnvironment(self)
-        self.isGlobal = True
 
+        node.name.setupEnvironment(self)
         node.arguments.setupEnvironment(self)
         
         if node.expression:
             node.expression.setupEnvironment(self)
+
+        self.isGlobal = True
 
         self.level = previousLevel
         self.currentTable = previousTable
@@ -671,11 +678,8 @@ class CodeSetup:
     def setupEnvironment_Argument(self, node):
         self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex), 0, True)
         node.setSymbolTable(self.currentTable)
-
-        self.isGlobal = False
+        
         map(lambda el: el.setupEnvironment(self), node.names.values)
-        self.isGlobal = True
-
         node.argumentType.setupEnvironment(self)
 
         if node.expression:

@@ -27,7 +27,7 @@ class Arguments:
         self.symbolTable = symbolTable
 
     def addArgument(self, argument):
-        self.arguments.add(argument)
+        self.arguments.append(argument)
 
     def getDependencies(self, codeGenerator):
         dep = Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.arguments))
