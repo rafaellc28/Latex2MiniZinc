@@ -1,0 +1,2 @@
+% Test Let Expression
+let (x \in \mathbb{Z}, \in \mathbb{V}; x \geq y \land x \geq -y \land (x = y \lor x = -y)) \{ x \}
