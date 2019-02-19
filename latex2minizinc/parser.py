@@ -892,13 +892,13 @@ def p_ArgumentList(t):
     t[0] = [t[1]]
 
 def p_FunctionExpression(t):
-  '''FunctionExpression : FUNCTION ID LPAREN Arguments RPAREN IN ID LLBRACE NumericSymbolicExpression RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET LLBRACE NumericSymbolicExpression RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET LLBRACE NumericSymbolicExpression RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET LLBRACE NumericSymbolicExpression RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET LLBRACE NumericSymbolicExpression RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC LLBRACE NumericSymbolicExpression RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL LLBRACE NumericSymbolicExpression RRBRACE
+  '''FunctionExpression : FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
 
                         | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
                         | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
@@ -908,13 +908,29 @@ def p_FunctionExpression(t):
                         | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
                         | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
 
-                        | FUNCTION ID LPAREN Arguments RPAREN IN ID LLBRACE Identifier RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET LLBRACE Identifier RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET LLBRACE Identifier RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET LLBRACE Identifier RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET LLBRACE Identifier RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC LLBRACE Identifier RRBRACE
-                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN PARAMETERS LLBRACE ConstraintExpression RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN VARIABLES LLBRACE ConstraintExpression RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
 
                         | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN VARIABLES LLBRACE Identifier RRBRACE
                         | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN VARIABLES LLBRACE Identifier RRBRACE
@@ -924,13 +940,13 @@ def p_FunctionExpression(t):
                         | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN VARIABLES LLBRACE Identifier RRBRACE
                         | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN VARIABLES LLBRACE Identifier RRBRACE
 
-                        | FUNCTION ID LPAREN Arguments RPAREN IN ID
-                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET
-                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET
-                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET
-                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET
-                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC
-                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL
+                        | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN IN INTEGERSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN IN REALSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN IN BINARYSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN PARAMETERS
 
                         | FUNCTION ID LPAREN Arguments RPAREN IN ID COMMA IN VARIABLES
                         | FUNCTION ID LPAREN Arguments RPAREN IN NATURALSET COMMA IN VARIABLES
@@ -940,22 +956,19 @@ def p_FunctionExpression(t):
                         | FUNCTION ID LPAREN Arguments RPAREN IN SYMBOLIC COMMA IN VARIABLES
                         | FUNCTION ID LPAREN Arguments RPAREN IN LOGICAL COMMA IN VARIABLES'''
 
+  isVariable = False
+  if t.slice[10].type == "VARIABLES":
+    isVariable = True
+
   if len(t) > 11:
-    t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], t[12], True)
-
-  if len(t) > 8:
-
-    if t.slice[8] == "LBRACE":
-      t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], t[9])
-
-    else:
-      t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], None, True)
+    t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], t[12], isVariable)
 
   else:
-    t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4])
+    t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], None, isVariable)
 
 def p_TestOperationExpression(t):
   '''TestOperationExpression : TEST ID LPAREN Arguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
+                             | TEST ID LPAREN Arguments RPAREN LLBRACE ConstraintExpression RRBRACE
                              | TEST ID LPAREN Arguments RPAREN LLBRACE Identifier RRBRACE
                              | TEST ID LPAREN Arguments RPAREN'''
 
@@ -967,6 +980,7 @@ def p_TestOperationExpression(t):
 
 def p_PredicateExpression(t):
   '''PredicateExpression : PREDICATE ID LPAREN Arguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
+                         | PREDICATE ID LPAREN Arguments RPAREN LLBRACE ConstraintExpression RRBRACE
                          | PREDICATE ID LPAREN Arguments RPAREN LLBRACE Identifier RRBRACE
                          | PREDICATE ID LPAREN Arguments RPAREN'''
 
@@ -1011,6 +1025,8 @@ def p_LetArgumentList(t):
 def p_LetExpression(t):
   '''LetExpression : LET LPAREN LetArguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
                    | LET LPAREN Arguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
+                   | LET LPAREN LetArguments RPAREN LLBRACE ConstraintExpression RRBRACE
+                   | LET LPAREN Arguments RPAREN LLBRACE ConstraintExpression RRBRACE
                    | LET LPAREN LetArguments RPAREN LLBRACE Identifier RRBRACE
                    | LET LPAREN Arguments RPAREN LLBRACE Identifier RRBRACE'''
   t[0] = LetExpression(t[3], t[6])
