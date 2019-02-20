@@ -1,0 +1,3 @@
+% Test Let Expression
+let (l \in \mathbb{Z}, \in \mathbb{P} = s \text{ div } 2; u \in \mathbb{Z}, \in \mathbb{P} = e \text{ div } 2; y \in l \dots u, \in \mathbb{V}) \{ x = 2*y \}
+x \in s \dots e, \in \mathbb{V}; s := 1; e := 10

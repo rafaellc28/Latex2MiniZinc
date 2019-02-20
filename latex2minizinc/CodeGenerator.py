@@ -123,6 +123,7 @@ class CodeGenerator:
         self.include = {}
 
         self.isLetExpression = False
+        self.isConstraint = False
 
     def generateCode(self, node):
         cls = node.__class__
@@ -374,7 +375,12 @@ class CodeGenerator:
     def _getCodeConstraint(self, constraint):
         if isinstance(constraint, Constraint):
             self.constraintNumber += 1
-            return CONSTRAINT + SPACE + constraint.generateCode(self)
+
+            self.isConstraint = True
+            res = CONSTRAINT + SPACE + constraint.generateCode(self)
+            self.isConstraint = False
+
+            return res
 
         elif isinstance(constraint, TestOperationExpression) or isinstance(constraint, PredicateExpression) or \
              isinstance(constraint, LetExpression) or isinstance(constraint, FunctionExpression):
@@ -1822,9 +1828,10 @@ class CodeGenerator:
         self.isLetExpression = False
 
         res = LET + SPACE + BEGIN_SET + arguments + END_SET + SPACE + IN + \
-                BREAKLINE + TAB + node.expression.generateCode(self) + END_STATEMENT
+                BREAKLINE + TAB + node.expression.generateCode(self)
 
-        
+        if self.isConstraint:
+            res += END_STATEMENT
 
         return res
 
