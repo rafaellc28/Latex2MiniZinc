@@ -123,7 +123,9 @@ class CodeGenerator:
         self.include = {}
 
         self.isLetExpression = False
+        self.isLetExpressionArgument = False
         self.isConstraint = False
+        self.isWithinOtherExpression = False
 
     def generateCode(self, node):
         cls = node.__class__
@@ -385,7 +387,9 @@ class CodeGenerator:
         elif isinstance(constraint, TestOperationExpression) or isinstance(constraint, PredicateExpression) or \
              isinstance(constraint, LetExpression) or isinstance(constraint, FunctionExpression):
 
+             self.isWithinOtherExpression = True
              return constraint.generateCode(self)
+             self.isWithinOtherExpression = False
 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
@@ -1702,7 +1706,7 @@ class CodeGenerator:
     def generateCode_Constraint(self, node):
         res = EMPTY_STRING
 
-        if self.isLetExpression:
+        if self.isLetExpressionArgument:
             res += CONSTRAINT + SPACE
 
         hasForall = False
@@ -1716,9 +1720,9 @@ class CodeGenerator:
 
         res += node.constraintExpression.generateCode(self) + (END_ARGUMENT_LIST if hasForall else EMPTY_STRING)
 
-        if not self.isLetExpression and not isinstance(node.constraintExpression, LetExpression):
+        if not self.isLetExpression and not isinstance(node.constraintExpression, LetExpression) and not self.isWithinOtherExpression:
             res += END_STATEMENT
-
+        
         return res
 
     def generateCode_ConstraintExpression2(self, node):
@@ -1824,11 +1828,14 @@ class CodeGenerator:
     # LetExpression
     def generateCode_LetExpression(self, node):
         self.isLetExpression = True
+        self.isLetExpressionArgument = True
         arguments = node.arguments.generateCode(self)
-        self.isLetExpression = False
-
+        self.isLetExpressionArgument = False
+        
         res = LET + SPACE + BEGIN_SET + arguments + END_SET + SPACE + IN + \
                 BREAKLINE + TAB + node.expression.generateCode(self)
+
+        self.isLetExpression = False
 
         if self.isConstraint:
             res += END_STATEMENT
