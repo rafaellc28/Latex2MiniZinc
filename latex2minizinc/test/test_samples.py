@@ -926,6 +926,9 @@ def test_extras_test82():
 def test_extras_test83():
 	check_test_extras_num(83)
 
+def test_extras_test84():
+	check_test_extras_num(84)
+
 # MiniZinc
 def test_minizinc_test0():
 	check_test_minizinc_num(0)

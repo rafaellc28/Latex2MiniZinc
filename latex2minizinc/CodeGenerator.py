@@ -1837,7 +1837,7 @@ class CodeGenerator:
 
         self.isLetExpression = False
 
-        if self.isConstraint:
+        if self.isConstraint and not isinstance(node.expression, LetExpression):
             res += END_STATEMENT
 
         return res

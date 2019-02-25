@@ -1,0 +1,6 @@
+% Test let expression with let expression
+let(x \in \mathbb{Z}, \in \mathbb{V}) \{
+	let (y \in \mathbb{Z}, \in \mathbb{V}) \{
+		x = 2 * y
+	\}
+\}
