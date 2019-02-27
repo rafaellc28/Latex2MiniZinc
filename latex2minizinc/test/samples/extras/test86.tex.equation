@@ -1,0 +1,2 @@
+% Test function expression
+\text{function } enum\_next(X \in \text{ setof } T, \in \mathbb{P}; x \in T, \in \mathbb{P}) \in T, \in \mathbb{P}\\
