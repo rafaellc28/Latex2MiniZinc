@@ -1,0 +1,3 @@
+% Return next smaller enum value of x in enum type X
+\text{function } enum\_prev(X \in \text{ setof } T, \in \mathbb{P}; x \in T, \in \mathbb{P}) \in T, \in \mathbb{P}\\
+\text{function } enum\_prev(X \in \text{ setof } T, \in \mathbb{P}; x \in T, \in \mathbb{V}) \in T, \in \mathbb{V}\\
