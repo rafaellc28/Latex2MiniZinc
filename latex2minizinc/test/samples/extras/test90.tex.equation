@@ -1,0 +1,10 @@
+\text{maximize } \sum_{h \in Hatreds}\text{let } (p1 \in Seats, \in \mathbb{V} = pos_{h1_{h}}; p2 \in Seats, \in \mathbb{V} = pos_{h2_{h}}; same \in 0 \dots 1, \in \mathbb{V} = bool2int(p1 \leq 6 \iff p2 \leq 6)) \{
+	same * abs(p1 - p2) + (1-same) * (abs(13 - p1 - p2) + 1)
+\}\\
+Seats, Guests \in \text{ setof } \mathbb{Z}, := 1 \dots 12\\
+h1_{h}, h2_{h}, \in Guests; pos_{h} \in Seats, \in \mathbb{V}: h \in Hatreds\\
+h1 := [groom, carol, ed, bride, ted]\\
+h2 := [clara, bestman, ted, alice, ron]\\
+bride := 1; groom := 2; bestman := 3; bridesmaid := 4; bob := 5; carol := 6;\\
+ted := 7; alice := 8; ron := 9; rona := 10; ed := 11; clara := 12\\
+bride, groom, bestman, bridesmaid, bob, carol, ted, alice, ron, rona, ed, clara \in \mathbb{Z}, \in \mathbb{P}\\
