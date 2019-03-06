@@ -1,0 +1,8 @@
+\text{predicate } smallx(y \in \mathbb{Z}, \in \mathbb{P}) \{
+	-x \leq y \land y \leq x
+\}\\
+\text{predicate } p(u \in \mathbb{Z}, \in \mathbb{P}; y \in \mathbb{B}, \in \mathbb{V}) \{ 
+	\exists \{x \in 1 \dots u\} y \lor smallx(x)
+\}\\
+p(x,false)\\
+x, y \in \mathbb{Z}, \in \mathbb{P}; x := 3; y := 4\\

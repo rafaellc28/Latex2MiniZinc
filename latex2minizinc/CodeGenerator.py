@@ -388,8 +388,10 @@ class CodeGenerator:
              isinstance(constraint, LetExpression) or isinstance(constraint, FunctionExpression):
 
              self.isWithinOtherExpression = True
-             return constraint.generateCode(self)
+             res = constraint.generateCode(self)
              self.isWithinOtherExpression = False
+
+             return res
 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
