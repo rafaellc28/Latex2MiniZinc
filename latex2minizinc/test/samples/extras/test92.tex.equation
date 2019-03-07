@@ -1,0 +1,3 @@
+\text{function } man\_dist(u1 \in \mathbb{Z}, \in \mathbb{V}; v1 \in \mathbb{Z}, \in \mathbb{V}; u2 \in \mathbb{Z}, \in \mathbb{V}; v2 \in \mathbb{Z}, \in \mathbb{V}) \in \mathbb{Z}, \in \mathbb{V} \{
+	|u1 - u2| + |v1 - v2|
+\}\\

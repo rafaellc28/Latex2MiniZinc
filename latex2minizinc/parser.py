@@ -972,8 +972,10 @@ def p_FunctionExpression(t):
   if t.slice[10].type == "VARIABLES":
     isVariable = True
 
-  if isinstance(t[7], str):
+  if t.slice[7].type == "ID":
     t[7] = ID(t[7])
+  else:
+    t[7] = t.slice[7].value2
 
   if len(t) > 11:
     t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], t[12], isVariable)
