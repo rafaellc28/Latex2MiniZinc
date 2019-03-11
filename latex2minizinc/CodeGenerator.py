@@ -115,6 +115,7 @@ class CodeGenerator:
         self.setsWitOperationsIndices = {}
         self.setsWitOperationsUsed = []
         self.setsWitOperationsInv = {}
+        self.extraConstraints = []
 
         file = os.path.dirname(__file__) + os.sep + "libraries.json"
 
@@ -1887,17 +1888,82 @@ class CodeGenerator:
         else:
             sep = COMMA
 
-        return (sep+SPACE).join(map(lambda el: el.generateCode(self), node.arguments))
+        self.extraConstraints = []
+        res = (sep+SPACE).join(map(lambda el: el.generateCode(self), node.arguments))
+
+        if len(self.extraConstraints) > 0:
+            res += sep + SPACE + (sep+SPACE).join(self.extraConstraints)
+
+        self.extraConstraints = []
+
+        return res
 
     def _getArgument(self, node, name):
-        res = node.argumentType.generateCode(self)
-        res += SEP_PARTS_DECLARATION + SPACE + name.generateCode(self)
+        res = EMPTY_STRING
+
+        if name.sub_indices and len(name.sub_indices) > 0:
+            domains = []
+            idxParts = None
+            logicalExpression = None
+
+            if node.indexingExpression:
+                inExpressions = filter(lambda el: (isinstance(el, EntryIndexingExpressionWithSet) and el.op == EntryIndexingExpressionWithSet.IN) or\
+                    (isinstance(el, EntryIndexingExpressionEq) and el.op == EntryIndexingExpressionEq.EQ), node.indexingExpression.entriesIndexingExpression)
+
+                if self.isLetExpression:
+                    otherExpressions = filter(lambda el: not ((isinstance(el, EntryIndexingExpressionWithSet) and el.op == EntryIndexingExpressionWithSet.IN) or\
+                        (isinstance(el, EntryIndexingExpressionEq) and el.op == EntryIndexingExpressionEq.EQ)), node.indexingExpression.entriesIndexingExpression)
+
+                    if len(otherExpressions) > 0:
+                        for otherExpression in otherExpressions:
+                            extraConstraint = otherExpression.generateCode(self)
+
+                            if not extraConstraint in self.extraConstraints:
+                                self.extraConstraints.append(extraConstraint)
+
+                    if node.indexingExpression.logicalExpression:
+                        extraConstraint = node.indexingExpression.logicalExpression.generateCode(self)
+
+                        if not extraConstraint in self.extraConstraints:
+                            self.extraConstraints.append(extraConstraint)
+
+            for idx in name.sub_indices:
+                foundDomain = False
+
+                if len(inExpressions) > 0:
+                    subIdx = idx.generateCode(self)
+
+                    for inExpression in inExpressions:
+
+                        if subIdx == inExpression.identifier.generateCode(self):
+
+                            foundDomain = True
+
+                            if isinstance(inExpression, EntryIndexingExpressionWithSet):
+                                domains.append(inExpression.setExpression.generateCode(self))
+                            else:
+                                setExpression = inExpression.value.generateCode(self)
+
+                                if inExpression.supExpression:
+                                    setExpression += FROM_TO + inExpression.supExpression.generateCode(self)
+
+                                domains.append(setExpression)
+
+                            break
+
+                if not foundDomain:
+                    domains.append(INT)
+
+            res += ARRAY + BEGIN_ARRAY + (COMMA+SPACE).join(domains) + END_ARRAY + SPACE + OF + SPACE
+
+        res += node.argumentType.generateCode(self)
+        res += SEP_PARTS_DECLARATION + SPACE
+
+
+        res += name.generateCodeWithoutIndices(self)
 
         if node.expression:
             res += SPACE + EQUAL + SPACE + node.expression.generateCode(self)
-
-        #if node.indexingExpression:
-        #    node.indexingExpression.generateCode(self)
 
         return res
 

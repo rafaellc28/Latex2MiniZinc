@@ -1,0 +1,1 @@
+\text{predicate } alldifferent(x_{i} \in \mathbb{Z}, \in \mathbb{V}: i \in int | i \neq j)\\
