@@ -1,0 +1,13 @@
+% specialization-examples/predicates/armyselect/armySelectPred.mzn. From https://github.com/MiniZinc/specialization-examples
+all\_disjoint([Liu, Guan, Zhang])\\
+\text{predicate } form(aTeam \in \text{setof } ELITE, \in \mathbb{V}) \{\\
+	card(aTeam \cap archer) \geq 1 \land card(aTeam \cap cavalry) \geq 2 \land card(aTeam \cap infantry) \geq 2 \land card(aTeam) = 6\\
+\}\\
+form(Liu)\\
+form(Guan)\\
+form(Zhang)\\
+obj := (\sum_{e \in Liu}liuValue_{e}) + (\sum_{e \in Guan}guanValue_{e}) + (\sum_{e \in Zhang}zhangValue_{e})\\
+\text{maximize } obj\\
+archer, cavalry, infantry \in \text{setof } ELITE;\\
+liuValue_{e}, guanValue_{e}, zhangValue_{e} \in \mathbb{Z}, \in \mathbb{P}: e \in ELITE\\
+Liu, Guan, Zhang \in \text{setof } ELITE, \in \mathbb{R}\\
