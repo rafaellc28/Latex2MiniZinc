@@ -1988,27 +1988,49 @@ class CodePrepare:
 
     # LetExpression
     def prepare_LetExpression(self, node):
-        pass
+        node.arguments.prepare(self)
+
+        if node.expression:
+            node.expression.prepare(self)
 
     # PredicateExpression
     def prepare_PredicateExpression(self, node):
-        pass
+        node.name.prepare(self)
+        node.arguments.prepare(self)
+
+        if node.expression:
+            node.expression.prepare(self)
 
     # TestOperationExpression
     def prepare_TestOperationExpression(self, node):
-        pass
+        node.name.prepare(self)
+        node.arguments.prepare(self)
+
+        if node.expression:
+            node.expression.prepare(self)
 
     # FunctionExpression
     def prepare_FunctionExpression(self, node):
-        pass
+        node.name.prepare(self)
+        node.arguments.prepare(self)
+
+        if node.expression:
+            node.expression.prepare(self)
 
     # Arguments
     def prepare_Arguments(self, node):
-        pass
+        map(lambda el: el.prepare(self), node.arguments)
 
     # Argument
     def prepare_Argument(self, node):
-        pass
+        node.names.prepare(self)
+        node.argumentType.prepare(self)
+
+        if node.expression:
+            node.expression.prepare(self)
+
+        #if node.indexingExpression:
+        #    node.indexingExpression.prepare(self)
 
     # ArgumentType
     def prepare_ArgumentType(self, node):

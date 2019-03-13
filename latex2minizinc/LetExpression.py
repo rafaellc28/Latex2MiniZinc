@@ -7,7 +7,7 @@ class LetExpression(Expression):
 
     def __init__(self, arguments, expression):
         """
-        :param arguments  : Declarations
+        :param arguments  : ArgumentList
         :param expression : NumericExpression | SymbolicExpression | LetExpression
         """
 

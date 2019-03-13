@@ -840,6 +840,11 @@ def p_Argument(t):
               | Identifier ArgumentType EQ Identifier WHERE IndexingExpression
               | Identifier ArgumentType EQ Identifier COLON IndexingExpression
 
+              | Identifier ArgumentType EQ Array
+              | Identifier ArgumentType EQ Array FOR IndexingExpression
+              | Identifier ArgumentType EQ Array WHERE IndexingExpression
+              | Identifier ArgumentType EQ Array COLON IndexingExpression
+
               | IdentifierList ArgumentType
               | IdentifierList ArgumentType FOR IndexingExpression
               | IdentifierList ArgumentType WHERE IndexingExpression
@@ -853,7 +858,12 @@ def p_Argument(t):
               | IdentifierList ArgumentType EQ Identifier
               | IdentifierList ArgumentType EQ Identifier FOR IndexingExpression
               | IdentifierList ArgumentType EQ Identifier WHERE IndexingExpression
-              | IdentifierList ArgumentType EQ Identifier COLON IndexingExpression'''
+              | IdentifierList ArgumentType EQ Identifier COLON IndexingExpression
+
+              | IdentifierList ArgumentType EQ Array
+              | IdentifierList ArgumentType EQ Array FOR IndexingExpression
+              | IdentifierList ArgumentType EQ Array WHERE IndexingExpression
+              | IdentifierList ArgumentType EQ Array COLON IndexingExpression'''
 
   if t.slice[1].type == "Identifier":
     t[1] = ValueList([t[1]])
