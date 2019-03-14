@@ -125,6 +125,7 @@ class CodeGenerator:
 
         self.isLetExpression = False
         self.isLetExpressionArgument = False
+        self.isConstraintInLetExpression = False
         self.isConstraint = False
         self.isWithinOtherExpression = False
 
@@ -1723,7 +1724,7 @@ class CodeGenerator:
 
         res += node.constraintExpression.generateCode(self) + (END_ARGUMENT_LIST if hasForall else EMPTY_STRING)
 
-        if not self.isLetExpression and not isinstance(node.constraintExpression, LetExpression) and not self.isWithinOtherExpression:
+        if not self.isLetExpressionArgument and not self.isConstraintInLetExpression and not self.isWithinOtherExpression:
             res += END_STATEMENT
         
         return res
@@ -1783,6 +1784,8 @@ class CodeGenerator:
 
     def generateCode_IteratedLinearExpression(self, node):
 
+        self.isWithinOtherExpression = True
+
         indexingExpression = node.indexingExpression.generateCode(self)
         if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
             indexingExpression = FLOOR+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST
@@ -1799,6 +1802,8 @@ class CodeGenerator:
             res = SUM + BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST
 
         res += node.linearExpression.generateCode(self) + END_ARGUMENT_LIST
+
+        self.isWithinOtherExpression = False
 
         return res
 
@@ -1830,18 +1835,22 @@ class CodeGenerator:
 
     # LetExpression
     def generateCode_LetExpression(self, node):
+        
         self.isLetExpression = True
         self.isLetExpressionArgument = True
         arguments = node.arguments.generateCode(self)
         self.isLetExpressionArgument = False
         
+        
+        self.isConstraintInLetExpression = True
         res = LET + SPACE + BEGIN_SET + arguments + END_SET + SPACE + IN + \
                 BREAKLINE + TAB + node.expression.generateCode(self)
+        self.isConstraintInLetExpression = False
 
         self.isLetExpression = False
 
-        if self.isConstraint and not isinstance(node.expression, LetExpression):
-            res += END_STATEMENT
+        #if self.isConstraint and not isinstance(node.expression, LetExpression):
+        #    res += END_STATEMENT
 
         return res
 

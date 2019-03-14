@@ -691,11 +691,13 @@ def p_EntryConstraintLogicalExpression(t):
 
                                         | NumericSymbolicExpression IN SetExpression
                                         | NumericSymbolicExpression IN Identifier
+                                        | NumericSymbolicExpression IN NumericSymbolicExpression
                                         | NumericSymbolicExpression SUBSET SetExpression
                                         | NumericSymbolicExpression SUBSET Identifier
 
                                         | Identifier IN SetExpression
                                         | Identifier IN Identifier
+                                        | Identifier IN NumericSymbolicExpression
                                         | Identifier SUBSET SetExpression
                                         | Identifier SUBSET Identifier'''
 
@@ -816,8 +818,10 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
 def p_ArgumentType(t):
   '''ArgumentType : IN SetExpression COMMA IN VARIABLES
                   | IN Identifier COMMA IN VARIABLES
+                  | IN NumericSymbolicExpression COMMA IN VARIABLES
                   | IN SetExpression COMMA IN PARAMETERS
-                  | IN Identifier COMMA IN PARAMETERS'''
+                  | IN Identifier COMMA IN PARAMETERS
+                  | IN NumericSymbolicExpression COMMA IN PARAMETERS'''
 
   if t.slice[5].type == "VARIABLES":
     t[0] = ArgumentType(t[2], True)
@@ -1407,6 +1411,7 @@ def p_DeclarationAttributeList(t):
 def p_DeclarationAttribute(t):
   '''DeclarationAttribute : IN SetExpression
                           | IN Identifier
+                          | IN NumericSymbolicExpression
                           
                           | SUBSET SetExpression
                           | SUBSET Identifier
@@ -1488,6 +1493,7 @@ def p_DeclarationAttribute(t):
 def p_ValueListInExpression(t):
     '''ValueListInExpression : IdentifierList IN SetExpression
                              | IdentifierList IN Identifier
+                             | IdentifierList IN NumericSymbolicExpression
 
                              | LPAREN ValueListInExpression RPAREN
                              | NOT ValueListInExpression'''
@@ -1589,6 +1595,7 @@ def p_EntryLogicalExpressionWithSet(t):
                               
                               | Tuple IN SetExpression
                               | Tuple IN Identifier
+                              | Tuple IN NumericSymbolicExpression
                               | Tuple NOTIN SetExpression
                               | Tuple NOTIN Identifier
 
@@ -1957,15 +1964,19 @@ def p_LogicalIndexExpression(t):
 def p_EntryIndexingExpressionWithSet(t):
     '''EntryIndexingExpression : IdentifierList IN SetExpression
                                | IdentifierList IN Identifier
+                               | IdentifierList IN NumericSymbolicExpression
                                
                                | Tuple IN SetExpression
                                | Tuple IN Identifier
+                               | Tuple IN NumericSymbolicExpression
                                
                                | Identifier IN SetExpression
                                | Identifier IN Identifier
+                               | Identifier IN NumericSymbolicExpression
                                
                                | NumericSymbolicExpression IN SetExpression
-                               | NumericSymbolicExpression IN Identifier'''
+                               | NumericSymbolicExpression IN Identifier
+                               | NumericSymbolicExpression IN NumericSymbolicExpression'''
 
     if not isinstance(t[3], SetExpression) and not isinstance(t[3], Range):
       t[3] = SetExpressionWithValue(t[3])
