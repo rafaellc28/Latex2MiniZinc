@@ -1838,7 +1838,7 @@ class CodeGenerator:
         
         self.isLetExpression = True
         self.isLetExpressionArgument = True
-        arguments = node.arguments.generateCode(self)
+        arguments = node.preparedArguments.generateCode(self)
         self.isLetExpressionArgument = False
         
         
@@ -1856,7 +1856,7 @@ class CodeGenerator:
 
     # PredicateExpression
     def generateCode_PredicateExpression(self, node):
-        res = PREDICATE + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+        res = PREDICATE + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
 
         if node.expression:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)
@@ -1867,7 +1867,7 @@ class CodeGenerator:
 
     # TestOperationExpression
     def generateCode_TestOperationExpression(self, node):
-        res = TEST + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+        res = TEST + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)
@@ -1881,7 +1881,7 @@ class CodeGenerator:
         var = VAR + SPACE if node.typeIsVariable else EMPTY_STRING
         _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
 
-        res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.arguments.generateCode(self) + END_ARGUMENT_LIST
+        res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)

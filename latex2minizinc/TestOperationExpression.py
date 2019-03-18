@@ -17,6 +17,7 @@ class TestOperationExpression(Expression):
         self.name = name
         self.arguments = arguments
         self.expression = expression
+        self.preparedArguments = None
 
     def __str__(self):
         """
@@ -28,6 +29,9 @@ class TestOperationExpression(Expression):
             res += " { " + str(self.expression) + " }"
 
         return res
+
+    def setPreparedArguments(self, preparedArguments):
+        self.preparedArguments = preparedArguments
 
     def getDependencies(self, codeGenerator):
         dep = self.name.getDependencies(codeGenerator) + self.arguments.getDependencies(codeGenerator)

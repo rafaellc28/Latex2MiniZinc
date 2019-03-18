@@ -997,6 +997,8 @@ def p_FunctionExpression(t):
   else:
     t[0] = FunctionExpression(t[7], Identifier(ID(t[2])), t[4], None, isVariable)
 
+  t[4].setOrigin(t[0])
+
 def p_TestOperationExpression(t):
   '''TestOperationExpression : TEST ID LPAREN Arguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
                              | TEST ID LPAREN Arguments RPAREN LLBRACE Constraint RRBRACE
@@ -1009,6 +1011,8 @@ def p_TestOperationExpression(t):
   else:
     t[0] = TestOperationExpression(Identifier(ID(t[2])), t[4])
 
+  t[4].setOrigin(t[0])
+
 def p_PredicateExpression(t):
   '''PredicateExpression : PREDICATE ID LPAREN Arguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
                          | PREDICATE ID LPAREN Arguments RPAREN LLBRACE Constraint RRBRACE
@@ -1020,6 +1024,8 @@ def p_PredicateExpression(t):
 
   else:
     t[0] = PredicateExpression(Identifier(ID(t[2])), t[4])
+
+  t[4].setOrigin(t[0])
 
 def p_LetArguments(t):
   '''LetArguments : LetArgumentList'''
@@ -1061,7 +1067,7 @@ def p_LetExpression(t):
                    | LET LPAREN LetArguments RPAREN LLBRACE Identifier RRBRACE
                    | LET LPAREN Arguments RPAREN LLBRACE Identifier RRBRACE'''
   t[0] = LetExpression(t[3], t[6])
-
+  t[3].setOrigin(t[0])
 
 def p_Declarations(t):
   '''Declarations : DeclarationList'''

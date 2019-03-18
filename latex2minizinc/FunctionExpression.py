@@ -21,6 +21,7 @@ class FunctionExpression(Expression):
         self.arguments = arguments
         self.expression = expression
         self.typeIsVariable = typeIsVariable
+        self.preparedArguments = None
         
     def __str__(self):
         """
@@ -35,6 +36,9 @@ class FunctionExpression(Expression):
             res += " { " + str(self.expression) + " }"
 
         return res
+
+    def setPreparedArguments(self, preparedArguments):
+        self.preparedArguments = preparedArguments
 
     def getDependencies(self, codeGenerator):
         dep = self.name.getDependencies(codeGenerator) + self.arguments.getDependencies(codeGenerator)

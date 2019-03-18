@@ -3,14 +3,15 @@ class Arguments:
     Class that encapsulate a list of all nodes in the AST that represent a argument list in a MLP
     """
 
-    def __init__(self, arguments):
+    def __init__(self, arguments, origin = None):
         """
         Set the list of arguments
         
-        :param arguments: [Argument]
+        :param arguments: [Argument|Constraint]
         """
         
         self.arguments = arguments
+        self.origin = origin
         self.symbolTable = None
     
     def __str__(self):
@@ -28,6 +29,9 @@ class Arguments:
 
     def addArgument(self, argument):
         self.arguments.append(argument)
+
+    def setOrigin(self, origin):
+        self.origin = origin
 
     def getDependencies(self, codeGenerator):
         dep = Utils._flatten(map(lambda el: el.getDependencies(codeGenerator), self.arguments))

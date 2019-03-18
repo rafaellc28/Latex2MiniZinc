@@ -7,6 +7,7 @@ from Range import *
 from Number import *
 from NumericExpression import *
 from Constants import *
+from Arguments import *
 
 
 class CodePrepare:
@@ -2017,9 +2018,37 @@ class CodePrepare:
         if node.expression:
             node.expression.prepare(self)
 
+    def _prepareArgument(self, argument, arguments):
+        if isinstance(argument, Argument):
+            argument.prepare(self)
+
+        else:
+            arguments.append(argument)
+
+    def _getArgumentByName(self, name, arguments):
+        for arg in arguments:
+            if isinstance(arg, dict) and name in arg:
+                return arg[name]
+
+        return None
+
     # Arguments
     def prepare_Arguments(self, node):
-        map(lambda el: el.prepare(self), node.arguments)
+        self.arguments = []
+        map(lambda el: self._prepareArgument(el, self.arguments), node.arguments)
+
+        preparedArguments = Arguments([])
+
+        for arg in self.arguments:
+
+            if isinstance(arg, dict):
+                preparedArguments.addArgument(arg.values()[0])
+
+            else:
+                preparedArguments.addArgument(arg)
+
+
+        node.origin.setPreparedArguments(preparedArguments)
 
     # Argument
     def prepare_Argument(self, node):
@@ -2029,8 +2058,22 @@ class CodePrepare:
         if node.expression:
             node.expression.prepare(self)
 
-        #if node.indexingExpression:
-        #    node.indexingExpression.prepare(self)
+        for name in node.names:
+            ident = name.getSymbolName(self.codeGenerator)
+
+            arg = self._getArgumentByName(ident, self.arguments)
+
+            if not arg:
+                self.arguments.append({ident: Argument(ValueList([name]), node.argumentType, node.expression, node.indexingExpression)})
+
+            else:
+                arg.argumentType = node.argumentType
+
+                if node.expression:
+                    arg.expression = node.expression
+
+                if node.indexingExpression:
+                    arg.indexingExpression = node.indexingExpression
 
     # ArgumentType
     def prepare_ArgumentType(self, node):

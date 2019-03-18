@@ -15,12 +15,16 @@ class LetExpression(Expression):
 
         self.arguments = arguments
         self.expression = expression
+        self.preparedArguments = None
 
     def __str__(self):
         """
         to string
         """
         return "LetExpression: let ("+str(self.arguments)+") in " + str(self.expression)
+
+    def setPreparedArguments(self, preparedArguments):
+        self.preparedArguments = preparedArguments
 
     def getDependencies(self, codeGenerator):
         dep = self.arguments.getDependencies(codeGenerator) + self.expression.getDependencies(codeGenerator)
