@@ -938,6 +938,12 @@ def test_extras_test86():
 def test_extras_test87():
 	check_test_extras_num(87)
 
+def test_extras_test86():
+	check_test_extras_num(86)
+
+def test_extras_test87():
+	check_test_extras_num(87)
+
 def test_extras_test88():
 	check_test_extras_num(88)
 
@@ -958,6 +964,12 @@ def test_extras_test93():
 
 def test_extras_test94():
 	check_test_extras_num(94)
+
+def test_extras_test95():
+	check_test_extras_num(95)
+
+def test_extras_test96():
+	check_test_extras_num(96)
 
 # MiniZinc
 def test_minizinc_test0():
@@ -1268,6 +1280,12 @@ def test_minizinc_test101():
 
 def test_minizinc_test102():
 	check_test_minizinc_num(102)
+
+def test_minizinc_test103():
+	check_test_minizinc_num(103)
+
+def test_minizinc_test104():
+	check_test_minizinc_num(104)
 
 # Linear Programming
 def test_lp0_linear():

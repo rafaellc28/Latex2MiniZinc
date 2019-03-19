@@ -1,0 +1,22 @@
+% specialization-examples/predicates/tableseating/table_seating.mzn. From https://github.com/MiniZinc/specialization-examples
+card(table_{t}) \neq 1: t \in TABLE
+\text{predicate } not\_same\_table(p1, p2 \in SCHOLAR, \in \mathbb{P}) \{\\
+\neg (\{p1,p2\} \subset table_{t}): t \in TABLE\\
+\}\\
+card(table_{t}) \leq S: t \in TABLE\\
+\exists\{t \in TABLE\}(p \in table_{t}): p \in SCHOLAR\\
+table_{t1} \cap table_{t2} = \emptyset: t1, t2 \in TABLE \mid t1 < t2\\
+not\_same\_table(enemies_{c,1},enemies_{c,2}): c \in index\_set\_1of2(enemies)\\
+\neg(not\_same\_table(friends_{c,1},friends_{c,2})): c \in index\_set\_1of2(friends)\\
+not\_same\_table(p1,p2): p1,p2 \in SCHOLAR \mid p1 < p2 \land reputation_{p1} = 10 \land reputation_{p2} = 10\\
+obj1 = \sum_{t \in TABLE}(card(table_{t}) \neq 0)\\
+obj2 = \sum_{t \in TABLE}\\
+   \text{ let } (minRep \in \mathbb{Z}, \in \mathbb{V} = min([reputation_{p}*(p \in table_{t}) + maxreputation*(1-(p \in table_{t})) : p \in SCHOLAR]);\\
+         maxRep  \in \mathbb{Z}, \in \mathbb{V} = max([reputation_{p}*(p \in table_{t}) : p \in SCHOLAR])) \{
+	\text{ if } minRep = maxreputation \text{ then } 0 \text{ else } maxRep - minRep \text{ endif }
+\}\\
+\text{minimize } (obj1*100 + obj2)\\
+TABLE := 1 \dots T; enemies_{i,j}, friends_{i,j} \in SCHOLAR: j \in 1  \dots 2\\
+reputation_{s}, maxreputation, S \in \mathbb{Z}, \in \mathbb{P}: s \in SCHOLAR;
+maxreputation := max(reputation);\\
+table_{t} \in \text{ setof } SCHOLAR, \in \mathbb{V}: t \in TABLE\\

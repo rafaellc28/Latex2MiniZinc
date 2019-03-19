@@ -1,0 +1,4 @@
+% Test Let Expression
+\text{let}(x_{i}, y_{i} \in \mathbb{Z}, \in \mathbb{V}; y_{i} = [i: i \in I \setminus J]) \{
+	x_{1}
+\}\\

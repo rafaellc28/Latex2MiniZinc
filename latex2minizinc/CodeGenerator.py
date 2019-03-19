@@ -1912,6 +1912,7 @@ class CodeGenerator:
 
         if name.sub_indices and len(name.sub_indices) > 0:
             domains = []
+            inExpressions = []
             idxParts = None
             logicalExpression = None
 
