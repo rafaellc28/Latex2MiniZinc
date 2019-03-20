@@ -1,4 +1,4 @@
 % Test Let Expression
-\text{let}(x_{i}, y_{i} \in \mathbb{Z}, \in \mathbb{V}; y_{i} \in \mathbb{Z}, \in \mathbb{P} = [i: i \in I | i \notin J]) \{
+\text{let}(x_{i}, y_{i} \in \mathbb{Z}, \in \mathbb{V}; y_{i} \in \mathbb{Z}, \in \mathbb{P} := [i: i \in I | i \notin J]) \{
 	x_{1}
 \}\\

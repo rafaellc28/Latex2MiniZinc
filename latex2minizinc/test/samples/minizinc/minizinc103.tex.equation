@@ -1,14 +1,14 @@
 % specialization-examples/predicates/bandits/bandits.mzn. From https://github.com/MiniZinc/specialization-examples
-\text{let }(points_{i} \in 1 \dots size*size, \in \mathbb{V} = [(ptR_{i}-1)*size + ptC_{i}: i \in 1 \dots nPts]: i \in 1 \dots nPts)\{\\
+\text{let }(points_{i} \in 1 \dots size*size, \in \mathbb{V} := [(ptR_{i}-1)*size + ptC_{i}: i \in 1 \dots nPts]: i \in 1 \dots nPts)\{\\
 	alldifferent(points)\\
 \}\\
 (ptR_{i} \mod 2) = 1 \lor (ptR_{i} \mod 2) = 1: i \in 1 \dots nPts\\
 \text{predicate } covered(x, y \in \mathbb{Z}, \in \mathbb{V}) \{\\
-	\text{ let } (i \in 1 \dots nPts, \in \mathbb{V}; dist \in \mathbb{Z}, \in \mathbb{V} = |x-ptR_{i}| + |y-ptC_{i}|) \{
+	\text{ let } (i \in 1 \dots nPts, \in \mathbb{V}; dist \in \mathbb{Z}, \in \mathbb{V} := |x-ptR_{i}| + |y-ptC_{i}|) \{
 		dist \leq mDist
 	\}
 \}\\
-\text{let } (huts_{i} \in 1 \dots size-1, \in \mathbb{P} = [i*2: i \in 1 \dots (size \text{ div } 2)]: i \in 1 \dots (size \text{ div } 2)) \{
+\text{let } (huts_{i} \in 1 \dots size-1, \in \mathbb{P} := [i*2: i \in 1 \dots (size \text{ div } 2)]: i \in 1 \dots (size \text{ div } 2)) \{
 	covered(i,j): i,j \in huts\\
 \}\\
 \text{minimize } tCost\\

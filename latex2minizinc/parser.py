@@ -834,40 +834,40 @@ def p_Argument(t):
               | Identifier ArgumentType WHERE IndexingExpression
               | Identifier ArgumentType COLON IndexingExpression
 
-              | Identifier ArgumentType EQ NumericSymbolicExpression
-              | Identifier ArgumentType EQ NumericSymbolicExpression FOR IndexingExpression
-              | Identifier ArgumentType EQ NumericSymbolicExpression WHERE IndexingExpression
-              | Identifier ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression
+              | Identifier ArgumentType ASSIGN NumericSymbolicExpression
+              | Identifier ArgumentType ASSIGN NumericSymbolicExpression FOR IndexingExpression
+              | Identifier ArgumentType ASSIGN NumericSymbolicExpression WHERE IndexingExpression
+              | Identifier ArgumentType ASSIGN NumericSymbolicExpression COLON IndexingExpression
 
-              | Identifier ArgumentType EQ Identifier
-              | Identifier ArgumentType EQ Identifier FOR IndexingExpression
-              | Identifier ArgumentType EQ Identifier WHERE IndexingExpression
-              | Identifier ArgumentType EQ Identifier COLON IndexingExpression
+              | Identifier ArgumentType ASSIGN Identifier
+              | Identifier ArgumentType ASSIGN Identifier FOR IndexingExpression
+              | Identifier ArgumentType ASSIGN Identifier WHERE IndexingExpression
+              | Identifier ArgumentType ASSIGN Identifier COLON IndexingExpression
 
-              | Identifier ArgumentType EQ Array
-              | Identifier ArgumentType EQ Array FOR IndexingExpression
-              | Identifier ArgumentType EQ Array WHERE IndexingExpression
-              | Identifier ArgumentType EQ Array COLON IndexingExpression
+              | Identifier ArgumentType ASSIGN Array
+              | Identifier ArgumentType ASSIGN Array FOR IndexingExpression
+              | Identifier ArgumentType ASSIGN Array WHERE IndexingExpression
+              | Identifier ArgumentType ASSIGN Array COLON IndexingExpression
 
               | IdentifierList ArgumentType
               | IdentifierList ArgumentType FOR IndexingExpression
               | IdentifierList ArgumentType WHERE IndexingExpression
               | IdentifierList ArgumentType COLON IndexingExpression
 
-              | IdentifierList ArgumentType EQ NumericSymbolicExpression
-              | IdentifierList ArgumentType EQ NumericSymbolicExpression FOR IndexingExpression
-              | IdentifierList ArgumentType EQ NumericSymbolicExpression WHERE IndexingExpression
-              | IdentifierList ArgumentType EQ NumericSymbolicExpression COLON IndexingExpression
+              | IdentifierList ArgumentType ASSIGN NumericSymbolicExpression
+              | IdentifierList ArgumentType ASSIGN NumericSymbolicExpression FOR IndexingExpression
+              | IdentifierList ArgumentType ASSIGN NumericSymbolicExpression WHERE IndexingExpression
+              | IdentifierList ArgumentType ASSIGN NumericSymbolicExpression COLON IndexingExpression
 
-              | IdentifierList ArgumentType EQ Identifier
-              | IdentifierList ArgumentType EQ Identifier FOR IndexingExpression
-              | IdentifierList ArgumentType EQ Identifier WHERE IndexingExpression
-              | IdentifierList ArgumentType EQ Identifier COLON IndexingExpression
+              | IdentifierList ArgumentType ASSIGN Identifier
+              | IdentifierList ArgumentType ASSIGN Identifier FOR IndexingExpression
+              | IdentifierList ArgumentType ASSIGN Identifier WHERE IndexingExpression
+              | IdentifierList ArgumentType ASSIGN Identifier COLON IndexingExpression
 
-              | IdentifierList ArgumentType EQ Array
-              | IdentifierList ArgumentType EQ Array FOR IndexingExpression
-              | IdentifierList ArgumentType EQ Array WHERE IndexingExpression
-              | IdentifierList ArgumentType EQ Array COLON IndexingExpression'''
+              | IdentifierList ArgumentType ASSIGN Array
+              | IdentifierList ArgumentType ASSIGN Array FOR IndexingExpression
+              | IdentifierList ArgumentType ASSIGN Array WHERE IndexingExpression
+              | IdentifierList ArgumentType ASSIGN Array COLON IndexingExpression'''
 
   if t.slice[1].type == "Identifier":
     t[1] = ValueList([t[1]])
@@ -877,7 +877,7 @@ def p_Argument(t):
 
   elif len(t) > 3:
 
-    if t.slice[3].type == "EQ":
+    if t.slice[3].type == "ASSIGN":
       t[0] = Argument(t[1], t[2], t[4])
 
     else:
