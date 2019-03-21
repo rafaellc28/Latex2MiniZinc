@@ -80,7 +80,11 @@ class Argument:
         """
         to string
         """
-        res = str(self.argumentType) + ": "
+        res = ""
+
+        if self.argumentType:
+            res += str(self.argumentType) + ": "
+
         res += str(self.names)
 
         if self.expression:

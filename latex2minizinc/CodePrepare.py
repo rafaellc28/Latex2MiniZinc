@@ -2053,7 +2053,9 @@ class CodePrepare:
     # Argument
     def prepare_Argument(self, node):
         node.names.prepare(self)
-        node.argumentType.prepare(self)
+
+        if node.argumentType:
+            node.argumentType.prepare(self)
 
         if node.expression:
             node.expression.prepare(self)
@@ -2067,7 +2069,8 @@ class CodePrepare:
                 self.arguments.append({ident: Argument(ValueList([name]), node.argumentType, node.expression, node.indexingExpression)})
 
             else:
-                arg.argumentType = node.argumentType
+                if node.argumentType:
+                    arg.argumentType = node.argumentType
 
                 if node.expression:
                     arg.expression = node.expression

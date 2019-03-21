@@ -971,6 +971,12 @@ def test_extras_test95():
 def test_extras_test96():
 	check_test_extras_num(96)
 
+def test_extras_test97():
+	check_test_extras_num(97)
+
+def test_extras_test98():
+	check_test_extras_num(98)
+
 # MiniZinc
 def test_minizinc_test0():
 	check_test_minizinc_num(0)

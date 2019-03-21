@@ -849,6 +849,21 @@ def p_Argument(t):
               | Identifier ArgumentType ASSIGN Array WHERE IndexingExpression
               | Identifier ArgumentType ASSIGN Array COLON IndexingExpression
 
+              | Identifier ASSIGN NumericSymbolicExpression
+              | Identifier ASSIGN NumericSymbolicExpression FOR IndexingExpression
+              | Identifier ASSIGN NumericSymbolicExpression WHERE IndexingExpression
+              | Identifier ASSIGN NumericSymbolicExpression COLON IndexingExpression
+
+              | Identifier ASSIGN Identifier
+              | Identifier ASSIGN Identifier FOR IndexingExpression
+              | Identifier ASSIGN Identifier WHERE IndexingExpression
+              | Identifier ASSIGN Identifier COLON IndexingExpression
+
+              | Identifier ASSIGN Array
+              | Identifier ASSIGN Array FOR IndexingExpression
+              | Identifier ASSIGN Array WHERE IndexingExpression
+              | Identifier ASSIGN Array COLON IndexingExpression
+
               | IdentifierList ArgumentType
               | IdentifierList ArgumentType FOR IndexingExpression
               | IdentifierList ArgumentType WHERE IndexingExpression
@@ -867,17 +882,39 @@ def p_Argument(t):
               | IdentifierList ArgumentType ASSIGN Array
               | IdentifierList ArgumentType ASSIGN Array FOR IndexingExpression
               | IdentifierList ArgumentType ASSIGN Array WHERE IndexingExpression
-              | IdentifierList ArgumentType ASSIGN Array COLON IndexingExpression'''
+              | IdentifierList ArgumentType ASSIGN Array COLON IndexingExpression
+
+              | IdentifierList ASSIGN NumericSymbolicExpression
+              | IdentifierList ASSIGN NumericSymbolicExpression FOR IndexingExpression
+              | IdentifierList ASSIGN NumericSymbolicExpression WHERE IndexingExpression
+              | IdentifierList ASSIGN NumericSymbolicExpression COLON IndexingExpression
+
+              | IdentifierList ASSIGN Identifier
+              | IdentifierList ASSIGN Identifier FOR IndexingExpression
+              | IdentifierList ASSIGN Identifier WHERE IndexingExpression
+              | IdentifierList ASSIGN Identifier COLON IndexingExpression
+
+              | IdentifierList ASSIGN Array
+              | IdentifierList ASSIGN Array FOR IndexingExpression
+              | IdentifierList ASSIGN Array WHERE IndexingExpression
+              | IdentifierList ASSIGN Array COLON IndexingExpression'''
 
   if t.slice[1].type == "Identifier":
     t[1] = ValueList([t[1]])
 
-  if len(t) > 5:
+  if len(t) > 6:
     t[0] = Argument(t[1], t[2], t[4], t[6])
 
   elif len(t) > 3:
 
-    if t.slice[3].type == "ASSIGN":
+    if t.slice[2].type == "ASSIGN":
+      if len(t) > 4:
+        t[0] = Argument(t[1], None, t[3], t[5])
+
+      else:
+        t[0] = Argument(t[1], None, t[3])
+
+    elif t.slice[3].type == "ASSIGN":
       t[0] = Argument(t[1], t[2], t[4])
 
     else:

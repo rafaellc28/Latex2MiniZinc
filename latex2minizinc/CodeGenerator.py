@@ -1966,7 +1966,7 @@ class CodeGenerator:
 
             res += ARRAY + BEGIN_ARRAY + (COMMA+SPACE).join(domains) + END_ARRAY + SPACE + OF + SPACE
 
-        res += node.argumentType.generateCode(self)
+        res += FLOAT if not node.argumentType else node.argumentType.generateCode(self)
         res += SEP_PARTS_DECLARATION + SPACE
 
 

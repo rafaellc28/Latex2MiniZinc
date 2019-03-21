@@ -680,7 +680,9 @@ class CodeSetup:
         node.setSymbolTable(self.currentTable)
         
         map(lambda el: el.setupEnvironment(self), node.names.values)
-        node.argumentType.setupEnvironment(self)
+
+        if node.argumentType:
+            node.argumentType.setupEnvironment(self)
 
         if node.expression:
             node.expression.setupEnvironment(self)
