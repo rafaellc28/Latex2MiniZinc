@@ -1,0 +1,22 @@
+% specialization-examples/predicates/brigades/brigades.mzn. From https://github.com/MiniZinc/specialization-examples
+card(brigades_{i}) = size: i \in 1 \dots nbrigade\\
+all\_disjoint(brigades)\\
+\text{predicate } alldifferent(b_{i} \in BATTALION, \in \mathbb{V}) \{
+	b[i] \neq b[j]: i,j \in index\_set(b) \mid i < j
+\}\\
+\text{predicate } pattern(brigade \in \text{ setof } BATTALION, \in \mathbb{V}; t_{i} \in \text{ setof } BATTALION, \in \mathbb{V}) \{ 
+   \text{ let } (IND \in \text{ setof } \mathbb{Z}, \in \mathbb{P} := 1 \dots length(t); 
+         b_{i} \in BATTALION, \in \mathbb{V}: i \in IND) \{
+   		\forall\{i \in IND\}(b_{i} \in t_{i} \land b_{i} \in brigade) \land alldifferent(b)\\
+   \}\\
+\}\\
+\text{predicate } elite(brigade \in \text{ setof } BATTALION, \in \mathbb{V}) \{\\
+          pattern(brigade, [ARCHER, ARCHER, SHIELD, SHIELD]) \lor pattern(brigade, [SWORD, SWORD, SWORD]) \lor pattern(brigade, [ARCHER, SWORD, SWORD, SHIELD])\\
+\}\\
+elite(brigades_{1})\\
+elite(brigades_{2})\\
+BATTALION := \{B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17,B18,B19,B20,B21,B22,B23,B24\};\\
+ARCHER, SWORD, SHIELD \in \text{ setof } BATTALION;\\
+ARCHER := \{B1,B2,B3,B4,B15\}; SWORD := \{B3,B8,B9,B6,B15\}; SHIELD := \{B1,B3,B15,B16,B18\}\\
+nbrigade := card(BATTALION) \text{ div } size; size \in \mathbb{Z}, \in \mathbb{P}, := 6; BRIGADE := 1 \dots nbrigade\\
+brigades_{b} \in \text{ setof } BATTALION, \in \mathbb{V}: b \in BRIGADE\\

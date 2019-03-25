@@ -687,8 +687,8 @@ class CodeSetup:
         if node.expression:
             node.expression.setupEnvironment(self)
 
-        if node.indexingExpression:
-            node.indexingExpression.setupEnvironment(self)
+        #if node.indexingExpression:
+        #    node.indexingExpression.setupEnvironment(self)
 
     # ArgumentType
     def setupEnvironment_ArgumentType(self, node):

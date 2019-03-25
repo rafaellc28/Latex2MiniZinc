@@ -839,6 +839,11 @@ def p_Argument(t):
               | Identifier ArgumentType ASSIGN NumericSymbolicExpression WHERE IndexingExpression
               | Identifier ArgumentType ASSIGN NumericSymbolicExpression COLON IndexingExpression
 
+              | Identifier ArgumentType ASSIGN SetExpression
+              | Identifier ArgumentType ASSIGN SetExpression FOR IndexingExpression
+              | Identifier ArgumentType ASSIGN SetExpression WHERE IndexingExpression
+              | Identifier ArgumentType ASSIGN SetExpression COLON IndexingExpression
+
               | Identifier ArgumentType ASSIGN Identifier
               | Identifier ArgumentType ASSIGN Identifier FOR IndexingExpression
               | Identifier ArgumentType ASSIGN Identifier WHERE IndexingExpression
@@ -853,6 +858,11 @@ def p_Argument(t):
               | Identifier ASSIGN NumericSymbolicExpression FOR IndexingExpression
               | Identifier ASSIGN NumericSymbolicExpression WHERE IndexingExpression
               | Identifier ASSIGN NumericSymbolicExpression COLON IndexingExpression
+
+              | Identifier ASSIGN SetExpression
+              | Identifier ASSIGN SetExpression FOR IndexingExpression
+              | Identifier ASSIGN SetExpression WHERE IndexingExpression
+              | Identifier ASSIGN SetExpression COLON IndexingExpression
 
               | Identifier ASSIGN Identifier
               | Identifier ASSIGN Identifier FOR IndexingExpression
@@ -874,6 +884,11 @@ def p_Argument(t):
               | IdentifierList ArgumentType ASSIGN NumericSymbolicExpression WHERE IndexingExpression
               | IdentifierList ArgumentType ASSIGN NumericSymbolicExpression COLON IndexingExpression
 
+              | IdentifierList ArgumentType ASSIGN SetExpression
+              | IdentifierList ArgumentType ASSIGN SetExpression FOR IndexingExpression
+              | IdentifierList ArgumentType ASSIGN SetExpression WHERE IndexingExpression
+              | IdentifierList ArgumentType ASSIGN SetExpression COLON IndexingExpression
+
               | IdentifierList ArgumentType ASSIGN Identifier
               | IdentifierList ArgumentType ASSIGN Identifier FOR IndexingExpression
               | IdentifierList ArgumentType ASSIGN Identifier WHERE IndexingExpression
@@ -888,6 +903,11 @@ def p_Argument(t):
               | IdentifierList ASSIGN NumericSymbolicExpression FOR IndexingExpression
               | IdentifierList ASSIGN NumericSymbolicExpression WHERE IndexingExpression
               | IdentifierList ASSIGN NumericSymbolicExpression COLON IndexingExpression
+
+              | IdentifierList ASSIGN SetExpression
+              | IdentifierList ASSIGN SetExpression FOR IndexingExpression
+              | IdentifierList ASSIGN SetExpression WHERE IndexingExpression
+              | IdentifierList ASSIGN SetExpression COLON IndexingExpression
 
               | IdentifierList ASSIGN Identifier
               | IdentifierList ASSIGN Identifier FOR IndexingExpression
