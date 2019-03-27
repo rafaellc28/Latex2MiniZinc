@@ -1,0 +1,6 @@
+% specialization-examples/predicates/brigades/even.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } even(x \in \mathbb{Z}, \in \mathbb{V}) \{\\
+	\text{let } (y \in \mathbb{Z}, \in \mathbb{V}) \{ x = 2*y \}\\
+\}\\
+u \in -1 \dots 7, \in \mathbb{R}\\
+\neg even(u)\\
