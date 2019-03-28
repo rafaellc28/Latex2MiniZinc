@@ -1,0 +1,17 @@
+% specialization-examples/scheduling/disjunctive/disj_sched_glo.mzn. From https://github.com/MiniZinc/specialization-examples
+start_{pre_{i,1}} + duration_{pre_{i,1}} \leq start_{pre_{i,2}}: i \in PREC\\
+\text{predicate } exclusive(tasks \in \text{ setof } TASK, \in \mathbb{P}) \{\\
+	\text{let } (sa_{i} \in \mathbb{Z}, \in \mathbb{V} := [start_{t} : t \in tasks];
+        dd_{i} \in \mathbb{Z}, \in \mathbb{P} := [duration_{t} : t \in tasks]) \{\\
+        	disjunctive(sa,dd)\\
+        \}\\
+\}\\
+exclusive(LIU)\\
+exclusive(ZHANG)\\
+exclusive(GUAN)\\
+\text{minimize } makespan\\
+duration_{i}, t, p \in \mathbb{Z}, \in \mathbb{P};\\
+t := sum(duration); PREC := 1 \dots p; pre_{p,j} \in TASK: p \in PREC, j \in 1 \dots 2;\\
+LIU, ZHANG, GUAN \in \text{ setof } TASK;\\
+start_{i}, makespan \in 0 \dots t, \in \mathbb{R}: i \in TASK\\
+makespan := \max_{t \in TASK}start_{t} + duration_{t}\\
