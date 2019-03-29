@@ -1,0 +1,12 @@
+% specialization-examples/scheduling/disjunctive/disj_sched_1.mzn. From https://github.com/MiniZinc/specialization-examples
+start_{pre_{i,1}} + duration_{pre_{i,1}} \leq start_{pre_{i,2}}: i \in PREC\\
+\text{predicate } nonoverlap(s1, d1, s2, d2 \in \mathbb{Z}, \in \mathbb{V}) \{\\
+	s1 + d1 \leq s2 \lor s2 + d2 \leq s1\\
+\}\\
+nonoverlap(start_{t1}, duration_{t1}, start_{t2}, duration_{t2}): t1, t2 \in LIU \mid t1 < t2\\
+\text{minimize } makespan\\
+duration_{i}, t \in \mathbb{Z}, \in \mathbb{P}: i \in TASK\\
+PREC := 1 \dots p; t := sum(duration)\\
+pre_{p,i}: p \in PREC, i \in 1 \dots 2\\
+start_{i}, makespan \in 0 \dots t, \in \mathbb{R}; LIU \in \text{ setof } TASK: i \in TASK\\
+makespan := \max_{t \in TASK}start_{t} + duration_{t}\\
