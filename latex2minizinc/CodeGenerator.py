@@ -1080,22 +1080,25 @@ class CodeGenerator:
     def _processInDeclaration(self, name, declaration, isArray, isVariable = False):
 
         _type = EMPTY_STRING
+        #print(name, declaration, str(declaration))
 
         if declaration != None:
             ins_vec = declaration.getIn()
+            #print(name, "1", ins_vec)
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
-            
+            #print(name, "2", ins_vec)
             if ins_vec != None and len(ins_vec) > 0:
                 ins = ins_vec[-1].generateCode(self)
 
                 setExpression = ins_vec[-1]
                 ins = setExpression.generateCode(self)
+                #print(name, setExpression, str(setExpression), ins)
 
                 if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
                     if len(ins_vec) > 1:
                         ins = ins_vec[-2].generateCode(self)
                 
-                if ins != EMPTY_STRING and not self._checkIsSetBetweenBraces(ins) and not (ins == SET_OF_INT and self._isSetForTuple(name)):
+                if ins != EMPTY_STRING and not (isArray and self._checkIsSetBetweenBraces(ins)) and not (ins == SET_OF_INT and self._isSetForTuple(name)):
 
                     if isVariable:
                         if isArray:
@@ -1276,6 +1279,7 @@ class CodeGenerator:
                 varStr += array
 
             _type = self._processInDeclaration(name, declaration, isArray, True)
+            #print(name, _type)
 
             if _type != EMPTY_STRING:
                 varStr += _type + SEP_PARTS_DECLARATION
