@@ -1,0 +1,69 @@
+% specialization-examples/CP/propagation_engine/village.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } healthy(a, b \in BAGUA, \in \mathbb{V}) \{\\
+	table([a,b], BookOfChanges)\\
+\}\\
+healthy(FloodDragon, Leopard)\\
+healthy(GoldDragon, Wolf)\\
+healthy(Raccoon, Horse)\\
+healthy(Hare, Cow)\\
+healthy(Fox, Wolf)\\
+healthy(Tiger, Rat)\\
+healthy(Leopard, ChineseUnicorn)\\
+healthy(Leopard, Sheep)\\
+healthy(WildDog, Bird)\\
+healthy(Horse, Tiger)\\
+healthy(Deer, Pig)\\
+healthy(Snake, WildDog)\\
+healthy(Snake, Fox)\\
+healthy(EarthWorm, Raccoon)\\
+healthy(EarthWorm, Rat)\\
+healthy(Wolf, Cow)\\
+healthy(Dog, RoeDeer)\\
+healthy(Pheasant, Deer)\\
+healthy(Pheasant, Bat)\\
+healthy(Chicken, Sheep)\\
+healthy(Bird, GoldDragon)\\
+healthy(Ape, Pig)\\
+healthy(Sparrow, RoeDeer)\\
+healthy(Devil, Monkey)\\
+healthy(Devil, Dog)\\
+FloodDragon \neq ChineseUnicorn\\
+Hare \neq Rat\\
+Fox \neq Bird\\
+Tiger \neq Monkey\\
+WildDog \neq Wolf\\
+Sheep \neq Dog\\
+RoeDeer \neq Pheasant\\
+Deer \neq Sparrow\\
+Wolf \neq WildDog\\
+Ape \neq Devil\\
+BAGUA := \{Heaven, Marsh, Fire, Thunder, Wind, Water, Mountain, Earth\}\\
+FloodDragon \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh\}, \in \mathbb{V}\\
+GoldDragon \in \{Earth, Water, Wind, Thunder, Marsh, Heaven\}, \in \mathbb{V}\\
+Raccoon \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Hare \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Fox \in \{Earth, Mountain, Water, Wind, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Tiger \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Leopard \in \{Earth, Water, Wind, Thunder, Marsh, Heaven\}, \in \mathbb{V}\\
+WildDog \in \{Earth, Mountain, Water, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Sheep \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+RoeDeer \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Horse \in \{Earth, Mountain, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Deer \in \{Mountain, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Snake \in \{Earth, Mountain, Water, Wind, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+EarthWorm \in \{Earth, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Wolf \in \{Earth, Mountain, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Dog \in \{Mountain, Water, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Pheasant \in \{Earth, Mountain, Water, Wind, Thunder, Marsh\}, \in \mathbb{V}\\
+Chicken \in \{Earth, Mountain, Heaven\}, \in \mathbb{V}\\
+Bird \in \{Earth, Mountain, Water\}, \in \mathbb{V}\\
+Monkey \in \{Earth, Mountain, Wind, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Ape \in \{Earth, Mountain, Water, Wind, Thunder, Marsh, Heaven\}, \in \mathbb{V}\\
+ChineseUnicorn \in \{Mountain, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Cow \in \{Earth, Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Bat \in \{Earth, Mountain, Water, Wind, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Rat \in \{Water, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Sparrow \in \{Earth, Wind, Thunder, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+Pig \in \{Earth, Water, Wind, Thunder, Marsh\}, \in \mathbb{V}\\
+Devil \in \{Earth, Wind, Fire, Marsh, Heaven\}, \in \mathbb{V}\\
+BookOfChanges_{i,j} \in BAGUA: i \in 1 \dots 15, j \in 1 \dots 2\\
