@@ -1,0 +1,9 @@
+% specialization-examples/CP/flattening/flattening10.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } far\_or\_equal(x1, y1, x2, y2 \in \mathbb{Z}, \in \mathbb{V}) \{\\
+	man\_dist(x1,y1,x2,y2) \geq 4 \lor (x1 = x2 \land y1 = y2)\\
+\}\\
+\text{function } man\_dist(u1, v1, u2, v2 \in \mathbb{Z}, \in \mathbb{V}) \in \mathbb{Z}, \in \mathbb{V} \{\\
+	abs(u1 - u2) + abs(v1 - v2)\\
+\}\\
+far\_or\_equal(a,b,c,d)\\
+a, b, c, d \in 0 \dots 4, \in \mathbb{V}\\

@@ -1,0 +1,7 @@
+% specialization-examples/CP/flattening/flattening11.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } all\_different\_int\_reif(a_{i} \in \mathbb{Z}, \in \mathbb{V}; b \in \mathbb{B}, \in \mathbb{V}) \{\\
+	b \iff \forall\{i, j \in index\_set(a) \mid i < j\}a_{i} \neq a_{j}\\
+\}\\
+alldifferent([x,y,z])\\
+alldifferent([y,z,t]) \implies x = 0\\
+x, y, z, t \in 0 \dots 3, \in \mathbb{V}\\
