@@ -35,12 +35,13 @@ from LetExpression import *
 from PredicateExpression import *
 from TestOperationExpression import *
 from FunctionExpression import *
+from IncludeExpression import *
 
 import objects as obj
 
 precedence = (
     ('left', 'ID'),
-    ('left', 'NUMBER', 'INFINITY'),
+    ('left', 'NUMBER', 'INFINITY', 'STRING'),
     ('left', 'COMMA'),
     ('right', 'SLASHES', 'SEMICOLON'),
     ('right', 'FOR', 'WHERE', 'COLON'),
@@ -48,9 +49,9 @@ precedence = (
     ('right', 'DEFAULT', 'DIMEN', 'ASSIGN'),
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE', 'LBRACKET', 'RBRACKET'),
     ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
-    ('left', 'MAXIMIZE', 'MINIMIZE', 'PREDICATE', 'TEST', 'FUNCTION'),
+    ('left', 'MAXIMIZE', 'MINIMIZE', 'PREDICATE', 'TEST', 'FUNCTION', 'INCLUDE'),
     ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
-    ('right', 'IF', 'THEN', 'ELSE', 'ENDIF'),
+    ('right', 'IF', 'THEN', 'ELSEIF', 'ELSE', 'ENDIF'),
     ('left', 'OR'),
     ('left', 'FORALL', 'EXISTS', 'NEXISTS', 'LET'),
     ('left', 'AND'),
@@ -129,6 +130,7 @@ def p_ConstraintList(t):
                       | ConstraintList PredicateExpression SLASHES
                       | ConstraintList TestOperationExpression SLASHES
                       | ConstraintList FunctionExpression SLASHES
+                      | ConstraintList IncludeExpression SLASHES
                       
                       | ConstraintList Objective
                       | ConstraintList Constraint
@@ -136,6 +138,7 @@ def p_ConstraintList(t):
                       | ConstraintList PredicateExpression
                       | ConstraintList TestOperationExpression
                       | ConstraintList FunctionExpression
+                      | ConstraintList IncludeExpression
                       
                       | Objective SLASHES
                       | Constraint SLASHES
@@ -143,13 +146,15 @@ def p_ConstraintList(t):
                       | PredicateExpression SLASHES
                       | TestOperationExpression SLASHES
                       | FunctionExpression SLASHES
+                      | IncludeExpression SLASHES
                       
                       | Objective
                       | Constraint
                       | Declarations
                       | PredicateExpression
                       | TestOperationExpression
-                      | FunctionExpression'''
+                      | FunctionExpression
+                      | IncludeExpression'''
 
     if len(t) > 2 and not isinstance(t[2], str):
         t[0] = t[1] + [t[2]]
@@ -814,6 +819,10 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
     declarationExpression.addAttribute(attr)
 
     return declarationExpression
+
+def p_IncludeExpression(t):
+  '''IncludeExpression : INCLUDE STRING'''
+  t[0] = IncludeExpression(StringSymbolicExpression(t[2]))
 
 def p_ArgumentType(t):
   '''ArgumentType : IN SetExpression COMMA IN VARIABLES

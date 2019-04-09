@@ -695,6 +695,11 @@ class CodeSetup:
         node.setSymbolTable(self.currentTable)
         node.type.setupEnvironment(self)
 
+    # IncludeExpression
+    def setupEnvironment_IncludeExpression(self, node):
+        node.setSymbolTable(self.currentTable)
+        node.name.setupEnvironment(self)
+
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
         """

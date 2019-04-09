@@ -43,6 +43,7 @@ from LetExpression import *
 from PredicateExpression import *
 from TestOperationExpression import *
 from FunctionExpression import *
+from IncludeExpression import *
 
 import re
 
@@ -397,6 +398,9 @@ class CodeGenerator:
 
         elif isinstance(constraint, Objective):
             return self._getCodeObjective(constraint)
+
+        else:
+            return constraint.generateCode(self)
 
         return EMPTY_STRING
 
@@ -1276,7 +1280,6 @@ class CodeGenerator:
                 varStr += array
 
             _type = self._processInDeclaration(name, declaration, isArray, True)
-            #print(name, _type)
 
             if _type != EMPTY_STRING:
                 varStr += _type + SEP_PARTS_DECLARATION
@@ -1610,7 +1613,7 @@ class CodeGenerator:
 
         constraints = filter(lambda el: isinstance(el, Constraint) or isinstance(el, TestOperationExpression) or \
                                 isinstance(el, PredicateExpression) or isinstance(el, LetExpression) or \
-                                isinstance(el, FunctionExpression), node.constraints.getConstraints())
+                                isinstance(el, FunctionExpression) or isinstance(el, IncludeExpression), node.constraints.getConstraints())
         objectives = filter(lambda el: isinstance(el, Objective), node.constraints.getConstraints())
 
         preModel = self._preModel()
@@ -1994,6 +1997,10 @@ class CodeGenerator:
                          isinstance(node.type.value, RealSet) else node.type.generateCode(self)
 
         return var + _type
+
+    # IncludeExpression
+    def generateCode_IncludeExpression(self, node):
+        return INCLUDE + SPACE + node.name.generateCode(self) + END_STATEMENT
 
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):
