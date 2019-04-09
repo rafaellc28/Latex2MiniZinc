@@ -1414,8 +1414,12 @@ class CodePrepare:
 
         function = self.codeGenerator._getNumericFunction(function)
         
-        if function in self.codeGenerator.LIBRARIES and not function in self.codeGenerator.include:
-            self.codeGenerator.include[function] = self.codeGenerator.LIBRARIES[function]
+        if  not function in self.codeGenerator.include:
+            if function in self.codeGenerator.LIBRARIES:
+                self.codeGenerator.include[function] = self.codeGenerator.LIBRARIES[function]
+
+            #else:
+            #    self.codeGenerator.include[function] = function + ".mzn"
 
         if node.numericExpression1 != None:
             node.numericExpression1.prepare(self)
@@ -2019,10 +2023,8 @@ class CodePrepare:
             node.expression.prepare(self)
 
     def _prepareArgument(self, argument, arguments):
-        if isinstance(argument, Argument):
-            argument.prepare(self)
-
-        else:
+        argument.prepare(self)
+        if not isinstance(argument, Argument):
             arguments.append(argument)
 
     def _getArgumentByName(self, name, arguments):

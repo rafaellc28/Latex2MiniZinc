@@ -1080,19 +1080,16 @@ class CodeGenerator:
     def _processInDeclaration(self, name, declaration, isArray, isVariable = False):
 
         _type = EMPTY_STRING
-        #print(name, declaration, str(declaration))
 
         if declaration != None:
             ins_vec = declaration.getIn()
-            #print(name, "1", ins_vec)
             ins_vec = self._removePreDefinedTypes(map(lambda el: el.attribute, ins_vec))
-            #print(name, "2", ins_vec)
+            
             if ins_vec != None and len(ins_vec) > 0:
                 ins = ins_vec[-1].generateCode(self)
 
                 setExpression = ins_vec[-1]
                 ins = setExpression.generateCode(self)
-                #print(name, setExpression, str(setExpression), ins)
 
                 if isinstance(setExpression, IteratedSetExpression) and setExpression.inferred:
                     if len(ins_vec) > 1:

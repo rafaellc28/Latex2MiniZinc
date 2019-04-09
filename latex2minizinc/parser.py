@@ -2438,6 +2438,7 @@ def p_FunctionNumericExpression(t):
 
                          | CARD LPAREN SetExpression RPAREN
                          | CARD LPAREN Identifier RPAREN
+                         | CARD LPAREN NumericSymbolicExpression RPAREN
 
                          | LENGTH LPAREN SetExpression RPAREN
                          | LENGTH LPAREN Identifier RPAREN

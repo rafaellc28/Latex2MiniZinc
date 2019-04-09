@@ -74,6 +74,9 @@ class Constraint:
         
     def setSymbolTable(self, symbolTable):
         self.symbolTable = symbolTable
+
+    def setIndexingExpression(self, indexingExpression):
+        self.indexingExpression = indexingExpression
         
     def setupEnvironment(self, codeSetup):
         """
