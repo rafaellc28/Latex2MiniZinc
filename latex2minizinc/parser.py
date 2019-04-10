@@ -821,8 +821,8 @@ def _getDeclarationExpression(entryConstraintLogicalExpression):
     return declarationExpression
 
 def p_IncludeExpression(t):
-  '''IncludeExpression : INCLUDE STRING'''
-  t[0] = IncludeExpression(StringSymbolicExpression(t[2]))
+  '''IncludeExpression : INCLUDE StringList'''
+  t[0] = IncludeExpression(t[2])
 
 def p_ArgumentType(t):
   '''ArgumentType : IN SetExpression COMMA IN VARIABLES
@@ -2741,6 +2741,16 @@ def p_TupleList(t):
         t[0] = TupleList([t[1]])
     else:
         t[0] = t[1].add(t[3])
+
+def p_StringList(t):
+    '''StringList : StringList COMMA STRING
+                  | STRING'''
+
+    if t.slice[1].type == "STRING":
+      t[0] = [StringSymbolicExpression(t[1])]
+
+    else:
+      t[0] = t[1] + [StringSymbolicExpression(t[3])]
 
 def p_Array(t):
   '''Array : LBRACKET ValueList RBRACKET

@@ -5,23 +5,23 @@ class IncludeExpression(Expression):
     Class representing a function expression node in the AST
     """
 
-    def __init__(self, name):
+    def __init__(self, values):
         """
-        :param name : StringSymbolicExpression
+        :param name : [StringSymbolicExpression]
         """
 
         Expression.__init__(self)
 
-        self.name = name
+        self.values = values
         
     def __str__(self):
         """
         to string
         """
-        return "include " + str(self.name)
+        return "include " + ", ".join(map(lambda el: str(el), self.values))
 
     def getDependencies(self, codeGenerator):
-        return self.name.getDependencies(codeGenerator)
+        return list(set(map(lambda el: el.getDependencies(codeGenerator), self.values)))
 
     def setupEnvironment(self, codeSetup):
         """

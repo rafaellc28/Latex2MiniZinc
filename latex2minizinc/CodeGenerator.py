@@ -2000,7 +2000,7 @@ class CodeGenerator:
 
     # IncludeExpression
     def generateCode_IncludeExpression(self, node):
-        return INCLUDE + SPACE + node.name.generateCode(self) + END_STATEMENT
+        return (BREAKLINE+BREAKLINE).join(map(lambda el: INCLUDE + SPACE + el.generateCode(self) + END_STATEMENT, node.values))
 
     # Numeric Expression
     def generateCode_NumericExpressionWithFunction(self, node):

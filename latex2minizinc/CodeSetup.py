@@ -698,7 +698,7 @@ class CodeSetup:
     # IncludeExpression
     def setupEnvironment_IncludeExpression(self, node):
         node.setSymbolTable(self.currentTable)
-        node.name.setupEnvironment(self)
+        map(lambda el: el.setupEnvironment(self), node.values)
 
     # Numeric Expression
     def setupEnvironment_NumericExpressionWithFunction(self, node):
