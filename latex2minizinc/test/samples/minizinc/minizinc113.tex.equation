@@ -1,0 +1,8 @@
+% specialization-examples/symmetry/lamp/double_lex.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } double\_lex(x_{i,j} \in \mathbb{Z}, \in \mathbb{V}) \{\\
+	\forall\{i \in index\_set\_1of2(x) \mid i \neq max(index\_set\_1of2(x))\}\\
+	(lex\_lesseq([x_{i,j}: j \in index\_set\_2of2(x)], [x_{i+1,j}: j \in index\_set\_2of2(x)]))\\
+	\land \forall\{j \in index\_set\_2of2(x) \mid j \neq max(index\_set\_2of2(x))\}\\
+	lex\_lesseq([x_{i,j}: i \in index\_set\_1of2(x)], [x_{i,j+1}: i \in index\_set\_1of2(x)])
+\}\\
+
