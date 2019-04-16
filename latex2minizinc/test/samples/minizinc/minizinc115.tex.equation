@@ -1,0 +1,11 @@
+% specialization-examples/symmetry/square/var_perm_sym.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } var\_perm\_sym(x_{i}, p_{i,j} \in \mathbb{Z}, \in \mathbb{P}) \{\\
+	\text{let } (l, u \in \mathbb{Z}, \in \mathbb{P}; l := min(index\_set\_1of2(p)); u := max(index\_set\_1of2(p)); y_{i} \in \mathbb{Z}, \in \mathbb{V} := [x_{i}: i \in index\_set(x)]: i \in 1 \dots length(x)) \{\\
+		var\_perm\_sym\_pairwise(y, [p_{i,k}: k \in index\_set\_2of2(p)], [p_{j,k}: k \in index\_set\_2of2(p)]): i, j \in l \dots u \mid i \neq j\\
+	\}\\
+\}\\
+\text{predicate } var\_perm\_sym\_pairwise(x_{i} \in \mathbb{Z}, \in \mathbb{V}; p1_{i}, p2_{i} \in \mathbb{Z}, \in \mathbb{P}) \{\\
+	\text{let } (n  \in \mathbb{Z}, \in \mathbb{P} := length(x); invp1_{i} \in 1 \dots n, \in \mathbb{P} := [j: i, j \in 1 \dots n \mid p1_{j} = i]) \{\\
+		lex\_lesseq(x, [x_{p2_{invp1_{i}}}: i \in 1 \dots n])\\
+	\}\\
+\}\\
