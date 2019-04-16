@@ -9,12 +9,12 @@
         y_{j} \in \mathbb{Z}, \in \mathbb{V} := [x_{i,j}: i \in index\_set\_1of2(x), j \in index\_set\_2of2(x)];\\
         p_{i,j} \in 1 \dots l, \in \mathbb{P} := array2d(1 \dots 8, 1 \dots l, [\\
 	      \text{if } k = 1 \text{ then } i*n + j - n\\
-              %\text{ elseif } k = 2 \text{ then } (n - j)*n + i\\
-              %\text{ elseif } k == 3 then (n - i)*n + (n - j)+1\\   % r180
-              %\text{ elseif } k == 4 then (j*n - n) + (n - i + 1)\\ % r90
-              %\text{ elseif } k == 5 then (n - i)*n + j\\ % x flip
-              %\text{ elseif } k == 6 then (i*n - n) + (n - j + 1)\\ % y flip
-              %\text{ elseif } k == 7 then (n - j)*n + (n - i + 1)\\ % d2 flip
+              \text{ elseif } k = 2 \text{ then } (n - j)*n + i\\
+              \text{ elseif } k = 3 \text{ then } (n - i)*n + (n - j)+1\\   % r180
+              \text{ elseif } k = 4 \text{ then } (j*n - n) + (n - i + 1)\\ % r90
+              \text{ elseif } k = 5 \text{ then } (n - i)*n + j\\ % x flip
+              \text{ elseif } k = 6 \text{ then } (i*n - n) + (n - j + 1)\\ % y flip
+              \text{ elseif } k = 7 \text{ then } (n - j)*n + (n - i + 1)\\ % d2 flip
               \text{ else }  (j*n - n) + i\\ % d1 flip
               \text{ endif }\\
             : k \in 1 \dots 8, i,j \in 1 \dots n\\

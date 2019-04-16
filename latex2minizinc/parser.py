@@ -18,6 +18,7 @@ from EntryIndexingExpression import *
 from LogicalExpression import *
 from EntryLogicalExpression import *
 from SetExpression import *
+from ElseIfExpression import *
 from ValueList import *
 from TupleList import *
 from Tuple import *
@@ -547,6 +548,59 @@ def p_ConstraintExpression(t):
     elif t.slice[2].type == "GE":
         t[0] = ConstraintExpression2(t[1], t[3], ConstraintExpression.GE)
 
+def p_ElseIfExpressionList(t):
+    '''ElseIfExpressionList : ELSEIF ConstraintExpression THEN ConstraintExpression
+                            | ELSEIF ConstraintExpression THEN ValueListInExpression
+                            | ELSEIF ConstraintExpression THEN NumericSymbolicExpression
+                            | ELSEIF ConstraintExpression THEN SetExpression
+                            | ELSEIF ConstraintExpression THEN Identifier
+
+                            | ELSEIF ValueListInExpression THEN ConstraintExpression
+                            | ELSEIF ValueListInExpression THEN ValueListInExpression
+                            | ELSEIF ValueListInExpression THEN NumericSymbolicExpression
+                            | ELSEIF ValueListInExpression THEN SetExpression
+                            | ELSEIF ValueListInExpression THEN Identifier
+
+                            | ELSEIF NumericSymbolicExpression THEN ConstraintExpression
+                            | ELSEIF NumericSymbolicExpression THEN ValueListInExpression
+                            | ELSEIF NumericSymbolicExpression THEN NumericSymbolicExpression
+                            | ELSEIF NumericSymbolicExpression THEN SetExpression
+                            | ELSEIF NumericSymbolicExpression THEN Identifier
+                            
+
+                            | ElseIfExpressionList ELSEIF ConstraintExpression THEN ConstraintExpression
+                            | ElseIfExpressionList ELSEIF ConstraintExpression THEN ValueListInExpression
+                            | ElseIfExpressionList ELSEIF ConstraintExpression THEN NumericSymbolicExpression
+                            | ElseIfExpressionList ELSEIF ConstraintExpression THEN SetExpression
+                            | ElseIfExpressionList ELSEIF ConstraintExpression THEN Identifier
+
+                            | ElseIfExpressionList ELSEIF ValueListInExpression THEN ConstraintExpression
+                            | ElseIfExpressionList ELSEIF ValueListInExpression THEN ValueListInExpression
+                            | ElseIfExpressionList ELSEIF ValueListInExpression THEN NumericSymbolicExpression
+                            | ElseIfExpressionList ELSEIF ValueListInExpression THEN SetExpression
+                            | ElseIfExpressionList ELSEIF ValueListInExpression THEN Identifier
+
+                            | ElseIfExpressionList ELSEIF NumericSymbolicExpression THEN ConstraintExpression
+                            | ElseIfExpressionList ELSEIF NumericSymbolicExpression THEN ValueListInExpression
+                            | ElseIfExpressionList ELSEIF NumericSymbolicExpression THEN NumericSymbolicExpression
+                            | ElseIfExpressionList ELSEIF NumericSymbolicExpression THEN SetExpression
+                            | ElseIfExpressionList ELSEIF NumericSymbolicExpression THEN Identifier'''
+
+    if t.slice[1].type == "ElseIfExpressionList":
+
+      if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
+        t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
+
+      t[1].addElseIfExpression(ElseIfExpression(t[3], t[5]))
+      t[0] = t[1]
+
+    else:
+
+      if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+        t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+      t[0] = ElseIfExpressionList([ElseIfExpression(t[2], t[4])])
+
 def p_ConditionalConstraintExpression(t):
     '''ConstraintExpression : IF ConstraintExpression THEN ConstraintExpression ELSE ConstraintExpression ENDIF
                             | IF ConstraintExpression THEN ConstraintExpression ELSE ValueListInExpression ENDIF
@@ -612,6 +666,75 @@ def p_ConditionalConstraintExpression(t):
 
     t[0] = ConditionalConstraintExpression(t[2], t[4])
     t[0].addElseExpression(t[6])
+
+
+def p_ConditionalConstraintExpressionWithElseIfExpression(t):
+    '''ConstraintExpression : IF ConstraintExpression THEN ConstraintExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF ConstraintExpression THEN ConstraintExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF ConstraintExpression THEN ConstraintExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF ConstraintExpression THEN ValueListInExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF ConstraintExpression THEN ValueListInExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF ConstraintExpression THEN ValueListInExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE ValueListInExpression ENDIF
+  
+
+
+                            | IF ValueListInExpression THEN ConstraintExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF ValueListInExpression THEN ConstraintExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF ValueListInExpression THEN ConstraintExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF ValueListInExpression THEN ValueListInExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF ValueListInExpression THEN ValueListInExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF ValueListInExpression THEN ValueListInExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE ValueListInExpression ENDIF
+
+
+
+                            | IF Identifier THEN ConstraintExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF Identifier THEN ConstraintExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF Identifier THEN ConstraintExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF Identifier THEN ValueListInExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF Identifier THEN ValueListInExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF Identifier THEN ValueListInExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF Identifier THEN Identifier ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF Identifier THEN Identifier ElseIfExpressionList ELSE ValueListInExpression ENDIF
+
+
+
+                            | IF NumericSymbolicExpression THEN ConstraintExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF NumericSymbolicExpression THEN ConstraintExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF NumericSymbolicExpression THEN ConstraintExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF NumericSymbolicExpression THEN ValueListInExpression ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF NumericSymbolicExpression THEN ValueListInExpression ElseIfExpressionList ELSE ValueListInExpression ENDIF
+                            | IF NumericSymbolicExpression THEN ValueListInExpression ElseIfExpressionList ELSE Identifier ENDIF
+
+                            | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE ConstraintExpression ENDIF
+                            | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE ValueListInExpression ENDIF'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
+      
+    if isinstance(t[4], Identifier):
+      t[4] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[4])])
+
+    if isinstance(t[7], Identifier):
+      t[7] = LogicalExpression([EntryLogicalExpressionNumericOrSymbolic(t[7])])
+
+    t[0] = ConditionalConstraintExpression(t[2], t[4])
+    t[0].addElseIfExpression(t[5])
+    t[0].addElseExpression(t[7])
+
 
 def p_EntryConstraintLogicalExpression(t):
     '''EntryConstraintLogicalExpression : NumericSymbolicExpression LE SetExpression
@@ -1914,13 +2037,53 @@ def p_ConditionalSetExpression(t):
     if isinstance(t[4], Identifier):
       t[4] = SetExpressionWithValue(t[4])
 
-    if len(t) > 5 and isinstance(t[6], Identifier):
+    if len(t) > 6 and isinstance(t[6], Identifier):
       t[6] = SetExpressionWithValue(t[6])
 
     t[0] = ConditionalSetExpression(t[2], t[4])
 
-    if len(t) > 5:
+    if len(t) > 6:
       t[0].addElseExpression(t[6])
+
+def p_ConditionalSetExpressionWithElseIfExpression(t):
+    '''ConditionalSetExpression : IF ConstraintExpression THEN SetExpression ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF ConstraintExpression THEN SetExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                | IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF ConstraintExpression THEN SetExpression ElseIfExpressionList ENDIF
+
+                                | IF ValueListInExpression THEN SetExpression ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF ValueListInExpression THEN SetExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF ValueListInExpression THEN ElseIfExpressionList SetExpression ENDIF
+
+                                | IF Identifier THEN SetExpression ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF Identifier THEN SetExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                | IF Identifier THEN Identifier ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF Identifier THEN SetExpression ElseIfExpressionList ENDIF
+
+                                | IF NumericSymbolicExpression THEN SetExpression ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF NumericSymbolicExpression THEN SetExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE SetExpression ENDIF
+                                | IF NumericSymbolicExpression THEN ElseIfExpressionList SetExpression ENDIF'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
+    
+    if isinstance(t[4], Identifier):
+      t[4] = SetExpressionWithValue(t[4])
+
+    if len(t) > 7 and isinstance(t[7], Identifier):
+      t[7] = SetExpressionWithValue(t[7])
+
+    t[0] = ConditionalSetExpression(t[2], t[4])
+
+    t[0].addElseIfExpression(t[5])
+
+    if len(t) > 7:
+      t[0].addElseExpression(t[7])
 
 def p_ExpressionList(t):
     '''ExpressionList : Identifier FOR IndexingExpression
@@ -2598,6 +2761,55 @@ def p_ConditionalNumericExpression(t):
 
     if len(t) > 6:
       t[0].addElseExpression(t[6])
+
+def p_ConditionalNumericExpressionWithElseIfExpression(t):
+    '''ConditionalNumericExpression : IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF ConstraintExpression THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ENDIF
+
+                                    | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF ValueListInExpression THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ENDIF
+
+                                    | IF Identifier THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF Identifier THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF Identifier THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ENDIF
+
+                                    | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ENDIF'''
+
+    if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
+      t[2] = EntryLogicalExpressionNumericOrSymbolic(t[2])
+
+    if not isinstance(t[2], LogicalExpression):
+      t[2] = LogicalExpression([t[2]])
+    
+    if isinstance(t[4], Identifier):
+      t[4] = ValuedNumericExpression(t[4])
+
+    if len(t) > 7 and isinstance(t[7], Identifier):
+      t[7] = ValuedNumericExpression(t[7])
+
+    t[0] = ConditionalNumericExpression(t[2], t[4])
+
+    t[0].addElseIfExpression(t[5])
+
+    if len(t) > 7:
+      t[0].addElseExpression(t[7])
+
 
 def p_Range(t):
     '''Range : Identifier DOTS Identifier BY Identifier

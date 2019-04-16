@@ -175,36 +175,47 @@ class ConditionalConstraintExpression(ConstraintExpression):
     Class representing a conditional constraint expression node in the AST of a MLP
     """
     
-    def __init__(self, logicalExpression, constraintExpression1, constraintExpression2 = None):
+    def __init__(self, logicalExpression, constraintExpression1, constraintExpression2 = None, elseIfExpression = None):
         """
         Set the conditional constraint expression
         
         :param logicalExpression     : LogicalExpression
         :param constraintExpression1 : ConstraintExpression
         :param constraintExpression2 : ConstraintExpression
+        :param elseIfExpression      : ElseIfExpressionList
         """
         ConstraintExpression.__init__(self)
         
-        self.logicalExpression      = logicalExpression
-        self.constraintExpression1  = constraintExpression1
-        self.constraintExpression2  = constraintExpression2
+        self.logicalExpression     = logicalExpression
+        self.constraintExpression1 = constraintExpression1
+        self.constraintExpression2 = constraintExpression2
+        self.elseIfExpression   = elseIfExpression
         
     def __str__(self):
         """
         to string
         """
-        res = "ConditionalConstraintExpression: " + "("+str(self.logicalExpression)+")?" + str(self.constraintExpression1)
+        res = "ConditionalConstraintExpression: " + "IF ("+str(self.logicalExpression)+") THEN " + str(self.constraintExpression1)
         
+        if self.elseIfExpression != None:
+            res += str(self.elseIfExpression)
+
         if self.constraintExpression2 != None:
-            res += ": " + str(self.constraintExpression2)
+            res += "ELSE " + str(self.constraintExpression2)
         
         return res
+
+    def addElseIfExpression(self, elseIfExpression):
+        self.elseIfExpression = elseIfExpression
 
     def addElseExpression(self, elseExpression):
         self.constraintExpression2 = elseExpression
 
     def getDependencies(self, codeGenerator):
         dep = self.logicalExpression.getDependencies(codeGenerator) + self.constraintExpression1.getDependencies(codeGenerator)
+
+        if self.elseIfExpression != None:
+            dep += self.elseIfExpression.getDependencies(codeGenerator)
 
         if self.constraintExpression2 != None:
             dep += self.constraintExpression2.getDependencies(codeGenerator)

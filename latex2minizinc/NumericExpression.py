@@ -454,13 +454,14 @@ class ConditionalNumericExpression(NumericExpression):
     Class representing a conditional numeric expression node in the AST of a MLP
     """
     
-    def __init__(self, logicalExpression, numericExpression1, numericExpression2 = None):
+    def __init__(self, logicalExpression, numericExpression1, numericExpression2 = None, elseIfExpression = None):
         """
         Set the conditional numeric expression
         
-        :param logicalExpression : LogicalExpression
-        :param numericExpression1: NumericExpression
-        :param numericExpression2: NumericExpression
+        :param logicalExpression  : LogicalExpression
+        :param numericExpression1 : NumericExpression
+        :param numericExpression2 : NumericExpression
+        :param elseIfExpression   : ElseIfExpressionList
         """
 
         NumericExpression.__init__(self)
@@ -468,23 +469,33 @@ class ConditionalNumericExpression(NumericExpression):
         self.logicalExpression  = logicalExpression
         self.numericExpression1 = numericExpression1
         self.numericExpression2 = numericExpression2
+        self.elseIfExpression   = elseIfExpression
     
     def __str__(self):
         """
         to string
         """
-        res = "CondNumExpr: " + "("+str(self.logicalExpression)+")?" + str(self.numericExpression1)
+        res = "ConditionalNumericExpression: " + "IF ("+str(self.logicalExpression)+") THEN " + str(self.numericExpression1)
+
+        if self.elseIfExpression != None:
+            res += str(self.elseIfExpression)
 
         if self.numericExpression2 != None:
-            res += ": " + str(self.numericExpression2)
+            res += "ELSE " + str(self.numericExpression2)
 
         return res
+
+    def addElseIfExpression(self, elseIfExpression):
+        self.elseIfExpression = elseIfExpression
 
     def addElseExpression(self, elseExpression):
         self.numericExpression2 = elseExpression
     
     def getDependencies(self, codeGenerator):
         dep = self.logicalExpression.getDependencies(codeGenerator) + self.numericExpression1.getDependencies(codeGenerator)
+
+        if self.elseIfExpression != None:
+            dep += self.elseIfExpression.getDependencies(codeGenerator)
 
         if self.numericExpression2 != None:
             dep += self.numericExpression2.getDependencies(codeGenerator)

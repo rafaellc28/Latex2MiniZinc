@@ -1313,17 +1313,31 @@ class CodePrepare:
         node.linearExpression2.prepare(self)
 
     def prepare_ConstraintExpression3(self, node):
-
     	node.numericExpression1.prepare(self)
         node.linearExpression.prepare(self)
         node.numericExpression2.prepare(self)
-    
+        
     def prepare_LogicalConstraintExpression(self, node):
         node.logicalExpression.prepare(self)
         node.constraintExpression1.prepare(self)
 
         if node.constraintExpression2:
             node.constraintExpression2.prepare(self)
+
+    def _prepareElseIfExpression(self, expression):
+        stmtIndex = expression.getSymbolTable().getStatement()
+        scope = expression.getSymbolTable().getScope()
+
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ElseIfExpression"}
+
+        expression.prepare(self)
+
+    def prepare_ElseIfExpression(self, node):
+        node.logicalExpression.prepare(self)
+        node.expression.prepare(self)
+
+    def prepare_ElseIfExpressionList(self, node):
+        map(lambda el: self._prepareElseIfExpression(el), node.expressions)
 
     def prepare_ConditionalConstraintExpression(self, node):
 
@@ -1335,6 +1349,9 @@ class CodePrepare:
         self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalConstraintExpression1"}
 
         node.constraintExpression1.prepare(self)
+
+        if node.elseIfExpression:
+            node.elseIfExpression.prepare(self)
 
         if node.constraintExpression2:
             stmtIndex = node.constraintExpression2.getSymbolTable().getStatement()
@@ -1389,15 +1406,18 @@ class CodePrepare:
 
             node.linearExpression1.prepare(self)
 
+        if node.elseIfExpression:
+            node.elseIfExpression.prepare(self)
+
+        if node.linearExpression2:
+
             if node.linearExpression2:
+                stmtIndex = node.linearExpression2.getSymbolTable().getStatement()
+                scope = node.linearExpression2.getSymbolTable().getScope()
 
-                if node.linearExpression2:
-                    stmtIndex = node.linearExpression2.getSymbolTable().getStatement()
-                    scope = node.linearExpression2.getSymbolTable().getScope()
+                self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalLinearExpression2"}
 
-                    self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalLinearExpression2"}
-
-                node.linearExpression2.prepare(self)
+            node.linearExpression2.prepare(self)
 
     # True or False Expression
     def prepare_TrueFalse(self, node):
@@ -1471,6 +1491,9 @@ class CodePrepare:
         self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalNumericExpression1"}
 
         node.numericExpression1.prepare(self)
+
+        if node.elseIfExpression:
+            node.elseIfExpression.prepare(self)
 
         if node.numericExpression2:
             stmtIndex = node.numericExpression2.getSymbolTable().getStatement()
@@ -1777,6 +1800,9 @@ class CodePrepare:
         scope = node.setExpression1.getSymbolTable().getScope()
 
         self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_ConditionalSetExpression"}
+
+        if node.elseIfExpression:
+            node.elseIfExpression.prepare(self)
 
         if node.setExpression2:
 

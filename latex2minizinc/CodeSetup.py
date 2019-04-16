@@ -427,6 +427,27 @@ class CodeSetup:
             self.level = previousLevel
             self.currentTable = previousTable
 
+    def _setupElseIfExpression(self, expression):
+        previousLevel = self.level
+        previousTable = self.currentTable
+        
+        self.level += 1
+        self.currentTable.setIsLeaf(False)
+        self.currentTable = self.codeGenerator.symbolTables.insert(self.stmtIndex, SymbolTable(self.stmtIndex, self.currentTable, True), self.level)
+
+        expression.setupEnvironment(self)
+
+        self.level = previousLevel
+        self.currentTable = previousTable
+
+    def setupEnvironment_ElseIfExpression(self, node):
+        node.setSymbolTable(self.currentTable)
+        node.logicalExpression.setupEnvironment(self)
+        node.expression.setupEnvironment(self)
+
+    def setupEnvironment_ElseIfExpressionList(self, node):
+        node.setSymbolTable(self.currentTable)
+        map(lambda el: self._setupElseIfExpression(el), node.expressions)
 
     def setupEnvironment_ConditionalConstraintExpression(self, node):
         """
@@ -447,6 +468,9 @@ class CodeSetup:
 
         self.level = previousLevel
         self.currentTable = previousTable
+
+        if node.elseIfExpression:
+            node.elseIfExpression.setupEnvironment(self)
 
         if node.constraintExpression2 != None:
             previousLevel = self.level
@@ -552,6 +576,9 @@ class CodeSetup:
 
             self.level = previousLevel
             self.currentTable = previousTable
+
+        if node.elseIfExpression:
+            node.elseIfExpression.setupEnvironment(self)
 
         if node.linearExpression2 != None:
             previousLevel = self.level
@@ -818,6 +845,9 @@ class CodeSetup:
 
         self.level = previousLevel
         self.currentTable = previousTable
+
+        if node.elseIfExpression:
+            node.elseIfExpression.setupEnvironment(self)
 
         if node.numericExpression2 != None:
             previousLevel = self.level
@@ -1499,6 +1529,9 @@ class CodeSetup:
 
         self.level = previousLevel
         self.currentTable = previousTable
+
+        if node.elseIfExpression:
+            node.elseIfExpression.setupEnvironment(self)
 
         if node.setExpression2 != None:
             previousLevel = self.level

@@ -344,36 +344,47 @@ class ConditionalSetExpression(SetExpression):
     Class representing a conditional set expression node in the AST
     """
     
-    def __init__(self, logicalExpression, setExpression1, setExpression2 = None):
+    def __init__(self, logicalExpression, setExpression1, setExpression2 = None, elseIfExpression = None):
         """
         Set the conditional set expression
         
         :param logicalExpression : LogicalExpression
         :param setExpression1    : SetExpression
         :param setExpression2    : SetExpression
+        :param elseIfExpression  : ElseIfExpressionList
         """
         SetExpression.__init__(self)
 
         self.logicalExpression = logicalExpression
         self.setExpression1    = setExpression1
         self.setExpression2    = setExpression2
+        self.elseIfExpression  = elseIfExpression
     
     def __str__(self):
         """
         to string
         """
-        res = "ConditionalSetExpression: " + "("+str(self.logicalExpression)+")?" + str(self.setExpression1)
+        res = "ConditionalSetExpression: " + "IF ("+str(self.logicalExpression)+") THEN " + str(self.setExpression1)
         
+        if self.elseIfExpression != None:
+            res += str(self.elseIfExpression)
+
         if self.setExpression2 != None:
-            res += ": " + str(self.setExpression2)
+            res += " ELSE " + str(self.setExpression2)
         
         return res
+
+    def addElseIfExpression(self, elseIfExpression):
+        self.elseIfExpression = elseIfExpression
 
     def addElseExpression(self, elseExpression):
         self.setExpression2 = elseExpression
 
     def getDependencies(self, codeGenerator):
         dep = self.logicalExpression.getDependencies(codeGenerator) + self.setExpression1.getDependencies(codeGenerator)
+
+        if self.elseIfExpression != None:
+            dep += self.elseIfExpression.getDependencies(codeGenerator)
 
         if self.setExpression2 != None:
             dep += self.setExpression2.getDependencies(codeGenerator)

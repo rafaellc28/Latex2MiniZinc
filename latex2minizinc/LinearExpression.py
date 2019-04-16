@@ -209,38 +209,57 @@ class ConditionalLinearExpression(LinearExpression):
     Class representing a conditional linear expression node in the AST of a MLP
     """
     
-    def __init__(self, logicalExpression, linearExpression1 = None, linearExpression2 = None):
+    def __init__(self, logicalExpression, linearExpression1 = None, linearExpression2 = None, elseIfExpression = None):
         """
         Set the conditional linear expression
         
         :param logicalExpression : LogicalExpression
         :param linearExpression1 : LinearExpression
         :param linearExpression2 : LinearExpression
+        :param elseIfExpression  : ElseIfExpressionList
         """
         LinearExpression.__init__(self)
         
         self.logicalExpression = logicalExpression
         self.linearExpression1 = linearExpression1
         self.linearExpression2 = linearExpression2
+        self.elseIfEpression   = elseIfEpression
     
     def __str__(self):
         """
         to string
         """
-        res = "CondLinearExpr: " + " IF "+str(self.logicalExpression)
+        res = "ConditionalLinearExpression: " + " IF "+str(self.logicalExpression)
 
         if self.linearExpression1:
             res += " THEN " + str(self.linearExpression1)
-            
-            if self.linearExpression2 != None:
-                res += " ELSE " + str(self.linearExpression2)
+
+        if self.elseIfExpression:
+            res += str(self.elseIfExpression)
+
+        if self.linearExpression2 != None:
+            res += " ELSE " + str(self.linearExpression2)
 
         res += " ENDIF "
 
         return res
+
+    def addElseIfExpression(self, elseIfExpression):
+        self.elseIfExpression = elseIfExpression
     
     def addElseExpression(self, elseExpression):
         self.linearExpression2 = elseExpression
+
+    def getDependencies(self, codeGenerator):
+        dep = self.logicalExpression.getDependencies(codeGenerator) + self.linearExpression1.getDependencies(codeGenerator)
+
+        if self.elseIfExpression != None:
+            dep += self.elseIfExpression.getDependencies(codeGenerator)
+
+        if self.linearExpression2 != None:
+            dep += self.linearExpression2.getDependencies(codeGenerator)
+
+        return list(set(dep))
 
     def setupEnvironment(self, codeSetup):
         """

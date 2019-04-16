@@ -1730,7 +1730,7 @@ class CodeGenerator:
 
         if not self.isLetExpressionArgument and not self.isConstraintInLetExpression and not self.isWithinOtherExpression:
             res += END_STATEMENT
-        
+            
         return res
 
     def generateCode_ConstraintExpression2(self, node):
@@ -1756,9 +1756,17 @@ class CodeGenerator:
 
         return res
 
-    def generateCode_ConditionalConstraintExpression(self, node):
+    def generateCode_ElseIfExpression(self, node):
+        return ELSEIF + SPACE + node.logicalExpression.generateCode(self) + SPACE + THEN + SPACE + node.expression.generateCode(self)
 
+    def generateCode_ElseIfExpressionList(self, node):
+        return SPACE.join(map(lambda el: el.generateCode(self), node.expressions))
+
+    def generateCode_ConditionalConstraintExpression(self, node):
         res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.constraintExpression1.generateCode(self)
+
+        if node.elseIfExpression:
+            res += SPACE + node.elseIfExpression.generateCode(self)
 
         if node.constraintExpression2:
             res += SPACE+ELSE+SPACE + node.constraintExpression2.generateCode(self)
@@ -1769,7 +1777,6 @@ class CodeGenerator:
         res += SPACE+ENDIF
 
         return res
-
 
     # Linear Expression
     def generateCode_ValuedLinearExpression(self, node):
@@ -1818,10 +1825,13 @@ class CodeGenerator:
         if node.linearExpression1:
             res += SPACE+THEN+SPACE + node.linearExpression1.generateCode(self)
 
-            if node.linearExpression2:
-                res += SPACE+ELSE+SPACE + node.linearExpression2.generateCode(self)
+        if node.elseIfExpression:
+            res += SPACE + node.elseIfExpression.generateCode(self)
 
-            res += SPACE+ENDIF
+        if node.linearExpression2:
+            res += SPACE+ELSE+SPACE + node.linearExpression2.generateCode(self)
+
+        res += SPACE+ENDIF
 
         return res
 
@@ -2126,6 +2136,9 @@ class CodeGenerator:
     def generateCode_ConditionalNumericExpression(self, node):
 
         res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.numericExpression1.generateCode(self)
+
+        if node.elseIfExpression:
+            res += SPACE + node.elseIfExpression.generateCode(self)
 
         if node.numericExpression2:
             res += SPACE+ELSE+SPACE + node.numericExpression2.generateCode(self)
@@ -2495,6 +2508,9 @@ class CodeGenerator:
 
     def generateCode_ConditionalSetExpression(self, node):
         res = IF+SPACE + node.logicalExpression.generateCode(self) + SPACE+THEN+SPACE + node.setExpression1.generateCode(self)
+
+        if node.elseIfExpression:
+            res += SPACE + node.elseIfExpression.generateCode(self)
 
         if node.setExpression2:
             res += SPACE+ELSE+SPACE + node.setExpression2.generateCode(self)
