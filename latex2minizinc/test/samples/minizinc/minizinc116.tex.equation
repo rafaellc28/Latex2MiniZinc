@@ -1,0 +1,23 @@
+% specialization-examples/workshops/elephant1_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{predicate } elephant\_moves(food\_here \in FOOD, \in \mathbb{V}; water\_here \in WATER, \in \mathbb{V}) \{\\
+	\text{ let } (food\_there \in FOOD, \in \mathbb{V} := F - food\_here; water\_there \in WATER, \in \mathbb{V} := W - water\_here) \{\\
+		food\_there = water\_there \land food\_there > food\_here \land water\_there > water\_here\\
+	\}\\
+\}\\
+\text{predicate } elephant(pos \in POS, \in \mathbb{V}; food\_here \in FOOD, \in \mathbb{V}; water\_here \in WATER, \in \mathbb{V}; new\_pos \in POS, \in \mathbb{V}) \{\\
+	\text{ let } (b \in \mathbb{B}, \in \mathbb{V} := elephant\_moves(food\_here, water\_here)) \{\\
+		new\_pos = [pos,opposite_{pos}][b+1] \land (b \lor (food\_here = 0 \iff water\_here = 0))\\
+	\}\\
+\}\\
+pos_{0} = bank \land food_{0} = F \land water_{0} = W\\
+food_{t} = food_{t-1} - move\_food_{t}: t \in TIME\\
+water_{t} = water_{t-1} - move\_water_{t}: t \in TIME//\\
+|move\_food_{t} + move\_water_{t}| \leq G: t \in TIME\\
+move\_food_{t} * move\_water_{t} \geq 0: t \in TIME\\
+t > end \implies (move\_food_{t} = 0 \land move\_water_{t} = 0): t \in TIME\\
+\text{if } pos_{t-1} = bank \text{ then } elephant(bank,food_{t-1},water_{t-1},pos_{t}) \text{ else } elephant(boat,F-food_{t-1},W-water_{t-1},pos_{t}) \text{ endif }: t \in TIME\\
+pos_{end} = boat \land food_{end} = F \land water_{end} = W\\
+opposite_{p} \in POS, := [boat,bank]: p \in POS; POS := \{bank, boat\};\\
+TIME := 1 \dots T; TIME0 := 0 \dots T; GUARD := 1 \dots G; GUARD0 := 0 \dots G; FOOD := 0 \dots F; WATER := 0 \dots W\\
+pos_{t} \in POS; food_{t} \in FOOD; water_{t} \in WATER; pos, food, water \in \mathbb{V}: t \in TIME0\\
+move\_food_{t} \in -F \dots F, \in \mathbb{V}; move\_water_{t} \in -W \dots W, \in \mathbb{V}; end \in TIME: t \in TIME\\

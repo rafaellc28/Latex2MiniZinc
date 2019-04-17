@@ -1167,12 +1167,13 @@ class CodeGenerator:
 
             setExpression = self._getDomainByIdentifier(var)
 
-            _types = Utils._splitDomain(setExpression, COMMA)
-            if pos < len(_types):
-                _type_aux = _types[pos]
+            if setExpression:
+                _types = Utils._splitDomain(setExpression, COMMA)
+                if pos < len(_types):
+                    _type_aux = _types[pos]
 
-                if not FROM_TO in _type_aux:
-                    _type = _type_aux
+                    if not FROM_TO in _type_aux:
+                        _type = _type_aux
 
         return _type
 
