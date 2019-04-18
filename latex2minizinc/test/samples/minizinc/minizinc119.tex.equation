@@ -1,0 +1,5 @@
+% specialization-examples/CP/flattening/flattening14.mzn. From https://github.com/MiniZinc/specialization-examples
+(\text{let } (x \in \mathbb{Z}, \in \mathbb{V} := 9 \text{ div } y) \{\\
+	x * y \neq 9\\
+\}) \implies y \neq 2\\
+y, \in -3 \dots 3, \in \mathbb{V}\\

@@ -1,0 +1,6 @@
+% specialization-examples/CP/flattening/flattening12.mzn. From https://github.com/MiniZinc/specialization-examples
+\neg (8 \geq \sum_{i \in 1 \dots 2}\sqrt{a_{i}})\\
+\text{function } sqrt(x \in \mathbb{Z}, \in \mathbb{V}) \in \mathbb{Z}, \in \mathbb{V} \{\\
+	\text{let } (y \in \mathbb{Z}, \in \mathbb{V}; y * y = x \land y \geq 0) \{y\}\\
+\}\\
+a_{i}, \in 0 \dots 25, \in \mathbb{V}: i \in 1 \dots 2\\

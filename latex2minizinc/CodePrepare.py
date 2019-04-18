@@ -1305,7 +1305,7 @@ class CodePrepare:
             
         if node.indexingExpression:
             node.indexingExpression.prepare(self)
-            
+        
         node.constraintExpression.prepare(self)
 
     def prepare_ConstraintExpression2(self, node):
@@ -1452,12 +1452,16 @@ class CodePrepare:
         node.value.prepare(self)
 
     def prepare_NumericExpressionBetweenParenthesis(self, node):
-
+        
         stmtIndex = node.getSymbolTable().getStatement()
         scope = node.getSymbolTable().getScope()
         
-        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_NumericExpressionBetweenParenthesis", CONTEXT: "(" + node.numericExpression.generateCode(self.codeGenerator) + ")"}
+        self.codeGenerator.scopes[stmtIndex][scope] = {WHERE: "generateCode_NumericExpressionBetweenParenthesis"}
+
         node.numericExpression.prepare(self)
+
+        
+        
 
     def prepare_NumericExpressionWithArithmeticOperation(self, node):
 
@@ -2070,7 +2074,6 @@ class CodePrepare:
 
             else:
                 preparedArguments.addArgument(arg)
-
 
         node.origin.setPreparedArguments(preparedArguments)
 
