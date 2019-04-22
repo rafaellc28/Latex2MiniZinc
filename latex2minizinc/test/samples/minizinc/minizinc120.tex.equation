@@ -1,0 +1,3 @@
+% specialization-examples/CP/bounds_propagation/bounds_propagation1.mzn. From https://github.com/MiniZinc/specialization-examples
+X = |Y|\\
+X \in -7 \dots 4; Y \in -5 \dots -3; X, Y \in \mathbb{V}\\

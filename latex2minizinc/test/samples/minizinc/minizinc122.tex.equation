@@ -1,0 +1,3 @@
+% specialization-examples/CP/bounds_propagation/bounds_propagation3.mzn. From https://github.com/MiniZinc/specialization-examples
+4*W + 3*P + 2*C \leq 9\\
+W, P, C \in 0 \dots 9, \in \mathbb{V}\\
