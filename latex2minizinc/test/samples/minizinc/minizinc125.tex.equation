@@ -1,0 +1,5 @@
+% specialization-examples/CP/cumulative/gate_crossing.mzn. From https://github.com/MiniZinc/specialization-examples
+H + 15 \leq Ca\\
+H \leq 15 \land Co \leq 18 \land Ca \leq 20 \land T \leq 22\\
+cumulative([H,Co,Ca,T],[15,12,10,8],[3,1,2,2],4)\\
+H, Co, Ca, T \in 0 \dots 30, \in \mathbb{V}\\
