@@ -1,0 +1,7 @@
+% specialization-examples/CP/flattening/flattening5.mzn. From https://github.com/MiniZinc/specialization-examples
+x_{i} \geq 0: i \in OBJ\\
+\sum_{i \in OBJ} size_{i}*x_{i} \leq limit\\
+\text{maximize } \sum_{i \in OBJ} value_{i}*x_{i}\\
+OBJ := 1 \dots n; n := 4; size := [5,8,9,12]; value := [3,5,7,8]; limit := 29\\
+size_{o}, value_{o}, x_{o}, limit \in \mathbb{Z};\\
+size, value, limit \in \mathbb{P}\\
