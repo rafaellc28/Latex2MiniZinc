@@ -1,0 +1,3 @@
+% specialization-examples/CP/flattening/flattening7.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{ if } b \text{ then } x \text{ else } y \text{ endif } \geq 0\\
+x, y \in \mathbb{R}; x \in -2 \dots 2; y \in -1 \dots 2; b \in \mathbb{B}\\

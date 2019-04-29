@@ -1,0 +1,4 @@
+% specialization-examples/CP/flattening/flattening6.mzn. From https://github.com/MiniZinc/specialization-examples
+\sum_{i \in 0 \dots 2}x_{i,i} \leq 1\\
+x_{x_{1,1},1} = 2\\
+x_{i,i} \in 0 \dots 2, \in \mathbb{R}: i \in 0 \dots 2\\

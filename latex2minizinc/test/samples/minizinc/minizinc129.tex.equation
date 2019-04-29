@@ -1,0 +1,3 @@
+% specialization-examples/CP/flattening/flattening8.mzn. From https://github.com/MiniZinc/specialization-examples
+x > 0 \implies bool2int(y > 0 \land z > 0) + t \geq u\\
+x, y, z, u, t \in \mathbb{R}; x, z \in -2 \dots 2; y, u \in -1 \dots 2; t \in 0 \dots 3\\
