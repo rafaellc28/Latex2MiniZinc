@@ -1,0 +1,4 @@
+% specialization-examples/CP/flattening/flattening1.mzn. From https://github.com/MiniZinc/specialization-examples
+x*y + y*z \leq i*j\\
+i := 3; j := 2; i, j \in \mathbb{P}; y, z \in \mathbb{R};\\
+x, i, j \in \mathbb{Z}; y \in 0 \dots 2; z \in 0 \dots 3\\

@@ -1,0 +1,3 @@
+% specialization-examples/CP/domain_propagation/domain_propagation1.mzn. From https://github.com/MiniZinc/specialization-examples
+X = 3*Y + 5*Z\\
+X, Y, Z \in \mathbb{R}; X \in 2 \dots 7; Y \in 0 \dots 2; Z \in -1 \dots 2\\

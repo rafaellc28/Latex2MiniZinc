@@ -1,0 +1,4 @@
+% specialization-examples/CP/flattening/flattening2.mzn. From https://github.com/MiniZinc/specialization-examples
+(x - i) * (x - j) + y + z + i + j \geq 0\\
+i, j := 3, \in \mathbb{Z}, \in \mathbb{P};\\
+x, y, z \in \mathbb{R}; x \in 0 \dots 5; y \in 0 \dots 2; z \in 0 \dots 3\\

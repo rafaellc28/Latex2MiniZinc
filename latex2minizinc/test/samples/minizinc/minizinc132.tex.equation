@@ -1,0 +1,3 @@
+% specialization-examples/CP/flattening/flattening3.mzn. From https://github.com/MiniZinc/specialization-examples
+x * x + y * y \leq 6\\
+x, y \in \mathbb{R}; x \in -2 \dots 2; y \in 0 \dots 4\\
