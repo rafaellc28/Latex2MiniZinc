@@ -1,0 +1,10 @@
+% specialization-examples/CP/optimization/yaocao.mzn. From https://github.com/MiniZinc/specialization-examples
+assert(n \geq w,"Window Size larger than # of steps")\\
+total\_nutrient \leq capacity\\
+\sum_{i \in tail-w+1 \dots tail}leave\_list_{i} \geq p: tail \in w \dots n\\
+\text{maximize } total\_leaves\\
+POTIONS := 1 \dots n; SEGMENTS := 1 \dots m\\
+total\_nutrient, total\_leaves, nutrient_{p,s}, leave_{p,s}, nutrient\_list_{p}, leave\_list_{p}, choice_{p} \in \mathbb{Z}: p \in POTIONS, s \in SEGMENTS\\
+total\_nutrient := sum(nutrient\_list); total\_leaves := sum(leave\_list);\\
+nutrient\_list := [nutrient_{i,choice_{i}}: i \in POTIONS]; leave\_list := [leave_{i,choice_{i}}: i \in POTIONS]\\
+nutrient, leave, choice \in \mathbb{P}; choice \in SEGMENTS\\

@@ -1,0 +1,3 @@
+% specialization-examples/CP/alldifferent/monster_defence.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent([X,Y,Z,T,U])\\
+X, Y, Z, T, U \in \mathbb{R}; X \in \{1,2,3\}; Y, Z \in \{2,3\}; T \in \{1,2,3,4,5\}; U \in \{3,4,5,6\}\\
