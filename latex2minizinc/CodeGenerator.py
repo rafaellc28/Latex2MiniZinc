@@ -1837,9 +1837,7 @@ class CodeGenerator:
         return res
 
     def _getNumericFunction(self, function):
-        if function == NumericExpressionWithFunction.LOG:
-            function = LN
-        elif function == TRUNC:
+        if function == TRUNC:
             function = NumericExpressionWithFunction.FLOOR
 
         return function

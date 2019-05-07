@@ -4,7 +4,7 @@ array[INDEX_SET_a_1] of float: a = array1d(INDEX_SET_a_1, [pow(2,k + n + 1) + po
 
 float: b = 0.5 * floor(sum(j in 1..n)(a[j]));
 
-float: log2n = ln(n) / ln(2);
+float: log2n = log(n) / log(2);
 
 float: k = floor(log2n);
 

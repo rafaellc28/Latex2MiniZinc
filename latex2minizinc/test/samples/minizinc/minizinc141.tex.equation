@@ -1,0 +1,5 @@
+% specialization-examples/CP/restart/domwdeg.mzn. From https://github.com/MiniZinc/specialization-examples
+sum(b) \geq 1\\
+alldifferent(x) \land x_{1} = x_{2}\\
+b_{i}, x_{j} \in \mathbb{R}; b_{i} \in 0 \dots 1; x_{j} \in 1 \dots 100: i \in 1 \dots 15, j \in 1 \dots 4\\
+vlist_{i} \in \mathbb{Z}, := [b_{i}: i \in 1 \dots 15] ++ [x_{i}: i \in 1 \dots 4]: i \in 1 \dots 19\\

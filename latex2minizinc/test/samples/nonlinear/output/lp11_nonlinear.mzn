@@ -18,7 +18,7 @@ constraint x[3] + x[7] + x[8] + 2 * x[9] + x[10] = 1.5;
 
 
 
-solve minimize sum(i in I)(x[i] * (c[i] + ln(x[i] / (sum(k in I)(x[k])))));
+solve minimize sum(i in I)(x[i] * (c[i] + log(x[i] / (sum(k in I)(x[k])))));
 
 
 
