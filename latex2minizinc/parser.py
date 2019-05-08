@@ -2719,31 +2719,55 @@ def p_FunctionNumericExpression(t):
 
 def p_ConditionalNumericExpression(t):
     '''ConditionalNumericExpression : IF ConstraintExpression THEN Identifier ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN Identifier ELSE TrueFalse ENDIF
                                     | IF ConstraintExpression THEN Identifier ELSE NumericSymbolicExpression ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ELSE TrueFalse ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ELSE NumericSymbolicExpression ENDIF
                                     | IF ConstraintExpression THEN NumericSymbolicExpression ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ELSE TrueFalse ENDIF
                                     | IF ConstraintExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression ENDIF
                                     | IF ConstraintExpression THEN Identifier ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ENDIF
                                     | IF ConstraintExpression THEN NumericSymbolicExpression ENDIF
 
                                     | IF ValueListInExpression THEN Identifier ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN Identifier ELSE TrueFalse ENDIF
                                     | IF ValueListInExpression THEN Identifier ELSE NumericSymbolicExpression ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ELSE TrueFalse ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ELSE NumericSymbolicExpression ENDIF
                                     | IF ValueListInExpression THEN NumericSymbolicExpression ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN NumericSymbolicExpression ELSE TrueFalse ENDIF
                                     | IF ValueListInExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression ENDIF
                                     | IF ValueListInExpression THEN Identifier ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ENDIF
                                     | IF ValueListInExpression THEN NumericSymbolicExpression ENDIF
 
                                     | IF Identifier THEN Identifier ELSE Identifier ENDIF
+                                    | IF Identifier THEN Identifier ELSE TrueFalse ENDIF
                                     | IF Identifier THEN Identifier ELSE NumericSymbolicExpression ENDIF
+                                    | IF Identifier THEN TrueFalse ELSE Identifier ENDIF
+                                    | IF Identifier THEN TrueFalse ELSE TrueFalse ENDIF
+                                    | IF Identifier THEN TrueFalse ELSE NumericSymbolicExpression ENDIF
                                     | IF Identifier THEN NumericSymbolicExpression ELSE Identifier ENDIF
+                                    | IF Identifier THEN NumericSymbolicExpression ELSE TrueFalse ENDIF
                                     | IF Identifier THEN NumericSymbolicExpression ELSE NumericSymbolicExpression ENDIF
                                     | IF Identifier THEN Identifier ENDIF
+                                    | IF Identifier THEN TrueFalse ENDIF
                                     | IF Identifier THEN NumericSymbolicExpression ENDIF
 
                                     | IF NumericSymbolicExpression THEN Identifier ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN Identifier ELSE TrueFalse ENDIF
                                     | IF NumericSymbolicExpression THEN Identifier ELSE NumericSymbolicExpression ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ELSE TrueFalse ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ELSE NumericSymbolicExpression ENDIF
                                     | IF NumericSymbolicExpression THEN NumericSymbolicExpression ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ELSE TrueFalse ENDIF
                                     | IF NumericSymbolicExpression THEN NumericSymbolicExpression ELSE NumericSymbolicExpression ENDIF
                                     | IF NumericSymbolicExpression THEN Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ENDIF
                                     | IF NumericSymbolicExpression THEN NumericSymbolicExpression ENDIF'''
 
     if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):
@@ -2765,31 +2789,55 @@ def p_ConditionalNumericExpression(t):
 
 def p_ConditionalNumericExpressionWithElseIfExpression(t):
     '''ConditionalNumericExpression : IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF ConstraintExpression THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ElseIfExpressionList ELSE TrueFalse ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF ConstraintExpression THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF ConstraintExpression THEN TrueFalse ElseIfExpressionList ENDIF
                                     | IF ConstraintExpression THEN NumericSymbolicExpression ElseIfExpressionList ENDIF
 
                                     | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF ValueListInExpression THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ElseIfExpressionList ELSE TrueFalse ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF ValueListInExpression THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF ValueListInExpression THEN TrueFalse ElseIfExpressionList ENDIF
                                     | IF ValueListInExpression THEN NumericSymbolicExpression ElseIfExpressionList ENDIF
 
                                     | IF Identifier THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF Identifier THEN Identifier ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF Identifier THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF Identifier THEN TrueFalse ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF Identifier THEN TrueFalse ElseIfExpressionList ELSE TrueFalse ENDIF
+                                    | IF Identifier THEN TrueFalse ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF Identifier THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF Identifier THEN TrueFalse ElseIfExpressionList ENDIF
                                     | IF Identifier THEN NumericSymbolicExpression ElseIfExpressionList ENDIF
 
                                     | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ElseIfExpressionList ELSE TrueFalse ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE Identifier ENDIF
+                                    | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE TrueFalse ENDIF
                                     | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ELSE NumericSymbolicExpression ENDIF
                                     | IF NumericSymbolicExpression THEN Identifier ElseIfExpressionList ENDIF
+                                    | IF NumericSymbolicExpression THEN TrueFalse ElseIfExpressionList ENDIF
                                     | IF NumericSymbolicExpression THEN NumericSymbolicExpression ElseIfExpressionList ENDIF'''
 
     if isinstance(t[2], NumericExpression) or isinstance(t[2], SymbolicExpression) or isinstance(t[2], Identifier):

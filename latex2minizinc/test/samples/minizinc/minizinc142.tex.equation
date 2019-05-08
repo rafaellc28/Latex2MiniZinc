@@ -1,0 +1,7 @@
+% specialization-examples/CP/start/herbs.mzn. From https://github.com/MiniZinc/specialization-examples
+table([herb_{i,j},herb_{i,j+1}], compat): i \in 1 \dots r, j \in 1 \dots c-1\\
+global\_cardinality\_low\_up([herb_{i,j}: i \in 1 \dots r], [Metal,Earth], [1,1], [2,2]): j \in 1 \dots c\\
+herb_{1,1} \neq Metal\\
+ELEMENTS := \{Metal, Wood, Water, Fire, Earth\};\\
+herb_{i,j}, compat_{k,l} \in ELEMENTS: j \in 1 \dots 2, k \in 1 \dots r, l \in 1 \dots c\\
+herb \in \mathbb{R}; r := 3; c := 2\\

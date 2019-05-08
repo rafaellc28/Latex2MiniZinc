@@ -1,0 +1,7 @@
+% specialization-examples/CP/start/herbs1.mzn. From https://github.com/MiniZinc/specialization-examples
+table([oHerbs_{i},oHerbs_{i+1}], eCompat): i \in 1 \dots (n \text{ div } 2 - 1)\\
+table([oHerbs_{i},eHerbs_{i}], esCompat) \land table([eHerbs_{i},oHerbs_{i+1}], esCompat): i \in 1 \dots (n \text{ div } 2 - 1)\\
+\text{if } n \mod 2 = 0 \text{ then } table([oHerbs_{n \text{ div } 2},eHerbs_{n \text{ div } 2}], esCompat) \text{ else } true \text{ endif}\\
+ELEMENTS := \{Gold, Wood, Water, Fire, Earth\}; SEASONS := \{Spring, Summer, Autumn, Winter\}\\
+oHerbs_{i}, eCompat_{j,k}, x \in ELEMENTS; esCompat_{j,k} \in (ELEMENTS \cup SEASONS); eHerbs_{i}, y \in SEASONS: i \in 1 \dots n \text{ div } 2, k \in 1 \dots 2\\
+oHerbs, eHerbs \in \mathbb{R}; n := 20, \in \mathbb{Z}, \in \mathbb{P}; ELEMENTS, SEASONS \in \mathbb{E}\\
