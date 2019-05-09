@@ -1987,7 +1987,6 @@ def p_SetExpressionWithValue(t):
 
 def p_SetExpressionWithIndices(t):
     '''SetExpression : Identifier Array'''
-
     t[0] = SetExpressionWithIndices(t[1], t[2].value)
 
 def p_IteratedSetExpression(t):
@@ -2528,6 +2527,30 @@ def p_NumericExpression(t):
 
     else:
       t[0] = ValuedNumericExpression(t[1])
+
+def p_NumericExpressionWithIndices(t):
+    '''NumericExpression : ID LPAREN ValueList RPAREN Array
+                         | ID LPAREN IdentifierList RPAREN Array
+                         | ID LPAREN SetExpression RPAREN Array
+                         | ID LPAREN Identifier RPAREN Array
+                         | ID LPAREN NumericSymbolicExpression RPAREN Array
+                         | ID LPAREN Array RPAREN Array
+                         | ID LPAREN ConstraintExpression RPAREN Array
+                         
+                         | ID LPAREN RPAREN Array'''
+
+    op = ID(t[1])
+
+    if t.slice[3].type == "LPAREN":
+      function = NumericExpressionWithFunction(op)
+    else:
+      function = NumericExpressionWithFunction(op, t[3])
+
+    if len(t) > 5:
+      t[0] = SetExpressionWithIndices(function, t[5].value)
+
+    else:
+      t[0] = SetExpressionWithIndices(function, t[4].value)
 
 def p_FractionalNumericExpression(t):
     '''NumericExpression : FRAC LBRACE Identifier RBRACE LBRACE Identifier RBRACE

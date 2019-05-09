@@ -2418,15 +2418,17 @@ class CodeGenerator:
     def generateCode_SetExpressionWithIndices(self, node):
         self.isSetExpressionWithIndices = True
 
-        var_gen = EMPTY_STRING
+        res = EMPTY_STRING
         if not isinstance(node.identifier, str):
-            var_gen = node.identifier.generateCode(self)
+            res = node.identifier.generateCode(self)
         else:
-            var_gen = node.identifier
+            res = node.identifier
+
+        res += BEGIN_ARRAY + node.indices.generateCode(self) + END_ARRAY
 
         self.isSetExpressionWithIndices = False
 
-        return  var_gen
+        return res
 
     def generateCode_SetExpressionWithOperation(self, node):
         return node.setExpression1.generateCode(self) + SPACE + node.op + SPACE + node.setExpression2.generateCode(self)

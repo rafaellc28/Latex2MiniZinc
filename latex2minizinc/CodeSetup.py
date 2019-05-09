@@ -1408,8 +1408,8 @@ class CodeSetup:
         """
         node.setSymbolTable(self.currentTable)
 
-        if not isinstance(node.identifier, str):
-            if isinstance(node.identifier, Identifier) and not self.isParamForSure(node.identifier):
+        if isinstance(node.identifier, Identifier):
+            if not self.isParamForSure(node.identifier):
                 self._setIsSet(node.identifier)
 
             if len(node.indices) > 0:

@@ -1,0 +1,8 @@
+% specialization-examples/CP/start/herbs3.mzn. From https://github.com/MiniZinc/specialization-examples
+table([herb_{i},herb_{i+1}], eCompat): i \in 1 \dots (n - 1)\\
+herb_{i} \neq herb_{i+3}: i \in 1 \dots n-3\\
+global\_cardinality\_low\_up([herb_{i+j-1}: j \in 1 \dots k],[Gold,Earth],[1,1],[2,2]): i \in 1 \dots n-k+1\\
+herb_{1} \neq Gold\\
+ELEMENTS := \{Gold, Wood, Water, Fire, Earth\}\\
+herb_{i}, eCompat_{j,l}, \in ELEMENTS: i \in 1 \dots n, l \in 1 \dots 2\\
+n := 20; k = 4; herb \in \mathbb{R}\\

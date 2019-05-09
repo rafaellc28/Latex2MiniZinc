@@ -110,7 +110,7 @@ class SetExpressionWithIndices(SetExpression):
         to string
         """
 
-        return "SetExpressionWithIndices: " + str(self.identifier)
+        return "SetExpressionWithIndices: " + str(self.identifier) + "[" + str(self.indices) + "]"
 
     def setDimension(self, dimension):
         self.dimension = dimension
