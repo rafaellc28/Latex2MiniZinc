@@ -1,0 +1,6 @@
+% specialization-examples/LS/monkey/monkey.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent(monkey)\\
+\text{maximize } \sum_{i \in 1 \dots n-1}coop_{monkey_{i},monkey_{i+1}}\\
+n := card(MONKEY); POS := 1 \dots n\\
+monkey_{p} \in MONKEY, \in \mathbb{V}: p \in POS\\
+coop_{m,m} \in \mathbb{Z}, \in \mathbb{P}: m \in MONKEY\\

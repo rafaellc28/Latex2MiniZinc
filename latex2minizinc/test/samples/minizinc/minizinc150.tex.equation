@@ -1,0 +1,8 @@
+% specialization-examples/LS/firefighting/fire.mzn. From https://github.com/MiniZinc/specialization-examples
+e_{pre_{i}} \leq s_{post_{i}}: i \in PREC\\
+cumulative(s, d, reqW, w)\\
+\text{minimize } obj\\
+obj := \sum_{f \in FIRE}|s_{f} - best_{f}|\\
+FIRE := 1 \dots n; PREC := 1 \dots m; w, d, reqW, best, maxt \in \mathbb{P}; maxt := \sum_{f \in FIRE}d_{f}; obj := \sum_{f \in FIRE}|s_{f} - best_{f}|\\
+w, d_{f}, reqW_{f}, best_{f}, obj \in \mathbb{Z}; s_{f}, e_{f} \in 0 \dots maxt, \in \mathbb{R}: f \in FIRE\\
+e := [s_{f} + d_{f}: f \in FIRE]; pre_{p}, post_{p} \in FIRE: p \in PREC\\

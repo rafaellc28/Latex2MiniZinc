@@ -1,0 +1,3 @@
+% specialization-examples/LS/princess/princess.mzn. From https://github.com/MiniZinc/specialization-examples
+\text{minimize } X*X + X*Y + Y*Y - 3*X - 2*Y\\
+X, Y \in -4 \dots 4, \in \mathbb{R}\\
