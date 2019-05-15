@@ -1,0 +1,9 @@
+% specialization-examples/MIP/linear_programming/initial_BFS.mzn. From https://github.com/MiniZinc/specialization-examples
+x \geq 0\\
+y \geq 0\\
+z \geq 0\\
+2.0*x - 1.0*y + 2.0*z \leq 4.0\\
+2.0*x - 3.0*y + 1.0*z \leq -5.0\\
+-1.0*x + 1.0*y - 2.0*z \leq -1.0\\
+\text{maximize } 1.0*x - 1.0*y + 1.0*z\\
+x, y, z \in \mathbb{R}\\
