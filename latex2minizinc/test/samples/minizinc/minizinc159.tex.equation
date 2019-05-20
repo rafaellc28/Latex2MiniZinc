@@ -1,0 +1,12 @@
+% specialization-examples/MIP/mixed_integer_programming/newshield3.mzn. From https://github.com/MiniZinc/specialization-examples
+x \geq 0\\
+y \geq 0\\
+z \geq 0\\
+2.0*x + 2.0*y + 1.0*z \leq 30.0\\
+1.5*x + 2.0*y + 3.0*z \leq 25.0\\
+2.0*x + 1.0*y + 1.0*z \leq 20.0\\
+\text{maximize } 3.0*x + 1.0*y + 3.0*z\\
+x \leq 7\\
+z \leq 4\\
+y \leq 1\\
+x, y, z \in \mathbb{R}\\
