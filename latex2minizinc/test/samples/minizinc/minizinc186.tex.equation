@@ -1,0 +1,19 @@
+% specialization-examples/workshop/feasttrap_solution_2.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent(dish)\\
+taste_{dish_{1}} = salty\\
+taste_{dish_{len}} = sweet//\\
+(taste[dish[c]] = spicy \implies (taste_{dish_{c+1}} \in \{bland, sweet\})) \land
+                  (taste_{dish_{c}} = sour \implies (taste_{dish_{c+1}} \in \{bland, umame\})) \land
+                  (taste_{dish_{c}} = sweet \implies (taste_{dish_{c+1}} \in \{spicy, sour, bland\})): c \in 1 \dots len-1\\
+taste_{dish_{c}} \neq taste_{dish_{c+1}}: c \in 1 \dots len-1\\
+temp_{dish_{c}} = hot \implies 
+                  \forall\{c1 \in c+1 \dots len\}
+                        (temp_{dish_{c1}} = cold \implies 
+                         \exists\{c2 \in c+1 \dots c1-1\}(temp_{dish_{c2}} = warm))\\
+heavy_{dish_{c}} \land heavy_{dish_{c+1}} \implies \neg heavy_{dish_{c+2}}: c \in 1 \dots len-2\\
+\text{maximize } obj\\
+obj \in \mathbb{Z}, := (\sum_{c \in COURSE}value_{dish_{c}}) + (len - 1) + \sum_{c \in 1 \dots len-1}(temp_{dish_{c}} \neq temp_{dish_{c+1}}) + \sum_{c \in 1 \dots len-1}(heavy_{dish_{c}} \neq heavy_{dish_{c+1}})\\
+TASTE := 1 \dots 6; TEMP := 1 \dots 3; COURSE := 1 \dots len; DISH := 1 \dots ndish\\
+taste_{d} \in TASTE; temp_{d} \in TEMP; heavy_{d} \in \mathbb{B}, \in \mathbb{P}; value_{d} \in \mathbb{Z}, \in \mathbb{P}: d \in DISH\\
+dish_{c} \in DISH, \in \mathbb{V}: c \in COURSE\\
+hot, cold, warm \in \mathbb{Z}, \in \mathbb{P}; hot := 1; cold := 2; warm := 3\\

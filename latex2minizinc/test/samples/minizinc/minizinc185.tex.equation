@@ -1,0 +1,12 @@
+% specialization-examples/workshop/feasttrap_solution.mzn. From https://github.com/MiniZinc/specialization-examples
+alldifferent(dish)\\
+regular([taste_{dish_{c}}: c \in COURSE], 7, card(TASTE), d, 1, \{5\})\\
+regular([temp_{dish_{c}}: c \in COURSE], 3, card(TEMP), e, 2, 1 \dots 3)\\
+heavy_{dish_{c}} \land heavy_{dish_{c+1}} \implies \neg heavy_{dish_{c+2}}: c \in 1 \dots len-2\\
+\text{maximize } obj\\
+obj \in \mathbb{Z}, := (\sum_{c \in COURSE}value_{dish_{c}}) + (len - 1) + \sum_{c \in 1 \dots len-1}(temp_{dish_{c}} \neq temp_{dish_{c+1}}) + \sum_{c \in 1 \dots len-1}(heavy_{dish_{c}} \neq heavy_{dish_{c+1}})\\
+TASTE := \{spicy, sour, salty, sweet, umame, bland\}; TEMP := \{hot, cold, warm\}; COURSE := 1 \dots len\\
+taste_{d} \in TASTE; temp_{d} \in TEMP; heavy_{d} \in \mathbb{B}, \in \mathbb{P}; value_{d} \in \mathbb{Z}, \in \mathbb{P}: d \in DISH\\
+dish_{c} \in DISH, \in \mathbb{V}: c \in COURSE\\
+d_{i,t} \in 0 \dots 7: i \in 1 \dots 7, t \in TASTE\\
+e_{i,t} \in 0 \dots 3: i \in 1 \dots 3, t \in TEMP\\

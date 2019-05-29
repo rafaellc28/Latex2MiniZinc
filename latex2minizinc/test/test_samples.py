@@ -1533,6 +1533,12 @@ def test_minizinc_test183():
 def test_minizinc_test184():
 	check_test_minizinc_num(184)
 
+def test_minizinc_test185():
+	check_test_minizinc_num(185)
+
+def test_minizinc_test186():
+	check_test_minizinc_num(186)
+
 # Linear Programming
 def test_lp0_linear():
 	check_test_linear_num(0)
