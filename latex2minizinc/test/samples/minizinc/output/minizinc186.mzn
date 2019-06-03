@@ -8,17 +8,17 @@ set of int: DISH = 1..ndish;
 
 array[int] of int: taste;
 
-float: salty;
+int: salty = 3;
 
-float: sweet;
+int: sweet = 4;
 
-float: spicy;
+int: spicy = 1;
 
-float: bland;
+int: bland = 6;
 
-float: sour;
+int: sour = 2;
 
-float: umame;
+int: umame = 5;
 
 int: len;
 
@@ -43,19 +43,7 @@ var int: obj = (sum(c in COURSE)(value[dish[c]])) + (len - 1) + sum(c in 1..floo
 
 array[INDEX_SET_dish_1] of var DISH: dish;
 
-set of int: INDEX_SET_bland_sweet;
-
-set of int: INDEX_SET_bland_umame;
-
 set of int: INDEX_SET_dish_1 = COURSE;
-
-set of int: INDEX_SET_spicy_sour_bland;
-
-array[INDEX_SET_bland_sweet] of int: bland_sweet;
-
-array[INDEX_SET_bland_umame] of int: bland_umame;
-
-array[INDEX_SET_spicy_sour_bland] of int: spicy_sour_bland;
 
 
 include "alldifferent.mzn";
@@ -66,7 +54,7 @@ constraint taste[dish[1]] = salty;
 
 constraint taste[dish[len]] = sweet;
 
-constraint forall(c in 1..floor(len - 1))((taste[dish[c]] = spicy -> (taste[dish[c + 1]] in bland_sweet)) /\ (taste[dish[c]] = sour -> (taste[dish[c + 1]] in bland_umame)) /\ (taste[dish[c]] = sweet -> (taste[dish[c + 1]] in spicy_sour_bland)));
+constraint forall(c in 1..floor(len - 1))((taste[dish[c]] = spicy -> (taste[dish[c + 1]] in {bland,sweet})) /\ (taste[dish[c]] = sour -> (taste[dish[c + 1]] in {bland,umame})) /\ (taste[dish[c]] = sweet -> (taste[dish[c + 1]] in {spicy,sour,bland})));
 
 constraint forall(c in 1..floor(len - 1))(taste[dish[c]] != taste[dish[c + 1]]);
 

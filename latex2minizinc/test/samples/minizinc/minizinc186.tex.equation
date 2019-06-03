@@ -16,4 +16,5 @@ obj \in \mathbb{Z}, := (\sum_{c \in COURSE}value_{dish_{c}}) + (len - 1) + \sum_
 TASTE := 1 \dots 6; TEMP := 1 \dots 3; COURSE := 1 \dots len; DISH := 1 \dots ndish\\
 taste_{d} \in TASTE; temp_{d} \in TEMP; heavy_{d} \in \mathbb{B}, \in \mathbb{P}; value_{d} \in \mathbb{Z}, \in \mathbb{P}: d \in DISH\\
 dish_{c} \in DISH, \in \mathbb{V}: c \in COURSE\\
-hot, cold, warm \in \mathbb{Z}, \in \mathbb{P}; hot := 1; cold := 2; warm := 3\\
+spicy, sour, salty, sweet, umame, bland, hot, cold, warm \in \mathbb{Z}, \in \mathbb{P};\\
+spicy, hot := 1; sour, cold := 2; salty, warm := 3; sweet := 4; umame := 5; bland := 6\\

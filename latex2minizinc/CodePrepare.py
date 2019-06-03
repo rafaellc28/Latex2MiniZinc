@@ -931,7 +931,7 @@ class CodePrepare:
 
                 for key, value in table:
                     
-                    if self.codeGenerator._checkIsSetOperation(key) or self.codeGenerator._checkIsSetBetweenBraces(key):
+                    if self.codeGenerator._checkIsSetOperation(key):# or self.codeGenerator._checkIsSetBetweenBraces(key):
                         indicesSetOp = self.codeGenerator._getIndicesFromSetOperation(key)
 
                         dnew = self.codeGenerator._cleanKeyWithSetOperation(key)
