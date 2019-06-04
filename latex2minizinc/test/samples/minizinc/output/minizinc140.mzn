@@ -2,7 +2,7 @@ set of int: COLOR = 1..N;
 
 array[int, int] of 0..N: start;
 
-int: digs = ceil(log(10.0,int2float(N)));
+int: digs = ceil(log(10.0, int2float(N)));
 
 int: N;
 

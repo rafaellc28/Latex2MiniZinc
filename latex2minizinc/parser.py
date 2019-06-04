@@ -2622,9 +2622,11 @@ def p_FunctionNumericExpression(t):
                          
                          | ATANH LPAREN Identifier RPAREN
                          | ATANH LPAREN NumericSymbolicExpression RPAREN
-                         
-                         | LOG LPAREN Identifier RPAREN
-                         | LOG LPAREN NumericSymbolicExpression RPAREN
+
+                         | LOG LPAREN Identifier COMMA Identifier RPAREN
+                         | LOG LPAREN Identifier COMMA NumericSymbolicExpression RPAREN
+                         | LOG LPAREN NumericSymbolicExpression COMMA Identifier RPAREN
+                         | LOG LPAREN NumericSymbolicExpression COMMA NumericSymbolicExpression RPAREN
                          
                          | LN LPAREN Identifier RPAREN
                          | LN LPAREN NumericSymbolicExpression RPAREN
@@ -2720,10 +2722,10 @@ def p_FunctionNumericExpression(t):
         op = NumericExpressionWithFunction.ATANH
 
     elif _type == "LOG":
-        op = NumericExpressionWithFunction.LOG10
+        op = NumericExpressionWithFunction.LOG
 
     elif _type == "LN":
-        op = NumericExpressionWithFunction.LOG
+        op = NumericExpressionWithFunction.LN
 
     elif _type == "EXP":
         op = NumericExpressionWithFunction.EXP

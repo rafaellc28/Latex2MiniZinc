@@ -18,7 +18,7 @@ constraint exp(x[3]) + exp(x[7]) + exp(x[8]) + 2 * exp(x[9]) + exp(x[10]) = 1;
 
 
 
-solve minimize sum(i in I)(exp(x[i]) * (c[i] + x[i] - log(sum(k in I)(exp(x[k])))));
+solve minimize sum(i in I)(exp(x[i]) * (c[i] + x[i] - ln(sum(k in I)(exp(x[k])))));
 
 
 

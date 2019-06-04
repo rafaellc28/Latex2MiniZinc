@@ -2,5 +2,5 @@
 \text{if } start_{i,j} > 0 \text{ then } cell_{i,j} = start_{i,j} \text{ else } true \text{ endif }: i,j \in COLOR\\
 alldifferent([cell_{i,j}: j \in COLOR]): i \in COLOR\\
 alldifferent([cell_{i,j}:i \in COLOR]): j \in COLOR\\
-digs \in \mathbb{Z}, \in \mathbb{P}, := \lceil log(10.0,int2float(N)) \rceil\\
+digs \in \mathbb{Z}, \in \mathbb{P}, := \lceil \log(10.0,int2float(N)) \rceil\\
 COLOR := 1 \dots N; start_{c,c} \in 0 \dots N; cell_{c,c}, celllist_{i} \in COLOR, \in \mathbb{V}: c \in COLOR, i \in 1 \dots N*N\\
