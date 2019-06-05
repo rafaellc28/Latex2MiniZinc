@@ -1,16 +1,34 @@
-enum ELEMENTS = {Gold,Wood,Water,Fire,Earth};
+set of int: ELEMENTS = {Gold,Wood,Water,Fire,Earth};
 
-enum SEASONS = {Spring,Summer,Autumn,Winter};
+set of int: SEASONS = {Spring,Summer,Autumn,Winter};
 
-array[int, int] of ELEMENTS: eCompat;
+array[int, int] of int: eCompat;
 
 int: n = 20;
 
 array[int, int] of (ELEMENTS union SEASONS): esCompat;
 
-ELEMENTS: x;
+int: Gold = 1;
 
-SEASONS: y;
+int: Wood = 2;
+
+int: Water = 3;
+
+int: Fire = 4;
+
+int: Earth = 5;
+
+int: Spring = 1;
+
+int: Summer = 2;
+
+int: Autumn = 3;
+
+int: Winter = 4;
+
+int: x;
+
+int: y;
 
 
 array[INDEX_SET_oHerbs_1] of var ELEMENTS: oHerbs;

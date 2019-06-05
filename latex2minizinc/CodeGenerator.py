@@ -931,7 +931,8 @@ class CodeGenerator:
             elif isinstance(declaration.getValue().attribute, TrueFalse):
                 _type = BOOL
 
-            elif isinstance(declaration.getValue().attribute, SetExpressionBetweenBraces) and not isinstance(declaration.getValue().attribute.setExpression, Range):
+            elif isinstance(declaration.getValue().attribute, SetExpressionBetweenBraces) and not isinstance(declaration.getValue().attribute.setExpression, Range) \
+                and not _type == SET_OF_INT:
                 self.removeParameterInSetExpressionBetweenBraces = True
 
             value = declaration.getValue().attribute.generateCode(self)
