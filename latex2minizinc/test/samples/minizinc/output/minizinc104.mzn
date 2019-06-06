@@ -14,9 +14,9 @@ float: obj1;
 
 float: obj2;
 
-int: T;
-
 int: maxreputation = max(reputation);
+
+int: T;
 
 
 array[INDEX_SET_table_1] of var set of SCHOLAR: table;

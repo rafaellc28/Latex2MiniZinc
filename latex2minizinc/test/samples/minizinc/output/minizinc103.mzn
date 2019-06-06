@@ -1,6 +1,6 @@
-int: nPts;
-
 int: size;
+
+int: nPts;
 
 int: mDist;
 

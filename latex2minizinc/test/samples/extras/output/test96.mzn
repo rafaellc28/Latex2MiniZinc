@@ -1,3 +1,7 @@
+set of int: I;
+
+set of int: J;
+
 set of int: INDEX_SET_I_diff_J;
 
 array[INDEX_SET_I_diff_J] of int: I_diff_J;

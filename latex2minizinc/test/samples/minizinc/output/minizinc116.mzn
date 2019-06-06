@@ -16,11 +16,11 @@ int: F;
 
 int: W;
 
+array[int] of POS: opposite = [boat,bank];
+
 int: G;
 
 int: end;
-
-array[int] of POS: opposite = [boat,bank];
 
 int: T;
 

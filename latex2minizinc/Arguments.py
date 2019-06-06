@@ -21,6 +21,26 @@ class Arguments:
         
         return "\nArguments:\n" + "\n".join(map(lambda i: str(i), self.arguments))
  
+    def getTotalNames(self):
+        total = 0
+
+        for arg in self.arguments:
+            if isinstance(arg, Argument):
+                total += len(arg.names)
+
+        return total
+
+    def getNames(self, codeGenerator):
+        names = []
+
+        for arg in self.arguments:
+            if isinstance(arg, Argument):
+                for name in arg.names:
+                    names.append(name.getSymbolName(codeGenerator))
+
+        return names
+
+
     def getSymbolTable(self):
         return self.symbolTable
         
