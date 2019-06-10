@@ -2,7 +2,7 @@ enum PRISONER;
 
 set of PRISONER: female;
 
-set of int: male = PRISONER diff female;
+set of PRISONER: male = PRISONER diff female;
 
 set of PRISONER: danger;
 

@@ -2,7 +2,7 @@ enum HERO = {GUANYU,ZHANGLIAO,XUHUANG};
 
 set of SPOT: LO = {TIANSHU,YONGQUAN};
 
-set of int: HI = SPOT diff LO;
+set of SPOT: HI = SPOT diff LO;
 
 enum SPOT = {BAIHUI,DANZHONG,QUCHI,TIANSHU,YONGQUAN};
 

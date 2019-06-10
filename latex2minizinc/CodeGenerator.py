@@ -991,8 +991,11 @@ class CodeGenerator:
                                     value += COMMA.join(inds) + END_ARRAY
                         
                         setType = False
+                        
                         if isSet:
-                            setType = not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name)
+                            setType = not self._checkIsSetBetweenBraces(value2) and not self._isSetForTuple(name) and not  \
+                                (self._checkIsSetOperation(value2) and not _type in [ENUM, INT])
+                            
                         else:
                             setType = not self._isSetForTuple(name)
 
@@ -1573,10 +1576,6 @@ class CodeGenerator:
 
     def _preModel(self):
         res = EMPTY_STRING
-
-        #print("parameters", map(lambda el: el.getName(), self.genParameters.getAll()))
-        #print("sets", map(lambda el: el.getName(), self.genSets.getAll()))
-        #print("variables", map(lambda el: el.getName(), self.genVariables.getAll()))
 
         setsAndParams = self._declareSetsAndParams()
         if setsAndParams != EMPTY_STRING:
