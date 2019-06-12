@@ -108,6 +108,7 @@ tokens = [
    'PROD',
    'MAX',
    'MIN',
+   'ANNOT',
    'COMMA',
    'SEMICOLON',
    'COLON',
@@ -665,6 +666,10 @@ def t_ignored_LEFT(t):
 def t_ignored_RIGHT(t):
    r'\\right'
    pass
+
+def t_ANNOT(t):
+   r'::'
+   return t
 
 t_COMMA = r','
 

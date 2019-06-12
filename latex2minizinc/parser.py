@@ -49,6 +49,7 @@ precedence = (
     ('right', 'PIPE'),
     ('right', 'DEFAULT', 'DIMEN', 'ASSIGN'),
     ('right', 'LPAREN', 'RPAREN', 'LLBRACE', 'RRBRACE'),
+    ('right', 'ANNOT'),
     ('right', 'LBRACE', 'RBRACE', 'UNDERLINE', 'FRAC'),
     ('left', 'MAXIMIZE', 'MINIMIZE', 'PREDICATE', 'TEST', 'FUNCTION', 'INCLUDE'),
     ('right', 'IMPLIES', 'ISIMPLIEDBY', 'IFANDONLYIF'),
