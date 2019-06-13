@@ -5,7 +5,7 @@ set of int: INDEX_SET_a_1 = 1..2;
 
 constraint 8 < sum(i in 1..2)(sqrt(a[i]));
 
-function var int: sqrt(var int: x) =
+function var int: sqrt(var int: x) :: promise_total =
 	let {var int: y; constraint y * y = x /\ y >= 0} in
 	y;
 

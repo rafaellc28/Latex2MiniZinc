@@ -1899,6 +1899,9 @@ class CodeGenerator:
         _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
 
         res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
+
+        if node.annotation:
+            res += SPACE + ANNOT + SPACE + node.annotation.generateCode(self)
         
         if node.expression:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)

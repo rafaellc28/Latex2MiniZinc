@@ -1190,6 +1190,90 @@ def p_FunctionExpression(t):
 
   t[4].setOrigin(t[0])
 
+def p_FunctionExpressionWithAnnotation(t):
+  '''FunctionExpression : FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN PARAMETERS LLBRACE NumericSymbolicExpression RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN VARIABLES LLBRACE NumericSymbolicExpression RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN PARAMETERS LLBRACE Constraint RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN VARIABLES LLBRACE Constraint RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN PARAMETERS LLBRACE Identifier RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN VARIABLES LLBRACE Identifier RRBRACE
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN PARAMETERS
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN PARAMETERS
+
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN ID COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN NATURALSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN INTEGERSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN REALSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN BINARYSET COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN SYMBOLIC COMMA IN VARIABLES
+                        | FUNCTION ID LPAREN Arguments RPAREN ANNOT ID IN LOGICAL COMMA IN VARIABLES'''
+
+  isVariable = False
+  if t.slice[12].type == "VARIABLES":
+    isVariable = True
+
+  if t.slice[9].type == "ID":
+    t[9] = ID(t[9])
+  else:
+    t[9] = t.slice[9].value2
+
+  t[7] = ID(t[7])
+
+  if len(t) > 13:
+    t[0] = FunctionExpression(t[9], Identifier(ID(t[2])), t[4], t[14], isVariable, t[7])
+
+  else:
+    t[0] = FunctionExpression(t[9], Identifier(ID(t[2])), t[4], None, isVariable, t[7])
+
+  t[4].setOrigin(t[0])
+
 def p_TestOperationExpression(t):
   '''TestOperationExpression : TEST ID LPAREN Arguments RPAREN LLBRACE NumericSymbolicExpression RRBRACE
                              | TEST ID LPAREN Arguments RPAREN LLBRACE Constraint RRBRACE
