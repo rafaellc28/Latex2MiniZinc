@@ -5,22 +5,16 @@ array[INDEX_SET_E, 1..2] of V: E;
 int: Nc;
 
 
-array[INDEX_SET_u_1] of var bool: u;
+array[1..Nc] of var bool: u;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+array[V, 1..Nc] of var bool: x;
 
 set of int: INDEX_SET_E;
-
-set of int: INDEX_SET_u_1 = 1..Nc;
-
-set of int: INDEX_SET_x_1 = V;
-
-set of int: INDEX_SET_x_2 = 1..Nc;
 
 
 constraint forall(i in V)(sum(c in 1..Nc)(x[i,c]) = 1);
 
-constraint forall(i in INDEX_SET_E, c in 1..Nc)(x[E[i,1],c] + x[E[i,2],c] <= u[c]);
+constraint forall(i in INDEX_SET_E, c in 1..Nc)(x[to_enum(V,E[i,1]),c] + x[to_enum(V,E[i,2]),c] <= u[c]);
 
 
 

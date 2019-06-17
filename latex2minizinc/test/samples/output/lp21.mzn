@@ -2,21 +2,17 @@ enum I;
 
 enum J;
 
-array[int, int] of float: C;
+array[I, J] of float: C;
 
-array[int] of float: A;
+array[I] of float: A;
 
-array[int] of float: B;
-
-
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
+array[J] of float: B;
 
 
-constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
+array[I, J] of var float: x;
+
+
+constraint forall(i in I, j in J)(x[i,j] >= 0);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) <= A[i]);
 

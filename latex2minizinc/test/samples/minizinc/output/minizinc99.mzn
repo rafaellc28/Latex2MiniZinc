@@ -6,14 +6,14 @@ set of ELITE: infantry;
 
 enum ELITE;
 
-array[int] of int: liuValue;
+array[ELITE] of int: liuValue;
 
-array[int] of int: guanValue;
+array[ELITE] of int: guanValue;
 
-array[int] of int: zhangValue;
+array[ELITE] of int: zhangValue;
 
 
-var int: obj = (sum(e in Liu)(liuValue[e])) + (sum(e in Guan)(guanValue[e])) + (sum(e in Zhang)(zhangValue[e]));
+var int: obj = (sum(e in Liu)(liuValue[to_enum(ELITE,e)])) + (sum(e in Guan)(guanValue[to_enum(ELITE,e)])) + (sum(e in Zhang)(zhangValue[to_enum(ELITE,e)]));
 
 var set of ELITE: Liu;
 

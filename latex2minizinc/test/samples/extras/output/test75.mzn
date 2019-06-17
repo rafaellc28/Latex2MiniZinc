@@ -1,12 +1,12 @@
 enum I;
 
-array[int] of float: c;
+array[1..I] of float: c;
 
-array[int] of float: d;
+array[1..I] of float: d;
 
-array[int] of float: a;
+array[I] of float: a;
 
-array[int] of float: b;
+array[I] of float: b;
 
 
 constraint forall(i in 1..I)(c[i] > d[i]);

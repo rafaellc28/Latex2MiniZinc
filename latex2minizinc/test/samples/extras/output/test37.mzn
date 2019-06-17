@@ -2,16 +2,12 @@ set of int: MACHINES = 1..n;
 
 set of int: JOBS = 1..n;
 
-array[int] of int: cap;
+array[MACHINES] of int: cap;
 
 int: n;
 
 
-array[INDEX_SET_Assign_1, INDEX_SET_Assign_2] of var bool: Assign;
-
-set of int: INDEX_SET_Assign_1 = JOBS;
-
-set of int: INDEX_SET_Assign_2 = MACHINES;
+array[JOBS, MACHINES] of var bool: Assign;
 
 
 constraint forall(k in MACHINES)(assert(cap[k] >= 0, "Assertion cap[\(k)] >= 0 failed!"));

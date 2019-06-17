@@ -2,14 +2,12 @@ enum HERO;
 
 enum SPOT;
 
-array[int, int] of int: damage;
+array[HERO, SPOT] of int: damage;
 
 
-array[INDEX_SET_pos_1] of var SPOT: pos;
+array[HERO] of var SPOT: pos;
 
 var int: tDamages = sum(h in HERO)(damage[h,pos[h]]);
-
-set of int: INDEX_SET_pos_1 = HERO;
 
 
 include "alldifferent.mzn";

@@ -11,39 +11,19 @@ enum SMOKE;
 enum PET;
 
 
-array[INDEX_SET_color_1, INDEX_SET_color_2] of var bool: color;
+array[HOUSE, COLOR] of var bool: color;
 
-array[INDEX_SET_nationality_1, INDEX_SET_nationality_2] of var bool: nationality;
+array[HOUSE, NATIONALITY] of var bool: nationality;
 
-array[INDEX_SET_drink_1, INDEX_SET_drink_2] of var bool: drink;
+array[HOUSE, DRINK] of var bool: drink;
 
-array[INDEX_SET_smoke_1, INDEX_SET_smoke_2] of var bool: smoke;
+array[HOUSE, SMOKE] of var bool: smoke;
 
-array[INDEX_SET_pet_1, INDEX_SET_pet_2] of var bool: pet;
+array[HOUSE, PET] of var bool: pet;
 
 SMOKE: Chesterfield;
 
 NATIONALITY: Englishman;
-
-set of int: INDEX_SET_color_1 = HOUSE;
-
-set of int: INDEX_SET_color_2 = COLOR;
-
-set of int: INDEX_SET_drink_1 = HOUSE;
-
-set of int: INDEX_SET_drink_2 = DRINK;
-
-set of int: INDEX_SET_nationality_1 = HOUSE;
-
-set of int: INDEX_SET_nationality_2 = NATIONALITY;
-
-set of int: INDEX_SET_pet_1 = HOUSE;
-
-set of int: INDEX_SET_pet_2 = PET;
-
-set of int: INDEX_SET_smoke_1 = HOUSE;
-
-set of int: INDEX_SET_smoke_2 = SMOKE;
 
 NATIONALITY: Japanese;
 
@@ -116,25 +96,25 @@ constraint forall(h in HOUSE)(drink[h,coffee] = color[h,green]);
 
 constraint forall(h in HOUSE)(nationality[h,Ukranian] = drink[h,tea]);
 
-constraint forall(h in HOUSE)(color[h,green] = if h = 1 then 0 else color[h - 1,ivory] endif);
+constraint forall(h in HOUSE)(color[h,green] = if h = 1 then 0 else color[to_enum(HOUSE,h - 1),ivory] endif);
 
 constraint forall(h in HOUSE)(smoke[h,Old_Gold] = pet[h,snails]);
 
 constraint forall(h in HOUSE)(smoke[h,Kools] = color[h,yellow]);
 
-constraint drink[3,milk] = 1;
+constraint drink[to_enum(HOUSE,3),milk] = 1;
 
-constraint nationality[1,Norwegian] = 1;
+constraint nationality[to_enum(HOUSE,1),Norwegian] = 1;
 
-constraint forall(h in HOUSE)((1 - smoke[h,Chesterfield]) + (if h = 1 then 0 else pet[h - 1,fox] endif) + (if h = 5 then 0 else pet[h + 1,fox] endif) >= 1);
+constraint forall(h in HOUSE)((1 - smoke[h,Chesterfield]) + (if h = 1 then 0 else pet[to_enum(HOUSE,h - 1),fox] endif) + (if h = 5 then 0 else pet[to_enum(HOUSE,h + 1),fox] endif) >= 1);
 
-constraint forall(h in HOUSE)((1 - smoke[h,Kools]) + (if h = 1 then 0 else pet[h - 1,horse] endif) + (if h = 5 then 0 else pet[h + 1,horse] endif) >= 1);
+constraint forall(h in HOUSE)((1 - smoke[h,Kools]) + (if h = 1 then 0 else pet[to_enum(HOUSE,h - 1),horse] endif) + (if h = 5 then 0 else pet[to_enum(HOUSE,h + 1),horse] endif) >= 1);
 
 constraint forall(h in HOUSE)(smoke[h,Lucky_Strike] = drink[h,orange_juice]);
 
 constraint forall(h in HOUSE)(nationality[h,Japanese] = smoke[h,Parliament]);
 
-constraint forall(h in HOUSE)((1 - nationality[h,Norwegian]) + (if h = 1 then 0 else color[h - 1,blue] endif) + (if h = 5 then 0 else color[h + 1,blue] endif) >= 1);
+constraint forall(h in HOUSE)((1 - nationality[h,Norwegian]) + (if h = 1 then 0 else color[to_enum(HOUSE,h - 1),blue] endif) + (if h = 5 then 0 else color[to_enum(HOUSE,h + 1),blue] endif) >= 1);
 
 solve satisfy;
 

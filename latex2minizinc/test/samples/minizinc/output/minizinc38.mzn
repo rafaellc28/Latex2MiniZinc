@@ -9,21 +9,13 @@ set of int: PDIFF = 1..floor(n - 1);
 int: n;
 
 
-array[INDEX_SET_posn_1] of var POSN: posn;
+array[NOTE] of var POSN: posn;
 
-array[INDEX_SET_order_1] of var NOTE: order;
+array[POSN] of var NOTE: order;
 
-array[INDEX_SET_diffs_1] of var DIFF: diffs;
+array[PDIFF] of var DIFF: diffs;
 
-array[INDEX_SET_dposn_1] of var PDIFF: dposn;
-
-set of int: INDEX_SET_diffs_1 = PDIFF;
-
-set of int: INDEX_SET_dposn_1 = DIFF;
-
-set of int: INDEX_SET_order_1 = POSN;
-
-set of int: INDEX_SET_posn_1 = NOTE;
+array[DIFF] of var PDIFF: dposn;
 
 
 include "inverse.mzn";

@@ -8,13 +8,13 @@ int: start;
 
 int: dest;
 
-array[int, int] of int: edge;
+array[EDGE, 1..2] of int: edge;
 
 int: maxstep;
 
 int: rest;
 
-array[int] of int: guard;
+array[NODE] of int: guard;
 
 int: n;
 
@@ -23,9 +23,7 @@ int: m;
 
 var STEP: step;
 
-array[INDEX_SET_path_1] of var NODE: path;
-
-set of int: INDEX_SET_path_1 = STEP;
+array[STEP] of var NODE: path;
 
 
 include "table.mzn";

@@ -2,17 +2,15 @@ enum V;
 
 array[INDEX_SET_E, 1..2] of V: E;
 
-array[int] of float: W;
+array[V] of float: W;
 
 
-array[INDEX_SET_x_1] of var bool: x;
+array[V] of var bool: x;
 
 set of int: INDEX_SET_E;
 
-set of int: INDEX_SET_x_1 = V;
 
-
-constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] >= 1);
+constraint forall(i in INDEX_SET_E)(x[to_enum(V,E[i,1])] + x[to_enum(V,E[i,2])] >= 1);
 
 
 

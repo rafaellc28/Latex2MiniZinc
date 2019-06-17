@@ -6,11 +6,11 @@ int: u;
 
 NEGOTIATOR: dummy;
 
-array[int, int] of int: joint;
+array[NEGOTIATOR, NEGOTIATOR] of int: joint;
 
 int: m;
 
-array[int] of int: honor;
+array[NEGOTIATOR] of int: honor;
 
 
 var set of NEGOTIATOR: party;
@@ -24,7 +24,7 @@ constraint not (dummy in party);
 
 constraint sum(i,j in party where i < j)(joint[i,j]) >= m;
 
-constraint obj = (min(j in party)(honor[j]));
+constraint obj = (min(j in party)(honor[to_enum(NEGOTIATOR,j)]));
 
 
 

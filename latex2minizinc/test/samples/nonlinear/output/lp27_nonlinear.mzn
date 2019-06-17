@@ -2,27 +2,23 @@ set of int: J = 1..M;
 
 set of int: I = 1..N;
 
-array[int] of float: y;
+array[J] of float: y;
 
-array[INDEX_SET_t_1] of float: t = array1d(INDEX_SET_t_1, [10 * (j - 1) | j in J]);
+array[J] of float: t = array1d(J, [10 * (j - 1) | j in J]);
 
 int: N;
 
 int: M;
 
 
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_t_1;
-
-set of int: INDEX_SET_x_1 = I;
+array[I] of var float: x;
 
 
 constraint assert(N > 0, "Assertion N > 0 failed!");
 
 constraint assert(M > 0, "Assertion M > 0 failed!");
 
-constraint forall(i in INDEX_SET_x_1)(x[i] <= 10);
+constraint forall(i in I)(x[i] <= 10);
 
 
 

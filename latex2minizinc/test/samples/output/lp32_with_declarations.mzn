@@ -2,7 +2,7 @@ enum EXPENSES = {TuitionA,TuitionB,TuitionC};
 
 set of int: N = 0..Nper;
 
-array[INDEX_SET_salary_1] of float: salary = array1d(INDEX_SET_salary_1, [(150000 * pow((1 + rf),n)) * (0.4 + 0.1 * t[n]) / (1 + 0.1 * t[n]) | n in N]);
+array[N] of float: salary = array1d(N, [(150000 * pow((1 + rf),n)) * (0.4 + 0.1 * t[n]) / (1 + 0.1 * t[n]) | n in N]);
 
 float: Rf = 0.03;
 
@@ -12,43 +12,31 @@ float: Wi = 0;
 
 float: Ri = 0.05;
 
-int: Nper = 1 * T;
+int: Nper = floor(1 * T);
 
 float: T = 40;
 
-array[INDEX_SET_t_1] of float: t = array1d(INDEX_SET_t_1, [n * dT | n in N]);
+array[N] of float: t = array1d(N, [n * dT | n in N]);
 
 float: ri = Ri * dT;
 
 float: rf = Rf * dT;
 
 
-array[INDEX_SET_w_1] of var float: w;
+array[N] of var float: w;
 
-array[INDEX_SET_u_1] of var float: u;
+array[N] of var float: u;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+array[N, EXPENSES] of var float: x;
 
 var float: fSave;
 
-set of int: INDEX_SET_salary_1;
 
-set of int: INDEX_SET_t_1;
+constraint forall(n in N)(w[n] >= 0);
 
-set of int: INDEX_SET_u_1 = N;
+constraint forall(n in N)(u[n] >= 0);
 
-set of int: INDEX_SET_w_1 = N;
-
-set of int: INDEX_SET_x_1 = N;
-
-set of int: INDEX_SET_x_2 = EXPENSES;
-
-
-constraint forall(n in INDEX_SET_w_1)(w[n] >= 0);
-
-constraint forall(n in INDEX_SET_u_1)(u[n] >= 0);
-
-constraint forall(n in INDEX_SET_x_1, e in INDEX_SET_x_2)(x[n,e] >= 0);
+constraint forall(n in N, e in EXPENSES)(x[n,e] >= 0);
 
 constraint w[Nper] = 8 * salary[Nper];
 

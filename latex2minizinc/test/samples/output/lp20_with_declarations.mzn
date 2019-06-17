@@ -21,13 +21,9 @@ array[int, int, int, int] of float: demand;
 array[int, int] of float: disttable;
 
 
-array[INDEX_SET_U_1, INDEX_SET_U_2] of var float: U;
+array[cities, times] of var float: U;
 
 array[INDEX_SET_X_1, INDEX_SET_X_2, INDEX_SET_X_3, INDEX_SET_X_4] of var float: X;
-
-set of int: INDEX_SET_U_1 = cities;
-
-set of int: INDEX_SET_U_2 = times;
 
 set of int: INDEX_SET_X_1 = schedule;
 
@@ -70,7 +66,7 @@ constraint forall(c1 in INDEX_SET_schedule)(assert(demand[schedule[c1,1],schedul
 
 constraint forall(l1 in INDEX_SET_links)(assert(disttable[links[l1,1],links[l1,2]] >= 0, "Assertion disttable[\(links[l1,1]),\(links[l1,2])] >= 0 failed!"));
 
-constraint forall(c in INDEX_SET_U_1, t in INDEX_SET_U_2)(U[c,t] >= 0);
+constraint forall(c in cities, t in times)(U[c,t] >= 0);
 
 constraint forall(c1 in INDEX_SET_schedule)(X[schedule[c1,1],schedule[c1,2],schedule[c1,3],schedule[c1,4]] >= 0);
 

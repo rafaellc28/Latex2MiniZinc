@@ -13,11 +13,7 @@ int: v;
 int: b;
 
 
-array[INDEX_SET_m_1, INDEX_SET_m_2] of var bool: m;
-
-set of int: INDEX_SET_m_1 = ROW;
-
-set of int: INDEX_SET_m_2 = COL;
+array[ROW, COL] of var bool: m;
 
 
 include "lex_lesseq.mzn";

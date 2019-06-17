@@ -2,7 +2,7 @@ set of int: SQUARE = 1..n;
 
 set of int: NSQ = 1..nsq;
 
-array[int] of int: ncopy;
+array[SQUARE] of int: ncopy;
 
 int: nsq = sum(i in SQUARE)(ncopy[i]);
 
@@ -19,17 +19,11 @@ var n..maxl: width;
 
 var mina..floor(n * maxl): area = height * width;
 
-array[INDEX_SET_x_1] of var 0..maxl: x;
+array[NSQ] of var 0..maxl: x;
 
-array[INDEX_SET_y_1] of var 0..maxl: y;
+array[NSQ] of var 0..maxl: y;
 
-array[INDEX_SET_size_1] of var SQUARE: size;
-
-set of int: INDEX_SET_size_1 = NSQ;
-
-set of int: INDEX_SET_x_1 = NSQ;
-
-set of int: INDEX_SET_y_1 = NSQ;
+array[NSQ] of var SQUARE: size;
 
 
 include "global_cardinality.mzn";

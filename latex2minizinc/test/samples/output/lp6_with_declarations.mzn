@@ -2,45 +2,35 @@ set of int: TASKS;
 
 array[INDEX_SET_ARCS, 1..2] of int: ARCS;
 
-array[int] of float: Dur;
+array[TASKS] of float: Dur;
 
 
-array[INDEX_SET_Tef_1] of var float: Tef;
+array[TASKS] of var float: Tef;
 
 var float: Tf;
 
-array[INDEX_SET_Tlf_1] of var float: Tlf;
+array[TASKS] of var float: Tlf;
 
-array[INDEX_SET_Tes_1] of var float: Tes;
+array[TASKS] of var float: Tes;
 
-array[INDEX_SET_Tls_1] of var float: Tls;
+array[TASKS] of var float: Tls;
 
-array[INDEX_SET_Tsl_1] of var float: Tsl;
+array[TASKS] of var float: Tsl;
 
 set of int: INDEX_SET_ARCS;
 
-set of int: INDEX_SET_Tef_1 = TASKS;
 
-set of int: INDEX_SET_Tes_1 = TASKS;
-
-set of int: INDEX_SET_Tlf_1 = TASKS;
-
-set of int: INDEX_SET_Tls_1 = TASKS;
-
-set of int: INDEX_SET_Tsl_1 = TASKS;
-
-
-constraint forall(j in INDEX_SET_Tef_1)(Tef[j] >= 0);
+constraint forall(j in TASKS)(Tef[j] >= 0);
 
 constraint Tf >= 0;
 
-constraint forall(j in INDEX_SET_Tlf_1)(Tlf[j] >= 0);
+constraint forall(j in TASKS)(Tlf[j] >= 0);
 
-constraint forall(j in INDEX_SET_Tes_1)(Tes[j] >= 0);
+constraint forall(j in TASKS)(Tes[j] >= 0);
 
-constraint forall(j in INDEX_SET_Tls_1)(Tls[j] >= 0);
+constraint forall(j in TASKS)(Tls[j] >= 0);
 
-constraint forall(j in INDEX_SET_Tsl_1)(Tsl[j] >= 0);
+constraint forall(j in TASKS)(Tsl[j] >= 0);
 
 constraint forall(j in TASKS)(Tef[j] <= Tf);
 

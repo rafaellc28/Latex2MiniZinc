@@ -1751,7 +1751,7 @@ class CodeSetup:
                         self.codeGenerator.genParameters.remove(self.identifierKey)
                         self.codeGenerator.genVariables.remove(self.identifierKey)
 
-                        _genSet = GenSet(self.identifierKey, node.dimenSet)
+                        _genSet = GenSet(self.identifierKey, node.dimenSet, node.isSetOfInt)
                         if (node.isSet != None and not node.isSet) or (node.isDeclaredAsSet != None and not node.isDeclaredAsSet):
                             _genSet.setCertainty(False)
 
@@ -1993,6 +1993,31 @@ class CodeSetup:
 
         else:
             name = var.getSymbolName(self.codeGenerator)
+
+        if node.op == DeclarationAttribute.WT:
+            identifier.isSetOfInt = True
+
+            _genSet = self.codeGenerator.genSets.get(identifier.getSymbolName(self.codeGenerator))
+            if _genSet:
+                _genSet.setIsSetOfInt(True)
+
+            if isinstance(var, list):
+                var[0].isSetOfInt = True
+                _genSet = self.codeGenerator.genSets.get(var[0].getSymbolName(self.codeGenerator))
+                if _genSet:
+                    _genSet.setIsSetOfInt(True)
+
+                var[1].isSetOfInt = True
+                _genSet = self.codeGenerator.genSets.get(var[1].getSymbolName(self.codeGenerator))
+                if _genSet:
+                    _genSet.setIsSetOfInt(True)
+
+            else:
+                var.isSetOfInt = True
+
+                _genSet = self.codeGenerator.genSets.get(var.getSymbolName(self.codeGenerator))
+                if _genSet:
+                    _genSet.setIsSetOfInt(True)
 
         if node.op == DeclarationAttribute.IN:
             self.setupEnvironment_DeclarationExpressionWithSet(node.attribute, identifier)

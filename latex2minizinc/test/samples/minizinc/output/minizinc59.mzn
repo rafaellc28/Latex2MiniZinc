@@ -13,15 +13,9 @@ int: n;
 int: l = m * n;
 
 
-array[INDEX_SET_p_1, INDEX_SET_p_2] of var POS: p;
+array[DIG, COPY] of var POS: p;
 
-array[INDEX_SET_dc_1] of var DIGCOP: dc;
-
-set of int: INDEX_SET_dc_1 = POS;
-
-set of int: INDEX_SET_p_1 = DIG;
-
-set of int: INDEX_SET_p_2 = COPY;
+array[POS] of var DIGCOP: dc;
 
 
 include "inverse.mzn";

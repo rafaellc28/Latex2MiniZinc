@@ -19,9 +19,7 @@ float: h;
 int: N = 8;
 
 
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = I;
+array[I] of var float: x;
 
 
 constraint assert(a >= 0, "Assertion a >= 0 failed!");

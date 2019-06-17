@@ -2,13 +2,13 @@ enum SCENS;
 
 float: c;
 
-array[int] of float: Pr;
+array[SCENS] of float: Pr;
 
 float: r;
 
 float: w;
 
-array[int] of float: D;
+array[SCENS] of float: D;
 
 float: ExD = sum(k in SCENS)(Pr[k] * D[k]);
 
@@ -21,9 +21,7 @@ var float: ExProfit;
 
 var float: x;
 
-array[INDEX_SET_y_1] of var float: y;
-
-set of int: INDEX_SET_y_1 = SCENS;
+array[SCENS] of var float: y;
 
 
 constraint assert(c >= 0, "Assertion c >= 0 failed!");
@@ -38,7 +36,7 @@ constraint forall(s in SCENS)(assert(D[s] >= 0, "Assertion D[\(s)] >= 0 failed!"
 
 constraint x >= 0;
 
-constraint forall(k in INDEX_SET_y_1)(y[k] >= 0);
+constraint forall(k in SCENS)(y[k] >= 0);
 
 constraint ExProfit = -c * x + sum(k in SCENS)(Pr[k] * (r * y[k] + w * (x - y[k])));
 

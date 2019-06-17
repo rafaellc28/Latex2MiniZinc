@@ -4,32 +4,22 @@ enum DEST;
 
 enum PROD;
 
-array[int, int, int] of float: vcost;
+array[ORIG, DEST, PROD] of float: vcost;
 
-array[int, int] of float: fcost;
+array[ORIG, DEST] of float: fcost;
 
-array[int, int] of float: supply;
+array[ORIG, PROD] of float: supply;
 
-array[int, int] of float: demand;
+array[DEST, PROD] of float: demand;
 
-array[int, int] of float: limit;
+array[ORIG, DEST] of float: limit;
 
 float: minload;
 
 
-array[INDEX_SET_Trans_1, INDEX_SET_Trans_2, INDEX_SET_Trans_3] of var float: Trans;
+array[ORIG, DEST, PROD] of var float: Trans;
 
-array[INDEX_SET_Use_1, INDEX_SET_Use_2] of var bool: Use;
-
-set of int: INDEX_SET_Trans_1 = ORIG;
-
-set of int: INDEX_SET_Trans_2 = DEST;
-
-set of int: INDEX_SET_Trans_3 = PROD;
-
-set of int: INDEX_SET_Use_1 = ORIG;
-
-set of int: INDEX_SET_Use_2 = DEST;
+array[ORIG, DEST] of var bool: Use;
 
 
 constraint forall(o in ORIG, d in DEST, p in PROD)(assert(vcost[o,d,p] >= 0, "Assertion vcost[\(o),\(d),\(p)] >= 0 failed!"));
@@ -44,7 +34,7 @@ constraint forall(o in ORIG, d in DEST)(assert(limit[o,d] >= 0, "Assertion limit
 
 constraint assert(minload >= 0, "Assertion minload >= 0 failed!");
 
-constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);
+constraint forall(o in ORIG, d in DEST, p in PROD)(Trans[o,d,p] >= 0);
 
 constraint forall(i in ORIG, p in PROD)(sum(j in DEST)(Trans[i,j,p]) = supply[i,p]);
 

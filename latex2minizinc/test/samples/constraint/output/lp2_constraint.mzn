@@ -1,4 +1,4 @@
-array[int, int] of float: duration;
+array[1..nMach, 1..nJobs] of float: duration;
 
 int: nMach;
 
@@ -9,11 +9,7 @@ int: endTime;
 
 var int: Makespan;
 
-array[INDEX_SET_Start_1, INDEX_SET_Start_2] of var int: Start;
-
-set of int: INDEX_SET_Start_1 = 1..nMach;
-
-set of int: INDEX_SET_Start_2 = 1..nJobs;
+array[1..nMach, 1..nJobs] of var int: Start;
 
 
 constraint assert(nMach > 0, "Assertion nMach > 0 failed!");
@@ -26,9 +22,9 @@ constraint Makespan >= 0;
 
 constraint Makespan <= endTime;
 
-constraint forall(i in INDEX_SET_Start_1, j in INDEX_SET_Start_2)(Start[i,j] >= 0);
+constraint forall(i in 1..nMach, j in 1..nJobs)(Start[i,j] >= 0);
 
-constraint forall(i in INDEX_SET_Start_1, j in INDEX_SET_Start_2)(Start[i,j] <= endTime);
+constraint forall(i in 1..nMach, j in 1..nJobs)(Start[i,j] <= endTime);
 
 constraint forall(m in 1..nMach, j1 in 1..nJobs, j2 in floor(j1 + 1)..nJobs)(Start[m,j1] + duration[m,j1] <= Start[m,j2] \/ Start[m,j2] + duration[m,j2] <= Start[m,j1]);
 

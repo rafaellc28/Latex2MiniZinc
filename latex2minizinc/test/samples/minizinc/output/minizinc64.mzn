@@ -2,16 +2,12 @@ enum WINE;
 
 enum FOOD;
 
-array[int, int] of int: joy;
+array[FOOD, WINE] of int: joy;
 
 
-array[INDEX_SET_eat_1] of var FOOD: eat;
+array[WINE] of var FOOD: eat;
 
-array[INDEX_SET_drink_1] of var WINE: drink;
-
-set of int: INDEX_SET_drink_1 = FOOD;
-
-set of int: INDEX_SET_eat_1 = WINE;
+array[FOOD] of var WINE: drink;
 
 
 include "inverse.mzn";

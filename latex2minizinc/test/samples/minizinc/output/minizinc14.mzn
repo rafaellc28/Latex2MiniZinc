@@ -1,4 +1,4 @@
-array[int] of set of SPOT: group;
+array[SYMB] of set of SPOT: group;
 
 enum SYMB;
 

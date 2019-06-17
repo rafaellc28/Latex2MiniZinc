@@ -9,9 +9,9 @@ array[INDEX_SET_PAIRS, 1..2] of int: PAIRS = array2d(INDEX_SET_PAIRS, 1..2, [if 
 int: T = 7;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
+array[VOLS, TASKS, WEEKS] of var bool: x;
 
-array[INDEX_SET_p_1, INDEX_SET_p_2, INDEX_SET_p_3, INDEX_SET_p_4] of var bool: p;
+array[INDEX_SET_p_1, INDEX_SET_p_2, TASKS, WEEKS] of var bool: p;
 
 var int: z;
 
@@ -20,16 +20,6 @@ set of int: INDEX_SET_PAIRS;
 set of int: INDEX_SET_p_1 = PAIRS;
 
 set of int: INDEX_SET_p_2 = TASKS;
-
-set of int: INDEX_SET_p_3 = WEEKS;
-
-set of int: INDEX_SET_p_4;
-
-set of int: INDEX_SET_x_1 = VOLS;
-
-set of int: INDEX_SET_x_2 = TASKS;
-
-set of int: INDEX_SET_x_3 = WEEKS;
 
 
 constraint forall(v in VOLS, w in WEEKS)(sum(t in TASKS)(x[v,t,w]) = 1);

@@ -1,9 +1,7 @@
-array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [1 | i0 in INDEX_SET_x_1]);
-
-set of int: INDEX_SET_x_1 = 1..3;
+array[1..3] of var float: x = array1d(1..3, [1 | i0 in 1..3]);
 
 
-constraint forall(i0 in INDEX_SET_x_1)(x[i0] >= 1E-5);
+constraint forall(i0 in 1..3)(x[i0] >= 1E-5);
 
 constraint 1 >= 4 / x[1] + 32 / x[2] + 120 / x[3];
 

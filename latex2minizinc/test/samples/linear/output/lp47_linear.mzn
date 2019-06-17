@@ -6,9 +6,9 @@ enum DEST;
 
 array[int, int] of float: cost;
 
-array[int] of float: supply;
+array[ORIG] of float: supply;
 
-array[int] of float: demand;
+array[DEST] of float: demand;
 
 
 array[INDEX_SET_Trans_1, INDEX_SET_Trans_2] of var float: Trans;

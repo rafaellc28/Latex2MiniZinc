@@ -2,26 +2,20 @@ set of int: J = 1..n;
 
 set of int: I = 1..m;
 
-array[int] of float: w;
+array[1..m] of float: w;
 
 float: c;
 
 int: m;
 
-array[int, int] of bool: z;
+array[I, 1..m] of bool: z;
 
 int: n = sum(j in 1..m)(if exists(i in I)(z[i,j] = true) then 1 else 0 endif);
 
 
-array[INDEX_SET_used_1] of var bool: used;
+array[J] of var bool: used;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
-
-set of int: INDEX_SET_used_1 = J;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
+array[I, J] of var bool: x;
 
 
 constraint forall(i in 1..m)(assert(w[i] > 0, "Assertion w[\(i)] > 0 failed!"));

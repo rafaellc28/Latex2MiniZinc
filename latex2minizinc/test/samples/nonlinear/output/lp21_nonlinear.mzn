@@ -1,9 +1,7 @@
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = 1..3;
+array[1..3] of var float: x;
 
 
-constraint forall(i0 in INDEX_SET_x_1)(x[i0] >= 0 /\ x[i0] <= 1);
+constraint forall(i0 in 1..3)(x[i0] >= 0 /\ x[i0] <= 1);
 
 constraint x[1] + x[2] + x[3] = 1;
 

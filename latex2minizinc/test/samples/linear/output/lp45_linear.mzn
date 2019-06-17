@@ -21,13 +21,9 @@ array[int, int] of float: distance;
 array[int, int] of float: dist_table;
 
 
-array[INDEX_SET_U_1, INDEX_SET_U_2] of var float: U;
+array[cities, times] of var float: U;
 
 array[INDEX_SET_X_1, INDEX_SET_X_2, INDEX_SET_X_3, INDEX_SET_X_4] of var float: X;
-
-set of int: INDEX_SET_U_1 = cities;
-
-set of int: INDEX_SET_U_2 = times;
 
 set of int: INDEX_SET_X_1 = schedule;
 
@@ -68,7 +64,7 @@ constraint forall(c1 in INDEX_SET_links)(assert(distance[links[c1,1],links[c1,2]
 
 constraint forall(l in INDEX_SET_links)(assert(dist_table[links[l,1],links[l,2]] >= 0, "Assertion dist_table[\(links[l,1]),\(links[l,2])] >= 0 failed!"));
 
-constraint forall(c in INDEX_SET_U_1, t in INDEX_SET_U_2)(U[c,t] >= 0);
+constraint forall(c in cities, t in times)(U[c,t] >= 0);
 
 constraint forall(s in INDEX_SET_X_1, i0 in INDEX_SET_X_2, i1 in INDEX_SET_X_3, i2 in INDEX_SET_X_4)(X[s,i0,i1,i2] >= 0);
 

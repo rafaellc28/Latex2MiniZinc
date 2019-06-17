@@ -1,15 +1,15 @@
 enum DISH;
 
-array[int] of int: size;
+enum TEST;
+
+array[DISH] of int: size;
 
 int: capacity;
 
-array[int] of int: satisf;
+array[DISH] of int: satisf;
 
 
-array[INDEX_SET_amt_1] of var int: amt;
-
-set of int: INDEX_SET_amt_1 = DISH;
+array[DISH] of var int: amt;
 
 
 constraint forall(i in DISH)(amt[i] >= 0);

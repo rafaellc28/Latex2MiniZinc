@@ -1,6 +1,4 @@
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = 1..2;
+array[1..2] of var float: x;
 
 
 constraint x[1] * x[1] + x[2] * x[2] = 25;

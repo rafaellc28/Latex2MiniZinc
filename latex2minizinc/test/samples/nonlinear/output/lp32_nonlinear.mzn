@@ -1,16 +1,14 @@
 set of int: I = 1..14;
 
-array[int] of float: a;
+array[I] of float: a;
 
-array[int] of float: c;
-
-
-array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [0.01 | i in I]);
-
-set of int: INDEX_SET_x_1 = I;
+array[I] of float: c;
 
 
-constraint forall(i in INDEX_SET_x_1)(x[i] >= 0);
+array[I] of var float: x = array1d(I, [0.01 | i in I]);
+
+
+constraint forall(i in I)(x[i] >= 0);
 
 constraint sum(i in I)(c[i] * x[i]) = 1;
 

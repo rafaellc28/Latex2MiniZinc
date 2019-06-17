@@ -5,4 +5,4 @@ V_{0} = 0\\
 V_{N} = N\\ 
 N := 100, \geq 1; p := 0.25, \geq 0, \leq 1; q := 1-p, \geq 0, \leq 1-p\\
 B := N, \geq 1, \leq N; a := 1, \geq 0, \leq 1; X := 0 \ldots N\\
-U_{x} := 1 \ldots \min(B,\min(N-x,x)); V_{x} \in \mathbb{R}: x \in X\\
+U_{x} := 1 \ldots floor(\min(B,\min(N-x,x))); V_{x} \in \mathbb{R}: x \in X\\

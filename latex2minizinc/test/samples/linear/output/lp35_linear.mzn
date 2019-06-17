@@ -4,22 +4,16 @@ enum DEST;
 
 enum PROD;
 
-array[int, int, int] of float: cost;
+array[ORIG, DEST, PROD] of float: cost;
 
-array[int, int] of float: supply;
+array[ORIG, PROD] of float: supply;
 
-array[int, int] of float: demand;
+array[DEST, PROD] of float: demand;
 
-array[int, int] of float: limit;
+array[ORIG, DEST] of float: limit;
 
 
-array[INDEX_SET_Trans_1, INDEX_SET_Trans_2, INDEX_SET_Trans_3] of var float: Trans;
-
-set of int: INDEX_SET_Trans_1 = ORIG;
-
-set of int: INDEX_SET_Trans_2 = DEST;
-
-set of int: INDEX_SET_Trans_3 = PROD;
+array[ORIG, DEST, PROD] of var float: Trans;
 
 
 constraint forall(o in ORIG, d in DEST, p in PROD)(assert(cost[o,d,p] >= 0, "Assertion cost[\(o),\(d),\(p)] >= 0 failed!"));
@@ -30,7 +24,7 @@ constraint forall(d in DEST, p in PROD)(assert(demand[d,p] >= 0, "Assertion dema
 
 constraint forall(o in ORIG, d in DEST)(assert(limit[o,d] >= 0, "Assertion limit[\(o),\(d)] >= 0 failed!"));
 
-constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);
+constraint forall(o in ORIG, d in DEST, p in PROD)(Trans[o,d,p] >= 0);
 
 constraint forall(i in ORIG, p in PROD)(sum(j in DEST)(Trans[i,j,p]) = supply[i,p]);
 

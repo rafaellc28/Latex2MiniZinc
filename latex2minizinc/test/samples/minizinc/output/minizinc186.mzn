@@ -6,7 +6,7 @@ set of int: TEMP = 1..3;
 
 set of int: DISH = 1..ndish;
 
-array[int] of int: taste;
+array[DISH] of int: taste;
 
 int: salty = 3;
 
@@ -22,7 +22,7 @@ int: umame = 5;
 
 int: len;
 
-array[int] of int: temp;
+array[DISH] of int: temp;
 
 int: hot = 1;
 
@@ -32,18 +32,16 @@ int: cold = 2;
 
 int: warm = 3;
 
-array[int] of bool: heavy;
+array[DISH] of bool: heavy;
 
-array[int] of int: value;
+array[DISH] of int: value;
 
 int: ndish;
 
 
 var int: obj = (sum(c in COURSE)(value[dish[c]])) + (len - 1) + sum(c in 1..floor(len - 1))((temp[dish[c]] != temp[dish[c + 1]]) + sum(c in 1..floor(len - 1))(heavy[dish[c]] != heavy[dish[c + 1]]));
 
-array[INDEX_SET_dish_1] of var DISH: dish;
-
-set of int: INDEX_SET_dish_1 = COURSE;
+array[COURSE] of var DISH: dish;
 
 
 include "alldifferent.mzn";

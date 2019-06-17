@@ -3,19 +3,11 @@ set of int: DIGITS = 0..9;
 enum LETTERS = {D,E,M,N,O,R,S,Y};
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+array[LETTERS, DIGITS] of var bool: x;
 
-array[INDEX_SET_dig_1] of var float: dig;
+array[LETTERS] of var float: dig;
 
-array[INDEX_SET_carry_1] of var bool: carry;
-
-set of int: INDEX_SET_carry_1 = 1..3;
-
-set of int: INDEX_SET_dig_1 = LETTERS;
-
-set of int: INDEX_SET_x_1 = LETTERS;
-
-set of int: INDEX_SET_x_2 = DIGITS;
+array[1..3] of var bool: carry;
 
 
 constraint forall(i in LETTERS)(sum(d in DIGITS)(x[i,d]) = 1);

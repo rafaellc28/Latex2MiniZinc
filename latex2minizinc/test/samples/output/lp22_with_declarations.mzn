@@ -4,87 +4,59 @@ PLACES: finish;
 
 PLACES: start;
 
-array[INDEX_SET_gcdist_1, INDEX_SET_gcdist_2] of float: gcdist = array2d(INDEX_SET_gcdist_1, INDEX_SET_gcdist_2, [2 * 6371 * atan(sqrt(alpha[a,b])/sqrt(1 - alpha[a,b])) | a in PLACES, b in PLACES]);
+array[PLACES, PLACES] of float: gcdist = array2d(PLACES, PLACES, [2 * 6371 * atan(sqrt(alpha[a,b])/sqrt(1 - alpha[a,b])) | a in PLACES, b in PLACES]);
 
 float: maxspeed;
 
 float: bigM = 50;
 
-array[int] of float: S1;
+array[PLACES] of float: S1;
 
-array[int] of float: S2;
+array[PLACES] of float: S2;
 
-array[int] of float: lat;
+array[PLACES] of float: lat;
 
-array[int] of float: lng;
+array[PLACES] of float: lng;
 
 float: d2r = 3.1415926 / 180;
 
-array[INDEX_SET_alpha_1, INDEX_SET_alpha_2] of float: alpha = array2d(INDEX_SET_alpha_1, INDEX_SET_alpha_2, [pow(sin(d2r * (lat[a] - lat[b]) / 2),2) + cos(d2r * lat[a]) * cos(d2r * lat[b]) * pow(sin(d2r * (lng[a] - lng[b]) / 2),2) | a in PLACES, b in PLACES]);
+array[PLACES, PLACES] of float: alpha = array2d(PLACES, PLACES, [pow(sin(d2r * (lat[a] - lat[b]) / 2),2) + cos(d2r * lat[a]) * cos(d2r * lat[b]) * pow(sin(d2r * (lng[a] - lng[b]) / 2),2) | a in PLACES, b in PLACES]);
 
 
-array[INDEX_SET_tea_1] of var float: tea;
+array[PLACES] of var float: tea;
 
-array[INDEX_SET_tla_1] of var float: tla;
+array[PLACES] of var float: tla;
 
-array[INDEX_SET_ted_1] of var float: ted;
+array[PLACES] of var float: ted;
 
-array[INDEX_SET_tld_1] of var float: tld;
+array[PLACES] of var float: tld;
 
 var float: Tmax;
 
-array[INDEX_SET_y_1, INDEX_SET_y_2] of var int: y;
+array[PLACES, PLACES] of var int: y;
 
-array[INDEX_SET_tlv_1] of var float: tlv;
+array[PLACES] of var float: tlv;
 
-array[INDEX_SET_tar_1] of var float: tar;
+array[PLACES] of var float: tar;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
-
-set of int: INDEX_SET_alpha_1;
-
-set of int: INDEX_SET_alpha_2;
-
-set of int: INDEX_SET_gcdist_1;
-
-set of int: INDEX_SET_gcdist_2;
-
-set of int: INDEX_SET_tar_1 = PLACES;
-
-set of int: INDEX_SET_tea_1 = PLACES;
-
-set of int: INDEX_SET_ted_1 = PLACES;
-
-set of int: INDEX_SET_tla_1 = PLACES;
-
-set of int: INDEX_SET_tld_1 = PLACES;
-
-set of int: INDEX_SET_tlv_1 = PLACES;
-
-set of int: INDEX_SET_x_1 = PLACES;
-
-set of int: INDEX_SET_x_2 = PLACES;
-
-set of int: INDEX_SET_y_1 = PLACES;
-
-set of int: INDEX_SET_y_2 = PLACES;
+array[PLACES, PLACES] of var bool: x;
 
 
 constraint assert(finish != start, "Assertion finish != start failed!");
 
 constraint forall(p in PLACES)(assert(S2[p] >= S1[p], "Assertion S2[\(p)] >= S1[\(p)] failed!"));
 
-constraint forall(a in INDEX_SET_tea_1)(tea[a] >= 0);
+constraint forall(a in PLACES)(tea[a] >= 0);
 
-constraint forall(a in INDEX_SET_tla_1)(tla[a] >= 0);
+constraint forall(a in PLACES)(tla[a] >= 0);
 
-constraint forall(a in INDEX_SET_ted_1)(ted[a] >= 0);
+constraint forall(a in PLACES)(ted[a] >= 0);
 
-constraint forall(a in INDEX_SET_tld_1)(tld[a] >= 0);
+constraint forall(a in PLACES)(tld[a] >= 0);
 
 constraint Tmax >= 0;
 
-constraint forall(a in INDEX_SET_y_1, b in INDEX_SET_y_2)(y[a,b] >= 0);
+constraint forall(a in PLACES, b in PLACES)(y[a,b] >= 0);
 
 constraint forall(a in PLACES where a != finish)(sum(b in PLACES)(x[a,b]) = 1);
 

@@ -1,15 +1,13 @@
 enum ELEMENTS = {Gold,Wood,Water,Fire,Earth};
 
-array[int, int] of ELEMENTS: eCompat;
+array[int, 1..2] of ELEMENTS: eCompat;
 
 int: n = 20;
 
 int: k;
 
 
-array[INDEX_SET_herb_1] of var ELEMENTS: herb;
-
-set of int: INDEX_SET_herb_1 = 1..n;
+array[1..n] of var ELEMENTS: herb;
 
 
 constraint assert(k = 4, "Assertion k = 4 failed!");

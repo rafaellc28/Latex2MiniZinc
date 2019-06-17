@@ -1,32 +1,24 @@
 enum JOBS;
 
-array[int] of float: Rel;
+array[JOBS] of float: Rel;
 
-array[int] of float: Dur;
+array[JOBS] of float: Dur;
 
-array[int] of float: Due;
+array[JOBS] of float: Due;
 
 float: BigM;
 
 
-array[INDEX_SET_start_1] of var float: start;
+array[JOBS] of var float: start;
 
-array[INDEX_SET_pastdue_1] of var float: pastdue;
+array[JOBS] of var float: pastdue;
 
-array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
-
-set of int: INDEX_SET_pastdue_1 = JOBS;
-
-set of int: INDEX_SET_start_1 = JOBS;
-
-set of int: INDEX_SET_y_1 = JOBS;
-
-set of int: INDEX_SET_y_2 = JOBS;
+array[JOBS, JOBS] of var bool: y;
 
 
-constraint forall(j in INDEX_SET_start_1)(start[j] >= 0);
+constraint forall(j in JOBS)(start[j] >= 0);
 
-constraint forall(k in INDEX_SET_pastdue_1)(pastdue[k] >= 0);
+constraint forall(k in JOBS)(pastdue[k] >= 0);
 
 constraint forall(k in JOBS)(start[k] >= Rel[k]);
 

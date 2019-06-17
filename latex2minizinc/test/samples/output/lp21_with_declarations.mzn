@@ -2,29 +2,21 @@ enum I;
 
 enum J;
 
-array[INDEX_SET_c_1, INDEX_SET_c_2] of float: c = array2d(INDEX_SET_c_1, INDEX_SET_c_2, [f * d[i,j] / 1000 | i in I, j in J]);
+array[I, J] of float: c = array2d(I, J, [f * d[i,j] / 1000 | i in I, j in J]);
 
-array[int] of float: a;
+array[I] of float: a;
 
-array[int] of float: b;
+array[J] of float: b;
 
-array[int, int] of float: d;
+array[I, J] of float: d;
 
 float: f;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
-
-set of int: INDEX_SET_c_1;
-
-set of int: INDEX_SET_c_2;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
+array[I, J] of var float: x;
 
 
-constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
+constraint forall(i in I, j in J)(x[i,j] >= 0);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) <= a[i]);
 

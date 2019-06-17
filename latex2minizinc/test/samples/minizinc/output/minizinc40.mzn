@@ -10,9 +10,9 @@ enum USAGE = {Long,Wide,Not};
 
 int: total = sum(number);
 
-array[int] of int: t = [max(t in TYPE)(t * (p > psum[t])) | p in PLASTER];
+array[PLASTER] of int: t = [max(t in TYPE)(t * (p > psum[t])) | p in PLASTER];
 
-array[int, int] of int: dim;
+array[TYPE, 1..2] of int: dim;
 
 int: total_wounds = sum(array1d(wound));
 
@@ -20,50 +20,34 @@ int: length1;
 
 int: width;
 
-array[int, int] of bool: wound;
+array[LENGTH, WIDTH] of bool: wound;
 
 int: ntypes;
 
-array[int] of int: number;
+array[TYPE] of int: number;
 
-array[int] of int: price;
+array[TYPE] of int: price;
 
-array[int] of int: psum = [sum(i in 1..floor(t - 1))(number[i]) | t in TYPE];
+array[TYPE] of int: psum = [sum(i in 1..floor(t - 1))(number[i]) | t in TYPE];
 
 int: maxdim = max(array1d(dim));
 
 
-array[INDEX_SET_covered_1, INDEX_SET_covered_2] of var bool: covered;
+array[LENGTH, WIDTH] of var bool: covered;
 
-array[INDEX_SET_x_1] of var LENGTH: x;
+array[PLASTER] of var LENGTH: x;
 
-array[INDEX_SET_y_1] of var WIDTH: y;
+array[PLASTER] of var WIDTH: y;
 
-array[INDEX_SET_u_1] of var USAGE: u;
+array[PLASTER] of var USAGE: u;
 
-array[INDEX_SET_used_1] of var 0..max(number): used;
+array[TYPE] of var 0..max(number): used;
 
-array[INDEX_SET_len_1] of var 0..maxdim: len = [[dim[t[p],1],dim[t[p],2],0][u[p]] | p in PLASTER];
+array[PLASTER] of var 0..maxdim: len = [[dim[t[p],1],dim[t[p],2],0][u[p]] | p in PLASTER];
 
-array[INDEX_SET_wid_1] of var 0..maxdim: wid = [[dim[t[p],2],dim[t[p],1],0][u[p]] | p in PLASTER];
+array[PLASTER] of var 0..maxdim: wid = [[dim[t[p],2],dim[t[p],1],0][u[p]] | p in PLASTER];
 
 var int: cost = sum(t in TYPE)(used[t] * price[t]);
-
-set of int: INDEX_SET_covered_1 = LENGTH;
-
-set of int: INDEX_SET_covered_2 = WIDTH;
-
-set of int: INDEX_SET_len_1 = PLASTER;
-
-set of int: INDEX_SET_u_1 = PLASTER;
-
-set of int: INDEX_SET_used_1 = TYPE;
-
-set of int: INDEX_SET_wid_1 = PLASTER;
-
-set of int: INDEX_SET_x_1 = PLASTER;
-
-set of int: INDEX_SET_y_1 = PLASTER;
 
 
 include "lex_lesseq.mzn";

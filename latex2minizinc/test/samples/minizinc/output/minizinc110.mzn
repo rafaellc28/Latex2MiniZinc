@@ -1,6 +1,6 @@
 enum BAGUA = {Heaven,Marsh,Fire,Thunder,Wind,Water,Mountain,Earth};
 
-array[int, int] of int: BookOfChanges;
+array[1..15, 1..2] of int: BookOfChanges;
 
 
 var {Earth,Mountain,Water,Wind,Thunder,Fire,Marsh}: FloodDragon;

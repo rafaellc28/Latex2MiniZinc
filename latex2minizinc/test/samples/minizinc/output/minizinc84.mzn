@@ -2,9 +2,9 @@ set of int: POST = 1..4;
 
 set of int: PATH = 1..10;
 
-array[int] of int: guard;
+array[POST] of int: guard;
 
-array[int] of int: time;
+array[PATH] of int: time;
 
 
 var 0..2: weather;

@@ -4,11 +4,11 @@ enum SCHOLAR;
 
 int: S;
 
-array[int, int] of SCHOLAR: enemies;
+array[int, 1..2] of SCHOLAR: enemies;
 
-array[int, int] of SCHOLAR: friends;
+array[int, 1..2] of SCHOLAR: friends;
 
-array[int] of int: reputation;
+array[SCHOLAR] of int: reputation;
 
 float: obj1;
 
@@ -19,9 +19,7 @@ int: maxreputation = max(reputation);
 int: T;
 
 
-array[INDEX_SET_table_1] of var set of SCHOLAR: table;
-
-set of int: INDEX_SET_table_1 = TABLE;
+array[TABLE] of var set of SCHOLAR: table;
 
 
 constraint forall(t in TABLE)(card(table[t]) != 1);

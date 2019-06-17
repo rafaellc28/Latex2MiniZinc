@@ -2,12 +2,10 @@ enum FOOD;
 
 enum WINE;
 
-array[int, int] of int: joy;
+array[FOOD, WINE] of int: joy;
 
 
-array[INDEX_SET_drink_1] of var WINE: drink;
-
-set of int: INDEX_SET_drink_1 = FOOD;
+array[FOOD] of var WINE: drink;
 
 
 include "alldifferent.mzn";

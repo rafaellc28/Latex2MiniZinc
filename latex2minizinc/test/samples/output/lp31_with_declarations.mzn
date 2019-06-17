@@ -10,28 +10,22 @@ enum ATOMS;
 
 set of int: BYPRODUCTS = (SPECIES diff RAWMATERIALS diff PRODUCTS);
 
-array[INDEX_SET_mw_1] of float: mw = array1d(INDEX_SET_mw_1, [sum(a in ATOMS)(amu[a] * formula[s,a]) | s in PRODUCTS]);
+array[PRODUCTS] of float: mw = array1d(PRODUCTS, [sum(a in ATOMS)(amu[a] * formula[s,a]) | s in PRODUCTS]);
 
-array[int, int] of float: stoich;
+array[SPECIES, REACTIONS] of float: stoich;
 
-array[int] of float: name;
+array[SPECIES] of float: name;
 
-array[int] of float: amu;
+array[ATOMS] of float: amu;
 
-array[int, int] of float: formula;
+array[SPECIES, ATOMS] of float: formula;
 
 
-array[INDEX_SET_n_1] of var float: n;
+array[SPECIES] of var float: n;
 
-array[INDEX_SET_x_1] of var float: x;
+array[REACTIONS] of var float: x;
 
 set of int: INDEX_SET_SPECIES_diff_RAWMATERIALS;
-
-set of int: INDEX_SET_mw_1;
-
-set of int: INDEX_SET_n_1 = SPECIES;
-
-set of int: INDEX_SET_x_1 = REACTIONS;
 
 array[INDEX_SET_SPECIES_diff_RAWMATERIALS] of int: SPECIES_diff_RAWMATERIALS;
 

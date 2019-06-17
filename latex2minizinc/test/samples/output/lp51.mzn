@@ -1,21 +1,17 @@
 enum Sample;
 
-array[int] of float: Sx;
+array[Sample] of float: Sx;
 
-array[int] of float: Sy;
+array[Sample] of float: Sy;
 
 
 var float: X;
 
-array[INDEX_SET_Ex_1] of var float: Ex;
+array[Sample] of var float: Ex;
 
 var float: Y;
 
-array[INDEX_SET_Ey_1] of var float: Ey;
-
-set of int: INDEX_SET_Ex_1 = Sample;
-
-set of int: INDEX_SET_Ey_1 = Sample;
+array[Sample] of var float: Ey;
 
 
 constraint forall(z in Sample)(X + Ex[z] = Sx[z]);

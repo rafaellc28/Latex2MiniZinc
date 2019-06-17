@@ -13,17 +13,11 @@ int: l;
 int: u;
 
 
-array[INDEX_SET_onEve_1] of var l..u: onEve;
+array[DAY] of var l..u: onEve;
 
-array[INDEX_SET_roster_1, INDEX_SET_roster_2] of var SHIFT: roster;
+array[SOLDIER, DAY] of var SHIFT: roster;
 
 var int: tOnEve = sum(d in DAY)(onEve[d]);
-
-set of int: INDEX_SET_onEve_1 = DAY;
-
-set of int: INDEX_SET_roster_1 = SOLDIER;
-
-set of int: INDEX_SET_roster_2 = DAY;
 
 
 include "global_cardinality.mzn";

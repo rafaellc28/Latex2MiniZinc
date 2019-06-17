@@ -2,11 +2,11 @@ set of int: ELEMENTS = {Gold,Wood,Water,Fire,Earth};
 
 set of int: SEASONS = {Spring,Summer,Autumn,Winter};
 
-array[int, int] of int: eCompat;
+array[int, 1..2] of int: eCompat;
 
 int: n = 20;
 
-array[int, int] of (ELEMENTS union SEASONS): esCompat;
+array[int, 1..2] of (ELEMENTS union SEASONS): esCompat;
 
 int: Gold = 1;
 
@@ -31,13 +31,9 @@ int: x;
 int: y;
 
 
-array[INDEX_SET_oHerbs_1] of var ELEMENTS: oHerbs;
+array[1..floor(n div 2)] of var ELEMENTS: oHerbs;
 
-array[INDEX_SET_eHerbs_1] of var SEASONS: eHerbs;
-
-set of int: INDEX_SET_eHerbs_1 = 1..floor(n div 2);
-
-set of int: INDEX_SET_oHerbs_1 = 1..floor(n div 2);
+array[1..floor(n div 2)] of var SEASONS: eHerbs;
 
 
 include "table.mzn";

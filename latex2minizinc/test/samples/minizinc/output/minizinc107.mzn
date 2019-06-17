@@ -2,9 +2,9 @@ set of int: PREC = 1..p;
 
 enum TASK;
 
-array[int, int] of TASK: pre;
+array[PREC, 1..2] of TASK: pre;
 
-array[int] of int: duration;
+array[TASK] of int: duration;
 
 set of TASK: LIU;
 
@@ -17,11 +17,9 @@ int: t = sum(duration);
 int: p;
 
 
-array[INDEX_SET_start_1] of var 0..t: start;
+array[TASK] of var 0..t: start;
 
 var 0..t: makespan = max(t in TASK)(start[t] + duration[t]);
-
-set of int: INDEX_SET_start_1 = TASK;
 
 
 include "disjunctive.mzn";

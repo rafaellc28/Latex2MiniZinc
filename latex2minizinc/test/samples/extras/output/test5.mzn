@@ -1,16 +1,10 @@
 enum C;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var int: x;
-
-set of int: INDEX_SET_x_1 = 1..3;
-
-set of int: INDEX_SET_x_2 = 2..4;
-
-set of int: INDEX_SET_x_3 = 2..6;
+array[1..3, 2..4, 2..6] of var int: x;
 
 
-constraint forall(i0 in INDEX_SET_x_1, i1 in INDEX_SET_x_2, i2 in INDEX_SET_x_3)(x[i0,i1,i2] >= 0);
+constraint forall(i0 in 1..3, i1 in 2..4, i2 in 2..6)(x[i0,i1,i2] >= 0);
 
 constraint x[1,3,5] + x[1,4,6] <= 80;
 

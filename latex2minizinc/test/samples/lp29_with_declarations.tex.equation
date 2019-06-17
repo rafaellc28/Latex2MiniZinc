@@ -4,4 +4,4 @@
 V_{T,x} = \ln(x): x \in X\\
 V_{t,x} \in \mathbb{R}^{+}: t \in 0 \cdots T, x \in X\\
 T := 5, \geq 1; N := 50, \geq 1; p := 0.55, \geq 0, \leq 1; q := 1-p, \geq 0, \leq 1-p\\
-B := N, \geq 1, \leq N; X := 1 \ldots N; U_{x} := 0 \ldots \min(B,\min(N-x,x-1)): x \in X\\
+B := N, \geq 1, \leq N; X := 1 \ldots N; U_{x} := 0 \ldots floor(\min(B,\min(N-x,x-1))): x \in X\\

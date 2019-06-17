@@ -5,13 +5,9 @@ int: N;
 float: pi = 4 * atan(1);
 
 
-array[INDEX_SET_rho_1] of var float: rho = array1d(INDEX_SET_rho_1, [4 * i * (N + 1 - i) / pow((N + 1),2) | i in I]);
+array[I] of var float: rho = array1d(I, [4 * i * (N + 1 - i) / pow((N + 1),2) | i in I]);
 
-array[INDEX_SET_the_1] of var float: the = array1d(INDEX_SET_the_1, [pi * i / N | i in I]);
-
-set of int: INDEX_SET_rho_1 = I;
-
-set of int: INDEX_SET_the_1 = I;
+array[I] of var float: the = array1d(I, [pi * i / N | i in I]);
 
 
 constraint assert(N > 0, "Assertion N > 0 failed!");

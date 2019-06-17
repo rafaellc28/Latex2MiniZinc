@@ -1,6 +1,4 @@
-array[INDEX_SET_a_1] of var 0..25: a;
-
-set of int: INDEX_SET_a_1 = 1..2;
+array[1..2] of var 0..25: a;
 
 
 constraint 8 < sum(i in 1..2)(sqrt(a[i]));

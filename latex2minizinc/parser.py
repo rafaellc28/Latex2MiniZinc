@@ -2226,8 +2226,8 @@ def p_ExpressionList(t):
     if isinstance(t[3], NumericExpression) or isinstance(t[3], SymbolicExpression) or isinstance(t[3], Identifier):
       t[3] = EntryLogicalExpressionNumericOrSymbolic(t[3])
 
-    if not isinstance(t[3], LogicalExpression):
-      t[3] = LogicalExpression([t[3]])
+    #if not isinstance(t[3], LogicalExpression):
+    #  t[3] = LogicalExpression([t[3]])
 
     t[0] = t[1].setLogicalExpression(t[3])
 

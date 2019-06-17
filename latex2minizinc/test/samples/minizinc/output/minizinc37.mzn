@@ -9,13 +9,9 @@ set of int: DIFF = 1..floor(n - 1);
 int: n;
 
 
-array[INDEX_SET_order_1] of var NOTE: order;
+array[POSN] of var NOTE: order;
 
-array[INDEX_SET_diffs_1] of var DIFF: diffs;
-
-set of int: INDEX_SET_diffs_1 = PDIFF;
-
-set of int: INDEX_SET_order_1 = POSN;
+array[PDIFF] of var DIFF: diffs;
 
 
 include "alldifferent.mzn";

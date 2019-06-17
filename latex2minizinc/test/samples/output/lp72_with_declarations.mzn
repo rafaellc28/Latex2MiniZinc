@@ -1,14 +1,10 @@
 set of int: I = 1..12;
 
-array[INDEX_SET_a_1] of float: a = array1d(INDEX_SET_a_1, [Uniform(2,7) | i in I]);
+array[I] of float: a = array1d(I, [Uniform(2,7) | i in I]);
 
-array[int] of float: pos;
+array[I] of float: pos;
 
-array[INDEX_SET_ind_1] of float: ind = array1d(INDEX_SET_ind_1, [sum(i in I where pos[i] = k)(i) | k in 1..card(I)]);
-
-set of int: INDEX_SET_a_1;
-
-set of int: INDEX_SET_ind_1 = 1..card(I);
+array[1..card(I)] of float: ind = array1d(1..card(I), [sum(i in I where pos[i] = k)(i) | k in 1..card(I)]);
 
 
 

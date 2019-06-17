@@ -2,17 +2,17 @@ enum ACT;
 
 enum PROD;
 
-array[int] of float: cost;
+array[ACT] of float: cost;
 
-array[int] of float: Level;
+array[ACT] of float: Level;
 
-array[int, int] of float: io;
+array[PROD, ACT] of float: io;
 
-array[int] of float: demand;
+array[PROD] of float: demand;
 
-array[int] of float: level_min;
+array[ACT] of float: level_min;
 
-array[int] of float: level_max;
+array[ACT] of float: level_max;
 
 
 constraint forall(a in ACT)(assert(cost[a] > 0, "Assertion cost[\(a)] > 0 failed!"));

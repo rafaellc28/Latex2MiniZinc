@@ -6,11 +6,11 @@ array[int, int] of float: cost;
 
 array[int, int] of float: Ship;
 
-array[int] of float: supply;
+array[CITIES] of float: supply;
 
-array[int] of float: demand;
+array[CITIES] of float: demand;
 
-array[int] of float: demmand;
+array[CITIES] of float: demmand;
 
 array[int, int] of float: capacity;
 

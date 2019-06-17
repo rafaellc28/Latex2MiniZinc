@@ -1,6 +1,4 @@
-array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [2 | i0 in INDEX_SET_x_1]);
-
-set of int: INDEX_SET_x_1 = 1..2;
+array[1..2] of var float: x = array1d(1..2, [2 | i0 in 1..2]);
 
 
 constraint x[1] * x[2] - 25 >= 0;

@@ -1,13 +1,7 @@
-array[int, int] of int: givens;
+array[1..9, 1..9] of int: givens;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
-
-set of int: INDEX_SET_x_1 = 1..9;
-
-set of int: INDEX_SET_x_2 = 1..9;
-
-set of int: INDEX_SET_x_3 = 1..9;
+array[1..9, 1..9, 1..9] of var bool: x;
 
 
 constraint forall(i in 1..9, j in 1..9)(assert(givens[i,j] <= 9 /\ givens[i,j] >= 0, "Assertion givens[\(i),\(j)] <= 9 /\\ givens[\(i),\(j)] >= 0 failed!"));

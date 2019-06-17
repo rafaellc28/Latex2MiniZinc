@@ -4,13 +4,13 @@ enum TASK;
 
 enum RESOURCE;
 
-array[int, int] of TASK: pre;
+array[PREC, 1..2] of TASK: pre;
 
-array[int] of int: duration;
+array[TASK] of int: duration;
 
-array[int, int] of int: res;
+array[RESOURCE, TASK] of int: res;
 
-array[int] of int: L;
+array[RESOURCE] of int: L;
 
 int: t = sum(duration);
 
@@ -19,9 +19,7 @@ int: p;
 
 var int: makespan = max(t in TASK)(start[t] + duration[t]);
 
-array[INDEX_SET_start_1] of var 0..t: start;
-
-set of int: INDEX_SET_start_1 = TASK;
+array[TASK] of var 0..t: start;
 
 
 include "cumulative.mzn";

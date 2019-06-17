@@ -4,42 +4,24 @@ enum oils;
 
 float: productprice;
 
-array[int, int] of float: buyingprices;
+array[month, oils] of float: buyingprices;
 
 float: storagecost;
 
-array[int] of float: oilhardness;
+array[oils] of float: oilhardness;
 
 float: M;
 
 
-array[INDEX_SET_production_1] of var float: production;
+array[month] of var float: production;
 
-array[INDEX_SET_buys_1, INDEX_SET_buys_2] of var float: buys;
+array[month, oils] of var float: buys;
 
-array[INDEX_SET_stock_1, INDEX_SET_stock_2] of var float: stock;
+array[month, oils] of var float: stock;
 
-array[INDEX_SET_useoil_1, INDEX_SET_useoil_2] of var float: useoil;
+array[month, oils] of var float: useoil;
 
-array[INDEX_SET_useoilb_1, INDEX_SET_useoilb_2] of var bool: useoilb;
-
-set of int: INDEX_SET_buys_1 = month;
-
-set of int: INDEX_SET_buys_2 = oils;
-
-set of int: INDEX_SET_production_1 = month;
-
-set of int: INDEX_SET_stock_1 = month;
-
-set of int: INDEX_SET_stock_2 = oils;
-
-set of int: INDEX_SET_useoil_1 = month;
-
-set of int: INDEX_SET_useoil_2 = oils;
-
-set of int: INDEX_SET_useoilb_1 = month;
-
-set of int: INDEX_SET_useoilb_2 = oils;
+array[month, oils] of var bool: useoilb;
 
 oils: OIL1;
 
@@ -58,17 +40,17 @@ constraint forall(o in oils)(assert(oilhardness[o] >= 0, "Assertion oilhardness[
 
 constraint assert(M >= 0, "Assertion M >= 0 failed!");
 
-constraint forall(m in INDEX_SET_production_1)(production[m] >= 0);
+constraint forall(m in month)(production[m] >= 0);
 
-constraint forall(m1 in INDEX_SET_buys_1, o in INDEX_SET_buys_2)(buys[m1,o] >= 0);
+constraint forall(m1 in month, o in oils)(buys[m1,o] >= 0);
 
-constraint forall(m1 in INDEX_SET_stock_1, o in INDEX_SET_stock_2)(stock[m1,o] >= 0);
+constraint forall(m1 in month, o in oils)(stock[m1,o] >= 0);
 
-constraint forall(m in INDEX_SET_useoil_1, o in INDEX_SET_useoil_2)(useoil[m,o] >= 0);
+constraint forall(m in month, o in oils)(useoil[m,o] >= 0);
 
-constraint forall(o in oils)(stock[1,o] = 500);
+constraint forall(o in oils)(stock[to_enum(month,1),o] = 500);
 
-constraint forall(o in oils)(stock[6,o] + buys[6,o] - useoil[6,o] >= 500);
+constraint forall(o in oils)(stock[to_enum(month,6),o] + buys[to_enum(month,6),o] - useoil[to_enum(month,6),o] >= 500);
 
 constraint forall(m in month, o in oils)(stock[m,o] <= 1000);
 

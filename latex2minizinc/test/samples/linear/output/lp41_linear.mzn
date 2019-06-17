@@ -6,9 +6,9 @@ set of int: PROJECTS;
 
 array[int, int] of float: cost;
 
-array[int] of float: supply;
+array[PEOPLE] of float: supply;
 
-array[int] of float: demand;
+array[PROJECTS] of float: demand;
 
 array[int, int] of float: limit;
 

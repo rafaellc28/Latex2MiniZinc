@@ -13,9 +13,7 @@ int: size = 6;
 int: nbrigade = floor(card(BATTALION)) div size;
 
 
-array[INDEX_SET_brigades_1] of var set of BATTALION: brigades;
-
-set of int: INDEX_SET_brigades_1 = BRIGADE;
+array[BRIGADE] of var set of BATTALION: brigades;
 
 set of int: INDEX_SET_t;
 

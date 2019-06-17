@@ -1,17 +1,15 @@
 enum P;
 
-array[int] of float: c;
+array[P] of float: c;
 
-array[int] of float: a;
+array[P] of float: a;
 
 float: b;
 
-array[int] of float: u;
+array[P] of float: u;
 
 
-array[INDEX_SET_X_1] of var float: X;
-
-set of int: INDEX_SET_X_1 = P;
+array[P] of var float: X;
 
 
 constraint sum(j in P)((1 / a[j]) * X[j]) <= b;

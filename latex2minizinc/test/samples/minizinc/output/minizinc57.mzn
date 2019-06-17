@@ -5,15 +5,9 @@ int: c;
 int: m;
 
 
-array[INDEX_SET_point_1, INDEX_SET_point_2] of var SPOT: point;
+array[1..m, 1..c] of var SPOT: point;
 
-array[INDEX_SET_stage_1] of var set of SPOT: stage;
-
-set of int: INDEX_SET_point_1 = 1..m;
-
-set of int: INDEX_SET_point_2 = 1..c;
-
-set of int: INDEX_SET_stage_1 = 1..m;
+array[1..m] of var set of SPOT: stage;
 
 
 constraint forall(i in 1..m)(card(stage[i]) = c);

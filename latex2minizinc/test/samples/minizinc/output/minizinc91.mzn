@@ -8,26 +8,24 @@ int: start;
 
 int: dest;
 
-array[int, int] of int: uedge = array2d(1..floor(2 * m),1..2,[edge[i,j] | i in EDGE, j in 1..2] ++ [edge[i,3 - j] | i in EDGE, j in 1..2]);
+array[1..floor(2 * m), 1..2] of int: uedge = array2d(1..floor(2 * m),1..2,[edge[i,j] | i in EDGE, j in 1..2] ++ [edge[i,3 - j] | i in EDGE, j in 1..2]);
 
 int: maxstep;
 
 int: rest;
 
-array[int] of int: guard;
+array[NODE] of int: guard;
 
 int: n;
 
 int: m;
 
-array[int, int] of int: edge;
+array[1..2 * m, 1..2] of int: edge;
 
 
 var STEP: step;
 
-array[INDEX_SET_path_1] of var NODE: path;
-
-set of int: INDEX_SET_path_1 = STEP;
+array[STEP] of var NODE: path;
 
 
 include "table.mzn";

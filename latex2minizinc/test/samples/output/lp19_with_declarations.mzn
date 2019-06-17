@@ -2,22 +2,18 @@ set of int: I = 1..m;
 
 set of int: J = 1..n;
 
-array[int, int] of float: c;
+array[I, J] of float: c;
 
-array[int, int] of float: a;
+array[I, J] of float: a;
 
-array[int] of float: b;
+array[I] of float: b;
 
 int: m;
 
 int: n;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
+array[I, J] of var bool: x;
 
 
 constraint forall(i in I, j in J)(assert(c[i,j] >= 0, "Assertion c[\(i),\(j)] >= 0 failed!"));

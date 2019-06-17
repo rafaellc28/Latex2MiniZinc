@@ -15,9 +15,7 @@ float: f;
 int: N = 13;
 
 
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = I;
+array[I] of var float: x;
 
 
 constraint assert(a > 0, "Assertion a > 0 failed!");
@@ -32,7 +30,7 @@ constraint assert(e > 0, "Assertion e > 0 failed!");
 
 constraint assert(f > 0, "Assertion f > 0 failed!");
 
-constraint forall(i in INDEX_SET_x_1)(x[i] >= 0);
+constraint forall(i in I)(x[i] >= 0);
 
 constraint x[3] - x[2] >= 0;
 

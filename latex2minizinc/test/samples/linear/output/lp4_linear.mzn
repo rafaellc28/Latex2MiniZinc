@@ -6,22 +6,20 @@ set of int: MAXREQ;
 
 set of int: NUTR = MINREQ union MAXREQ;
 
-array[int] of float: cost;
+array[FOOD] of float: cost;
 
-array[int, int] of float: amt;
+array[NUTR, FOOD] of float: amt;
 
-array[int] of float: n_min;
+array[MINREQ] of float: n_min;
 
-array[int] of float: n_max;
+array[MAXREQ] of float: n_max;
 
-array[int] of float: f_min;
+array[FOOD] of float: f_min;
 
-array[int] of float: f_max;
+array[FOOD] of float: f_max;
 
 
-array[INDEX_SET_Buy_1] of var float: Buy = array1d(INDEX_SET_Buy_1, [f_min[f] | f in FOOD]);
-
-set of int: INDEX_SET_Buy_1 = FOOD;
+array[FOOD] of var float: Buy = array1d(FOOD, [f_min[f] | f in FOOD]);
 
 
 constraint forall(f in FOOD)(assert(cost[f] > 0, "Assertion cost[\(f)] > 0 failed!"));

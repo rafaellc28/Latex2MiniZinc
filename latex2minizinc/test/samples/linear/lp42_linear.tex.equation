@@ -19,3 +19,4 @@ mi \in m\_inter, c \in crude, q \in qual\\
 InCr_{c}, InInt_{mp,c}, LevPr_{p,c}, LevBl_{i,j,c}, Out_{mf} \in \mathbb{R}, \geq 0:\\
 c \in crude, mp \in m\_purch, p \in proc, (i,j) \in blend, mf \in m\_final\\
 Revenue, PurchCost, OperCost \in \mathbb{R}\\
+io_{mr,c,p} \in \mathbb{P}: mr \in m\_raw \cup m\_inter, c \in crude, p \in proc\\

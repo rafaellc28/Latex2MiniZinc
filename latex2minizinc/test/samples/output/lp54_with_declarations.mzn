@@ -1,84 +1,84 @@
 set of int: cFinal;
 
-enum port;
+set of int: port;
 
 enum nutr;
 
 enum region;
 
-array[INDEX_SET_pPos_1] of set of int: pPos = array1d(INDEX_SET_pPos_1, [pCappl_diff_pExceptpl[pl] | pl in plant]);
+array[plant] of set of int: pPos = array1d(plant, [pCappl_diff_pExceptpl[pl] | pl in plant]);
 
-enum cShip;
+set of int: cShip;
 
 set of int: cRaw;
 
 set of int: commod = cFinal union cInter union cRaw;
 
-enum plant;
+set of int: plant;
 
 array[INDEX_SET_mPos] of set of int: mPos;
 
-enum center;
+set of int: center;
 
 set of int: cInter;
 
-enum proc;
+set of int: proc;
 
 enum unit;
 
-array[int] of set of int: pExcept;
+array[plant] of set of int: pExcept;
 
-array[INDEX_SET_cPos_1] of set of int: cPos = array1d(INDEX_SET_cPos_1, [cpPosc_union_ccPosc[c] | c in commod]);
+array[commod] of set of int: cPos = array1d(commod, [cpPosc_union_ccPosc[c] | c in commod]);
 
-array[int, int] of float: fn;
+array[cFinal, nutr] of float: fn;
 
-array[INDEX_SET_cn75_1, INDEX_SET_cn75_2] of float: cn75 = array2d(INDEX_SET_cn75_1, INDEX_SET_cn75_2, [sum(c in cFinal)(cf75[r,c] * fn[c,n]) | r in region, n in nutr]);
+array[region, nutr] of float: cn75 = array2d(region, nutr, [sum(c in cFinal)(cf75[r,c] * fn[c,n]) | r in region, n in nutr]);
 
-array[int, int] of float: cf75;
+array[region, cFinal] of float: cf75;
 
-array[int, int] of float: io;
+array[commod, proc] of float: io;
 
-array[int] of float: pImp;
+array[commod] of float: pImp;
 
-array[INDEX_SET_pDom_1, INDEX_SET_pDom_2] of float: pDom = array2d(INDEX_SET_pDom_1, INDEX_SET_pDom_2, [if pR[c] > 0 then pR[c] else pPr[pl,c] endif | pl in plant, c in cRaw]);
+array[plant, cRaw] of float: pDom = array2d(plant, cRaw, [if pR[c] > 0 then pR[c] else pPr[pl,c] endif | pl in plant, c in cRaw]);
 
-array[int, int] of float: util;
+array[unit, proc] of float: util;
 
 float: utilPct = 0.85;
 
-array[INDEX_SET_icap_1, INDEX_SET_icap_2] of float: icap = array2d(INDEX_SET_icap_1, INDEX_SET_icap_2, [0.33 * dcap[pl,u] | u in unit, pl in plant]);
+array[unit, plant] of float: icap = array2d(unit, plant, [0.33 * dcap[pl,u] | u in unit, pl in plant]);
 
-array[INDEX_SET_tranFinal_1, INDEX_SET_tranFinal_2] of float: tranFinal = array2d(INDEX_SET_tranFinal_1, INDEX_SET_tranFinal_2, [if road[r,pl] > 0 then 0.5 + 0.0144 * road[r,pl] else 0 endif | pl in plant, r in region]);
+array[plant, region] of float: tranFinal = array2d(plant, region, [if road[r,pl] > 0 then 0.5 + 0.0144 * road[r,pl] else 0 endif | pl in plant, r in region]);
 
-array[INDEX_SET_tranImport_1, INDEX_SET_tranImport_2] of float: tranImport = array2d(INDEX_SET_tranImport_1, INDEX_SET_tranImport_2, [if road[r,po] > 0 then 0.5 + 0.0144 * road[r,po] else 0 endif | r in region, po in port]);
+array[region, port] of float: tranImport = array2d(region, port, [if road[r,po] > 0 then 0.5 + 0.0144 * road[r,po] else 0 endif | r in region, po in port]);
 
-array[INDEX_SET_tranInter_1, INDEX_SET_tranInter_2] of float: tranInter = array2d(INDEX_SET_tranInter_1, INDEX_SET_tranInter_2, [if rail[p1,p2] > 0 then 3.5 + 0.03 * rail[p1,p2] else 0 endif | p1,p2 in plant]);
+array[plant, plant] of float: tranInter = array2d(plant, plant, [if rail[p1,p2] > 0 then 3.5 + 0.03 * rail[p1,p2] else 0 endif | p1,p2 in plant]);
 
-array[INDEX_SET_tranRaw_1] of float: tranRaw = array1d(INDEX_SET_tranRaw_1, [(if impdBarg[pl] > 0 then 1.0 + 0.0030 * impdBarg[pl] else 0 endif) + (if impdRoad[pl] > 0 then 0.5 + 0.0144 * impdRoad[pl] else 0 endif) | pl in plant]);
+array[plant] of float: tranRaw = array1d(plant, [(if impdBarg[pl] > 0 then 1.0 + 0.0030 * impdBarg[pl] else 0 endif) + (if impdRoad[pl] > 0 then 0.5 + 0.0144 * impdRoad[pl] else 0 endif) | pl in plant]);
 
 float: exch = 0.4;
 
-array[int, int] of float: road;
+array[region, center] of float: road;
 
-array[int, int] of float: railHalf;
+array[plant, plant] of float: railHalf;
 
-array[INDEX_SET_rail_1, INDEX_SET_rail_2] of float: rail = array2d(INDEX_SET_rail_1, INDEX_SET_rail_2, [if railHalf[p1,p2] > 0 then railHalf[p1,p2] else railHalf[p2,p1] endif | p1,p2 in plant]);
+array[plant, plant] of float: rail = array2d(plant, plant, [if railHalf[p1,p2] > 0 then railHalf[p1,p2] else railHalf[p2,p1] endif | p1,p2 in plant]);
 
-array[int] of float: impdBarg;
+array[plant] of float: impdBarg;
 
-array[int] of float: impdRoad;
+array[plant] of float: impdRoad;
 
-array[int] of float: pR;
+array[cRaw] of float: pR;
 
-array[int, int] of float: pPr;
+array[plant, cRaw] of float: pPr;
 
-array[int, int] of float: dcap;
+array[plant, unit] of float: dcap;
 
-array[int] of set of int: pCap;
+array[plant] of set of int: pCap;
 
-array[int] of set of int: cpPos;
+array[commod] of set of int: cpPos;
 
-array[int] of set of int: ccPos;
+array[commod] of set of int: ccPos;
 
 
 var float: Psip;
@@ -87,87 +87,35 @@ var float: Psil;
 
 var float: Psii;
 
-array[INDEX_SET_Xf_1, INDEX_SET_Xf_2, INDEX_SET_Xf_3] of var float: Xf;
+array[cFinal, INDEX_SET_Xf_2, region] of var float: Xf;
 
-array[INDEX_SET_Vf_1, INDEX_SET_Vf_2, INDEX_SET_Vf_3] of var float: Vf;
+array[cFinal, region, port] of var float: Vf;
 
-array[INDEX_SET_Z_1, INDEX_SET_Z_2] of var float: Z;
+array[plant, INDEX_SET_Z_2] of var float: Z;
 
-array[INDEX_SET_Xi_1, INDEX_SET_Xi_2, INDEX_SET_Xi_3] of var float: Xi;
+array[cShip, INDEX_SET_Xi_2, INDEX_SET_Xi_3] of var float: Xi;
 
-array[INDEX_SET_Vr_1, INDEX_SET_Vr_2] of var float: Vr;
+array[cRaw, INDEX_SET_Vr_2] of var float: Vr;
 
-array[INDEX_SET_U_1, INDEX_SET_U_2] of var float: U;
-
-set of int: INDEX_SET_U_1 = cRaw;
+array[cRaw, INDEX_SET_U_2] of var float: U;
 
 set of int: INDEX_SET_U_2;
 
-set of int: INDEX_SET_Vf_1 = cFinal;
-
-set of int: INDEX_SET_Vf_2 = region;
-
-set of int: INDEX_SET_Vf_3 = port;
-
-set of int: INDEX_SET_Vr_1 = cRaw;
-
 set of int: INDEX_SET_Vr_2;
 
-set of int: INDEX_SET_Xf_1 = cFinal;
-
 set of int: INDEX_SET_Xf_2;
-
-set of int: INDEX_SET_Xf_3 = region;
-
-set of int: INDEX_SET_Xi_1 = cShip;
 
 set of int: INDEX_SET_Xi_2;
 
 set of int: INDEX_SET_Xi_3;
 
-set of int: INDEX_SET_Z_1 = plant;
-
 set of int: INDEX_SET_Z_2;
 
-set of int: INDEX_SET_cPos_1;
-
-set of int: INDEX_SET_cn75_1;
-
-set of int: INDEX_SET_cn75_2;
-
 set of int: INDEX_SET_cpPosc_union_ccPosc;
-
-set of int: INDEX_SET_icap_1;
-
-set of int: INDEX_SET_icap_2;
 
 set of int: INDEX_SET_mPos;
 
 set of int: INDEX_SET_pCappl_diff_pExceptpl;
-
-set of int: INDEX_SET_pDom_1;
-
-set of int: INDEX_SET_pDom_2;
-
-set of int: INDEX_SET_pPos_1;
-
-set of int: INDEX_SET_rail_1;
-
-set of int: INDEX_SET_rail_2;
-
-set of int: INDEX_SET_tranFinal_1;
-
-set of int: INDEX_SET_tranFinal_2;
-
-set of int: INDEX_SET_tranImport_1;
-
-set of int: INDEX_SET_tranImport_2;
-
-set of int: INDEX_SET_tranInter_1;
-
-set of int: INDEX_SET_tranInter_2;
-
-set of int: INDEX_SET_tranRaw_1;
 
 array[INDEX_SET_cpPosc_union_ccPosc] of int: cpPosc_union_ccPosc;
 
@@ -196,17 +144,17 @@ constraint forall(p in plant, cr in cRaw)(assert(pPr[p,cr] >= 0, "Assertion pPr[
 
 constraint forall(p in plant, u in unit)(assert(dcap[p,u] >= 0, "Assertion dcap[\(p),\(u)] >= 0 failed!"));
 
-constraint forall(c in INDEX_SET_Xf_1, pl in INDEX_SET_Xf_2, r in INDEX_SET_Xf_3)(Xf[c,pl,r] >= 0);
+constraint forall(c in cFinal, pl in INDEX_SET_Xf_2, r in region)(Xf[c,pl,r] >= 0);
 
-constraint forall(c in INDEX_SET_Vf_1, r in INDEX_SET_Vf_2, po in INDEX_SET_Vf_3)(Vf[c,r,po] >= 0);
+constraint forall(c in cFinal, r in region, po in port)(Vf[c,r,po] >= 0);
 
-constraint forall(pl in INDEX_SET_Z_1, pr in INDEX_SET_Z_2)(Z[pl,pr] >= 0);
+constraint forall(pl in plant, pr in INDEX_SET_Z_2)(Z[pl,pr] >= 0);
 
-constraint forall(c in INDEX_SET_Xi_1, p1 in INDEX_SET_Xi_2, p2 in INDEX_SET_Xi_3)(Xi[c,p1,p2] >= 0);
+constraint forall(c in cShip, p1 in INDEX_SET_Xi_2, p2 in INDEX_SET_Xi_3)(Xi[c,p1,p2] >= 0);
 
-constraint forall(c in INDEX_SET_Vr_1, pl in INDEX_SET_Vr_2)(Vr[c,pl] >= 0);
+constraint forall(c in cRaw, pl in INDEX_SET_Vr_2)(Vr[c,pl] >= 0);
 
-constraint forall(c in INDEX_SET_U_1, pl in INDEX_SET_U_2)(U[c,pl] >= 0);
+constraint forall(c in cRaw, pl in INDEX_SET_U_2)(U[c,pl] >= 0);
 
 constraint forall(n in nutr, r in region)(sum(c in cFinal)(fn[c,n] * (sum(po in port)(Vf[c,r,po] + sum(pl in cpPos[c])(Xf[c,pl,r])))) >= cn75[r,n]);
 
@@ -214,7 +162,7 @@ constraint forall(c in cFinal, r in region where cf75[r,c] > 0)(sum(po in port)(
 
 constraint forall(c in commod, pl in plant)(sum(pr in pPos[pl])(io[c,pr] * Z[pl,pr] + (if c in cShip then (if pl in cpPos[c] then sum(p2 in ccPos[c])(Xi[c,pl,p2]) else 0 endif) - (if pl in ccPos[c] then sum(p2 in cpPos[c])(Xi[c,p2,pl]) else 0 endif) else 0 endif) + (if c in cRaw /\ pl in ccPos[c] then ((if pImp[c] > 0 then Vr[c,pl] else 0 endif) + (if pDom[pl,c] > 0 then U[c,pl] else 0 endif)) else 0 endif)) >= if c in cFinal /\ pl in cpPos[c] then sum(r in region)(Xf[c,pl,r]) else 0 endif);
 
-constraint forall(pl in plant, u in mPos[pl])(sum(pr in pPos[pl])(util[u,pr] * Z[pl,pr]) <= utilPct * icap[u,pl]);
+constraint forall(pl in plant, u in mPos[pl])(sum(pr in pPos[pl])(util[to_enum(unit,u),pr] * Z[pl,pr]) <= utilPct * icap[to_enum(unit,u),pl]);
 
 constraint Psip = sum(c in cRaw, pl in ccPos[c])(pDom[pl,c] * U[c,pl]);
 

@@ -8,9 +8,9 @@ set of int: K = 1..17;
 
 array[int, int] of float: c;
 
-array[int, int, int] of float: E;
+array[int, int, I] of float: E;
 
-array[int] of float: b;
+array[I] of float: b;
 
 float: xlb;
 

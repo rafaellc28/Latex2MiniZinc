@@ -12,7 +12,7 @@
 (\text{ if } p\_dom_{pl,c} > 0 \text{ then } U_{c,pl} \text{ endif }))\\
 \text{ endif }) \geq \\
 \text{ if } (c \in c\_final \land pl \in cp\_pos_{c}) \text{ then } \sum_{r \in region} Xf_{c,pl,r} \text{ endif }: c \in commod, pl \in plant\\
-\sum_{pr \in p\_pos_{pl}} util_{u,pr} * Z_{pl,pr} \leq util\_pct * icap_{u,pl}: pl \in plant, u \in m\_pos_{pl}\\
+\sum_{pr \in p\_pos_{pl}} util_{to\_enum(unit,u),pr} * Z_{pl,pr} \leq util\_pct * icap_{to\_enum(unit,u),pl}: pl \in plant, u \in m\_pos_{pl}\\
 Psip = \sum_{c \in c\_raw, pl \in cc\_pos_{c}} p\_dom_{pl,c} * U_{c,pl}\\
 Psil = \sum_{c \in c\_final} (\sum_{pl \in cp\_pos_{c}, r \in region} tran\_final_{pl,r} * Xf_{c,pl,r} + \sum_{po \in port, r \in region} tran\_import_{r,po} * Vf_{c,r,po}) + \sum_{c \in c\_ship, p1 \in cp\_pos_{c}, p2 \in cc\_pos_{c}} tran\_inter_{p1,p2} * Xi_{c,p1,p2} + \sum_{c \in c\_raw, pl \in cc\_pos_{c} \mid p\_imp_{c} > 0} tran\_raw_{pl} * Vr_{c,pl}\\
 \frac{Psii}{exch} = \sum_{c \in c\_final, r \in region, po \in port} p\_imp_{c} * Vf_{c,r,po} + \sum_{c \in c\_raw, pl \in cc\_pos_{c}} p\_imp_{c} * Vr_{c,pl}\\

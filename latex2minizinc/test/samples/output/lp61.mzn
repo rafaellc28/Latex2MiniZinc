@@ -4,21 +4,19 @@ set of int: D;
 
 set of int: U;
 
-array[int, int] of float: X;
+array[U, N] of float: X;
 
 
-array[INDEX_SET_alfa_1] of var int: alfa;
+array[N] of var int: alfa;
 
 var int: beta;
 
 set of int: INDEX_SET_U_diff_D;
 
-set of int: INDEX_SET_alfa_1 = N;
-
 array[INDEX_SET_U_diff_D] of int: U_diff_D;
 
 
-constraint forall(j in INDEX_SET_alfa_1)(alfa[j] >= 0);
+constraint forall(j in N)(alfa[j] >= 0);
 
 constraint beta >= 0;
 

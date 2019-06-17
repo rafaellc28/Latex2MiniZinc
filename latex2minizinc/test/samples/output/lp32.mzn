@@ -2,7 +2,7 @@ enum EXPENSES;
 
 enum N;
 
-array[int] of float: Salary;
+array[N] of float: Salary;
 
 float: Rf;
 
@@ -17,19 +17,11 @@ N: Nper;
 
 var float: fSave;
 
-array[INDEX_SET_w_1] of var float: w;
+array[N] of var float: w;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+array[1..Nper, EXPENSES] of var float: x;
 
-array[INDEX_SET_u_1] of var float: u;
-
-set of int: INDEX_SET_u_1 = N;
-
-set of int: INDEX_SET_w_1 = N;
-
-set of int: INDEX_SET_x_1 = 1..Nper;
-
-set of int: INDEX_SET_x_2 = EXPENSES;
+array[N] of var float: u;
 
 EXPENSES: TuitionA;
 
@@ -38,11 +30,11 @@ EXPENSES: TuitionB;
 EXPENSES: TuitionC;
 
 
-constraint forall(n in INDEX_SET_w_1)(w[n] >= 0);
+constraint forall(n in N)(w[n] >= 0);
 
-constraint forall(n in INDEX_SET_x_1, e in INDEX_SET_x_2)(x[n,e] >= 0);
+constraint forall(n in 1..Nper, e in EXPENSES)(x[n,e] >= 0);
 
-constraint forall(n in INDEX_SET_u_1)(u[n] >= 0);
+constraint forall(n in N)(u[n] >= 0);
 
 constraint w[Nper] = 8 * Salary[Nper];
 
@@ -52,9 +44,9 @@ constraint forall(n in floor(20 / DT)..floor(23 / DT))(x[n,TuitionB] = 40000 * p
 
 constraint forall(n in floor(22 / DT)..floor(25 / DT))(x[n,TuitionC] = 40000 * pow((1 + Rf),n));
 
-constraint w[0] = Wi;
+constraint w[to_enum(N,0)] = Wi;
 
-constraint forall(n in 1..Nper)(w[to_enum(N,n)] = (1 + Ri) * (w[to_enum(N,n) - 1] + u[to_enum(N,n) - 1]) - sum(e in EXPENSES)(x[n,e]));
+constraint forall(n in 1..Nper)(w[to_enum(N,n)] = (1 + Ri) * (w[to_enum(N,to_enum(N,n) - 1)] + u[to_enum(N,to_enum(N,n) - 1)]) - sum(e in EXPENSES)(x[n,e]));
 
 constraint forall(n in 0..Nper)(u[to_enum(N,n)] <= fSave * Salary[to_enum(N,n)]);
 

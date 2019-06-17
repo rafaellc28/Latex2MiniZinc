@@ -4,18 +4,12 @@ int: r = 3;
 
 int: c = 2;
 
-array[int, int] of ELEMENTS: compat;
+array[int, 1..2] of ELEMENTS: compat;
 
 
-array[INDEX_SET_herb_1, INDEX_SET_herb_2] of var ELEMENTS: herb;
+array[1..r, 1..c] of var ELEMENTS: herb;
 
-array[INDEX_SET_rherb_1] of var ELEMENTS: rherb;
-
-set of int: INDEX_SET_herb_1 = 1..r;
-
-set of int: INDEX_SET_herb_2 = 1..c;
-
-set of int: INDEX_SET_rherb_1 = 1..floor(r * c);
+array[1..floor(r * c)] of var ELEMENTS: rherb;
 
 
 include "table.mzn";

@@ -8,7 +8,7 @@ set of int: PVERTEX = 1..floor(n * m);
 
 enum TRIBUTE;
 
-array[int] of int: rank = [floor((i - 1)) div m + 1 | i in 1..floor(n * m)];
+array[TRIBUTE] of int: rank = [floor((i - 1)) div m + 1 | i in 1..floor(n * m)];
 
 int: m;
 
@@ -17,21 +17,11 @@ int: n;
 
 var int: tcoins = sum(i in 1..floor(m - 1), j in VERTEX)(ncoins[i,j]);
 
-array[INDEX_SET_tribute_1, INDEX_SET_tribute_2] of var TRIBUTE: tribute;
+array[POLYGON, VERTEX] of var TRIBUTE: tribute;
 
-array[INDEX_SET_ncoins_1, INDEX_SET_ncoins_2] of var 0..floor(n - 1): ncoins;
+array[1..floor(m - 1), VERTEX] of var 0..floor(n - 1): ncoins;
 
-array[INDEX_SET_position_1] of var PVERTEX: position;
-
-set of int: INDEX_SET_ncoins_1 = 1..floor(m - 1);
-
-set of int: INDEX_SET_ncoins_2 = VERTEX;
-
-set of int: INDEX_SET_position_1 = 1..length(TRIBUTE);
-
-set of int: INDEX_SET_tribute_1 = POLYGON;
-
-set of int: INDEX_SET_tribute_2 = VERTEX;
+array[1..length(TRIBUTE)] of var PVERTEX: position;
 
 
 include "all_different.mzn";

@@ -1,9 +1,10 @@
 from GenObj import *
 
 class GenSet(GenObj):
-	def __init__(self, name, dimen = 1, certainty = True, isDeclaredAsSet = False):
+	def __init__(self, name, dimen = 1, isSetOfInt = False, certainty = True, isDeclaredAsSet = False):
 		super(GenSet, self).__init__(name)
 		self.dimen = dimen
+		self.isSetOfInt = isSetOfInt
 		self.certainty = certainty
 		self.isDeclaredAsSet = isDeclaredAsSet
 	
@@ -12,6 +13,12 @@ class GenSet(GenObj):
 
 	def setDimension(self, dimen):
 		self.dimen = dimen
+
+	def getIsSetOfInt(self):
+		return self.isSetOfInt
+
+	def setIsSetOfInt(self, isSetOfInt):
+		self.isSetOfInt = isSetOfInt
 
 	def getCertainty(self):
 		return self.certainty

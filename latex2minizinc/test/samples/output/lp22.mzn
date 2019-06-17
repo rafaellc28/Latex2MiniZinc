@@ -4,67 +4,47 @@ PLACES: Finish;
 
 PLACES: Start;
 
-array[int, int] of float: Gcdist;
+array[PLACES, PLACES] of float: Gcdist;
 
 float: Maxspeed;
 
 float: BigM;
 
-array[int] of float: S1;
+array[PLACES] of float: S1;
 
-array[int] of float: S2;
+array[PLACES] of float: S2;
 
 
-array[INDEX_SET_tea_1] of var float: tea;
+array[PLACES] of var float: tea;
 
-array[INDEX_SET_tla_1] of var float: tla;
+array[PLACES] of var float: tla;
 
-array[INDEX_SET_ted_1] of var float: ted;
+array[PLACES] of var float: ted;
 
-array[INDEX_SET_tld_1] of var float: tld;
+array[PLACES] of var float: tld;
 
 var float: Tmax;
 
-array[INDEX_SET_y_1, INDEX_SET_y_2] of var int: y;
+array[PLACES, PLACES] of var int: y;
 
-array[INDEX_SET_tlv_1] of var float: tlv;
+array[PLACES] of var float: tlv;
 
-array[INDEX_SET_tar_1] of var float: tar;
+array[PLACES] of var float: tar;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
-
-set of int: INDEX_SET_tar_1 = PLACES;
-
-set of int: INDEX_SET_tea_1 = PLACES;
-
-set of int: INDEX_SET_ted_1 = PLACES;
-
-set of int: INDEX_SET_tla_1 = PLACES;
-
-set of int: INDEX_SET_tld_1 = PLACES;
-
-set of int: INDEX_SET_tlv_1 = PLACES;
-
-set of int: INDEX_SET_x_1 = PLACES;
-
-set of int: INDEX_SET_x_2 = PLACES;
-
-set of int: INDEX_SET_y_1 = PLACES;
-
-set of int: INDEX_SET_y_2 = PLACES;
+array[PLACES, PLACES] of var bool: x;
 
 
-constraint forall(a in INDEX_SET_tea_1)(tea[a] >= 0);
+constraint forall(a in PLACES)(tea[a] >= 0);
 
-constraint forall(a in INDEX_SET_tla_1)(tla[a] >= 0);
+constraint forall(a in PLACES)(tla[a] >= 0);
 
-constraint forall(a in INDEX_SET_ted_1)(ted[a] >= 0);
+constraint forall(a in PLACES)(ted[a] >= 0);
 
-constraint forall(a in INDEX_SET_tld_1)(tld[a] >= 0);
+constraint forall(a in PLACES)(tld[a] >= 0);
 
 constraint Tmax >= 0;
 
-constraint forall(a in INDEX_SET_y_1, b in INDEX_SET_y_2)(y[a,b] >= 0);
+constraint forall(a in PLACES, b in PLACES)(y[a,b] >= 0);
 
 constraint forall(a in PLACES where a != Finish)(sum(b in PLACES)(x[a,b]) = 1);
 

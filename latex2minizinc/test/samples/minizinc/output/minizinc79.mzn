@@ -2,7 +2,7 @@ set of int: SPOT = 1..nSpot;
 
 set of int: CLUSTER = 1..k;
 
-array[int, int] of float: dist;
+array[SPOT, SPOT] of float: dist;
 
 float: maxSep;
 
@@ -15,9 +15,7 @@ float: maxdist = max([dist[i,j] | i,j in SPOT]);
 
 var float: obj = min(i,j in SPOT where i < j)(if shot[i] = shot[j] then maxdist else dist[i,j] endif);
 
-array[INDEX_SET_shot_1] of var CLUSTER: shot;
-
-set of int: INDEX_SET_shot_1 = SPOT;
+array[SPOT] of var CLUSTER: shot;
 
 
 include "global_cardinality_low_up_closed.mzn";

@@ -7,9 +7,7 @@ float: c = cos(b1);
 float: b1;
 
 
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = 1..9;
+array[1..9] of var float: x;
 
 
 constraint x[4] - x[3] + 0.55 >= 0;

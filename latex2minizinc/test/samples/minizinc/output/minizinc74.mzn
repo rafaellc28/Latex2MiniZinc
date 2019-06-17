@@ -15,11 +15,7 @@ int: nDays;
 
 var int: tOnEve = sum(d in DAY)(card(roster[EVE,d]));
 
-array[INDEX_SET_roster_1, INDEX_SET_roster_2] of var set of SOLDIER: roster;
-
-set of int: INDEX_SET_roster_1 = SHIFT;
-
-set of int: INDEX_SET_roster_2 = DAY;
+array[SHIFT, DAY] of var set of SOLDIER: roster;
 
 
 constraint forall(d in DAY)(card(roster[NIGHT,d]) = o);

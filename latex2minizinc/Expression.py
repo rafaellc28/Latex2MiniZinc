@@ -22,6 +22,7 @@ class Expression:
         self.isArray = False
         self.isSubIndice = False
         self.isInt = False
+        self.isSetOfInt = False
         self.isDeclaredAsParam = None
         self.isDeclaredAsSet = None
         self.isDeclaredAsVar = None

@@ -2,6 +2,7 @@
 \sum_{j \in COL}m_{i,j} = r: i \in ROW\\
 \sum_{i \in ROW}m_{i,j} = k: j \in COL\\
 \sum_{j \in COL}(m_{i1,j} \land m_{i2,j}) = lambda: i1, i2 \in ROW \mid i1 < i2\\
+\text{include } "double_lex.mzn"\\
 double\_lex(m)\\
 ROW := 1 \dots v; COL := 1 \dots b\\
 r, k, lambda \in \mathbb{Z}, \in \mathbb{P}\\

@@ -8,11 +8,11 @@ set of ELITE: infantry;
 
 float: obj = (sum(e in Liu)(liuValue[e])) + (sum(e in Guan)(guanValue[e])) + (sum(e in Zhang)(zhangValue[e]));
 
-array[int] of int: liuValue;
+array[ELITE] of int: liuValue;
 
-array[int] of int: guanValue;
+array[ELITE] of int: guanValue;
 
-array[int] of int: zhangValue;
+array[ELITE] of int: zhangValue;
 
 
 var set of ELITE: Liu;

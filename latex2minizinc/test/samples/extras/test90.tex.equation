@@ -2,7 +2,7 @@
 	same * abs(p1 - p2) + (1-same) * (abs(13 - p1 - p2) + 1)
 \}\\
 Seats, Guests \in \text{ setof } \mathbb{Z}, := 1 \dots 12\\
-h1_{h}, h2_{h}, \in Guests; pos_{h} \in Seats, \in \mathbb{V}: h \in Hatreds\\
+h1_{h}, h2_{h}, \in Hatreds; pos_{h} \in Seats, \in \mathbb{V}: h \in Hatreds\\
 h1 := [groom, carol, ed, bride, ted]\\
 h2 := [clara, bestman, ted, alice, ron]\\
 bride := 1; groom := 2; bestman := 3; bridesmaid := 4; bob := 5; carol := 6;\\

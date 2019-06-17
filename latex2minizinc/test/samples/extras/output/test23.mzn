@@ -7,15 +7,13 @@ array[INDEX_SET_ISO, 1..2] of int: ISO;
 enum REST;
 
 
-array[INDEX_SET_Assign2_1, INDEX_SET_Assign2_2, INDEX_SET_Assign2_3] of var int: Assign2;
+array[INDEX_SET_Assign2_1, INDEX_SET_Assign2_2, REST] of var int: Assign2;
 
 set of int: INDEX_SET_ADJACENT;
 
 set of int: INDEX_SET_Assign2_1 = ISO;
 
 set of int: INDEX_SET_Assign2_2 = REST;
-
-set of int: INDEX_SET_Assign2_3;
 
 set of int: INDEX_SET_ISO;
 

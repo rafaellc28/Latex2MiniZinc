@@ -10,7 +10,7 @@ int: other = 0;
 
 int: n = k + l + m;
 
-array[int] of KIND: kind = [E | i in 1..k] ++ [S | i in 1..l];
+array[ESSTANZA] of KIND: kind = [E | i in 1..k] ++ [S | i in 1..l];
 
 int: k;
 
@@ -21,15 +21,11 @@ int: m;
 array[int] of int: effect;
 
 
-array[INDEX_SET_place_1] of var POSN: place;
+array[ESSTANZA] of var POSN: place;
 
-array[INDEX_SET_what_1] of var STANZA: what;
+array[POSN] of var STANZA: what;
 
 var int: obj = sum(p in 1..floor(n - 1))(if what[p] != other /\ what[p + 1] != other then abs(effect[what[p]] - effect[what[p + 1]]) else 0 endif);
-
-set of int: INDEX_SET_place_1 = ESSTANZA;
-
-set of int: INDEX_SET_what_1 = POSN;
 
 
 include "alldifferent.mzn";

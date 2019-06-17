@@ -1,19 +1,17 @@
 enum PROD;
 
-array[int] of float: profit;
+array[PROD] of float: profit;
 
-array[int] of float: rate;
+array[PROD] of float: rate;
 
 float: avail;
 
-array[int] of float: commit;
+array[PROD] of float: commit;
 
-array[int] of float: market;
+array[PROD] of float: market;
 
 
-array[INDEX_SET_Make_1] of var float: Make;
-
-set of int: INDEX_SET_Make_1 = PROD;
+array[PROD] of var float: Make;
 
 
 constraint forall(p in PROD)(assert(rate[p] > 0, "Assertion rate[\(p)] > 0 failed!"));
@@ -24,7 +22,7 @@ constraint forall(p in PROD)(assert(commit[p] >= 0, "Assertion commit[\(p)] >= 0
 
 constraint forall(p in PROD)(assert(market[p] >= 0, "Assertion market[\(p)] >= 0 failed!"));
 
-constraint forall(p in INDEX_SET_Make_1)(Make[p] <= market[p] /\ Make[p] >= commit[p]);
+constraint forall(p in PROD)(Make[p] <= market[p] /\ Make[p] >= commit[p]);
 
 constraint sum(p in PROD)((1/rate[p]) * Make[p]) <= avail;
 

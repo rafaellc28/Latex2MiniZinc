@@ -2,20 +2,16 @@ enum ORIG;
 
 enum DEST;
 
-array[int, int] of float: rate;
+array[ORIG, DEST] of float: rate;
 
-array[int, int] of float: limit;
+array[ORIG, DEST] of float: limit;
 
-array[int] of float: supply;
+array[ORIG] of float: supply;
 
-array[int] of float: demand;
+array[DEST] of float: demand;
 
 
-array[INDEX_SET_Trans_1, INDEX_SET_Trans_2] of var float: Trans;
-
-set of int: INDEX_SET_Trans_1 = ORIG;
-
-set of int: INDEX_SET_Trans_2 = DEST;
+array[ORIG, DEST] of var float: Trans;
 
 
 constraint forall(o in ORIG, d in DEST)(assert(rate[o,d] >= 0, "Assertion rate[\(o),\(d)] >= 0 failed!"));
@@ -26,7 +22,7 @@ constraint forall(o in ORIG)(assert(supply[o] >= 0, "Assertion supply[\(o)] >= 0
 
 constraint forall(d in DEST)(assert(demand[d] >= 0, "Assertion demand[\(d)] >= 0 failed!"));
 
-constraint forall(i in INDEX_SET_Trans_1, j in INDEX_SET_Trans_2)(Trans[i,j] >= 0);
+constraint forall(i in ORIG, j in DEST)(Trans[i,j] >= 0);
 
 constraint forall(i in ORIG)(sum(j in DEST)(Trans[i,j]) = supply[i]);
 

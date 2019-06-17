@@ -5,11 +5,9 @@ array[INDEX_SET_E, 1..2] of int: E;
 int: n;
 
 
-array[INDEX_SET_x_1] of var bool: x;
+array[V] of var bool: x;
 
 set of int: INDEX_SET_E;
-
-set of int: INDEX_SET_x_1 = V;
 
 
 constraint assert(n > 0, "Assertion n > 0 failed!");

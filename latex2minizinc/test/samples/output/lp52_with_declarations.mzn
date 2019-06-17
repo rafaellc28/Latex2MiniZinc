@@ -8,22 +8,16 @@ int: nc = max(i in V)(z[i,0]);
 
 int: n;
 
-array[int, int] of int: z;
+array[V, 0..1] of int: z;
 
 
-array[INDEX_SET_u_1] of var bool: u;
+array[1..nc] of var bool: u;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
+array[V, 1..nc] of var bool: x;
 
 set of int: INDEX_SET_E;
 
 set of int: INDEX_SET_EE;
-
-set of int: INDEX_SET_u_1 = 1..nc;
-
-set of int: INDEX_SET_x_1 = V;
-
-set of int: INDEX_SET_x_2 = 1..nc;
 
 
 constraint assert(n >= 2, "Assertion n >= 2 failed!");

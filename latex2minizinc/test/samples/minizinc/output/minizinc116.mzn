@@ -16,7 +16,7 @@ int: F;
 
 int: W;
 
-array[int] of POS: opposite = [boat,bank];
+array[POS] of POS: opposite = [boat,bank];
 
 int: G;
 
@@ -25,25 +25,15 @@ int: end;
 int: T;
 
 
-array[INDEX_SET_pos_1] of var POS: pos;
+array[TIME0] of var POS: pos;
 
-array[INDEX_SET_food_1] of var FOOD: food;
+array[TIME0] of var FOOD: food;
 
-array[INDEX_SET_water_1] of var WATER: water;
+array[TIME0] of var WATER: water;
 
-array[INDEX_SET_move_food_1] of var -F..F: move_food;
+array[TIME] of var -F..F: move_food;
 
-array[INDEX_SET_move_water_1] of var -W..W: move_water;
-
-set of int: INDEX_SET_food_1 = TIME0;
-
-set of int: INDEX_SET_move_food_1 = TIME;
-
-set of int: INDEX_SET_move_water_1 = TIME;
-
-set of int: INDEX_SET_pos_1 = TIME0;
-
-set of int: INDEX_SET_water_1 = TIME0;
+array[TIME] of var -W..W: move_water;
 
 
 predicate elephant_moves(var FOOD: food_here, var WATER: water_here) =

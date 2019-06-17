@@ -2,18 +2,14 @@ array[INDEX_SET_PAIRS, 1..2] of TASKS: PAIRS;
 
 set of int: TASKS = 1..M;
 
-array[int, int] of float: saving;
+array[1..M, 1..M] of float: saving;
 
 int: M;
 
 
-array[INDEX_SET_before_1, INDEX_SET_before_2] of var bool: before;
+array[TASKS, TASKS] of var bool: before;
 
 set of int: INDEX_SET_PAIRS;
-
-set of int: INDEX_SET_before_1 = TASKS;
-
-set of int: INDEX_SET_before_2 = TASKS;
 
 
 constraint forall(a in TASKS, b in TASKS, c in TASKS where a < b /\ a < c /\ c < b)(before[a,b] - before[c,b] - before[a,c] <= 0);

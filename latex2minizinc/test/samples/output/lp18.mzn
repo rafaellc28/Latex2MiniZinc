@@ -2,29 +2,21 @@ enum I;
 
 enum J;
 
-array[int, int] of float: Varcost;
+array[I, J] of float: Varcost;
 
-array[int, int] of float: Fixcost;
+array[I, J] of float: Fixcost;
 
-array[int] of float: Supply;
+array[I] of float: Supply;
 
-array[int] of float: Demand;
-
-
-array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
-
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
-
-set of int: INDEX_SET_y_1 = I;
-
-set of int: INDEX_SET_y_2 = J;
+array[J] of float: Demand;
 
 
-constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
+array[I, J] of var bool: y;
+
+array[I, J] of var float: x;
+
+
+constraint forall(i in I, j in J)(x[i,j] >= 0);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) = Supply[i]);
 

@@ -1,24 +1,20 @@
 int: N;
 
-array[int] of float: Xi;
+array[0..N] of float: Xi;
 
-array[int] of float: Fi;
+array[0..N] of float: Fi;
 
 
 var float: f;
 
-array[INDEX_SET_s_1] of var float: s;
+array[1..N] of var float: s;
 
-array[INDEX_SET_z_1] of var bool: z;
+array[1..N] of var bool: z;
 
 var float: x;
 
-set of int: INDEX_SET_s_1 = 1..N;
 
-set of int: INDEX_SET_z_1 = 1..N;
-
-
-constraint forall(n in INDEX_SET_s_1)(s[n] >= 0);
+constraint forall(n in 1..N)(s[n] >= 0);
 
 constraint forall(n in 1..N)(s[n] <= z[n]);
 

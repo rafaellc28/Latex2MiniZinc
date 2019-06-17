@@ -6,22 +6,18 @@ set of int: PREC = 1..m;
 
 PIVOT: first;
 
-array[int] of PIVOT: prev;
+array[PREC] of PIVOT: prev;
 
-array[int] of PIVOT: post;
+array[PREC] of PIVOT: post;
 
 int: m;
 
-array[int] of int: coord;
+array[PIVOT] of int: coord;
 
 
-array[INDEX_SET_order_1] of var POS: order;
+array[PIVOT] of var POS: order;
 
-array[INDEX_SET_route_1] of var PIVOT: route;
-
-set of int: INDEX_SET_order_1 = PIVOT;
-
-set of int: INDEX_SET_route_1 = POS;
+array[POS] of var PIVOT: route;
 
 
 include "alldifferent.mzn";

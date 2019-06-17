@@ -2,11 +2,11 @@ set of int: BLOCK = 1..n;
 
 set of int: ROFF = 1..m;
 
-array[int, int] of set of ROFF: shape;
+array[BLOCK, ROT] of set of ROFF: shape;
 
 set of int: ROT = 1..4;
 
-array[int, int] of int: d;
+array[ROFF, 1..4] of int: d;
 
 int: h;
 
@@ -14,26 +14,20 @@ int: n;
 
 int: m;
 
-array[int, int] of int: rsize = array2d(ROFF,1..2,[d[i,j] | i in ROFF, j in 3..4]);
+array[ROFF, 1..2] of int: rsize = array2d(ROFF,1..2,[d[i,j] | i in ROFF, j in 3..4]);
 
-array[int, int] of int: roff = array2d(ROFF,1..2,[d[i,j] | i in ROFF, j in 1..2]);
+array[ROFF, 1..2] of int: roff = array2d(ROFF,1..2,[d[i,j] | i in ROFF, j in 1..2]);
 
 int: maxl;
 
 
-array[INDEX_SET_x_1] of var 0..maxl: x;
+array[BLOCK] of var 0..maxl: x;
 
 var 0..maxl: l;
 
-array[INDEX_SET_y_1] of var 0..h: y;
+array[BLOCK] of var 0..h: y;
 
-array[INDEX_SET_rot_1] of var ROT: rot;
-
-set of int: INDEX_SET_rot_1 = BLOCK;
-
-set of int: INDEX_SET_x_1 = BLOCK;
-
-set of int: INDEX_SET_y_1 = BLOCK;
+array[BLOCK] of var ROT: rot;
 
 
 constraint forall(i in BLOCK)(shape[i,rot[i]] != {});

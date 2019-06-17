@@ -1,17 +1,13 @@
 enum ELEMENTS = {Metal,Wood,Water,Fire,Earth};
 
-array[int, int] of ELEMENTS: compat;
+array[1..r, 1..c] of ELEMENTS: compat;
 
 int: r = 3;
 
 int: c = 2;
 
 
-array[INDEX_SET_herb_1, INDEX_SET_herb_2] of var ELEMENTS: herb;
-
-set of int: INDEX_SET_herb_1 = 1..r;
-
-set of int: INDEX_SET_herb_2 = 1..c;
+array[1..r, 1..c] of var ELEMENTS: herb;
 
 
 include "table.mzn";

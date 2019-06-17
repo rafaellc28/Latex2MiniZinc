@@ -34,8 +34,8 @@ tran\_raw_{pl} := \\
 p\_dom_{pl,c} := \text{ if } p\_r_{c} > 0 \text{ then } p\_r_{c} \text{ else } p\_pr_{pl,c} \text{ endif }: pl \in plant, c \in c\_raw\\
 icap_{u,pl} := 0.33 * dcap_{pl,u}: u \in unit, pl \in plant\\
 Z_{pr,pl} \in \mathbb{R}: pr \in proc, pl \in plant\\
-Xf_{c,pl,r} \in \mathbb{R}: c \in c\_final, pl \in plant, r \in region \mid (c,pl) \in cp\_pos\\
-Xi_{c,p1,p2} \in \mathbb{R}: c \in c\_ship, p1 \in plant, p2 \in plant \mid (c,p1) \in cp\_pos \land (c,p2) \in cc\_pos\\
+Xf_{c,pl,r} \in \mathbb{R}: c \in c\_final, pl \in plant, r \in region\\
+Xi_{c,p1,p2} \in \mathbb{R}: c \in c\_ship, p1 \in plant, p2 \in plant\\
 Vf_{cf,r,p} \in \mathbb{R}: cf \in c\_final, r \in region, p \in port\\
 Vr_{c,pl} \in \mathbb{R}: c \in c\_raw, pl \in plant \mid (c,pl) \in cc\_pos\\
 U_{c,pl} \in \mathbb{R}: c \in c\_raw, pl \in plant \mid (c,pl) \in cc\_pos\\

@@ -6,25 +6,21 @@ enum EVENTS;
 
 array[int, int] of float: Price;
 
-array[int, int] of float: Payout;
+array[MARKETS, EVENTS] of float: Payout;
 
 
 var float: minpayout;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+array[MARKETS, EVENTS] of var float: x;
 
 set of int: INDEX_SET_CONTRACTS;
-
-set of int: INDEX_SET_x_1 = MARKETS;
-
-set of int: INDEX_SET_x_2 = EVENTS;
 
 
 constraint minpayout >= 0;
 
-constraint forall(m in INDEX_SET_x_1, e in INDEX_SET_x_2)(x[m,e] >= 0);
+constraint forall(m in MARKETS, e in EVENTS)(x[m,e] >= 0);
 
-constraint sum(m in INDEX_SET_CONTRACTS)(Price[CONTRACTS[m,1],CONTRACTS[m,2]] * x[CONTRACTS[m,1],CONTRACTS[m,2]]) <= 1000;
+constraint sum(m in INDEX_SET_CONTRACTS)(Price[CONTRACTS[m,1],CONTRACTS[m,2]] * x[to_enum(MARKETS,CONTRACTS[m,1]),to_enum(EVENTS,CONTRACTS[m,2])]) <= 1000;
 
 constraint forall(e in EVENTS)(sum(m in MARKETS)(Payout[m,e] * x[m,e]) >= minpayout);
 

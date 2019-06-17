@@ -15,21 +15,11 @@ int: nDays;
 
 var int: tOnEve = sum(d in DAY)(onEve[d]);
 
-array[INDEX_SET_onEve_1] of var l..u: onEve;
+array[DAY] of var l..u: onEve;
 
-array[INDEX_SET_rosterShift_1, INDEX_SET_rosterShift_2] of var set of SOLDIER: rosterShift;
+array[SHIFT, DAY] of var set of SOLDIER: rosterShift;
 
-array[INDEX_SET_rosterSoldier_1, INDEX_SET_rosterSoldier_2] of var SHIFT: rosterSoldier;
-
-set of int: INDEX_SET_onEve_1 = DAY;
-
-set of int: INDEX_SET_rosterShift_1 = SHIFT;
-
-set of int: INDEX_SET_rosterShift_2 = DAY;
-
-set of int: INDEX_SET_rosterSoldier_1 = SOLDIER;
-
-set of int: INDEX_SET_rosterSoldier_2 = DAY;
+array[SOLDIER, DAY] of var SHIFT: rosterSoldier;
 
 
 include "global_cardinality.mzn";

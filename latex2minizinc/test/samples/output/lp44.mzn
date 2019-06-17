@@ -1,13 +1,7 @@
-array[int, int] of float: Givens;
+array[1..9, 1..9] of float: Givens;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
-
-set of int: INDEX_SET_x_1 = 1..9;
-
-set of int: INDEX_SET_x_2 = 1..9;
-
-set of int: INDEX_SET_x_3 = 1..9;
+array[1..9, 1..9, 1..9] of var bool: x;
 
 
 constraint forall(i in 1..9, j in 1..9, k in 1..9 where Givens[i,j] != 0)(x[i,j,k] = if Givens[i,j] = k then 1 else 0 endif);

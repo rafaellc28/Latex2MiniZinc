@@ -1,17 +1,15 @@
 set of int: MOVES = 1..nMoves;
 
-array[int] of 1..10: duration;
+array[MOVES] of 1..10: duration;
 
 int: timeBound;
 
-array[int] of 1..20: power;
+array[MOVES] of 1..20: power;
 
 int: nMoves;
 
 
-array[INDEX_SET_occur_1] of var 0..1: occur;
-
-set of int: INDEX_SET_occur_1 = MOVES;
+array[MOVES] of var 0..1: occur;
 
 
 constraint (sum(i in MOVES)(duration[i] * occur[i])) <= timeBound;

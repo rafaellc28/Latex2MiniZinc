@@ -16,6 +16,7 @@ from SetExpression import *
 from EntryIndexingExpression import *
 from EntryLogicalExpression import *
 from SymbolicExpression import *
+from ExpressionList import *
 from TrueFalse import *
 from TopologicalSort import *
 from Constants import *
@@ -39,6 +40,7 @@ from VariableSet import *
 from SetSet import *
 from String import *
 
+from Arguments import *
 from LetExpression import *
 from PredicateExpression import *
 from TestOperationExpression import *
@@ -112,6 +114,10 @@ class CodeGenerator:
 
         self.SET_OPERATIONS = [SetExpressionWithOperation.DIFF, SetExpressionWithOperation.SYMDIFF, SetExpressionWithOperation.UNION, \
                                SetExpressionWithOperation.INTER, SetExpressionWithOperation.CROSS]
+        self.ARITHMETIC_OPERATIONS = [NumericExpressionWithArithmeticOperation.PLUS,  NumericExpressionWithArithmeticOperation.MINUS, 
+                                      NumericExpressionWithArithmeticOperation.TIMES, NumericExpressionWithArithmeticOperation.DIV, 
+                                      NumericExpressionWithArithmeticOperation.MOD,   NumericExpressionWithArithmeticOperation.POW, 
+                                      NumericExpressionWithArithmeticOperation.QUOT]
         self.setsWitOperations = {}
         self.setsWitOperationsIndices = {}
         self.setsWitOperationsUsed = []
@@ -129,6 +135,11 @@ class CodeGenerator:
         self.isConstraintInLetExpression = False
         self.isConstraint = False
         self.isWithinOtherExpression = False
+
+        self.objectsDomains = {}
+        self.objectsTypes = {}
+        self.currentDomain = []
+        self.localArgumentType = []
 
     def generateCode(self, node):
         cls = node.__class__
@@ -233,6 +244,14 @@ class CodeGenerator:
 
     def _checkIsSetOperation(self, key):
         for op in self.SET_OPERATIONS:
+            op = " " + op + " "
+            if op in key:
+                return True
+
+        return False
+
+    def _checkIsArithmeticOperation(self, key):
+        for op in self.ARITHMETIC_OPERATIONS:
             op = " " + op + " "
             if op in key:
                 return True
@@ -590,6 +609,9 @@ class CodeGenerator:
 
                 #elif not FROM_TO in d:
                 #    res.append(INT)
+                elif self.genSets.has(d) or self._checkIsSetOperation(d) or FROM_TO in d:
+                    res.append(d)
+                    c += 1
 
                 else:
                     res.append(INT)
@@ -850,7 +872,7 @@ class CodeGenerator:
         isArray = False
         array = EMPTY_STRING
         domains_aux = []
-
+        
         if domain != None and domain.strip() != EMPTY_STRING:
 
             if isVariable:
@@ -1208,6 +1230,26 @@ class CodeGenerator:
 
         return domain, isArray, array
 
+    def _setObjectDomain(self, name, isArray, array):
+        if isArray:
+            domains_aux = array[array.find(BEGIN_ARRAY)+1:array.find(END_ARRAY)]
+            domains_aux = map(lambda el: el.strip(), domains_aux.split(COMMA))
+
+            self.objectsDomains[name] = domains_aux;
+
+    def _setObjectType(self, name, _type):
+        _type = _type.strip()
+
+        if _type.startswith(OF+SPACE+VAR+SPACE):
+            _type = _type[7:]
+        elif _type.startswith(OF+SPACE):
+            _type = _type[3:]
+
+        if _type.endswith(SEP_PARTS_DECLARATION):
+            _type = _type[:-1]
+
+        self.objectsTypes[name] = _type
+
     def _declareVars(self):
         """
         Generate the MiniZinc code for the declaration of variables
@@ -1306,6 +1348,7 @@ class CodeGenerator:
                         varStr += VAR+SPACE + _type
 
             if not includedVar:
+                _type = FLOAT
                 if isArray:
                     varStr += SPACE + OF + SPACE+VAR+SPACE + FLOAT + SEP_PARTS_DECLARATION
                 else:
@@ -1325,6 +1368,9 @@ class CodeGenerator:
 
             varStr += SPACE + name
             varStr += END_STATEMENT+BREAKLINE+BREAKLINE
+
+            self._setObjectDomain(name, isArray, array)
+            self._setObjectType(name, _type)
             
         return varStr
 
@@ -1404,6 +1450,8 @@ class CodeGenerator:
         if _type[0] == BEGIN_SET and _type[-1] == END_SET and FROM_TO in _type:
             _type = _type[1:-1]
 
+        self._setObjectType(name, _type)
+
         if _type != ENUM:
             _type = _type+SEP_PARTS_DECLARATION
 
@@ -1418,6 +1466,8 @@ class CodeGenerator:
             paramStr += SPACE+ASSIGN+SPACE + value
 
         paramStr += END_STATEMENT+BREAKLINE+BREAKLINE
+
+        self._setObjectDomain(name, isArray, array)
 
         return paramStr
 
@@ -1518,6 +1568,9 @@ class CodeGenerator:
                 
                 self.array2dIndex1 = index1
                 self.array2dIndex2 = index2
+
+        if _genSet.getIsSetOfInt():
+            _type = SET_OF_INT
                 
         if _type == SET_OF_INT and self._isSetForTuple(name):
             _type = INT
@@ -1543,7 +1596,9 @@ class CodeGenerator:
 
         self.array2dIndex1 = None
         self.array2dIndex2 = None
-        
+
+        self._setObjectType(name, _type)
+
         if _type == ENUM:
             self.listEnums.append(name)
 
@@ -1551,6 +1606,8 @@ class CodeGenerator:
             self.listSetOfInts.append(name)
             
         setStr += END_STATEMENT+BREAKLINE+BREAKLINE
+
+        self._setObjectDomain(name, isArray, array)
         
         return setStr
 
@@ -1668,10 +1725,15 @@ class CodeGenerator:
         return res
 
     def generateCode_Declaration(self, node):
+
+        self._addCurrentDomain(node)
+
         res = node.declarationExpression.generateCode(self)
 
         if node.indexingExpression:
             res += BEGIN_SET+ node.indexingExpression.generateCode(self) +END_SET
+
+        self._removeCurrentDomain(node)
 
         return res
 
@@ -1703,6 +1765,74 @@ class CodeGenerator:
 
         return objStr;
 
+    def _addLocalArgumentType(self, node):
+        if node.preparedArguments:
+            for arg in node.preparedArguments.arguments:
+                if isinstance(arg, Argument):
+
+                    for name in arg.names:
+                        self.localArgumentType.append({name.getSymbolName(self): arg.argumentType.type.getSymbolName(self)})
+
+    def _removeLocalArgumentType(self, node):
+        if node.preparedArguments:
+            c = 0
+            for arg in node.preparedArguments.arguments:
+                if isinstance(arg, Argument):
+
+                    for name in arg.names:
+                        c += 1
+
+        self.localArgumentType = self.localArgumentType[:-c]
+
+    def _addCurrentDomain(self, node):
+
+        inExpressions = []
+
+        if isinstance(node, ExpressionList):
+            if node.logicalExpression:
+                inExpressions = filter(lambda el: isinstance(el, EntryIndexingExpressionWithSet) and el.op == EntryIndexingExpressionWithSet.IN, 
+                    node.logicalExpression.entriesIndexingExpression)
+
+        else:
+            if node.indexingExpression:
+                inExpressions = filter(lambda el: isinstance(el, EntryIndexingExpressionWithSet) and el.op == EntryIndexingExpressionWithSet.IN, 
+                    node.indexingExpression.entriesIndexingExpression)
+
+        if len(inExpressions) > 0:
+
+            for inExpression in inExpressions:
+
+                inExpression = inExpression.generateCode(self)
+                if inExpression.strip() != EMPTY_STRING:
+                    parts = map(lambda el: el.strip(), inExpression.split(IN))
+
+                    self.currentDomain.append({parts[0]: parts[1]})
+
+    def _removeCurrentDomain(self, node):
+
+        inExpressions = []
+
+        if isinstance(node, ExpressionList):
+            if node.logicalExpression:
+                inExpressions = filter(lambda el: isinstance(el, EntryIndexingExpressionWithSet) and el.op == EntryIndexingExpressionWithSet.IN, 
+                    node.logicalExpression.entriesIndexingExpression)
+
+        else:
+            if node.indexingExpression:
+                inExpressions = filter(lambda el: isinstance(el, EntryIndexingExpressionWithSet) and el.op == EntryIndexingExpressionWithSet.IN, 
+                    node.indexingExpression.entriesIndexingExpression)
+
+        if len(inExpressions) > 0:
+            c = 0
+
+            for inExpression in inExpressions:
+
+                inExpression = inExpression.generateCode(self)
+                if inExpression.strip() != EMPTY_STRING:
+                    c += 1
+
+            self.currentDomain = self.currentDomain[:-c]
+
     # Objective Function
     def generateCode_Objective(self, node):
         """
@@ -1724,6 +1854,8 @@ class CodeGenerator:
 
         hasForall = False
 
+        self._addCurrentDomain(node)
+
         if node.indexingExpression:
             idxExpression = node.indexingExpression.generateCode(self)
 
@@ -1736,6 +1868,8 @@ class CodeGenerator:
         if not self.isLetExpressionArgument and not self.isConstraintInLetExpression and not self.isWithinOtherExpression:
             res += END_STATEMENT
             
+        self._removeCurrentDomain(node)
+
         return res
 
     def generateCode_ConstraintExpression2(self, node):
@@ -1802,6 +1936,8 @@ class CodeGenerator:
 
         self.isWithinOtherExpression = True
 
+        self._addCurrentDomain(node)
+
         indexingExpression = node.indexingExpression.generateCode(self)
         if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
             indexingExpression = FLOOR+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST
@@ -1818,6 +1954,8 @@ class CodeGenerator:
             res = SUM + BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST
 
         res += node.linearExpression.generateCode(self) + END_ARGUMENT_LIST
+
+        self._removeCurrentDomain(node)
 
         self.isWithinOtherExpression = False
 
@@ -1852,6 +1990,9 @@ class CodeGenerator:
 
     # LetExpression
     def generateCode_LetExpression(self, node):
+
+        #self._addCurrentDomain(node)
+        self._addLocalArgumentType(node)
         
         self.isLetExpression = True
         self.isLetExpressionArgument = True
@@ -1869,10 +2010,17 @@ class CodeGenerator:
         #if self.isConstraint and not isinstance(node.expression, LetExpression):
         #    res += END_STATEMENT
 
+        self._removeLocalArgumentType(node)
+        #self._removeCurrentDomain(node)
+
         return res
 
     # PredicateExpression
     def generateCode_PredicateExpression(self, node):
+
+        #self._addCurrentDomain(node)
+        self._addLocalArgumentType(node)
+
         res = PREDICATE + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
 
         if node.expression:
@@ -1880,10 +2028,17 @@ class CodeGenerator:
 
         res += END_STATEMENT
 
+        self._removeLocalArgumentType(node)
+        #self._removeCurrentDomain(node)
+
         return res
 
     # TestOperationExpression
     def generateCode_TestOperationExpression(self, node):
+
+        #self._addCurrentDomain(node)
+        self._addLocalArgumentType(node)
+
         res = TEST + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
         
         if node.expression:
@@ -1891,10 +2046,17 @@ class CodeGenerator:
 
         res += END_STATEMENT
 
+        self._removeLocalArgumentType(node)
+        #self._removeCurrentDomain(node)
+
         return res
 
     # FunctionExpression
     def generateCode_FunctionExpression(self, node):
+
+        #self._addCurrentDomain(node)
+        self._addLocalArgumentType(node)
+
         var = VAR + SPACE if node.typeIsVariable else EMPTY_STRING
         _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
 
@@ -1907,6 +2069,9 @@ class CodeGenerator:
             res += SPACE + EQUAL + BREAKLINE + TAB + node.expression.generateCode(self)
 
         res += END_STATEMENT
+
+        self._removeLocalArgumentType(node)
+        #self._removeCurrentDomain(node)
 
         return res
 
@@ -2120,6 +2285,8 @@ class CodeGenerator:
 
     def generateCode_IteratedNumericExpression(self, node):
 
+        self._addCurrentDomain(node)
+
         indexingExpression = node.indexingExpression.generateCode(self)
         if isinstance(node.indexingExpression, NumericExpressionWithArithmeticOperation) and not self._hasVariable(node.indexingExpression):
             indexingExpression = FLOOR+BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST
@@ -2136,6 +2303,8 @@ class CodeGenerator:
             res = str(node.op) + BEGIN_ARGUMENT_LIST + indexingExpression + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST
 
         res += node.numericExpression.generateCode(self) + END_ARGUMENT_LIST
+
+        self._removeCurrentDomain(node)
 
         return res
 
@@ -2172,6 +2341,8 @@ class CodeGenerator:
     # Expression List
     def generateCode_ExpressionList(self, node):
 
+        self._addCurrentDomain(node)
+
         indexing = filter(Utils._deleteEmpty, map(self._getCodeEntry, node.entriesIndexingExpression))
         res = (COMMA+SPACE).join(indexing)
 
@@ -2197,6 +2368,8 @@ class CodeGenerator:
                     entries = (SPACE+AND+SPACE).join(self.scopes[stmtIndex][scope][NEWENTRYLOGICALEXPRESSION])
 
                     res += entries
+
+        self._removeCurrentDomain(node)
 
         return res
 
@@ -2399,7 +2572,9 @@ class CodeGenerator:
         return node.setExpression1.generateCode(self) + SPACE + node.op + SPACE + node.setExpression2.generateCode(self)
 
     def generateCode_EntryLogicalExpressionIterated(self, node):
+        self._addCurrentDomain(node)
         res =  node.op + BEGIN_ARGUMENT_LIST + node.indexingExpression.generateCode(self) + END_ARGUMENT_LIST+BEGIN_ARGUMENT_LIST +  node.logicalExpression.generateCode(self) + END_ARGUMENT_LIST
+        self._removeCurrentDomain(node)
         return res
 
     def generateCode_EntryLogicalExpressionBetweenParenthesis(self, node):
@@ -2471,6 +2646,9 @@ class CodeGenerator:
         return res
 
     def generateCode_IteratedSetExpression(self, node):
+
+        self._addCurrentDomain(node)
+
         if node.indexingExpression:
             integrand_str = EMPTY_STRING
             indexingExpression = node.indexingExpression.generateCode(self)
@@ -2508,6 +2686,8 @@ class CodeGenerator:
 
         if isArray2d:
             res += END_ARGUMENT_LIST
+
+        self._removeCurrentDomain(node)
 
         if self.stmtIndex > -1:
             self.parentScope = previousParentScope
@@ -2578,6 +2758,76 @@ class CodeGenerator:
     def generateCode_Value(self, node):
         return node.value.generateCode(self)
 
+    def _getCurrentDomain(self, identifier):
+        for i in range(len(self.currentDomain)-1, -1, -1):
+            if identifier in self.currentDomain[i]:
+                return self.currentDomain[i][identifier]
+
+        return None
+
+    def _getLocalArgumentType(self, identifier):
+        for i in range(len(self.localArgumentType)-1, -1, -1):
+            if identifier in self.localArgumentType[i]:
+                return self.localArgumentType[i][identifier]
+
+        return None
+
+    def _getIndex(self, identifier, ind, i):
+        includeToEnum = False
+
+        if identifier in self.objectsDomains and i < len(self.objectsDomains[identifier]):
+
+            if self.objectsDomains[identifier][i] != INT and not self.objectsDomains[identifier][i].startswith(INDEX_SET_) and \
+               self.objectsDomains[identifier][i] in self.objectsTypes and self.objectsTypes[self.objectsDomains[identifier][i]] == ENUM:
+
+                m = re.search(r"^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$", ind)
+
+                if m:
+                    includeToEnum = True
+
+                elif BEGIN_ARRAY in ind:
+                    domains_aux = ind[ind.find(BEGIN_ARRAY)+1:-1]
+                    domains_aux = map(lambda el: el.strip(), domains_aux.split(COMMA))
+
+                    if len(domains_aux) == 2:
+                        curDomain = self._getCurrentDomain(domains_aux[0])
+                        
+                        if curDomain and curDomain.startswith(INDEX_SET_):
+                            includeToEnum = True
+
+                elif self._checkIsArithmeticOperation(ind):
+                    includeToEnum = True
+
+                else:
+                    localObjectType = self._getLocalArgumentType(ind)
+
+                    if localObjectType:
+                        if localObjectType != self.objectsDomains[identifier][i]:
+                            includeToEnum = True
+
+                    else:
+                        curDomain = self._getCurrentDomain(ind)
+                        #print(identifier, ind, curDomain, self.objectsDomains[identifier][i], localObjectType, self.localArgumentType)
+
+                        if curDomain:
+                            localObjectType = self._getLocalArgumentType(curDomain)
+
+                            if localObjectType:
+                                if localObjectType != self.objectsDomains[identifier][i] and localObjectType != SET_OF + self.objectsDomains[identifier][i]:
+                                    includeToEnum = True
+
+                            elif curDomain != self.objectsDomains[identifier][i]:
+                                includeToEnum = True
+
+                        elif ind in self.objectsTypes and self.objectsTypes[ind] != self.objectsDomains[identifier][i]:
+                            includeToEnum = True
+
+
+        if includeToEnum:
+            ind = TO_ENUM + BEGIN_ARGUMENT_LIST + self.objectsDomains[identifier][i] + COMMA + ind + END_ARGUMENT_LIST
+
+        return ind
+
     # Identifier
     def generateCode_Identifier(self, node):
         if isinstance(node.sub_indices, str):
@@ -2604,6 +2854,7 @@ class CodeGenerator:
                     res = ident + BEGIN_ARRAY
                     
                     self.posId[identProcessing] = 0
+                    i = 0
                     for ind in node.sub_indices:
                         if self.posId[identProcessing] > 0:
                             res += COMMA
@@ -2614,12 +2865,16 @@ class CodeGenerator:
                         ind = ind.generateCode(self)
                         self.turnStringsIntoInts = False
 
+                        ind = self._getIndex(ident, ind, i)
+
                         if self.generateAssertExpression:
                             ind = "\\("+ind+")"
 
                         res += ind
 
                         self.posId[identProcessing] += 1
+
+                        i += 1
                         
                     res += END_ARRAY
                     del self.posId[identProcessing]
@@ -2630,16 +2885,21 @@ class CodeGenerator:
 
                     inds = []
                     res = ident + BEGIN_ARRAY
+                    i = 0
 
                     for ind in node.sub_indices:
                         self.turnStringsIntoInts = True
                         ind = self._getCodeID(ind)
                         self.turnStringsIntoInts = False
 
+                        ind = self._getIndex(ident, ind, i)
+
                         if self.generateAssertExpression:
                             ind = "\\("+ind+")"
 
                         inds.append(ind)
+
+                        i += 1
 
                     res += COMMA.join(inds) + END_ARRAY
 

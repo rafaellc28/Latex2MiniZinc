@@ -4,20 +4,20 @@ array[INDEX_SET_DW_LINKS, 1..2] of W_CITY: DW_LINKS;
 
 set of int: W_CITY;
 
-array[int] of float: pd_cost;
+array[D_CITY] of float: pd_cost;
 
 array[int, int] of float: dw_cost;
 
 float: p_supply;
 
-array[int] of float: w_demand;
+array[W_CITY] of float: w_demand;
 
-array[int] of float: pd_cap;
+array[D_CITY] of float: pd_cap;
 
 array[int, int] of float: dw_cap;
 
 
-array[INDEX_SET_PD_Ship_1] of var float: PD_Ship;
+array[D_CITY] of var float: PD_Ship;
 
 array[INDEX_SET_DW_Ship_1, INDEX_SET_DW_Ship_2] of var float: DW_Ship;
 
@@ -26,8 +26,6 @@ set of int: INDEX_SET_DW_LINKS;
 set of int: INDEX_SET_DW_Ship_1 = DW_LINKS;
 
 set of int: INDEX_SET_DW_Ship_2;
-
-set of int: INDEX_SET_PD_Ship_1 = D_CITY;
 
 
 constraint forall(dc in D_CITY)(assert(pd_cost[dc] >= 0, "Assertion pd_cost[\(dc)] >= 0 failed!"));
@@ -42,7 +40,7 @@ constraint forall(dc in D_CITY)(assert(pd_cap[dc] >= 0, "Assertion pd_cap[\(dc)]
 
 constraint forall(dl1 in INDEX_SET_DW_LINKS)(assert(dw_cap[DW_LINKS[dl1,1],DW_LINKS[dl1,2]] >= 0, "Assertion dw_cap[\(DW_LINKS[dl1,1]),\(DW_LINKS[dl1,2])] >= 0 failed!"));
 
-constraint forall(i in INDEX_SET_PD_Ship_1)(PD_Ship[i] <= pd_cap[i] /\ PD_Ship[i] >= 0);
+constraint forall(i in D_CITY)(PD_Ship[i] <= pd_cap[i] /\ PD_Ship[i] >= 0);
 
 constraint forall(i in INDEX_SET_DW_LINKS)(DW_Ship[DW_LINKS[i,1],DW_LINKS[i,2]] <= dw_cap[DW_LINKS[i,1],DW_LINKS[i,2]] /\ DW_Ship[DW_LINKS[i,1],DW_LINKS[i,2]] >= 0);
 

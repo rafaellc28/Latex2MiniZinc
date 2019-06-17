@@ -4,25 +4,25 @@ array[INDEX_SET_AREA] of set of int: AREA;
 
 int: T;
 
-array[int, int, int] of float: revenue;
+array[PROD, int, 1..T] of float: revenue;
 
-array[int, int, int] of float: Sell;
+array[PROD, int, 1..T] of float: Sell;
 
-array[int] of float: prodcost;
+array[PROD] of float: prodcost;
 
-array[int, int] of float: Make;
+array[PROD, 1..T] of float: Make;
 
-array[int] of float: invcost;
+array[PROD] of float: invcost;
 
-array[int, int] of float: Inv;
+array[PROD, 0..T] of float: Inv;
 
-array[int] of float: rate;
+array[PROD] of float: rate;
 
-array[int] of float: avail;
+array[1..T] of float: avail;
 
-array[int] of float: inv0;
+array[PROD] of float: inv0;
 
-array[int, int, int] of float: market;
+array[PROD, int, 1..T] of float: market;
 
 set of int: INDEX_SET_AREA;
 

@@ -4,18 +4,14 @@ int: nPts;
 
 int: mDist;
 
-array[int, int] of int: cost;
+array[1..size, 1..size] of int: cost;
 
 
-array[INDEX_SET_ptR_1] of var 1..size: ptR;
+array[1..nPts] of var 1..size: ptR;
 
-array[INDEX_SET_ptC_1] of var 1..size: ptC;
+array[1..nPts] of var 1..size: ptC;
 
 var int: tCost = sum(i in 1..nPts)(cost[ptR[i],ptC[i]]);
-
-set of int: INDEX_SET_ptC_1 = 1..nPts;
-
-set of int: INDEX_SET_ptR_1 = 1..nPts;
 
 
 include "alldifferent.mzn";

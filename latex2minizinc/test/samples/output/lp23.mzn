@@ -10,16 +10,16 @@ array[INDEX_SET_CUSTOMERS, 1..2] of int: CUSTOMERS;
 
 enum LOCATIONS;
 
-array[int, int] of float: Gcdist;
+array[LOCATIONS, LOCATIONS] of float: Gcdist;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5] of var bool: x;
+array[P, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5] of var bool: x;
 
-array[INDEX_SET_y_1, INDEX_SET_y_2, INDEX_SET_y_3, INDEX_SET_y_4, INDEX_SET_y_5] of var int: y;
+array[P, INDEX_SET_y_2, INDEX_SET_y_3, INDEX_SET_y_4, INDEX_SET_y_5] of var int: y;
 
-array[INDEX_SET_routeDistance_1] of var float: routeDistance;
+array[P] of var float: routeDistance;
 
-array[INDEX_SET_routeLegs_1] of var float: routeLegs;
+array[P] of var float: routeLegs;
 
 var float: maxDistance;
 
@@ -43,12 +43,6 @@ set of int: INDEX_SET_START;
 
 set of int: INDEX_SET_START_union_CUSTOMERS;
 
-set of int: INDEX_SET_routeDistance_1 = P;
-
-set of int: INDEX_SET_routeLegs_1 = P;
-
-set of int: INDEX_SET_x_1 = P;
-
 set of int: INDEX_SET_x_2 = N;
 
 set of int: INDEX_SET_x_3 = N;
@@ -56,8 +50,6 @@ set of int: INDEX_SET_x_3 = N;
 set of int: INDEX_SET_x_4;
 
 set of int: INDEX_SET_x_5;
-
-set of int: INDEX_SET_y_1 = P;
 
 set of int: INDEX_SET_y_2 = N;
 
@@ -70,11 +62,11 @@ set of int: INDEX_SET_y_5;
 array[INDEX_SET_START_union_CUSTOMERS,1..2] of int: START_union_CUSTOMERS;
 
 
-constraint forall(p in INDEX_SET_y_1, a in INDEX_SET_N, b in INDEX_SET_N)(y[p,N[a,1],N[a,2],N[b,1],N[b,2]] >= 0);
+constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(y[p,N[a,1],N[a,2],N[b,1],N[b,2]] >= 0);
 
-constraint forall(p in INDEX_SET_routeDistance_1)(routeDistance[p] >= 0);
+constraint forall(p in P)(routeDistance[p] >= 0);
 
-constraint forall(p in INDEX_SET_routeLegs_1)(routeLegs[p] >= 0);
+constraint forall(p in P)(routeLegs[p] >= 0);
 
 constraint maxDistance >= 0;
 
@@ -102,7 +94,7 @@ constraint sum(p in P, a in INDEX_SET_START, b in INDEX_SET_N)(y[p,START[a,1],ST
 
 constraint forall(a in INDEX_SET_CUSTOMERS)(sum(p in P, b in INDEX_SET_CUSTOMERS_union_START)(y[p,CUSTOMERS_union_START[b,1],CUSTOMERS_union_START[b,2],CUSTOMERS[a,1],CUSTOMERS[a,2]]) = 1 + sum(p in P, b in INDEX_SET_CUSTOMERS_union_FINISH)(y[p,CUSTOMERS[a,1],CUSTOMERS[a,2],CUSTOMERS_union_FINISH[b,1],CUSTOMERS_union_FINISH[b,2]]));
 
-constraint forall(p in P)(routeDistance[p] = sum(a in INDEX_SET_N, b in INDEX_SET_N)(Gcdist[N[a,2],N[b,2]] * x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
+constraint forall(p in P)(routeDistance[p] = sum(a in INDEX_SET_N, b in INDEX_SET_N)(Gcdist[to_enum(LOCATIONS,N[a,2]),to_enum(LOCATIONS,N[b,2])] * x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
 
 constraint forall(p in P)(routeLegs[p] = sum(a in INDEX_SET_START, b in INDEX_SET_N)(y[p,START[a,1],START[a,2],N[b,1],N[b,2]]));
 

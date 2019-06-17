@@ -1,20 +1,16 @@
 set of int: I = 1..11;
 
-array[int] of float: a;
+array[I] of float: a;
 
-array[INDEX_SET_b_1] of float: b = array1d(INDEX_SET_b_1, [1 / c[i] | i in I]);
+array[I] of float: b = array1d(I, [1 / c[i] | i in I]);
 
-array[int] of float: c;
-
-
-array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [0.42 | i0 in INDEX_SET_x_1]);
-
-set of int: INDEX_SET_b_1;
-
-set of int: INDEX_SET_x_1 = 1..4;
+array[I] of float: c;
 
 
-constraint forall(i0 in INDEX_SET_x_1)(x[i0] >= 0 /\ x[i0] <= 0.42);
+array[1..4] of var float: x = array1d(1..4, [0.42 | i0 in 1..4]);
+
+
+constraint forall(i0 in 1..4)(x[i0] >= 0 /\ x[i0] <= 0.42);
 
 
 

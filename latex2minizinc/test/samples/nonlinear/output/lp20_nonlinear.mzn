@@ -1,6 +1,4 @@
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = 1..2;
+array[1..2] of var float: x;
 
 
 constraint 10 * (x[2] - pow(x[1],2)) = 0;

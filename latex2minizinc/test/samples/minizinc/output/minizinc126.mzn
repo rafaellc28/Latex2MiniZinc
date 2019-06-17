@@ -2,16 +2,14 @@ set of int: OBJ = 1..n;
 
 int: n = 4;
 
-array[int] of int: size = [5,8,9,12];
+array[OBJ] of int: size = [5,8,9,12];
 
-array[int] of int: value = [3,5,7,8];
+array[OBJ] of int: value = [3,5,7,8];
 
 int: limit = 29;
 
 
-array[INDEX_SET_x_1] of var int: x;
-
-set of int: INDEX_SET_x_1 = OBJ;
+array[OBJ] of var int: x;
 
 
 constraint forall(i in OBJ)(x[i] >= 0);

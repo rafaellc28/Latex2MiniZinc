@@ -3,11 +3,7 @@ set of int: N = 1..n;
 int: n;
 
 
-array[INDEX_SET_t_1, INDEX_SET_t_2] of var bool: t;
-
-set of int: INDEX_SET_t_1 = N;
-
-set of int: INDEX_SET_t_2 = N;
+array[N, N] of var bool: t;
 
 
 constraint sum(i,j in N)(t[i,j]) = n;

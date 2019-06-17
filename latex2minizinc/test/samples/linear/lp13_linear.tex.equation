@@ -5,6 +5,6 @@ the_{N} = pi\\
 rho_{N} = 0\\
 \text{maximize } .5*\sum_{i \in 2 \dots N} rho_{i}*rho_{i-1}*\sin(the_{i}-the_{i-1})\\
 N \in \mathbb{Z}, \in \mathbb{P}, > 0\\
-I := 1 \dots N; pi := 4*\arctan(1.)\\
+I := 1 \dots N; pi := 4*\arctan(1)\\
 rho_{i} \in \mathbb{R}, \leq 1, \geq 0, := 4*i*(N + 1 - i)/(N+1)^{2}: i \in I\\
 the_{i} \in \mathbb{R}, \geq 0, := pi*i/N: i \in I\\

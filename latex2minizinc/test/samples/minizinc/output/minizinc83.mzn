@@ -6,16 +6,12 @@ set of SPOT: HI = SPOT diff LO;
 
 enum SPOT = {BAIHUI,DANZHONG,QUCHI,TIANSHU,YONGQUAN};
 
-array[int, int] of int: damage;
+array[HERO, SPOT] of int: damage;
 
 
-array[INDEX_SET_pos1_1] of var SPOT: pos1;
+array[HERO] of var SPOT: pos1;
 
-array[INDEX_SET_pos2_1] of var SPOT: pos2;
-
-set of int: INDEX_SET_pos1_1 = HERO;
-
-set of int: INDEX_SET_pos2_1 = HERO;
+array[HERO] of var SPOT: pos2;
 
 
 include "alldifferent.mzn";

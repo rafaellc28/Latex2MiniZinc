@@ -6,24 +6,20 @@ enum RIDER;
 
 enum HORSE;
 
-array[int] of int: speed;
+array[HORSE] of int: speed;
 
-array[int] of int: endur;
+array[RIDER] of int: endur;
 
 int: n;
 
-array[int] of int: strength;
+array[RIDER] of int: strength;
 
 
-array[INDEX_SET_h_1] of var HORSE: h;
+array[POS] of var HORSE: h;
 
-array[INDEX_SET_r_1] of var RIDER: r;
+array[POS] of var RIDER: r;
 
 set of int: INDEX_SET_compatible;
-
-set of int: INDEX_SET_h_1 = POS;
-
-set of int: INDEX_SET_r_1 = POS;
 
 
 include "alldifferent.mzn";

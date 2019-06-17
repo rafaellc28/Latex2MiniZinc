@@ -4,30 +4,22 @@ enum R;
 
 int: T;
 
-array[int, int] of float: c;
+array[P, 1..T] of float: c;
 
-array[int] of float: d;
+array[R] of float: d;
 
-array[int] of float: f;
+array[R] of float: f;
 
 float: M;
 
-array[int] of float: b;
+array[R] of float: b;
 
-array[int, int] of float: a;
+array[R, P] of float: a;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+array[P, 1..T] of var float: x;
 
-array[INDEX_SET_s_1, INDEX_SET_s_2] of var float: s;
-
-set of int: INDEX_SET_s_1 = R;
-
-set of int: INDEX_SET_s_2 = 1..floor(T + 1);
-
-set of int: INDEX_SET_x_1 = P;
-
-set of int: INDEX_SET_x_2 = 1..T;
+array[R, 1..floor(T + 1)] of var float: s;
 
 
 constraint assert(T > 0, "Assertion T > 0 failed!");
@@ -36,11 +28,11 @@ constraint assert(M > 0, "Assertion M > 0 failed!");
 
 constraint forall(r in R)(assert(b[r] >= 0, "Assertion b[\(r)] >= 0 failed!"));
 
-constraint forall(r in R)(assert(a[r,r] >= 0, "Assertion a[\(r),\(r)] >= 0 failed!"));
+constraint forall(r in R, p in P)(assert(a[r,p] >= 0, "Assertion a[\(r),\(p)] >= 0 failed!"));
 
-constraint forall(p in INDEX_SET_x_1, t in INDEX_SET_x_2)(x[p,t] >= 0);
+constraint forall(p in P, t in 1..T)(x[p,t] >= 0);
 
-constraint forall(r in INDEX_SET_s_1, t1 in INDEX_SET_s_2)(s[r,t1] >= 0);
+constraint forall(r in R, t1 in 1..floor(T + 1))(s[r,t1] >= 0);
 
 constraint forall(t in 1..T)(sum(j in P)(x[j,t]) <= M);
 

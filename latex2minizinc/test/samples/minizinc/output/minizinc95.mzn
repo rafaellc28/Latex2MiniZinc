@@ -2,16 +2,14 @@ enum PRODUCT;
 
 enum RESOURCE;
 
-array[int] of float: profit;
+array[PRODUCT] of float: profit;
 
-array[int] of float: capacity;
+array[RESOURCE] of float: capacity;
 
-array[int, int] of float: consumption;
+array[PRODUCT, RESOURCE] of float: consumption;
 
 
-array[INDEX_SET_produce_1] of var int: produce;
-
-set of int: INDEX_SET_produce_1 = PRODUCT;
+array[PRODUCT] of var int: produce;
 
 
 constraint forall(p in PRODUCT)(assert(profit[p] >= 0,"profit[\(p)] < 0!"));

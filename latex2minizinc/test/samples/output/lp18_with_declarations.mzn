@@ -2,30 +2,22 @@ set of int: I = 1..m;
 
 set of int: J = 1..n;
 
-array[int, int] of float: varcost;
+array[I, J] of float: varcost;
 
-array[int, int] of float: fixcost;
+array[I, J] of float: fixcost;
 
-array[int] of float: supply;
+array[I] of float: supply;
 
-array[int] of float: demand;
+array[J] of float: demand;
 
 int: m;
 
 int: n;
 
 
-array[INDEX_SET_y_1, INDEX_SET_y_2] of var bool: y;
+array[I, J] of var bool: y;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
-
-set of int: INDEX_SET_y_1 = I;
-
-set of int: INDEX_SET_y_2 = J;
+array[I, J] of var float: x;
 
 
 constraint forall(i in I, j in J)(assert(varcost[i,j] >= 0, "Assertion varcost[\(i),\(j)] >= 0 failed!"));
@@ -40,7 +32,7 @@ constraint assert(m > 0, "Assertion m > 0 failed!");
 
 constraint assert(n > 0, "Assertion n > 0 failed!");
 
-constraint forall(i in INDEX_SET_x_1, j in INDEX_SET_x_2)(x[i,j] >= 0);
+constraint forall(i in I, j in J)(x[i,j] >= 0);
 
 constraint forall(i in I)(sum(j in J)(x[i,j]) = supply[i]);
 

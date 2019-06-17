@@ -10,17 +10,17 @@ int: nS;
 
 int: nC;
 
-array[int] of int: len;
+array[1..nC] of int: len;
 
-array[int] of int: speed;
+array[SHIP] of int: speed;
 
-array[int] of enter..dummy: kind = dirn ++ [dummy | i in 1..nC];
+array[SHIP] of enter..dummy: kind = dirn ++ [dummy | i in 1..nC];
 
 int: leeway;
 
 array[int] of int: speede = speed ++ [0 | i in 1..nC];
 
-array[int] of int: desired;
+array[SHIP] of int: desired;
 
 int: enter = 1;
 
@@ -28,24 +28,16 @@ int: leave = 2;
 
 int: dummy = 3;
 
-array[int] of enter..leave: dirn;
+array[SHIP] of enter..leave: dirn;
 
 
-array[INDEX_SET_start_1] of var TIME: start;
+array[SHIP] of var TIME: start;
 
-array[INDEX_SET_end_1] of var TIME: end;
+array[SHIP] of var TIME: end;
 
-array[INDEX_SET_next_1] of var SHIPE: next;
+array[SHIP] of var SHIPE: next;
 
-array[INDEX_SET_channel_1] of var 1..nC: channel;
-
-set of int: INDEX_SET_channel_1 = SHIP;
-
-set of int: INDEX_SET_end_1 = SHIP;
-
-set of int: INDEX_SET_next_1 = SHIP;
-
-set of int: INDEX_SET_start_1 = SHIP;
+array[SHIP] of var 1..nC: channel;
 
 
 include "alldifferent.mzn";

@@ -6,37 +6,29 @@ enum UNITS;
 
 float: BigM;
 
-array[int, int] of float: A;
+array[UNITS, STREAMS] of float: A;
 
-array[int] of float: Y;
+array[SENSORS] of float: Y;
 
-array[int] of STREAMS: S;
+array[SENSORS] of STREAMS: S;
 
-array[int] of float: Emax;
-
-
-array[INDEX_SET_gerr_1] of var bool: gerr;
-
-array[INDEX_SET_epos_1] of var float: epos;
-
-array[INDEX_SET_eneg_1] of var float: eneg;
-
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_eneg_1 = SENSORS;
-
-set of int: INDEX_SET_epos_1 = SENSORS;
-
-set of int: INDEX_SET_gerr_1 = SENSORS;
-
-set of int: INDEX_SET_x_1 = STREAMS;
+array[SENSORS] of float: Emax;
 
 
-constraint forall(k in INDEX_SET_epos_1)(epos[k] >= 0);
+array[SENSORS] of var bool: gerr;
 
-constraint forall(k in INDEX_SET_eneg_1)(eneg[k] >= 0);
+array[SENSORS] of var float: epos;
 
-constraint forall(j in INDEX_SET_x_1)(x[j] >= 0);
+array[SENSORS] of var float: eneg;
+
+array[STREAMS] of var float: x;
+
+
+constraint forall(k in SENSORS)(epos[k] >= 0);
+
+constraint forall(k in SENSORS)(eneg[k] >= 0);
+
+constraint forall(j in STREAMS)(x[j] >= 0);
 
 constraint forall(i in UNITS)(sum(j in STREAMS)(A[i,j] * x[j]) = 0);
 

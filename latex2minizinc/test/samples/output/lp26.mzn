@@ -2,27 +2,25 @@ enum SCENS;
 
 float: C;
 
-array[int] of float: Pr;
+array[SCENS] of float: Pr;
 
 float: R;
 
 float: W;
 
-array[int] of float: D;
+array[SCENS] of float: D;
 
 
 var float: ExProfit;
 
 var float: x;
 
-array[INDEX_SET_y_1] of var float: y;
-
-set of int: INDEX_SET_y_1 = SCENS;
+array[SCENS] of var float: y;
 
 
 constraint x >= 0;
 
-constraint forall(k in INDEX_SET_y_1)(y[k] >= 0);
+constraint forall(k in SCENS)(y[k] >= 0);
 
 constraint ExProfit = -C * x + sum(k in SCENS)(Pr[k] * (R * y[k] + W * (x - y[k])));
 

@@ -2,18 +2,14 @@ enum I;
 
 enum J;
 
-array[int, int] of float: C;
+array[I, J] of float: C;
 
-array[int, int] of float: A;
+array[I, J] of float: A;
 
-array[int] of float: B;
+array[I] of float: B;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var bool: x;
-
-set of int: INDEX_SET_x_1 = I;
-
-set of int: INDEX_SET_x_2 = J;
+array[I, J] of var bool: x;
 
 
 constraint forall(j in J)(sum(i in I)(x[i,j]) = 1);

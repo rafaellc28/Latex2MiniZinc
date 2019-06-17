@@ -1,12 +1,10 @@
 set of int: I = 1..5;
 
 
-array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [0.4 | i in INDEX_SET_x_1]);
-
-set of int: INDEX_SET_x_1 = I;
+array[I] of var float: x = array1d(I, [0.4 | i in I]);
 
 
-constraint forall(i in INDEX_SET_x_1)(x[i] <= 0.4);
+constraint forall(i in I)(x[i] <= 0.4);
 
 
 

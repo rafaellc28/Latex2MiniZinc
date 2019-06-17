@@ -4,5 +4,6 @@
 \sum_{i \in N}t_{i,j} \leq 1: j \in N\\
 \sum_{i,j \in N \mid i-j=k}t_{i,j} \leq 1: k \in 1-n \dots n-1\\
 \sum_{i,j \in N \mid i+j=k}t_{i,j} \leq 1: k \in 2 \dots 2*n\\
+\text{include } "rot_flip_sqr_sym.mzn"\\
 rot\_flip\_sqr\_sym(t)\\
 N := 1 \dots n; t_{n,n} \in \mathbb{B}: n \in N\\

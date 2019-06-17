@@ -4,12 +4,10 @@ set of int: POS = 1..n;
 
 int: n = card(MONKEY);
 
-array[int, int] of int: coop;
+array[MONKEY, MONKEY] of int: coop;
 
 
-array[INDEX_SET_monkey_1] of var MONKEY: monkey;
-
-set of int: INDEX_SET_monkey_1 = POS;
+array[POS] of var MONKEY: monkey;
 
 
 include "alldifferent.mzn";

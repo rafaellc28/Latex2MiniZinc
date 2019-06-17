@@ -13,9 +13,7 @@ int: nSpots;
 
 var int: totalDamages = sum(p in attacks)(damage[p]);
 
-array[INDEX_SET_attacks_1] of var SPOT: attacks;
-
-set of int: INDEX_SET_attacks_1 = 1..size;
+array[1..size] of var SPOT: attacks;
 
 set of int: INDEX_SET_group;
 

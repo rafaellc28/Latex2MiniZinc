@@ -6,14 +6,14 @@ float: a = 0.99;
 
 int: n = 10;
 
-array[int] of float: ub;
+array[I] of float: ub;
 
-array[int] of float: lb;
+array[I] of float: lb;
 
-array[int] of float: x0;
+array[I] of float: x0;
 
 
-array[INDEX_SET_x_1] of var float: x = array1d(INDEX_SET_x_1, [x0[i] | i in I]);
+array[I] of var float: x = array1d(I, [x0[i] | i in I]);
 
 var float: G1;
 
@@ -22,8 +22,6 @@ var float: G2;
 var float: G5;
 
 var float: G6;
-
-set of int: INDEX_SET_x_1 = I;
 
 
 constraint forall(i in I)(assert(ub[i] > lb[i], "Assertion ub[\(i)] > lb[\(i)] failed!"));

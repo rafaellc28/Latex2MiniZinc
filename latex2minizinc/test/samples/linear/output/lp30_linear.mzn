@@ -6,98 +6,66 @@ float: rtr;
 
 float: sl;
 
-array[int] of float: dpp;
+array[time] of float: dpp;
 
 int: cs;
 
-array[int] of float: hc;
+array[time] of float: hc;
 
-array[int] of float: lc;
+array[time] of float: lc;
 
 float: otr;
 
-array[int] of float: pt;
+array[prod] of float: pt;
 
 int: life;
 
-array[int] of float: cri;
+array[prod] of float: cri;
 
-array[int] of float: pc;
+array[prod] of float: pc;
 
-array[int] of float: crs;
+array[prod] of float: crs;
 
-array[int] of float: ol;
+array[time] of float: ol;
 
 int: first;
 
 int: iw;
 
-array[int] of float: cmin;
+array[time] of float: cmin;
 
-array[int] of float: cmax;
+array[time] of float: cmax;
 
-array[int, int] of float: dem;
+array[prod, first..floor(last + 1)] of float: dem;
 
-array[int] of float: iinv;
+array[prod] of float: iinv;
 
-array[INDEX_SET_iil_1, INDEX_SET_iil_2] of float: iil = array2d(INDEX_SET_iil_1, INDEX_SET_iil_2, [if iinv[p] < sum(v in first..t)(dem[p,v]) then 0 else iinv[p] - sum(v in first..t)(dem[p,v]) endif | p in prod, t in time]);
+array[prod, time] of float: iil = array2d(prod, time, [if iinv[p] < sum(v in first..t)(dem[p,v]) then 0 else iinv[p] - sum(v in first..t)(dem[p,v]) endif | p in prod, t in time]);
 
 int: last;
 
-array[INDEX_SET_minv_1, INDEX_SET_minv_2] of float: minv = array2d(INDEX_SET_minv_1, INDEX_SET_minv_2, [dem[p,t + 1] * (if pro[p,t + 1] = true then pir else rir endif) | p in prod, t in time]);
+array[prod, time] of float: minv = array2d(prod, time, [dem[p,t + 1] * (if pro[p,t + 1] = true then pir else rir endif) | p in prod, t in time]);
 
 float: rir;
 
 float: pir;
 
-array[int, int] of bool: pro;
+array[prod, first..floor(last + 1)] of bool: pro;
 
 
-array[INDEX_SET_Crews_1] of var float: Crews;
+array[floor(first - 1)..last] of var float: Crews;
 
-array[INDEX_SET_Hire_1] of var float: Hire;
+array[time] of var float: Hire;
 
-array[INDEX_SET_Layoff_1] of var float: Layoff;
+array[time] of var float: Layoff;
 
-array[INDEX_SET_Rprod_1, INDEX_SET_Rprod_2] of var float: Rprod;
+array[prod, time] of var float: Rprod;
 
-array[INDEX_SET_Oprod_1, INDEX_SET_Oprod_2] of var float: Oprod;
+array[prod, time] of var float: Oprod;
 
-array[INDEX_SET_Short_1, INDEX_SET_Short_2] of var float: Short;
+array[prod, time] of var float: Short;
 
-array[INDEX_SET_Inv_1, INDEX_SET_Inv_2, INDEX_SET_Inv_3] of var float: Inv;
-
-set of int: INDEX_SET_Crews_1 = floor(first - 1)..last;
-
-set of int: INDEX_SET_Hire_1 = time;
-
-set of int: INDEX_SET_Inv_1 = prod;
-
-set of int: INDEX_SET_Inv_2 = time;
-
-set of int: INDEX_SET_Inv_3 = 1..life;
-
-set of int: INDEX_SET_Layoff_1 = time;
-
-set of int: INDEX_SET_Oprod_1 = prod;
-
-set of int: INDEX_SET_Oprod_2 = time;
-
-set of int: INDEX_SET_Rprod_1 = prod;
-
-set of int: INDEX_SET_Rprod_2 = time;
-
-set of int: INDEX_SET_Short_1 = prod;
-
-set of int: INDEX_SET_Short_2 = time;
-
-set of int: INDEX_SET_iil_1;
-
-set of int: INDEX_SET_iil_2;
-
-set of int: INDEX_SET_minv_1;
-
-set of int: INDEX_SET_minv_2;
+array[prod, time, 1..life] of var float: Inv;
 
 
 constraint assert(rtr > 0, "Assertion rtr > 0 failed!");
@@ -144,19 +112,19 @@ constraint assert(rir >= 0, "Assertion rir >= 0 failed!");
 
 constraint assert(pir >= 0, "Assertion pir >= 0 failed!");
 
-constraint forall(i in INDEX_SET_Crews_1)(Crews[i] >= 0);
+constraint forall(i in floor(first - 1)..last)(Crews[i] >= 0);
 
-constraint forall(t in INDEX_SET_Hire_1)(Hire[t] >= 0);
+constraint forall(t in time)(Hire[t] >= 0);
 
-constraint forall(t in INDEX_SET_Layoff_1)(Layoff[t] >= 0);
+constraint forall(t in time)(Layoff[t] >= 0);
 
-constraint forall(p in INDEX_SET_Rprod_1, t in INDEX_SET_Rprod_2)(Rprod[p,t] >= 0);
+constraint forall(p in prod, t in time)(Rprod[p,t] >= 0);
 
-constraint forall(p in INDEX_SET_Oprod_1, t in INDEX_SET_Oprod_2)(Oprod[p,t] >= 0);
+constraint forall(p in prod, t in time)(Oprod[p,t] >= 0);
 
-constraint forall(p in INDEX_SET_Short_1, t in INDEX_SET_Short_2)(Short[p,t] >= 0);
+constraint forall(p in prod, t in time)(Short[p,t] >= 0);
 
-constraint forall(p in INDEX_SET_Inv_1, t in INDEX_SET_Inv_2, j in INDEX_SET_Inv_3)(Inv[p,t,j] >= 0);
+constraint forall(p in prod, t in time, j in 1..life)(Inv[p,t,j] >= 0);
 
 constraint forall(t in time)(sum(p in prod)(pt[p] * Rprod[p,t]) != 0 <- sl * dpp[t] * Crews[t] != 0);
 

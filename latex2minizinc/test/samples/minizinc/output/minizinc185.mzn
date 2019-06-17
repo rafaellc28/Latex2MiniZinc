@@ -6,26 +6,24 @@ enum TEMP = {hot,cold,warm};
 
 enum DISH;
 
-array[int] of TASTE: taste;
+array[DISH] of TASTE: taste;
 
-array[int, int] of DISH: d;
+array[1..7, TASTE] of DISH: d;
 
-array[int] of TEMP: temp;
+array[DISH] of TEMP: temp;
 
-array[int, int] of int: e;
+array[1..3, TEMP] of int: e;
 
-array[int] of bool: heavy;
+array[DISH] of bool: heavy;
 
 int: len;
 
-array[int] of int: value;
+array[DISH] of int: value;
 
 
 var int: obj = (sum(c in COURSE)(value[dish[c]])) + (len - 1) + sum(c in 1..floor(len - 1))((temp[dish[c]] != temp[dish[c + 1]]) + sum(c in 1..floor(len - 1))(heavy[dish[c]] != heavy[dish[c + 1]]));
 
-array[INDEX_SET_dish_1] of var DISH: dish;
-
-set of int: INDEX_SET_dish_1 = COURSE;
+array[COURSE] of var DISH: dish;
 
 
 include "alldifferent.mzn";

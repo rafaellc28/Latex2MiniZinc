@@ -3,15 +3,9 @@ set of int: N = 1..floor(pow(n,2));
 int: n = 4;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3] of var bool: x;
+array[1..n, 1..n, N] of var bool: x;
 
 var float: s;
-
-set of int: INDEX_SET_x_1 = 1..n;
-
-set of int: INDEX_SET_x_2 = 1..n;
-
-set of int: INDEX_SET_x_3 = N;
 
 
 constraint forall(i in 1..n, j in 1..n)(sum(k in N)(x[i,j,k]) = 1);

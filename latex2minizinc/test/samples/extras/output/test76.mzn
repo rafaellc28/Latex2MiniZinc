@@ -1,6 +1,6 @@
 array[int] of float: start;
 
-array[int, int] of int: pre;
+array[int, 1..2] of int: pre;
 
 array[int] of float: duration;
 

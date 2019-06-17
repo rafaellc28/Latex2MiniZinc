@@ -1,8 +1,8 @@
 enum Sample;
 
-array[int] of float: Sx;
+array[Sample] of float: Sx;
 
-array[int] of float: Sy;
+array[Sample] of float: Sy;
 
 
 var float: a;

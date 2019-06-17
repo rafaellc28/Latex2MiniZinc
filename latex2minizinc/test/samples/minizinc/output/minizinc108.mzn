@@ -4,20 +4,18 @@ set of TASK: LIU;
 
 enum TASK;
 
-array[int, int] of TASK: pre;
+array[PREC, 1..2] of TASK: pre;
 
-array[int] of int: duration;
+array[TASK] of int: duration;
 
 int: t = sum(duration);
 
 int: p;
 
 
-array[INDEX_SET_start_1] of var 0..t: start;
+array[TASK] of var 0..t: start;
 
 var 0..t: makespan = max(t in TASK)(start[t] + duration[t]);
-
-set of int: INDEX_SET_start_1 = TASK;
 
 
 constraint forall(i in PREC)(start[pre[i,1]] + duration[pre[i,1]] <= start[pre[i,2]]);

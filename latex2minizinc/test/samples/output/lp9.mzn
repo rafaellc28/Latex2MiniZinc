@@ -2,18 +2,14 @@ array[INDEX_SET_PAIRS, 1..2] of TASKS: PAIRS;
 
 enum TASKS;
 
-array[int, int] of float: Saving;
+array[1..M, 1..M] of float: Saving;
 
 int: M;
 
 
-array[INDEX_SET_before_1, INDEX_SET_before_2] of var bool: before;
+array[TASKS, TASKS] of var bool: before;
 
 set of int: INDEX_SET_PAIRS;
-
-set of int: INDEX_SET_before_1 = TASKS;
-
-set of int: INDEX_SET_before_2 = TASKS;
 
 
 constraint forall(a in TASKS, b in TASKS, c in TASKS where a < b /\ a < c /\ c < b)(before[a,b] - before[c,b] - before[a,c] <= 0);
@@ -24,7 +20,7 @@ constraint forall(d in 1..M, e in 1..M)(Saving[d,e] >= 0);
 
 
 
-solve maximize sum(a in INDEX_SET_PAIRS)((Saving[PAIRS[a,1],PAIRS[a,2]] * before[PAIRS[a,1],PAIRS[a,2]] + Saving[PAIRS[a,2],PAIRS[a,1]] * (1 - before[PAIRS[a,1],PAIRS[a,2]])));
+solve maximize sum(a in INDEX_SET_PAIRS)((Saving[PAIRS[a,1],PAIRS[a,2]] * before[to_enum(TASKS,PAIRS[a,1]),to_enum(TASKS,PAIRS[a,2])] + Saving[PAIRS[a,2],PAIRS[a,1]] * (1 - before[to_enum(TASKS,PAIRS[a,1]),to_enum(TASKS,PAIRS[a,2])])));
 
 
 

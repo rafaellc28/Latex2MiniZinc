@@ -4,29 +4,23 @@ enum outputs;
 
 enum inputs;
 
-array[int, int] of float: outputdata;
+array[dmus, outputs] of float: outputdata;
 
-array[int, int] of float: inputdata;
+array[dmus, inputs] of float: inputdata;
 
 
-array[INDEX_SET_theta_1] of var float: theta;
+array[dmus] of var float: theta;
 
-array[INDEX_SET_lambda_1, INDEX_SET_lambda_2] of var float: lambda;
-
-set of int: INDEX_SET_lambda_1 = dmus;
-
-set of int: INDEX_SET_lambda_2 = dmus;
-
-set of int: INDEX_SET_theta_1 = dmus;
+array[dmus, dmus] of var float: lambda;
 
 
 constraint forall(td in dmus, o in outputs)(assert(outputdata[td,o] >= 0, "Assertion outputdata[\(td),\(o)] >= 0 failed!"));
 
 constraint forall(td in dmus, i in inputs)(assert(inputdata[td,i] >= 0, "Assertion inputdata[\(td),\(i)] >= 0 failed!"));
 
-constraint forall(td in INDEX_SET_theta_1)(theta[td] >= 0);
+constraint forall(td in dmus)(theta[td] >= 0);
 
-constraint forall(d in INDEX_SET_lambda_1, td in INDEX_SET_lambda_2)(lambda[d,td] >= 0);
+constraint forall(d in dmus, td in dmus)(lambda[d,td] >= 0);
 
 constraint forall(o in outputs, td in dmus)(sum(d in dmus)(lambda[d,td] * outputdata[d,o]) >= outputdata[td,o]);
 

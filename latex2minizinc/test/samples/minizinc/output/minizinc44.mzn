@@ -6,18 +6,16 @@ int: l;
 
 int: u;
 
-array[int, int] of int: joint;
+array[NEGOTIATOR, NEGOTIATOR] of int: joint;
 
 int: m;
 
-array[int] of int: honor;
+array[NEGOTIATOR] of int: honor;
 
 
-array[INDEX_SET_party_1] of var NEGOTIATOR: party;
+array[1..u] of var NEGOTIATOR: party;
 
 var int: obj;
-
-set of int: INDEX_SET_party_1 = 1..u;
 
 
 constraint forall(i in 1..l)(party[i] > dummy);

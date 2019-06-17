@@ -2,25 +2,25 @@ enum PROD;
 
 enum WEEKS;
 
-array[int, int] of float: revenue;
+array[PROD, WEEKS] of float: revenue;
 
-array[int, int] of float: Sell;
+array[PROD, WEEKS] of float: Sell;
 
-array[int] of float: prodcost;
+array[PROD] of float: prodcost;
 
-array[int, int] of float: Make;
+array[PROD, WEEKS] of float: Make;
 
-array[int] of float: invcost;
+array[PROD] of float: invcost;
 
-array[int, int] of float: Inv;
+array[PROD, WEEKS] of float: Inv;
 
-array[int] of float: rate;
+array[PROD] of float: rate;
 
-array[int] of float: avail;
+array[WEEKS] of float: avail;
 
-array[int] of float: inv0;
+array[PROD] of float: inv0;
 
-array[int, int] of float: market;
+array[PROD, WEEKS] of float: market;
 
 
 constraint forall(p in PROD, w in WEEKS)(assert(revenue[p,w] >= 0, "Assertion revenue[\(p),\(w)] >= 0 failed!"));

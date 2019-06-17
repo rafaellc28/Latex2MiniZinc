@@ -2,33 +2,23 @@ enum J;
 
 enum M;
 
-array[int, int] of M: Sigma;
+array[J, 1..MS] of M: Sigma;
 
-array[int, int] of float: P;
+array[J, M] of float: P;
 
 int: MS;
 
 float: K;
 
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var float: x;
+array[J, M] of var float: x;
 
-array[INDEX_SET_Y_1, INDEX_SET_Y_2, INDEX_SET_Y_3] of var bool: Y;
+array[J, J, M] of var bool: Y;
 
 var float: z;
 
-set of int: INDEX_SET_Y_1 = J;
 
-set of int: INDEX_SET_Y_2 = J;
-
-set of int: INDEX_SET_Y_3 = M;
-
-set of int: INDEX_SET_x_1 = J;
-
-set of int: INDEX_SET_x_2 = M;
-
-
-constraint forall(j in INDEX_SET_x_1, a in INDEX_SET_x_2)(x[j,a] >= 0);
+constraint forall(j in J, a in M)(x[j,a] >= 0);
 
 constraint forall(j in J, t in 2..MS)(x[j,Sigma[j,t]] >= x[j,Sigma[j,t - 1]] + P[j,Sigma[j,t - 1]]);
 

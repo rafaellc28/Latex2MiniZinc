@@ -8,7 +8,7 @@ set of int: SOLDIER = 1..nsoldier;
 
 int: nsoldier;
 
-array[int] of int: heightx = array1d(SOLDIER0,[strawheight] ++ height);
+array[SOLDIER0] of int: heightx = array1d(SOLDIER0,[strawheight] ++ height);
 
 int: strawheight;
 
@@ -16,18 +16,14 @@ int: maxc;
 
 int: maxr;
 
-array[int] of int: height;
+array[SOLDIER] of int: height;
 
 
 var ROW: nrow;
 
 var COL: ncol;
 
-array[INDEX_SET_x_1, INDEX_SET_x_2] of var SOLDIER0: x;
-
-set of int: INDEX_SET_x_1 = ROW;
-
-set of int: INDEX_SET_x_2 = COL;
+array[ROW, COL] of var SOLDIER0: x;
 
 
 include "alldifferent_except_0.mzn";

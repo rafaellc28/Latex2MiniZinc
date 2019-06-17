@@ -1,10 +1,10 @@
 set of int: MOVES = 1..nMoves;
 
-array[int] of 1..10: duration;
+array[MOVES] of 1..10: duration;
 
 int: timeBound;
 
-array[int] of 1..20: power;
+array[MOVES] of 1..20: power;
 
 int: nMoves;
 

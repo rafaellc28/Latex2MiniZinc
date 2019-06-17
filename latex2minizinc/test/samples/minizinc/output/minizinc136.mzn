@@ -1,11 +1,7 @@
 set of int: RANGE = 1..9;
 
 
-array[INDEX_SET_cell_1, INDEX_SET_cell_2] of var RANGE: cell;
-
-set of int: INDEX_SET_cell_1 = RANGE;
-
-set of int: INDEX_SET_cell_2 = RANGE;
+array[RANGE, RANGE] of var RANGE: cell;
 
 
 include "alldifferent.mzn";

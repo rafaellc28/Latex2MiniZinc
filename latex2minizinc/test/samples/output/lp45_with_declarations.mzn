@@ -11,35 +11,15 @@ enum SMOKE = {Chesterfield,Kools,Lucky_Strike,Old_Gold,Parliament};
 enum PET = {dog,fox,horse,snails,zebra};
 
 
-array[INDEX_SET_color_1, INDEX_SET_color_2] of var bool: color;
+array[HOUSE, COLOR] of var bool: color;
 
-array[INDEX_SET_nationality_1, INDEX_SET_nationality_2] of var bool: nationality;
+array[HOUSE, NATIONALITY] of var bool: nationality;
 
-array[INDEX_SET_drink_1, INDEX_SET_drink_2] of var bool: drink;
+array[HOUSE, DRINK] of var bool: drink;
 
-array[INDEX_SET_smoke_1, INDEX_SET_smoke_2] of var bool: smoke;
+array[HOUSE, SMOKE] of var bool: smoke;
 
-array[INDEX_SET_pet_1, INDEX_SET_pet_2] of var bool: pet;
-
-set of int: INDEX_SET_color_1 = HOUSE;
-
-set of int: INDEX_SET_color_2 = COLOR;
-
-set of int: INDEX_SET_drink_1 = HOUSE;
-
-set of int: INDEX_SET_drink_2 = DRINK;
-
-set of int: INDEX_SET_nationality_1 = HOUSE;
-
-set of int: INDEX_SET_nationality_2 = NATIONALITY;
-
-set of int: INDEX_SET_pet_1 = HOUSE;
-
-set of int: INDEX_SET_pet_2 = PET;
-
-set of int: INDEX_SET_smoke_1 = HOUSE;
-
-set of int: INDEX_SET_smoke_2 = SMOKE;
+array[HOUSE, PET] of var bool: pet;
 
 
 constraint forall(h in HOUSE)(sum(c in COLOR)(color[h,c]) = 1);

@@ -11,11 +11,7 @@ int: n;
 int: l = m * n;
 
 
-array[INDEX_SET_p_1, INDEX_SET_p_2] of var POS: p;
-
-set of int: INDEX_SET_p_1 = DIG;
-
-set of int: INDEX_SET_p_2 = COPY;
+array[DIG, COPY] of var POS: p;
 
 
 include "alldifferent.mzn";

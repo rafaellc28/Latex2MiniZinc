@@ -1,4 +1,4 @@
-array[int] of float: Pos;
+array[1..2] of float: Pos;
 
 
 constraint Pos[1] < Pos[2];

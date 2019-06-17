@@ -1,9 +1,7 @@
-array[INDEX_SET_x_1] of var float: x;
-
-set of int: INDEX_SET_x_1 = 1..4;
+array[1..4] of var float: x;
 
 
-constraint forall(i0 in INDEX_SET_x_1)(x[i0] >= 0);
+constraint forall(i0 in 1..4)(x[i0] >= 0);
 
 constraint 8 - x[1] - 2 * x[2] >= 0;
 

@@ -13,11 +13,7 @@ int: v;
 int: b;
 
 
-array[INDEX_SET_m_1, INDEX_SET_m_2] of var bool: m;
-
-set of int: INDEX_SET_m_1 = ROW;
-
-set of int: INDEX_SET_m_2 = COL;
+array[ROW, COL] of var bool: m;
 
 
 constraint forall(i in ROW)(sum(j in COL)(m[i,j]) = r);
@@ -25,6 +21,8 @@ constraint forall(i in ROW)(sum(j in COL)(m[i,j]) = r);
 constraint forall(j in COL)(sum(i in ROW)(m[i,j]) = k);
 
 constraint forall(i1,i2 in ROW where i1 < i2)(sum(j in COL)(m[i1,j] = true /\ m[i2,j] = true) = lambda);
+
+include "double_lex.mzn";
 
 constraint double_lex(m);
 

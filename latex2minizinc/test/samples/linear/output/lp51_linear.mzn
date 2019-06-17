@@ -10,22 +10,20 @@ set of int: NUTR = MINREQ union MAXREQ;
 
 float: lambda = 0.85;
 
-array[int, int] of float: cost;
+array[STORE, FOOD] of float: cost;
 
-array[int, int] of float: amt;
+array[NUTR, FOOD] of float: amt;
 
-array[int] of float: n_min;
+array[MINREQ] of float: n_min;
 
-array[int] of float: n_max;
+array[MAXREQ] of float: n_max;
 
-array[int] of float: f_min;
+array[FOOD] of float: f_min;
 
-array[int] of float: f_max;
+array[FOOD] of float: f_max;
 
 
-array[INDEX_SET_Buy_1] of var float: Buy;
-
-set of int: INDEX_SET_Buy_1 = FOOD;
+array[FOOD] of var float: Buy;
 
 
 constraint forall(s in STORE, f in FOOD)(assert(cost[s,f] > 0, "Assertion cost[\(s),\(f)] > 0 failed!"));
@@ -38,7 +36,7 @@ constraint forall(ma in MAXREQ)(assert(n_max[ma] >= 0, "Assertion n_max[\(ma)] >
 
 constraint forall(f in FOOD)(assert(f_min[f] >= 0, "Assertion f_min[\(f)] >= 0 failed!"));
 
-constraint forall(j in INDEX_SET_Buy_1)(Buy[j] <= f_max[j] /\ Buy[j] >= f_min[j]);
+constraint forall(j in FOOD)(Buy[j] <= f_max[j] /\ Buy[j] >= f_min[j]);
 
 constraint forall(i in MINREQ)(sum(j in FOOD)(amt[i,j] * Buy[j]) >= n_min[i]);
 

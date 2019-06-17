@@ -4,9 +4,9 @@ set of int: Seats = 1..12;
 
 set of int: Guests = 1..12;
 
-array[int] of int: h1 = [groom,carol,ed,bride,ted];
+array[Hatreds] of Hatreds: h1 = [groom,carol,ed,bride,ted];
 
-array[int] of int: h2 = [clara,bestman,ted,alice,ron];
+array[Hatreds] of Hatreds: h2 = [clara,bestman,ted,alice,ron];
 
 int: groom = 2;
 
@@ -33,9 +33,7 @@ int: bob = 5;
 int: rona = 10;
 
 
-array[INDEX_SET_pos_1] of var Seats: pos;
-
-set of int: INDEX_SET_pos_1 = Hatreds;
+array[Hatreds] of var Seats: pos;
 
 
 

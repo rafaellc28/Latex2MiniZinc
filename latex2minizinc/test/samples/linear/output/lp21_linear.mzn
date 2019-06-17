@@ -4,37 +4,27 @@ enum PROD;
 
 enum DEST;
 
-array[int, int] of float: make_cost;
+array[ORIG, PROD] of float: make_cost;
 
-array[int, int, int] of float: trans_cost;
+array[ORIG, DEST, PROD] of float: trans_cost;
 
-array[int, int] of float: rate;
+array[ORIG, PROD] of float: rate;
 
-array[int] of float: avail;
+array[ORIG] of float: avail;
 
-array[int, int] of float: demand;
+array[DEST, PROD] of float: demand;
 
 
-array[INDEX_SET_Make_1, INDEX_SET_Make_2] of var float: Make;
+array[ORIG, PROD] of var float: Make;
 
-array[INDEX_SET_Trans_1, INDEX_SET_Trans_2, INDEX_SET_Trans_3] of var float: Trans;
-
-set of int: INDEX_SET_Make_1 = ORIG;
-
-set of int: INDEX_SET_Make_2 = PROD;
-
-set of int: INDEX_SET_Trans_1 = ORIG;
-
-set of int: INDEX_SET_Trans_2 = DEST;
-
-set of int: INDEX_SET_Trans_3 = PROD;
+array[ORIG, DEST, PROD] of var float: Trans;
 
 
 constraint forall(o in ORIG, p in PROD)(assert(rate[o,p] > 0, "Assertion rate[\(o),\(p)] > 0 failed!"));
 
-constraint forall(o in INDEX_SET_Make_1, p in INDEX_SET_Make_2)(Make[o,p] >= 0);
+constraint forall(o in ORIG, p in PROD)(Make[o,p] >= 0);
 
-constraint forall(o in INDEX_SET_Trans_1, d in INDEX_SET_Trans_2, p in INDEX_SET_Trans_3)(Trans[o,d,p] >= 0);
+constraint forall(o in ORIG, d in DEST, p in PROD)(Trans[o,d,p] >= 0);
 
 constraint forall(i in ORIG)(sum(p in PROD)((1/rate[i,p]) * Make[i,p]) <= avail[i]);
 

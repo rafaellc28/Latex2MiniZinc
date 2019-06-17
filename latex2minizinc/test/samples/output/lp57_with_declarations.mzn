@@ -5,7 +5,7 @@ set of int: V = i_i_j_in_E_union_j_i_j_in_E;
 array[INDEX_SET_w_1, INDEX_SET_w_2] of float: w = array2d(INDEX_SET_w_1, INDEX_SET_w_2, [1 | i in INDEX_SET_E]);
 
 
-array[INDEX_SET_x_1] of var bool: x;
+array[V] of var bool: x;
 
 array[INDEX_SET_t_1, INDEX_SET_t_2] of var bool: t;
 
@@ -20,8 +20,6 @@ set of int: INDEX_SET_t_2;
 set of int: INDEX_SET_w_1;
 
 set of int: INDEX_SET_w_2;
-
-set of int: INDEX_SET_x_1 = V;
 
 array[INDEX_SET_i_i_j_in_E_union_j_i_j_in_E] of int: i_i_j_in_E_union_j_i_j_in_E;
 

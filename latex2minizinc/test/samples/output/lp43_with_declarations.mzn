@@ -10,7 +10,7 @@ set of int: cols1 = 1..(ndim + 1);
 
 int: ndim = 10;
 
-array[int, int] of int: givens;
+array[rows, cols] of int: givens;
 
 
 array[INDEX_SET_x_1, INDEX_SET_x_2, INDEX_SET_x_3, INDEX_SET_x_4, INDEX_SET_x_5, INDEX_SET_x_6] of var bool: x;
