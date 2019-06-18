@@ -2786,14 +2786,30 @@ class CodeGenerator:
                     includeToEnum = True
 
                 elif BEGIN_ARRAY in ind:
-                    domains_aux = ind[ind.find(BEGIN_ARRAY)+1:-1]
-                    domains_aux = map(lambda el: el.strip(), domains_aux.split(COMMA))
-
-                    if len(domains_aux) == 2:
-                        curDomain = self._getCurrentDomain(domains_aux[0])
-                        
-                        if curDomain and curDomain.startswith(INDEX_SET_):
+                    domains_aux = ind[:ind.find(BEGIN_ARRAY)]
+                    localObjectType = self._getLocalArgumentType(domains_aux)
+                    
+                    if localObjectType:
+                        if localObjectType != self.objectsDomains[identifier][i] and localObjectType != SET_OF + self.objectsDomains[identifier][i]:
                             includeToEnum = True
+
+                    elif domains_aux in self.objectsTypes:
+                        if self.objectsTypes[domains_aux] == ENUM:
+                            if domains_aux != self.objectsDomains[identifier][i]:
+                                includeToEnum = True
+
+                        elif self.objectsTypes[domains_aux] != self.objectsDomains[identifier][i]:
+                            includeToEnum = True
+
+                    else:
+                        domains_aux = ind[ind.find(BEGIN_ARRAY)+1:-1]
+                        domains_aux = map(lambda el: el.strip(), domains_aux.split(COMMA))
+
+                        if len(domains_aux) == 2:
+                            curDomain = self._getCurrentDomain(domains_aux[0])
+                            
+                            if curDomain and curDomain.startswith(INDEX_SET_):
+                                includeToEnum = True
 
                 elif self._checkIsArithmeticOperation(ind):
                     includeToEnum = True

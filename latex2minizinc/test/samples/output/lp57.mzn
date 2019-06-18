@@ -16,13 +16,13 @@ set of int: INDEX_SET_t_1 = E;
 set of int: INDEX_SET_t_2;
 
 
-constraint forall(i in INDEX_SET_E)(x[to_enum(V,E[i,1])] + x[to_enum(V,E[i,2])] - 2 * t[E[i,1],E[i,2]] <= 1 /\ x[to_enum(V,E[i,1])] + x[to_enum(V,E[i,2])] - 2 * t[E[i,1],E[i,2]] >= 0);
+constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]] <= 1 /\ x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]] >= 0);
 
 constraint forall(i in V)(x[i] >= 0);
 
 
 
-solve maximize sum(i in INDEX_SET_E)(W[E[i,1],E[i,2]] * (x[to_enum(V,E[i,1])] + x[to_enum(V,E[i,2])] - 2 * t[E[i,1],E[i,2]]));
+solve maximize sum(i in INDEX_SET_E)(W[E[i,1],E[i,2]] * (x[E[i,1]] + x[E[i,2]] - 2 * t[E[i,1],E[i,2]]));
 
 
 

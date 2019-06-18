@@ -42,9 +42,9 @@ constraint forall(j in TASKS)(Tlf[j] = Tls[j] + Dur[j]);
 
 constraint forall(j in TASKS)(Tsl[j] = Tls[j] - Tes[j]);
 
-constraint forall(i in INDEX_SET_ARCS)(Tef[to_enum(TASKS,ARCS[i,1])] <= Tes[to_enum(TASKS,ARCS[i,2])]);
+constraint forall(i in INDEX_SET_ARCS)(Tef[ARCS[i,1]] <= Tes[ARCS[i,2]]);
 
-constraint forall(j in INDEX_SET_ARCS)(Tlf[to_enum(TASKS,ARCS[j,1])] <= Tls[to_enum(TASKS,ARCS[j,2])]);
+constraint forall(j in INDEX_SET_ARCS)(Tlf[ARCS[j,1]] <= Tls[ARCS[j,2]]);
 
 
 

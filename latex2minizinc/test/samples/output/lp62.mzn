@@ -8,7 +8,7 @@ array[V] of var bool: x;
 set of int: INDEX_SET_E;
 
 
-constraint forall(i in INDEX_SET_E)(x[to_enum(V,E[i,1])] + x[to_enum(V,E[i,2])] <= 1);
+constraint forall(i in INDEX_SET_E)(x[E[i,1]] + x[E[i,2]] <= 1);
 
 
 

@@ -128,7 +128,7 @@ constraint forall(p in prod, d in dctr)(Trans[p,d] >= sum(d in INDEX_SET_rt)(Shi
 
 
 
-solve minimize sum(p in prod, f in fact)(rpc[p,f] * Rprod[p,f] + sum(p in prod, f in fact)(opc[p,f] * Oprod[p,f] + sum(p in prod, d in INDEX_SET_rt)(sc[to_enum(dctr,rt[d,1]),to_enum(whse,rt[d,2])] * wt[p] * Ship[p,rt[d,1],rt[d,2]] + sum(p in prod, d in dctr)(tc[p] * Trans[p,rt[d,1]]))));
+solve minimize sum(p in prod, f in fact)(rpc[p,f] * Rprod[p,f] + sum(p in prod, f in fact)(opc[p,f] * Oprod[p,f] + sum(p in prod, d in INDEX_SET_rt)(sc[rt[d,1],to_enum(whse,rt[d,2])] * wt[p] * Ship[p,rt[d,1],rt[d,2]] + sum(p in prod, d in dctr)(tc[p] * Trans[p,rt[d,1]]))));
 
 
 

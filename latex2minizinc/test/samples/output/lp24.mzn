@@ -152,9 +152,9 @@ constraint forall(a in INDEX_SET_CUSTOMERS)(sum(p in P, b in INDEX_SET_CUSTOMERS
 
 constraint forall(a in INDEX_SET_N)(tlv[N[a,1],N[a,2]] >= tar[N[a,1],N[a,2]]);
 
-constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(tar[N[b,1],N[b,2]] >= tlv[N[a,1],N[a,2]] + Gcdist[to_enum(LOCATIONS,N[a,2]),to_enum(LOCATIONS,N[b,2])] / Maxspeed - BigM * (1 - x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
+constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(tar[N[b,1],N[b,2]] >= tlv[N[a,1],N[a,2]] + Gcdist[N[a,2],N[b,2]] / Maxspeed - BigM * (1 - x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
 
-constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(tar[N[b,1],N[b,2]] <= tlv[N[a,1],N[a,2]] + Gcdist[to_enum(LOCATIONS,N[a,2]),to_enum(LOCATIONS,N[b,2])] / Minspeed + BigM * (1 - x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
+constraint forall(p in P, a in INDEX_SET_N, b in INDEX_SET_N)(tar[N[b,1],N[b,2]] <= tlv[N[a,1],N[a,2]] + Gcdist[N[a,2],N[b,2]] / Minspeed + BigM * (1 - x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
 
 constraint forall(a in INDEX_SET_CUSTOMERS)(tea[CUSTOMERS[a,1],CUSTOMERS[a,2]] >= T1[CUSTOMERS[a,1],CUSTOMERS[a,2]] - tar[CUSTOMERS[a,1],CUSTOMERS[a,2]]);
 
@@ -172,7 +172,7 @@ constraint forall(a in INDEX_SET_START)(tld[START[a,1],START[a,2]] >= tlv[START[
 
 constraint forall(a in INDEX_SET_CUSTOMERS)(tld[CUSTOMERS[a,1],CUSTOMERS[a,2]] >= tlv[CUSTOMERS[a,1],CUSTOMERS[a,2]] - T2[CUSTOMERS[a,1],CUSTOMERS[a,2]]);
 
-constraint forall(p in P)(routeDistance[p] = sum(a in INDEX_SET_N, b in INDEX_SET_N)(Gcdist[to_enum(LOCATIONS,N[a,2]),to_enum(LOCATIONS,N[b,2])] * x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
+constraint forall(p in P)(routeDistance[p] = sum(a in INDEX_SET_N, b in INDEX_SET_N)(Gcdist[N[a,2],N[b,2]] * x[p,N[a,1],N[a,2],N[b,1],N[b,2]]));
 
 constraint totalDistance = sum(p in P)(routeDistance[p]);
 

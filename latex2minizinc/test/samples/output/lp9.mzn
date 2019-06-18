@@ -20,7 +20,7 @@ constraint forall(d in 1..M, e in 1..M)(Saving[d,e] >= 0);
 
 
 
-solve maximize sum(a in INDEX_SET_PAIRS)((Saving[PAIRS[a,1],PAIRS[a,2]] * before[to_enum(TASKS,PAIRS[a,1]),to_enum(TASKS,PAIRS[a,2])] + Saving[PAIRS[a,2],PAIRS[a,1]] * (1 - before[to_enum(TASKS,PAIRS[a,1]),to_enum(TASKS,PAIRS[a,2])])));
+solve maximize sum(a in INDEX_SET_PAIRS)((Saving[PAIRS[a,1],PAIRS[a,2]] * before[PAIRS[a,1],PAIRS[a,2]] + Saving[PAIRS[a,2],PAIRS[a,1]] * (1 - before[PAIRS[a,1],PAIRS[a,2]])));
 
 
 

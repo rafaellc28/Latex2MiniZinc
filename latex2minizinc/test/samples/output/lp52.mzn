@@ -14,7 +14,7 @@ set of int: INDEX_SET_E;
 
 constraint forall(i in V)(sum(c in 1..Nc)(x[i,c]) = 1);
 
-constraint forall(i in INDEX_SET_E, c in 1..Nc)(x[to_enum(V,E[i,1]),c] + x[to_enum(V,E[i,2]),c] <= u[c]);
+constraint forall(i in INDEX_SET_E, c in 1..Nc)(x[E[i,1],c] + x[E[i,2],c] <= u[c]);
 
 
 

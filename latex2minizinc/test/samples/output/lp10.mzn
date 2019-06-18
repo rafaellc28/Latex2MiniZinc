@@ -32,11 +32,11 @@ constraint forall(t in TASKS, v in VOLS where t != Trash)(sum(w in WEEKS)(x[v,t,
 
 constraint forall(v in VOLS)(sum(w in WEEKS)(x[v,Trash,w]) <= z);
 
-constraint forall(t in TASKS, w in WEEKS, u in INDEX_SET_PAIRS)(p[PAIRS[u,1],PAIRS[u,2],t,w] <= x[to_enum(VOLS,PAIRS[u,1]),t,w]);
+constraint forall(t in TASKS, w in WEEKS, u in INDEX_SET_PAIRS)(p[PAIRS[u,1],PAIRS[u,2],t,w] <= x[PAIRS[u,1],t,w]);
 
-constraint forall(t in TASKS, w in WEEKS, u in INDEX_SET_PAIRS)(p[PAIRS[u,1],PAIRS[u,2],t,w] <= x[to_enum(VOLS,PAIRS[u,2]),t,w]);
+constraint forall(t in TASKS, w in WEEKS, u in INDEX_SET_PAIRS)(p[PAIRS[u,1],PAIRS[u,2],t,w] <= x[PAIRS[u,2],t,w]);
 
-constraint forall(t in TASKS, w in WEEKS, u in INDEX_SET_PAIRS)(p[PAIRS[u,1],PAIRS[u,2],t,w] >= x[to_enum(VOLS,PAIRS[u,1]),t,w] + x[to_enum(VOLS,PAIRS[u,2]),t,w] - 1);
+constraint forall(t in TASKS, w in WEEKS, u in INDEX_SET_PAIRS)(p[PAIRS[u,1],PAIRS[u,2],t,w] >= x[PAIRS[u,1],t,w] + x[PAIRS[u,2],t,w] - 1);
 
 constraint forall(u in INDEX_SET_PAIRS)(sum(t in TASKS, w in WEEKS)(p[PAIRS[u,1],PAIRS[u,2],t,w]) >= 1);
 

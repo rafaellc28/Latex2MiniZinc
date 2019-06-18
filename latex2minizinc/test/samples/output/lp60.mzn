@@ -12,7 +12,7 @@ set of int: INDEX_SET_E;
 
 constraint forall(i in V)(k[i] >= 1);
 
-constraint forall(i in INDEX_SET_E)(k[to_enum(V,E[i,2])] - k[to_enum(V,E[i,1])] >= 1 - card(V) * (x[to_enum(V,E[i,1])] + x[to_enum(V,E[i,2])]));
+constraint forall(i in INDEX_SET_E)(k[E[i,2]] - k[E[i,1]] >= 1 - card(V) * (x[E[i,1]] + x[E[i,2]]));
 
 constraint forall(i in V)(k[i] <= card(V));
 
