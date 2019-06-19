@@ -38,9 +38,9 @@ constraint regular([temp[dish[c]] | c in COURSE],3,card(TEMP),e,2,1..3);
 
 constraint forall(c in 1..floor(len - 2))(heavy[dish[c]] = true /\ heavy[dish[c + 1]] = true -> not heavy[dish[c + 2]] = true);
 
-constraint forall(i in 1..7, t in TASTE)(d[i,to_enum(TASTE,t)] in 0..7);
+constraint forall(i in 1..7, t in TASTE)(d[i,t] in 0..7);
 
-constraint forall(i in 1..3, t in TEMP)(e[i,to_enum(TEMP,t)] in 0..3);
+constraint forall(i in 1..3, t in TEMP)(e[i,t] in 0..3);
 
 
 

@@ -18,7 +18,7 @@ set of int: INDEX_SET_U;
 
 constraint forall(t in 0..T, x in X)(V[t,x] >= 0);
 
-constraint forall(t in 0..floor(T - 1), x in 1..N, u in U[to_enum(X,x)])(V[t,to_enum(X,x)] >= P * V[t + 1,to_enum(X,to_enum(X,x) + u)] + Q * V[t + 1,to_enum(X,to_enum(X,x) - u)]);
+constraint forall(t in 0..floor(T - 1), x in 1..N, u in U[x])(V[t,to_enum(X,x)] >= P * V[t + 1,to_enum(X,x + u)] + Q * V[t + 1,to_enum(X,x - u)]);
 
 constraint forall(x in X)(V[T,x] = ln(x));
 

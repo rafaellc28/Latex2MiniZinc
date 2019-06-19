@@ -1947,7 +1947,7 @@ class CodePrepare:
 
         if self.includeNewIndices:
             if self.to_enum:
-                self.codeGenerator.newIndexExpression = TO_ENUM + BEGIN_ARGUMENT_LIST+self.realtype+COMMA+ident+END_ARGUMENT_LIST
+                self.codeGenerator.newIndexExpression = ident
 
             stmtIndex = node.getSymbolTable().getStatement()
             scope = node.getSymbolTable().getScope()

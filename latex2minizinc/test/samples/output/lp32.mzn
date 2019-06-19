@@ -46,7 +46,7 @@ constraint forall(n in floor(22 / DT)..floor(25 / DT))(x[n,TuitionC] = 40000 * p
 
 constraint w[to_enum(N,0)] = Wi;
 
-constraint forall(n in 1..Nper)(w[to_enum(N,n)] = (1 + Ri) * (w[to_enum(N,to_enum(N,n) - 1)] + u[to_enum(N,to_enum(N,n) - 1)]) - sum(e in EXPENSES)(x[n,e]));
+constraint forall(n in 1..Nper)(w[to_enum(N,n)] = (1 + Ri) * (w[to_enum(N,n - 1)] + u[to_enum(N,n - 1)]) - sum(e in EXPENSES)(x[n,e]));
 
 constraint forall(n in 0..Nper)(u[to_enum(N,n)] <= fSave * Salary[to_enum(N,n)]);
 
