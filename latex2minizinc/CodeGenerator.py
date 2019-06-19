@@ -140,6 +140,7 @@ class CodeGenerator:
         self.objectsTypes = {}
         self.currentDomain = []
         self.localArgumentType = []
+        self.functionType = {}
 
     def generateCode(self, node):
         cls = node.__class__
@@ -2059,8 +2060,11 @@ class CodeGenerator:
 
         var = VAR + SPACE if node.typeIsVariable else EMPTY_STRING
         _type = FLOAT if isinstance(node.type, RealSet) else node.type.generateCode(self)
+        name = node.name.generateCode(self)
 
-        res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + node.name.generateCode(self) + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
+        self.functionType[name] = _type
+
+        res = FUNCTION + SPACE + var + _type + SEP_PARTS_DECLARATION + SPACE + name + BEGIN_ARGUMENT_LIST + node.preparedArguments.generateCode(self) + END_ARGUMENT_LIST
 
         if node.annotation:
             res += SPACE + ANNOT + SPACE + node.annotation.generateCode(self)
@@ -2781,9 +2785,15 @@ class CodeGenerator:
                self.objectsDomains[identifier][i] in self.objectsTypes and self.objectsTypes[self.objectsDomains[identifier][i]] == ENUM:
 
                 m = re.search(r"^[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$", ind)
-
+                
                 if m:
                     includeToEnum = True
+
+                elif BEGIN_ARGUMENT_LIST in ind:
+                    domains_aux = ind[:ind.find(BEGIN_ARGUMENT_LIST)]
+
+                    if domains_aux != TO_ENUM and domains_aux in self.functionType and self.functionType[domains_aux] != self.objectsDomains[identifier][i]:
+                        includeToEnum = True
 
                 elif BEGIN_ARRAY in ind:
                     domains_aux = ind[:ind.find(BEGIN_ARRAY)]
@@ -2823,7 +2833,6 @@ class CodeGenerator:
 
                     else:
                         curDomain = self._getCurrentDomain(ind)
-                        #print(identifier, ind, curDomain, self.objectsDomains[identifier][i], localObjectType, self.localArgumentType)
 
                         if curDomain:
                             localObjectType = self._getLocalArgumentType(curDomain)
@@ -2946,41 +2955,6 @@ class CodeGenerator:
             if NEW_INDICES in self.scopes[stmt][scope]:
                 if ident in self.scopes[stmt][scope][NEW_INDICES]:
                     new_index = self.scopes[stmt][scope][NEW_INDICES][ident]
-                    replaced = True
-
-                    if TO_ENUM + "('"+REALTYPE+"'" in new_index:
-                        replaced = False
-
-                        if self.parentIdentifier != None and self.identProcessing != None and self.identProcessing in self.posId:
-
-                            domain = self._getDomainByIdentifier(self.parentIdentifier)
-                            
-                            if domain != None and domain.strip() != EMPTY_STRING:
-                                domains = []
-                                domains_aux = Utils._splitDomain(domain, COMMA)
-                                
-                                for domain in domains_aux:
-                                    if domain in self.tuplesDeclared:
-                                        dimen  = self.tuplesDeclared[domain][DIMEN]
-                                        domain = self.tuplesDeclared[domain][TYPE]
-                                        
-                                        for i in range(dimen):
-                                            domains.append(domain)
-
-                                    else:
-                                        domains.append(domain)
-
-                                if len(domains) > 0:
-                                    
-                                    if self.posId[self.identProcessing] < len(domains):
-                                        domain = domains[self.posId[self.identProcessing]]
-
-                                        if domain != INT and domain in self.listEnums:
-                                            new_index = new_index.replace("'"+REALTYPE+"'", domain)
-                                            replaced = True
-
-                    if not replaced:
-                        new_index = ident
 
                     return new_index
 

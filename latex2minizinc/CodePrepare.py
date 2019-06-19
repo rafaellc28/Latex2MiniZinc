@@ -26,7 +26,7 @@ class CodePrepare:
 
     def init(self):
         self.realtype = None
-        self.to_enum = False
+        self.from_tuple = False
         self.includeNewIndices = False
         self.lastIdentifier = None
 
@@ -1204,24 +1204,24 @@ class CodePrepare:
             realtype = self.codeGenerator.tuplesDeclared[setExpression][REALTYPE]
             if realtype != None and realtype != SET_OF_INT:
                 self.includeNewIndices = True
-                self.to_enum = True
+                self.from_tuple = True
                 self.realtype = realtype
                 for v in values:
                     v.prepare(self)
 
                 self.includeNewIndices = False
-                self.to_enum = False
+                self.from_tuple = False
                 self.realtype = None
 
         elif FROM_TO in setExpression:
             self.includeNewIndices = True
-            self.to_enum = True
+            self.from_tuple = True
             self.realtype = "'"+REALTYPE+"'"
             for v in values:
                 v.prepare(self)
 
             self.includeNewIndices = False
-            self.to_enum = False
+            self.from_tuple = False
             self.realtype = None
 
     def _prepareDeclaration(self, declaration):
@@ -1946,8 +1946,8 @@ class CodePrepare:
         ident = node.value
 
         if self.includeNewIndices:
-            if self.to_enum:
-                self.codeGenerator.newIndexExpression = TO_ENUM + BEGIN_ARGUMENT_LIST+self.realtype+COMMA+ident+END_ARGUMENT_LIST
+            if self.from_tuple:
+                self.codeGenerator.newIndexExpression = ident
 
             stmtIndex = node.getSymbolTable().getStatement()
             scope = node.getSymbolTable().getScope()

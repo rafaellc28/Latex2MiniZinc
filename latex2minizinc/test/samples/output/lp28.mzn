@@ -16,7 +16,7 @@ array[X] of var float: V;
 set of int: INDEX_SET_U;
 
 
-constraint forall(x in 1..floor(N - 1), u in U[to_enum(X,x)])(V[to_enum(X,x)] >= A * (P * V[to_enum(X,to_enum(X,x) + u)] + Q * V[to_enum(X,to_enum(X,x) - u)]));
+constraint forall(x in 1..floor(N - 1), u in U[x])(V[to_enum(X,x)] >= A * (P * V[to_enum(X,x + u)] + Q * V[to_enum(X,x - u)]));
 
 constraint V[to_enum(X,0)] = 0;
 

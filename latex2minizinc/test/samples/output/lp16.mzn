@@ -20,7 +20,7 @@ set of int: INDEX_SET_y_2;
 
 constraint forall(p in PEOPLE)(sum(t in TABLES)(x[p,t]) = 1);
 
-constraint forall(p in PEOPLE)((sum(q in 1..(p - 1))(y[to_enum(PEOPLE,q),p])) + (sum(q in (p + 1)..card(PEOPLE))(y[p,to_enum(PEOPLE,q)])) = TABLESIZE - 1);
+constraint forall(p in PEOPLE)((sum(q in 1..(p - 1))(y[q,p])) + (sum(q in (p + 1)..card(PEOPLE))(y[p,q])) = TABLESIZE - 1);
 
 constraint forall(t in TABLES, p in INDEX_SET_PAIRS)(y[PAIRS[p,1],PAIRS[p,2]] >= x[PAIRS[p,1],t] + x[PAIRS[p,2],t] - 1);
 
